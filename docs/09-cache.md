@@ -1,0 +1,49 @@
+# 09 — Cache
+
+> **Fonte:** «Cache», «Cache e snapshot» della [specifica](specifica/prompt-originale.md).
+> **Moduli:** M07 Cache Manager.
+
+## Politica
+
+- La cache iniziale usa **CLOCK**.
+- Se i benchmark mostrano *scan pollution* significativa, valutare **2Q**. Il passaggio è
+  quindi subordinato a una misura, non anticipato.
+- La cache PUÒ essere **partizionata per Serie**, per impedire che un burst su una singola
+  Serie monopolizzi tutta la cache.
+
+## Read path
+
+```
+request → Serie → snapshot/index → cache → segment
+```
+
+L'indice viene consultato **prima** della cache: la cache è interrogata conoscendo già quale
+versione serve.
+
+## Cache e snapshot
+
+La cache DEVE essere consapevole della versione/epoch del dato; un reader non deve ottenere
+una versione incompatibile con il proprio snapshot (INV-M3).
+
+> **Proposta** — Indicizzare la cache per **location** (`segment-id`, `offset`) invece che per
+> `_id`. Poiché i segmenti chiusi sono immutabili, il contenuto di una location non cambia mai:
+> una entry non può diventare «vecchia», non serve invalidazione sugli update e la
+> compatibilità con gli snapshot è garantita per costruzione, perché ogni reader arriva alla
+> cache con la location della versione che il suo snapshot deve vedere. Il costo è che la
+> rilocazione fatta da CLEAN/MERGE cambia le location e raffredda le entry corrispondenti
+> (RSK-10).
+
+## Punti aperti e rischi
+
+- **QA-17** — Granularità (documento o blocco), chiave, budget per Serie e criteri di
+  ripartizione tra Serie.
+- **RSK-10** — Doppia cache con la page cache del sistema operativo, se i segmenti sono letti
+  con I/O bufferizzato o `mmap`; perdita di calore dopo la compaction.
+- La memoria della cache è soggetta alle stesse considerazioni sul GC degli indici: i payload
+  non devono vivere come oggetti gestiti dal collector (QA-18).
+
+## Metriche
+
+Hit/miss, eviction, occupazione per Serie, scan pollution
+([12 Osservabilità](12-osservabilita.md)). La metrica di scan pollution è quella che decide
+l'eventuale passaggio a 2Q: va definita prima dei benchmark.
