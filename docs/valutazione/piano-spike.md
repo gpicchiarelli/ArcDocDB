@@ -125,7 +125,8 @@ prodotto è una **misura con una raccomandazione**.
 - *Metodo:* descrivere come macchine a stati, ed esplorare esaustivamente su configurazioni
   piccole: (1) 2PC con writer non bloccante, `multiserie.log`, recovery; (2) CLEAN/MERGE con
   writer concorrente, swap, reader, snapshot, reclaim. L'esploratore è un programma Common
-  Lisp.
+  Lisp: nessun linguaggio di specifica o strumento di verifica esterno (decisione dell'autore,
+  2026-10-03; [ADR-0035](../adr/0035-strategia-di-verifica-e-tracciabilita.md)).
 - *Modelli aggiuntivi (ADR-0032, ADR-0033):* (3) il protocollo del seqlock a 64 bit con 1
   writer, 2 reader, 2 slot, ogni interleaving e ogni sospensione, compreso il ripiego sul
   writer; (4) l'**idempotenza del recovery**: interruzione del recovery in ogni passo e

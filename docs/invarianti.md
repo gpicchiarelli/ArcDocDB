@@ -89,7 +89,7 @@ revisione del progetto o benchmark.
 |---|---|---|---|
 | INV-X1 | SIMD e ottimizzazioni native si introducono solo sugli hot path dove i benchmark ne dimostrano l'utilità. | SIMD e ottimizzazioni native | revisione |
 | INV-X2 | I target di prestazione sono ipotesi finché non verificati da benchmark riproducibili; nessuna dichiarazione di superiorità da benchmark eterogenei. | Target preliminari, Confronto | revisione |
-| INV-X3 | Il codice del progetto è solo Common Lisp, finché un ADR non riapre l'uso di codice foreign. | [ADR-0001](adr/0001-common-lisp-sbcl.md) (decisione del 2026-10-01) | revisione |
+| INV-X3 | Il codice del progetto è solo Common Lisp, finché un ADR non riapre l'uso di codice foreign; lo stesso vale per i modelli e gli strumenti di verifica (nessun TLA+ o equivalente per ora). | [ADR-0001](adr/0001-common-lisp-sbcl.md) (decisione del 2026-10-01) | revisione |
 
 ## Derivati dalle decisioni di progetto (ADR 0013–0030)
 

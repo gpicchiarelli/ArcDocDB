@@ -88,6 +88,10 @@ fault injection; nessun rischio alto non mitigato; deviazioni solo se registrate
 ## Alternative considerate
 
 - *Soli test di esempio:* non coprono gli interleaving né le combinazioni di guasto.
+- *Linguaggi di specifica e verifica esterni (TLA+, Alloy, model checker in altri linguaggi):*
+  esclusi per decisione dell'autore (2026-10-03): per ora anche gli strumenti di verifica sono
+  solo Common Lisp (INV-X3). I modelli dei protocolli sono programmi Common Lisp con un
+  esploratore proprio. Si riesamina con un nuovo ADR, non prima.
 - *Metodi formali completi sul codice:* fuori portata per un progetto in Common Lisp con
   singolo autore; si adottano modelli esplorabili dei protocolli, dove il rapporto
   costo/beneficio è massimo.
