@@ -39,7 +39,7 @@ Dalla specifica, con il corrispondente identificativo in [invarianti.md](invaria
 
 Il fault injection condiziona il progetto fin dall'inizio; non si aggiunge alla fine.
 
-> **Proposta** — Requisiti di testabilità da assumere in fase di definizione:
+> **Deciso ([ADR-0035](adr/0035-strategia-di-verifica-e-tracciabilita.md))** — Requisiti di testabilità:
 >
 > - **Punti di crash nominati.** Ogni passo dei protocolli (append, fsync, prepare, decisione,
 >   swap, cambio di stato del segmento, cancellazione) attraversa un punto di iniezione
@@ -56,9 +56,14 @@ Il fault injection condiziona il progetto fin dall'inizio; non si aggiunge alla 
 >   prima di scrivere il codice: è un'attività della fase di valutazione
 >   ([piano degli spike](valutazione/piano-spike.md), SPK-07).
 
-## Punti aperti
+## Questioni decise
 
-- Che cosa significa «committed» per il livello di durability async (QA-05): determina che cosa
-  l'oracolo può pretendere dopo FI-01/FI-02.
-- Semantica di `fsync` per piattaforma (QA-19): un test di durability è significativo solo se
-  il flush raggiunge davvero il supporto.
+- «Committed» per l'oracolo: confermato a livello `:group` o `:strong`; con `:async` l'oracolo
+  pretende solo un prefisso coerente del log
+  ([ADR-0019](adr/0019-durability-e-group-commit-pipelined.md)).
+- Flush per piattaforma: `fdatasync` su Linux, `F_FULLFSYNC` su macOS, dietro un'unica
+  primitiva ([ADR-0017](adr/0017-piattaforma-e-io.md)). Un flush dichiarato riuscito ma non
+  durevole resta un rischio residuo dichiarato
+  ([FM-03](affidabilita/analisi-dei-guasti.md#fm-03)).
+- Oltre al crash, il simulatore inietta errori di I/O, corruzioni e scritture perse: vedi
+  l'[analisi dei guasti](affidabilita/analisi-dei-guasti.md).

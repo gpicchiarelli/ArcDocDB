@@ -73,7 +73,7 @@ stateDiagram-v2
 
 Le transizioni sono a senso unico: nessuno stato torna ad ACTIVE.
 
-> **Proposta** — La specifica non nomina lo stato di un segmento prodotto dalla compaction.
+> **Deciso ([ADR-0018](adr/0018-control-log-manifest-swap.md))** — La specifica non nomina lo stato di un segmento prodotto dalla compaction.
 > Poiché nasce immutabile, viene qui trattato come `CLOSED` dal momento dello swap. Prima dello
 > swap il file è in costruzione e non è visibile (INV-C7): non è uno stato del modello, ma un
 > file temporaneo che il recovery può scartare.
@@ -124,12 +124,12 @@ La classificazione è dinamica: una versione `LIVE` diventa `SNAPSHOT-LIVE` o `D
 documento viene aggiornato, e `SNAPSHOT-LIVE` diventa `DEAD` quando l'ultimo snapshot che la
 vede termina.
 
-> **Aperto (QA-15)** — Un tombstone è a sua volta un record: la specifica non dice quando può
+> **Deciso (QA-15 → [ADR-0023](adr/0023-politiche-di-compaction.md))** — Un tombstone è a sua volta un record: la specifica non dice quando può
 > essere scartato dalla compaction.
 
-## Punti aperti che toccano lo storage
+## Questioni decise che toccano lo storage
 
-- **QA-01** — formato dei record (intestazione, checksum, codifica del documento).
-- **QA-02** — rapporto tra WAL e segmenti: il dato viene scritto due volte, oppure il segmento
+- **QA-01** ([ADR-0014](adr/0014-formato-record-documento-id.md)) — formato dei record (intestazione, checksum, codifica del documento).
+- **QA-02** ([ADR-0013](adr/0013-log-structured-segmento-active-come-log.md)) — rapporto tra WAL e segmenti: il dato viene scritto due volte, oppure il segmento
   ACTIVE viene alimentato in modo che il WAL sia troncabile presto?
-- **QA-04** — dove è registrato in modo autorevole l'insieme dei segmenti di una Serie (manifest).
+- **QA-04** ([ADR-0018](adr/0018-control-log-manifest-swap.md)) — dove è registrato in modo autorevole l'insieme dei segmenti di una Serie (manifest).

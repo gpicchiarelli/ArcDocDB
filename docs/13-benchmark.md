@@ -58,7 +58,7 @@ Questi numeri DEVONO essere verificati con benchmark reali. Una prima verifica d
 rispetto ai limiti fisici dell'hardware è in
 [valutazione/stime-ordine-di-grandezza.md](valutazione/stime-ordine-di-grandezza.md).
 
-> **Aperto (QA-26)** — Solo il primo target è dichiarato «aggregato». Per gli altri va chiarito
+> **Deciso (QA-26 → [ADR-0028](adr/0028-target-e-obiettivi-di-latenza.md))** — Solo il primo target è dichiarato «aggregato». Per gli altri va chiarito
 > se si intendono per singola Serie o sommati su tutte le Serie: la differenza è sostanziale,
 > perché ogni Serie ha un solo writer logico.
 

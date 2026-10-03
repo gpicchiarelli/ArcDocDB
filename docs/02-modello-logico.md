@@ -40,7 +40,7 @@ Una Serie:
 Tutto ciò che è fisicamente condiviso tra Serie è un potenziale punto di contesa: la specifica
 lo riduce al solo `multiserie.log` (e alle risorse di calcolo governate dallo scheduler).
 
-> **Aperto (QA-21)** — La specifica non definisce il linguaggio dello schema/contratto né le
+> **Deciso (QA-21 → [ADR-0029](adr/0029-interfacce-protocollo-query-contratto.md))** — La specifica non definisce il linguaggio dello schema/contratto né le
 > regole di evoluzione dello schema.
 
 ### Documento
@@ -48,7 +48,7 @@ lo riduce al solo `multiserie.log` (e alle risorse di calcolo governate dallo sc
 L'unità logica di dati. Ha un `_id` univoco **all'interno della Serie** e può avere versioni
 storiche, conservate dallo storage append-only e governate da MVCC.
 
-> **Aperto (QA-01)** — Formato del documento, tipo di `_id` e codifica dei record su disco non
+> **Deciso (QA-01 → [ADR-0014](adr/0014-formato-record-documento-id.md))** — Formato del documento, tipo di `_id` e codifica dei record su disco non
 > sono specificati.
 
 ## Registri
@@ -65,7 +65,7 @@ Contiene:
 (vedi [05 Transazioni](05-transazioni.md)). Ne esiste **uno solo per Archivio**: NON DEVE
 esistere un file separato per ogni transazione.
 
-> **Aperto (QA-10)** — Registri è definita «Serie speciale», ma il layout indicativo mostra solo
+> **Deciso (QA-10 → [ADR-0022](adr/0022-registri-come-serie-catalogo.md))** — Registri è definita «Serie speciale», ma il layout indicativo mostra solo
 > `catalog/` e `multiserie.log`. Resta da decidere se il catalogo è memorizzato con il normale
 > meccanismo di una Serie (WAL + segmenti propri) o con un formato dedicato, e come avviene il
 > bootstrap (per aprire le Serie serve il catalogo, che a sua volta va recuperato per primo).
@@ -116,7 +116,7 @@ Regole:
 - NON DEVE esistere un global data WAL (INV-W1);
 - l'unico log condiviso a livello di Archivio è `Registri/multiserie.log` (INV-W2).
 
-> **Proposta** — Poiché le directory delle Serie sono sorelle di `Registri/`, il nome
+> **Deciso ([ADR-0022](adr/0022-registri-come-serie-catalogo.md))** — Poiché le directory delle Serie sono sorelle di `Registri/`, il nome
 > `Registri` va riservato: nessuna Serie utente può chiamarsi così. Conviene inoltre che il nome
 > della directory sia un identificatore interno stabile e non il nome logico della Serie, così
 > una rinomina è una modifica del solo catalogo.

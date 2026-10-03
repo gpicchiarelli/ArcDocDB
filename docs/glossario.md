@@ -84,6 +84,40 @@
 | **EWMA / AIMD / isteresi** | Media mobile esponenziale / crescita additiva e riduzione moltiplicativa / soglie distinte in salita e discesa: gli strumenti del controllo dinamico. |
 | **Scan pollution** | Degrado della cache causato da scansioni che espellono dati frequentemente usati. |
 
+## Termini introdotti dalle decisioni di progetto
+
+| Termine | Definizione |
+|---|---|
+| **Control log** | `wal/control.log`: log strutturale della Serie (segmenti, swap, stati, checkpoint). ADR-0013, ADR-0018. |
+| **CSN** | Commit Sequence Number: contatore di Archivio che ordina i commit e definisce la visibilità. ADR-0020. |
+| **File hint** | Indice primario di un segmento chiuso, da cui si ricostruisce l'indice in memoria. ADR-0015. |
+| **Key arena** | Area di memoria contigua che contiene le chiavi `_id` di una Serie. ADR-0015. |
+| **Versioni trattenute** | Tabella delle versioni non più correnti ancora visibili a uno snapshot. ADR-0015. |
+| **Seqlock** | Contatore per slot che permette letture senza lock e rileva le scritture concorrenti. ADR-0032. |
+| **EBR** | Epoch-based reclamation: un oggetto ritirato si elimina quando ogni reader ha superato l'epoca del ritiro. ADR-0016. |
+| **Intento** | Modifica di una transazione multiserie preparata e non ancora decisa su un documento. ADR-0021. |
+| **OUTCOME** | Record che registra nel segmento l'esito (COMMIT/ABORT) di una multiserie. ADR-0021. |
+| **Presumed abort** | Regola di recovery: senza decisione COMMIT durevole, la transazione è abortita. ADR-0021. |
+| **Lineage** | Il più piccolo segment-id tra gli antenati di un segmento; governa lo scarto dei tombstone. ADR-0023. |
+| **Stato di carico** | `basso` / `normale` / `alto`: governa CLEAN e MERGE. ADR-0023. |
+| **Rilocazione condizionale** | Aggiornamento di una entry dell'indice dopo la compaction, applicato solo se punta ancora alla location sorgente. ADR-0015. |
+
+## Affidabilità
+
+| Termine | Definizione |
+|---|---|
+| **Classe di integrità** | C1 percorso dei dati, C2 correttezza funzionale, C3 governo delle risorse, C4 strumenti. ADR-0031. |
+| **Fail-stop** | A fronte di un guasto non recuperabile il componente si ferma invece di proseguire con uno stato incerto. ADR-0033. |
+| **HEALTHY / DEGRADED / FAULTED** | Stati di salute di una Serie; `MULTI-DISABLED` per l'Archivio. ADR-0033. |
+| **Quarantena** | Stato di un segmento con dati non verificabili: non viene letto né compattato. ADR-0033. |
+| **Verifica in lettura** | Controllo di CRC32C, chiave, versione e CSN prima di restituire un record. ADR-0033. |
+| **Scrubbing** | Rilettura periodica dei segmenti chiusi per rilevare alterazioni latenti. ADR-0033. |
+| **Scansione di risincronizzazione** | Ricerca di record validi dopo un'anomalia nel log, per distinguere coda troncata da corruzione. ADR-0033. |
+| **Verificatore offline** | `arcdocdb-verify`: controlla in sola lettura formati, CRC e coerenza di un Archivio. ADR-0033. |
+| **Simulatore deterministico** | Esecuzione del sistema con tempo, casualità, schedulazione e I/O simulati, riproducibile da seme. ADR-0035. |
+| **Test differenziale** | Stessa sequenza di operazioni sul motore e su un modello di riferimento; i risultati devono coincidere. ADR-0035. |
+| **Deviazione** | Scostamento registrato e approvato da una regola di codifica. |
+
 ## Identificativi della documentazione
 
 | Prefisso | Significato | Dove |
@@ -95,3 +129,7 @@
 | `ADR-` | Decisione architetturale | [adr/](adr/README.md) |
 | `RSK-` | Rischio | [valutazione/registro-rischi.md](valutazione/registro-rischi.md) |
 | `SPK-` | Spike di valutazione | [valutazione/piano-spike.md](valutazione/piano-spike.md) |
+| `REQ-` | Requisito tracciato | [tracciabilita/requisiti.lisp](tracciabilita/requisiti.lisp) |
+| `FM-` | Modo di guasto | [affidabilita/analisi-dei-guasti.md](affidabilita/analisi-dei-guasti.md) |
+| `COD-` | Regola di codifica | [affidabilita/standard-di-codifica.md](affidabilita/standard-di-codifica.md) |
+| `DEV-` / `COV-` | Deviazione / eccezione di copertura | [affidabilita/deviazioni.md](affidabilita/deviazioni.md) |

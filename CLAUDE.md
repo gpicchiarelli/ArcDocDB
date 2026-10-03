@@ -2,10 +2,10 @@
 
 ## Fase corrente
 
-**Fase 0: definizione architetturale e valutazione.** La definizione è completa (ADR
-0013–0030, [architettura](docs/architettura.md), [formati](docs/formati-su-disco.md)); non si
-scrive codice di produzione. Restano: conferma di ADR-0028 e ADR-0030 da parte dell'autore ed
-esecuzione degli [spike](docs/valutazione/piano-spike.md) (SPK-01, 02, 03, 07 per primi),
+**Fase 0: definizione architetturale e valutazione.** La definizione è completa (35 ADR,
+[architettura](docs/architettura.md), [formati](docs/formati-su-disco.md)); non si scrive
+codice di produzione. Restano: conferma di ADR-0028 e ADR-0030 da parte dell'autore ed
+esecuzione degli [spike](docs/valutazione/piano-spike.md) (SPK-01, 02, 03, 07, 09 per primi),
 aggiornando la [valutazione](docs/valutazione/README.md). Vedi la [roadmap](docs/roadmap.md).
 
 Principio operativo: si scrive una volta sola, con la soluzione migliore nota
@@ -39,8 +39,8 @@ valgono per ogni modifica:
 
 - **Solo Common Lisp** (INV-X3, [ADR-0001](docs/adr/0001-common-lisp-sbcl.md)): nessun C,
   C++, Rust, nemmeno negli spike. Estensioni e contrib di SBCL ammessi.
-- Nei documenti, ciò che non viene dalla specifica è marcato `> **Proposta** —` o
-  `> **Aperto (QA-nn)** —`. Non presentare un'interpretazione come requisito.
+- Nei documenti, ciò che non viene dalla specifica è marcato `> **Proposta** —`,
+  `> **Deciso (… → ADR-nnnn)** —` o `> **Aperto (QA-nn)** —`. Non presentare un'interpretazione come requisito.
 - Numeri di prestazione: solo da misure riproducibili, altrimenti sono dichiarati target o
   stime (INV-X2).
 - Identificativi (`INV-`, `QA-`, `FI-`, `RSK-`, `SPK-`, `REQ-`, `FM-`, `COD-`, `M01…M18`, `ADR-`) stabili: non si

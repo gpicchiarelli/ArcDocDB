@@ -49,7 +49,7 @@ La specifica presuppone più livelli, senza elencarli formalmente. Dal testo se 
 | group commit | «privilegiare group commit», target «INSERT group commit» | conferma dopo un `fsync` condiviso con altre transazioni |
 | forte | «salvo esplicita richiesta di durability forte» | `fsync` dedicato all'operazione |
 
-> **Aperto (QA-05)** — Nomi, semantica esatta, livello di default e granularità (per Serie, per
+> **Deciso (QA-05 → [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md))** — Nomi, semantica esatta, livello di default e granularità (per Serie, per
 > richiesta, per transazione) vanno definiti. In particolare va precisato che cosa significa
 > «committed» ai fini di INV-D1 quando il livello è async.
 
@@ -67,14 +67,15 @@ dimensione del gruppo, profondità della coda del WAL. Latenza di `fsync` e thro
 sono anche segnali di carico per la [low-load policy](07-compaction.md#low-load-policy) del
 MERGE e per lo [scheduler](10-concorrenza-e-scheduling.md).
 
-## Punti aperti
+## Questioni decise
 
-- **QA-02** — Rapporto WAL ↔ segmenti e politica di troncamento del WAL.
-- **QA-05** — Livelli di durability.
-- **QA-19** — Primitive di I/O per piattaforma. Nota rilevante per lo sviluppo su macOS: lì
+- **QA-02** ([ADR-0013](adr/0013-log-structured-segmento-active-come-log.md)) — Rapporto WAL ↔ segmenti e politica di troncamento del WAL.
+- **QA-05** ([ADR-0019](adr/0019-durability-e-group-commit-pipelined.md)) — Livelli di durability.
+- **QA-19** ([ADR-0017](adr/0017-piattaforma-e-io.md)) — Primitive di I/O per piattaforma. Nota rilevante per lo sviluppo su macOS: lì
   `fsync` non garantisce la persistenza su supporto fisico (serve `F_FULLFSYNC`); i test di
   durability vanno quindi interpretati per piattaforma.
 
-> **Proposta** — Ogni record del WAL dovrebbe portare lunghezza e checksum, così che il recovery
-> possa distinguere un record completo da una coda troncata da un crash durante l'append
-> (scenario FI-01). Formato da definire con QA-01.
+> **Deciso ([ADR-0014](adr/0014-formato-record-documento-id.md), [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md))** —
+> Ogni record porta lunghezza e CRC32C, così il recovery distingue un record completo da una
+> coda troncata (scenario FI-01) e una coda troncata da una corruzione a metà log. Formato in
+> [formati-su-disco.md](formati-su-disco.md#record).

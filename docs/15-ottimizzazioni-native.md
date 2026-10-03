@@ -56,13 +56,13 @@ Si sale di livello solo quando il profiler mostra che il livello precedente non 
 Lo storage append-only con segmenti immutabili e scansioni sequenziali favorisce queste
 ottimizzazioni: i dati sono contigui e non cambiano sotto il lettore.
 
-## Punti aperti e rischi
+## Questioni decise e rischi
 
-- **QA-18** — Garbage collector e memoria: quali strutture vivono nello heap Lisp e quali
+- **QA-18** ([ADR-0024](adr/0024-memoria-e-gc.md)) — Garbage collector e memoria: quali strutture vivono nello heap Lisp e quali
   fuori (RSK-01). È il rischio tecnico principale della scelta di SBCL.
-- **QA-19** — Architettura di riferimento. Il supporto SIMD esplicito di SBCL va verificato
-  per architettura (x86-64 e ARM64): lo sviluppo avviene su macOS/ARM64, mentre l'hardware di
-  riferimento per i benchmark non è ancora fissato (RSK-11).
+- **QA-19** ([ADR-0017](adr/0017-piattaforma-e-io.md)) — Architettura di riferimento. Il supporto SIMD esplicito di SBCL va verificato
+  per architettura (x86-64 e ARM64): lo sviluppo avviene su macOS/ARM64, la piattaforma di
+  riferimento è Linux x86-64 (RSK-11).
 - Il vincolo «solo Common Lisp» riguarda anche le chiamate di sistema per l'I/O: va verificato
   nello spike sul WAL che `fsync` e le letture posizionali siano raggiungibili senza codice
   non-Lisp e senza allocazioni sul percorso critico (SPK-03, SPK-05).

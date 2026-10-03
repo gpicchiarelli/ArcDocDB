@@ -1,28 +1,13 @@
 # SBCL / ASDF
 *.fasl
-*.dfsl
-*.pfsl
-*.d64fsl
-*.p64fsl
-*.lx64fsl
-*.lx32fsl
-*.wx64fsl
-*.wx32fsl
-*.cfsl
-*.abcl
 *.core
-.cache/
-_build/
 
 # Dati e risultati locali degli spike
 spikes/**/data/
 spikes/**/out/
-*.log
-!docs/**/*.log
 
 # Sistema operativo ed editor
 .DS_Store
-Thumbs.db
 *~
 *.swp
 .vscode/

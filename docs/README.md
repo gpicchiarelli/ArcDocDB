@@ -89,8 +89,11 @@ la specifica prescrive. Tutto il resto è marcato esplicitamente:
 > **Proposta** — interpretazione o scelta di progetto non presente nella specifica. Va
 > confermata; finché non lo è, non vincola l'implementazione.
 
-> **Aperto (QA-nn)** — punto che la specifica non decide; rimanda a
-> [questioni-aperte.md](questioni-aperte.md).
+> **Deciso (QA-nn → ADR-nnnn)** — punto che la specifica non decideva, chiuso dall'ADR
+> indicato. Il testo che segue descrive la questione; la decisione è nell'ADR.
+
+> **Aperto (QA-nn)** — punto non ancora deciso; rimanda a
+> [questioni-aperte.md](questioni-aperte.md). Oggi non ce ne sono.
 
 **Parole normative.** DEVE / NON DEVE indicano requisiti; DOVREBBE una forte preferenza; PUÒ
 una facoltà.

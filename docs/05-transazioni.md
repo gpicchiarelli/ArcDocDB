@@ -38,7 +38,7 @@ Il controllo della versione DEVE essere **atomico rispetto all'applicazione dell
 parte del writer della Serie (INV-T2). Poiché il writer è l'unico a mutare la Serie, «verifica
 e applica» eseguiti dentro il writer sono atomici per costruzione, senza lock per documento.
 
-> **Aperto (QA-09)** — La specifica parla di conflitti «sullo stesso documento» (write-write).
+> **Deciso (QA-09 → [ADR-0020](adr/0020-csn-snapshot-isolamento.md))** — La specifica parla di conflitti «sullo stesso documento» (write-write).
 > Non definisce il livello di isolamento risultante (snapshot isolation? validazione anche del
 > read-set?) né il comportamento rispetto al write skew.
 
@@ -111,21 +111,21 @@ Dopo un crash il Recovery Manager:
 3. determina la decisione definitiva;
 4. completa il `COMMIT` o l'`ABORT` sui WAL delle Serie partecipanti.
 
-> **Proposta** — Regola di decisione in recovery (*presumed abort*): una transazione che risulta
+> **Deciso ([ADR-0021](adr/0021-2pc-intenti-outcome.md))** — Regola di decisione in recovery (*presumed abort*): una transazione che risulta
 > PREPARED in uno o più WAL ma **non** ha una decisione `COMMIT` durevole in `multiserie.log`
 > viene abortita. È l'unica regola coerente con INV-T3: senza decisione durevole la transazione
 > non è mai stata committed, quindi nessun client può averne ricevuto conferma.
 
-## Punti aperti e rischi
+## Questioni decise e rischi
 
 La parte multiserie è quella dove la specifica lascia più gradi di libertà, ed è tra i temi
 principali della [valutazione](valutazione/analisi-critica.md).
 
-- **QA-06** — Chi assegna il TXID e come si ottiene un ordine di commit a livello di Archivio,
+- **QA-06** ([ADR-0020](adr/0020-csn-snapshot-isolamento.md)) — Chi assegna il TXID e come si ottiene un ordine di commit a livello di Archivio,
   necessario per uno snapshot multiserie coerente.
-- **QA-07** — Che cosa vedono reader e scrittori concorrenti su un documento in stato PREPARED,
+- **QA-07** ([ADR-0021](adr/0021-2pc-intenti-outcome.md)) — Che cosa vedono reader e scrittori concorrenti su un documento in stato PREPARED,
   tra il prepare e la decisione. Il writer della Serie non può fermarsi ad aspettare la
   decisione, altrimenti l'intera Serie si blocca (contro INV-P3).
-- **QA-08** — Quando una decisione può essere dimenticata e come si tronca `multiserie.log`.
-- **QA-09** — Livelli di isolamento.
+- **QA-08** ([ADR-0021](adr/0021-2pc-intenti-outcome.md)) — Quando una decisione può essere dimenticata e come si tronca `multiserie.log`.
+- **QA-09** ([ADR-0020](adr/0020-csn-snapshot-isolamento.md)) — Livelli di isolamento.
 - Rischi collegati: RSK-05, RSK-06 nel [registro rischi](valutazione/registro-rischi.md).

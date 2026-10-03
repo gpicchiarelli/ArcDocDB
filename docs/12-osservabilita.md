@@ -33,8 +33,15 @@ e le scelte rinviate ai benchmark (2Q, SIMD) dipendono da essi.
 > - **Finestre.** I controllori leggono valori smussati (EWMA); l'esposizione verso l'esterno
 >   può usare finestre diverse.
 
-## Punti aperti
+## Questioni decise
 
-- Formato e canale di esposizione delle metriche (legato a QA-20, protocollo).
-- Definizione precisa di «scan pollution» come metrica misurabile (QA-17).
-- Come si misura l'utilizzo di NVMe e la I/O queue depth in modo portabile (QA-19).
+- Esposizione delle metriche: attraverso il protocollo a frame CBOR
+  ([ADR-0029](adr/0029-interfacce-protocollo-query-contratto.md)).
+- «Scan pollution»: quota di slot inseriti da scansioni ed espulsi senza essere mai riletti
+  ([ADR-0025](adr/0025-cache-per-location.md)).
+- Utilizzo del dispositivo: banda di flush e letture misurata dal modulo `io` rispetto alla
+  banda rilevata all'avvio ([ADR-0023](adr/0023-politiche-di-compaction.md)); la profondità
+  della coda di I/O del sistema operativo non è usata dai controllori.
+- Affidabilità: stati di salute di Serie e Archivio, segmenti in quarantena, avanzamento dello
+  scrubbing, ripieghi del seqlock, Serie in `:async`
+  ([ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md)).

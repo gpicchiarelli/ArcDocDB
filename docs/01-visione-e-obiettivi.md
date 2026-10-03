@@ -37,7 +37,7 @@ Dichiarati dalla specifica:
   (vedi [13 Benchmark](13-benchmark.md)).
 - I [target preliminari](13-benchmark.md#target-preliminari) **non** sono risultati dimostrati.
 
-> **Aperto (QA-23)** — La specifica non menziona replica, backup, autenticazione/autorizzazione
+> **Deciso (QA-23 → [ADR-0030](adr/0030-scope-v1.md))** — La specifica non menziona replica, backup, autenticazione/autorizzazione
 > né cifratura. Finché non viene deciso diversamente si considerano fuori dallo scope della v1.
 
 ## Le scelte che definiscono il progetto

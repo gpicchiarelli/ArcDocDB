@@ -35,11 +35,11 @@ Il vincolo sugli oggetti Lisp non è solo una questione di velocità: milioni di
 puntatori sono lavoro per il garbage collector, mentre array specializzati non contengono
 puntatori da tracciare ([15](15-ottimizzazioni-native.md)).
 
-> **Aperto (QA-03)** — Persistenza dell'indice: la directory `index/` della Serie esiste nel
+> **Deciso (QA-03 → [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md))** — Persistenza dell'indice: la directory `index/` della Serie esiste nel
 > layout, ma la specifica non dice se contiene un checkpoint del primary index o solo indici
 > secondari. La scelta determina il tempo di riavvio.
 
-> **Aperto (QA-01)** — Tipo e lunghezza di `_id` condizionano il formato della tabella (chiavi
+> **Deciso (QA-01 → [ADR-0014](adr/0014-formato-record-documento-id.md))** — Tipo e lunghezza di `_id` condizionano il formato della tabella (chiavi
 > a lunghezza fissa inline oppure hash + verifica).
 
 ## Indici secondari
@@ -87,17 +87,18 @@ nuovi reader      → Index v18
 reader precedenti → completano su v17
 ```
 
-## Punti aperti e rischi
+## Questioni decise e rischi
 
-- **QA-24** — Il modello «versione immutabile + swap» è naturale per gli indici secondari
+- **QA-24** ([ADR-0015](adr/0015-primary-index-swiss-table-swmr.md)) — Il modello «versione immutabile + swap» è naturale per gli indici secondari
   (base + delta) e per la rilocazione in blocco fatta dalla compaction. Per il **primary
   index**, che riceve una modifica per ogni scrittura, costruire una nuova versione completa a
   ogni commit non è praticabile: va definito come si concilia l'immutabilità per i reader con
-  aggiornamenti continui del writer (RSK-02). È il principale punto di progetto ancora aperto
-  sugli indici.
-- **QA-25** — Indici secondari: aggiornati in modo sincrono con il commit o in ritardo? Che
+  aggiornamenti continui del writer (RSK-02).
+  Risolto con il seqlock per slot e lo scambio atomico della tabella
+  ([ADR-0032](adr/0032-seqlock-a-64-bit.md)).
+- **QA-25** ([ADR-0026](adr/0026-indici-secondari-segmentati.md)) — Indici secondari: aggiornati in modo sincrono con il commit o in ritardo? Che
   cosa vede uno snapshot? Sono persistiti o ricostruiti al riavvio?
-- **QA-03** — Persistenza e tempo di ricostruzione del primary index (RSK-07).
+- **QA-03** ([ADR-0015](adr/0015-primary-index-swiss-table-swmr.md)) — Persistenza e tempo di ricostruzione del primary index (RSK-07).
 
 ## Metriche
 

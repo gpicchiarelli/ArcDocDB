@@ -6,8 +6,8 @@
 </p>
 
 <p align="center">
-  <strong>A general-purpose document database that never overwrites.</strong><br>
-  Append-only storage, one writer per Serie, copy-on-write compaction — in pure Common Lisp.
+  <strong>A general-purpose document database that never overwrites — and never answers wrong in silence.</strong><br>
+  Append-only storage, one writer per Serie, every read verified. Engineered as safety-critical software, in pure Common Lisp.
 </p>
 
 <p align="center">
@@ -15,23 +15,24 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-BSD--2--Clause-3f7a80.svg" alt="License: BSD-2-Clause"></a>
   <a href="docs/adr/0001-common-lisp-sbcl.md"><img src="https://img.shields.io/badge/Common%20Lisp-100%25-3f7a80.svg" alt="100% Common Lisp"></a>
   <a href="https://www.sbcl.org/"><img src="https://img.shields.io/badge/SBCL-2.6%2B-1f3f43.svg" alt="SBCL 2.6+"></a>
+  <a href="docs/adr/0027-dipendenze-e-test.md"><img src="https://img.shields.io/badge/dependencies-0-2e7d32.svg" alt="Zero dependencies"></a>
+  <a href="docs/affidabilita/README.md"><img src="https://img.shields.io/badge/design-safety--critical-b71c1c.svg" alt="Safety-critical design"></a>
+</p>
+
+<p align="center">
   <a href="docs/roadmap.md"><img src="https://img.shields.io/badge/phase-0%20%C2%B7%20architecture-d4a017.svg" alt="Phase 0: architecture"></a>
   <a href="docs/adr/README.md"><img src="https://img.shields.io/badge/ADRs-35-5a9aa0.svg" alt="35 ADRs"></a>
   <a href="docs/invarianti.md"><img src="https://img.shields.io/badge/invariants-50-5a9aa0.svg" alt="50 invariants"></a>
+  <a href="docs/tracciabilita/matrice.md"><img src="https://img.shields.io/badge/requirements-90%20traced-5a9aa0.svg" alt="90 requirements traced"></a>
   <a href="docs/questioni-aperte.md"><img src="https://img.shields.io/badge/open%20questions-0-2e7d32.svg" alt="0 open questions"></a>
-  <a href="docs/tracciabilita/matrice.md"><img src="https://img.shields.io/badge/requirements-90%20traced-2e7d32.svg" alt="90 requirements traced"></a>
-  <a href="docs/affidabilita/README.md"><img src="https://img.shields.io/badge/design-safety--critical-b71c1c.svg" alt="Safety-critical design"></a>
   <a href="docs/valutazione/piano-spike.md"><img src="https://img.shields.io/badge/spikes-0%2F9-9e9e9e.svg" alt="Spikes 0/9"></a>
-  <img src="https://img.shields.io/badge/dependencies-0-2e7d32.svg" alt="Zero dependencies">
-  <a href="https://github.com/gpicchiarelli/ArcDocDB/commits/main"><img src="https://img.shields.io/github/last-commit/gpicchiarelli/ArcDocDB.svg?color=3f7a80" alt="Last commit"></a>
-  <a href="https://github.com/gpicchiarelli/ArcDocDB/commits/main"><img src="https://img.shields.io/github/commit-activity/m/gpicchiarelli/ArcDocDB.svg?color=3f7a80" alt="Commit activity"></a>
-  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-3f7a80.svg" alt="PRs welcome"></a>
 </p>
 
 <p align="center">
   <a href="#why-arcdocdb">Why</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#design-at-a-glance">Design</a> ·
+  <a href="#reliability">Reliability</a> ·
   <a href="#limits">Limits</a> ·
   <a href="#status">Status</a> ·
   <a href="#quick-start">Quick start</a> ·
@@ -42,14 +43,14 @@
 
 ## Why ArcDocDB
 
-Most databases are built to be fast on launch day and unpredictable at the tail. ArcDocDB is
-designed backwards from **predictable P99**: a data layout where every write is one sequential
-append, every read is a lock-free probe in memory, and background work is strictly
-subordinate to user traffic.
+A database has one job before all others: give back exactly what was committed, or say
+clearly that it cannot. ArcDocDB is engineered like **safety-critical software**: reliability
+outranks speed, every requirement is traced to its verification by a tool, and a datum that
+cannot be verified is never returned — see [Reliability](#reliability).
 
-It is engineered like **safety-critical software**: reliability outranks speed, every
-requirement is traced to a verification by a tool, and a datum that cannot be verified is never
-returned — see [Reliability](#reliability).
+Performance follows from the layout rather than from shortcuts: every write is one sequential
+append, every read is a lock-free probe in memory, and background work is strictly subordinate
+to user traffic.
 
 It is a **document** engine, not a CMS backend: it stores opaque, versioned documents under
 a unique `_id`, with schemas, secondary indexes, snapshots and transactions on top.
@@ -85,7 +86,7 @@ a unique `_id`, with schemas, secondary indexes, snapshots and transactions on t
     </td>
     <td valign="top">
       <strong>Designed to be measured</strong><br>
-      Targets are hypotheses. Eight spikes, a protocol model and thirteen crash scenarios
+      Targets are hypotheses. Nine spikes, a protocol model and thirteen crash scenarios
       decide what survives.
     </td>
   </tr>
@@ -117,7 +118,7 @@ The full design is a single document: **[docs/architettura.md](docs/architettura
 | Area | Decision | ADR |
 |---|---|---|
 | **Storage** | Log-structured: the `ACTIVE` segment *is* the data log — each record written once, CRC32C-protected | [0013](docs/adr/0013-log-structured-segmento-active-come-log.md) |
-| **Primary index** | Swiss-table, single-writer / multi-reader, per-slot seqlock, flat arrays — no Lisp object per entry | [0015](docs/adr/0015-primary-index-swiss-table-swmr.md) |
+| **Primary index** | Swiss-table, single-writer / multi-reader, 64-bit per-slot seqlock with bounded retries, flat arrays — no Lisp object per entry | [0015](docs/adr/0015-primary-index-swiss-table-swmr.md) · [0032](docs/adr/0032-seqlock-a-64-bit.md) |
 | **Secondary indexes** | One immutable, fixed-format file per segment (ordered / string / category / bitmap) + in-memory delta for `ACTIVE` | [0026](docs/adr/0026-indici-secondari-segmentati.md) |
 | **Durability** | `:async` · `:group` (default) · `:strong`; pipelined group commit — the writer never waits for a flush | [0019](docs/adr/0019-durability-e-group-commit-pipelined.md) |
 | **MVCC** | Per-Archivio commit sequence number; snapshot isolation; optional `:serializable` | [0020](docs/adr/0020-csn-snapshot-isolamento.md) |
@@ -128,7 +129,7 @@ The full design is a single document: **[docs/architettura.md](docs/architettura
 | **Memory / GC** | Long-lived specialized arrays, zero allocation on hot paths | [0024](docs/adr/0024-memoria-e-gc.md) |
 | **Integrity** | End-to-end CRC32C on every read (disk *and* cache), fail-stop on any write/flush error, scrubbing, offline verifier | [0033](docs/adr/0033-fail-stop-e-integrita-end-to-end.md) |
 | **Code policy** | `safety` ≥ 2 always, zero compiler warnings, banned constructs checked by a linter | [0034](docs/adr/0034-policy-di-compilazione-e-standard-di-codifica.md) |
-| **Verification** | Deterministic simulation, model-checked protocols, fault injection, differential testing, fuzzing, mutation testing | [0035](docs/adr/0035-strategia-di-verifica-e-tracciabilita.md) |
+| **Verification** | Deterministic simulation, exhaustively explored protocol models, fault injection, differential testing, fuzzing, mutation testing | [0035](docs/adr/0035-strategia-di-verifica-e-tracciabilita.md) |
 | **Dependencies** | None. SBCL and its contribs only; own CBOR, CRC32C, hash, test harness | [0027](docs/adr/0027-dipendenze-e-test.md) |
 
 Every pattern is admitted by one rule: *the best known solution for the problem, decided once,
@@ -184,6 +185,8 @@ Phase 0 and the ten phases that follow.
 
 ## Quick start
 
+The documentation is written in Italian; this page and the code are in English and Lisp.
+
 Requires SBCL and ASDF (bundled with SBCL). Nothing else.
 
 ```bash
@@ -200,6 +203,7 @@ make check      # strict build + tests, linter (+ self-test), traceability, doc 
 | [`src/`](src) · [`tests/`](tests) | ASDF system (minimal in Phase 0) |
 | [`spikes/`](spikes/README.md) | disposable experiments, one folder per spike |
 | [`tools/`](tools) | strict build, linter, traceability and link checkers — all Common Lisp |
+| [`assets/`](assets/README.md) | logo, palette, hero image brief |
 
 ## Contributing
 

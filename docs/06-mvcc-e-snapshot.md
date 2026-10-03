@@ -48,20 +48,20 @@ Il reclaim di un segmento avviene solo quando (INV-R1):
 Le quattro condizioni corrispondono alla transizione `OBSOLETE → RECLAIMABLE`
 ([03 Storage](03-storage.md#stati-del-segmento)).
 
-## Punti aperti e rischi
+## Questioni decise e rischi
 
 La specifica fissa il *comportamento* degli snapshot ma non il *meccanismo*. I punti seguenti
-sono architetturali: vanno chiusi prima di progettare primary index e compaction.
+erano architetturali e sono stati chiusi dagli ADR indicati.
 
-- **QA-24** — Come uno snapshot localizza una versione non più corrente. Il primary index
+- **QA-24** ([ADR-0015](adr/0015-primary-index-swiss-table-swmr.md)) — Come uno snapshot localizza una versione non più corrente. Il primary index
   mappa `_id → location` della versione corrente; serve una struttura che, per i documenti
   aggiornati mentre uno snapshot è attivo, conservi anche le location precedenti, e che resti
   valida quando la compaction riloca i record.
-- **QA-06** — Snapshot coerente a livello di Archivio con writer indipendenti per Serie: serve
+- **QA-06** ([ADR-0020](adr/0020-csn-snapshot-isolamento.md)) — Snapshot coerente a livello di Archivio con writer indipendenti per Serie: serve
   un punto di riferimento comune (sequenza di commit dell'Archivio o vettore di posizioni per
   Serie) e la garanzia che una transazione multiserie diventi visibile in modo atomico rispetto
   allo snapshot.
-- **QA-14** — Snapshot longevi: bloccano il reclaim (spazio) e, per le condizioni del MERGE,
+- **QA-14** ([ADR-0020](adr/0020-csn-snapshot-isolamento.md)) — Snapshot longevi: bloccano il reclaim (spazio) e, per le condizioni del MERGE,
   anche la deframmentazione. Serve una politica (limite di durata, metrica, allarme).
-- **QA-16** — Come si tracciano i reader attivi per il reclaim (epoch, refcount per segmento).
+- **QA-16** ([ADR-0016](adr/0016-epoch-based-reclamation.md)) — Come si tracciano i reader attivi per il reclaim (epoch, refcount per segmento).
 - Rischi collegati: RSK-02, RSK-05, RSK-09.

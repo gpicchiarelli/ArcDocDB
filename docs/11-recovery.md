@@ -39,8 +39,9 @@ Il Recovery Manager DEVE essere in grado di ricostruire il sistema dopo un crash
 
 ## Sequenza
 
-> **Proposta** — La specifica elenca le attività ma non l'ordine. L'ordine seguente rispetta le
-> dipendenze tra le attività.
+> **Deciso ([architettura](architettura.md#recovery))** — La specifica elenca le attività ma non
+> l'ordine. L'ordine seguente rispetta le dipendenze tra le attività; il recovery è idempotente
+> (INV-A7).
 
 | # | Passo | Perché in questo punto |
 |---|---|---|
@@ -68,17 +69,17 @@ Con riferimento ai passi del [workflow](07-compaction.md#workflow):
 | dopo lo swap, prima di OBSOLETE (10) | output visibile, sorgente ancora `CLOSED` | segnare il sorgente `OBSOLETE` |
 | durante il reclaim (11–13) | sorgente `OBSOLETE`/`RECLAIMABLE`, eventualmente file già rimosso | dopo un riavvio non esistono reader né snapshot precedenti: il reclaim può essere completato |
 
-> **Aperto (QA-04)** — Per riconoscere uno swap incompleto serve una registrazione autorevole e
+> **Deciso (QA-04 → [ADR-0018](adr/0018-control-log-manifest-swap.md))** — Per riconoscere uno swap incompleto serve una registrazione autorevole e
 > atomica dell'insieme dei segmenti validi di una Serie (un *manifest*, oppure record dedicati
 > nel WAL della Serie). È la decisione che rende deterministica tutta la tabella qui sopra.
 
-## Punti aperti e rischi
+## Questioni decise e rischi
 
-- **QA-04** — Manifest dei segmenti e meccanismo dello swap.
-- **QA-03** — Ricostruire l'indice da zero richiede di rileggere tutti i segmenti; senza
+- **QA-04** ([ADR-0018](adr/0018-control-log-manifest-swap.md)) — Manifest dei segmenti e meccanismo dello swap.
+- **QA-03** ([ADR-0015](adr/0015-primary-index-swiss-table-swmr.md)) — Ricostruire l'indice da zero richiede di rileggere tutti i segmenti; senza
   checkpoint il tempo di riavvio cresce con la dimensione dei dati (RSK-07).
-- **QA-10** — Bootstrap di Registri/catalogo (RSK-15).
-- **QA-08** — Fino a quando una decisione resta in `multiserie.log`.
+- **QA-10** ([ADR-0022](adr/0022-registri-come-serie-catalogo.md)) — Bootstrap di Registri/catalogo (RSK-15).
+- **QA-08** ([ADR-0021](adr/0021-2pc-intenti-outcome.md)) — Fino a quando una decisione resta in `multiserie.log`.
 - Ogni riga delle tabelle sopra corrisponde a uno scenario di
   [fault injection](14-fault-injection.md).
 

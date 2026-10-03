@@ -66,8 +66,6 @@
        (char= (char s 7) #\-)
        (every #'digit-char-p (subseq s 8))))
 
-(defun area-of (id) (subseq id 4 7))
-
 (defun load-requirements ()
   (with-open-file (in *req-file* :external-format :utf-8)
     (read in)))

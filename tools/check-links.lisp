@@ -73,9 +73,13 @@
   (let ((h (position #\# target)))
     (if h (values (subseq target 0 h) (subseq target (1+ h))) (values target nil))))
 
+(defun directory-argument (s)
+  "Normalizza un argomento di directory senza dipendere da UIOP."
+  (truename (if (char= (char s (1- (length s))) #\/) s (concatenate 'string s "/"))))
+
 (defun main ()
   (let* ((root (if (second sb-ext:*posix-argv*)
-                   (uiop-less-dir (second sb-ext:*posix-argv*))
+                   (directory-argument (second sb-ext:*posix-argv*))
                    (truename "./")))
          (files (markdown-files root))
          (heading-cache (make-hash-table :test #'equal))
@@ -105,9 +109,5 @@
                                (enough-namestring file root) target)))))))))
     (format t "~D file, ~D link controllati, ~D rotti~%" (length files) checked broken)
     (sb-ext:exit :code (if (zerop broken) 0 1))))
-
-(defun uiop-less-dir (s)
-  "Normalizza un argomento di directory senza dipendere da UIOP."
-  (truename (if (char= (char s (1- (length s))) #\/) s (concatenate 'string s "/"))))
 
 (main)

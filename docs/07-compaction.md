@@ -33,7 +33,7 @@ sempre un nuovo segmento immutabile (INV-C1, INV-C2).
 | `live ≈ total` | nessuna compaction |
 | troppi segmenti piccoli | MERGE, **solo se** i candidati hanno ≥ 50 s di stabilità **e** il carico è basso |
 
-> **Aperto (QA-11)** — Le soglie numeriche non sono specificate: quanto spazio morto fa
+> **Deciso (QA-11 → [ADR-0023](adr/0023-politiche-di-compaction.md))** — Le soglie numeriche non sono specificate: quanto spazio morto fa
 > scattare un CLEAN, che cosa conta come «piccolo», quanti segmenti piccoli fanno un gruppo,
 > dimensione massima dell'output di un MERGE.
 
@@ -82,13 +82,13 @@ Il timestamp di riferimento è quello di **chiusura/stabilizzazione** del segmen
 non compattare immediatamente segmenti appena chiusi. La regola si applica al solo MERGE, non
 al CLEAN.
 
-> **Aperto (QA-13)** — Per un segmento prodotto da CLEAN o MERGE il timestamp di
+> **Deciso (QA-13 → [ADR-0018](adr/0018-control-log-manifest-swap.md))** — Per un segmento prodotto da CLEAN o MERGE il timestamp di
 > «stabilizzazione» va definito (proposta: l'istante in cui lo swap è completato). Va inoltre
 > deciso che cosa succede dopo un riavvio, dato che il close time vive nei metadata, che sono
 > dati derivati: l'opzione conservativa è far ripartire il conteggio dal termine del recovery.
 > Serve un orologio monotono.
 
-> **Aperto (QA-14)** — La condizione 5 implica che uno snapshot longevo sospende il MERGE dei
+> **Deciso (QA-14 → [ADR-0020](adr/0020-csn-snapshot-isolamento.md))** — La condizione 5 implica che uno snapshot longevo sospende il MERGE dei
 > segmenti che gli servono, anche se il MERGE è copy-on-write e i sorgenti resterebbero
 > comunque leggibili fino al reclaim.
 
@@ -120,7 +120,7 @@ Se il carico aumenta significativamente **durante** un MERGE:
 Il MERGE NON DEVE monopolizzare CPU, NVMe, memoria, cache, memory bandwidth, e NON DEVE
 competere con il traffico utente.
 
-> **Aperto (QA-12)** — «Basso carico» va reso operativo: soglie, finestre di osservazione,
+> **Deciso (QA-12 → [ADR-0023](adr/0023-politiche-di-compaction.md))** — «Basso carico» va reso operativo: soglie, finestre di osservazione,
 > isteresi per evitare oscillazioni. Va deciso se un MERGE in corso si può sospendere e
 > riprendere o solo abbandonare (l'output parziale è scartabile senza danni, perché i sorgenti
 > sono intatti). Va infine deciso che cosa accade se il carico non scende mai: il MERGE non
@@ -158,7 +158,7 @@ Proprietà di crash-safety (dettagli in [11 Recovery](11-recovery.md)):
 - il sorgente resta recuperabile fino al completamento dello swap (INV-C8);
 - un passo 9 interrotto DEVE essere riconoscibile in recovery.
 
-> **Aperto (QA-04, QA-24)** — Lo «atomic index swap» è il punto più delicato del workflow. Il
+> **Deciso (QA-04, QA-24 → [ADR-0018](adr/0018-control-log-manifest-swap.md), [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md))** — Lo «atomic index swap» è il punto più delicato del workflow. Il
 > writer della Serie continua a lavorare durante la copia: un documento copiato può essere
 > stato aggiornato nel frattempo, e in quel caso l'indice non va toccato per quel documento.
 > Il meccanismo di swap e il suo rapporto con il writer logico sono da definire.
