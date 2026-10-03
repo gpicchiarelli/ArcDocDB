@@ -4,9 +4,10 @@ Questa cartella trasforma la [specifica originale](specifica/prompt-originale.md
 tematici navigabili, con tracciabilità verso il testo di partenza, e la sottopone a una
 [valutazione architetturale](valutazione/README.md).
 
-**Fase corrente:** definizione architetturale e valutazione ([roadmap](roadmap.md)). Il
-lavoro di questa fase è chiudere le [questioni aperte](questioni-aperte.md) con ADR ed
-eseguire gli [spike](valutazione/piano-spike.md).
+**Fase corrente:** definizione architetturale e valutazione ([roadmap](roadmap.md)). La
+definizione è completa: il progetto consolidato è in [architettura.md](architettura.md), i
+formati persistenti in [formati-su-disco.md](formati-su-disco.md), le decisioni negli
+[ADR](adr/README.md). Restano gli [spike](valutazione/piano-spike.md) di verifica.
 
 ## Come leggere
 
@@ -41,6 +42,15 @@ Ordine consigliato per chi arriva per la prima volta:
 | [14 Fault injection](14-fault-injection.md) | Scenari di crash e invarianti verificati | Fault injection |
 | [15 Ottimizzazioni native](15-ottimizzazioni-native.md) | SBCL, SIMD, FFI | SIMD e ottimizzazioni native |
 | [16 Moduli](16-moduli.md) | I 18 moduli, package, dipendenze, mappa del codice | Moduli software |
+
+Progetto consolidato:
+
+| Documento | Contenuto |
+|---|---|
+| [Architettura](architettura.md) | Il progetto completo in un documento: strutture, percorsi di lettura e scrittura, transazioni, compaction, recovery, contratti tra moduli |
+| [Formati su disco](formati-su-disco.md) | Segmento, record, hint, indici, Bloom, control log, `multiserie.log`, catalogo |
+| [Limiti dimensionali](limiti.md) | Limiti hard dai formati e limiti pratici dall'hardware |
+| [Principi di ingegneria](principi-di-ingegneria.md) | Criterio di ammissione dei pattern; si scrive una volta sola |
 
 Documenti trasversali:
 

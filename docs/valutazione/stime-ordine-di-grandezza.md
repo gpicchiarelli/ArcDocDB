@@ -45,18 +45,19 @@ secondo, ~4.000 segmenti per TB.
 
 ## Memoria del primary index
 
-Ipotesi: entry compatta con impronta della chiave, segment-id, offset, length, version —
-nell'ordine di 24–32 byte — più lo spazio libero della tabella. Stima: **30–40 byte per
-documento**, escluso lo spazio per `_id` di lunghezza variabile.
+Layout deciso in [ADR-0015](../adr/0015-primary-index-swiss-table-swmr.md): 1 byte di
+controllo + 5 parole da 64 bit per slot (hash, chiave, location, lunghezza/versione,
+CSN/seqlock) = 41 byte, a fattore di carico 7/8 ≈ **48 byte per documento**, più la key arena
+(lunghezza della chiave + 0 byte di overhead; 16 byte per gli id generati).
 
-| Documenti | Indice | Dati live a 2 KB/doc |
-|---|---|---|
-| 100 milioni | 3–4 GB | 200 GB |
-| 1 miliardo | 30–40 GB | 2 TB |
+| Documenti | Indice | Key arena (id 16 B) | Dati live a 2 KB/doc |
+|---|---|---|---|
+| 100 milioni | ~4,8 GB | 1,6 GB | 200 GB |
+| 1 miliardo | ~48 GB | 16 GB | 2 TB |
 
-→ Su una macchina da 64–128 GB il primary index limita la capacità a qualche miliardo di
-documenti per server, e a 1 miliardo occupa già una quota importante della RAM, in concorrenza
-con la cache. Questa memoria non deve essere lavoro per il GC (QA-18).
+→ Su una macchina da 64–128 GB il primary index limita la capacità a circa 1 miliardo di
+documenti per server (64 GB di indice + arena a 1 miliardo), in concorrenza con la cache.
+Questa memoria non è lavoro per il GC ([ADR-0024](../adr/0024-memoria-e-gc.md)).
 
 ## Tempo di riavvio
 

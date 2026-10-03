@@ -68,4 +68,35 @@ operazioni distinte.
 **Indicazione.** Nessun elemento emerso finora invalida l'architettura. La fattibilità delle
 prestazioni dichiarate dipende però da due verifiche che non si possono fare a tavolino — GC e
 primary index in SBCL — e da un chiarimento sui target (QA-26). L'ordine di lavoro proposto è
-nella [roadmap](../roadmap.md#ordine-consigliato).
+nella [roadmap](../roadmap.md#ordine-consigliato-parte-restante).
+
+## Rivalutazione 2026-10-03
+
+Le 26 questioni aperte sono state chiuse con gli ADR 0013–0030, scegliendo per ciascuna il
+pattern con il miglior track record noto ([principi](../principi-di-ingegneria.md)). Il
+progetto consolidato è in [architettura.md](../architettura.md) e
+[formati-su-disco.md](../formati-su-disco.md). Giudizio sui criteri:
+
+| Criterio | Prima | Dopo | Perché |
+|---|---|---|---|
+| Correttezza | meccanismi non definiti | definiti e modellabili | swap = un record (ADR-0018); CSN con attesa delle multiserie in applicazione (ADR-0020); presumed abort e intenti (ADR-0021); invarianti INV-F1, INV-V1…V4 |
+| Prevedibilità | dipende dal GC | dipende dal GC, con criterio numerico | zero allocazione e array senza puntatori (ADR-0024); pausa ≤ 5 ms come criterio di SPK-02 (ADR-0028); writer mai bloccato su I/O (ADR-0019) |
+| Isolamento tra Serie | buono | buono, quantificato | un incremento atomico per lotto è l'unico costo condiviso ([architettura](../architettura.md#archivio-coordinamento-minimo)) |
+| Prestazioni | banda al limite con doppia scrittura | 1× scrittura | log-structured (ADR-0013); indici per segmento senza lavoro extra nel writer (ADR-0026) |
+| Recuperabilità | riavvio proporzionale ai dati | proporzionale ai documenti | hint per segmento (ADR-0015); ogni stato intermedio riconoscibile dal control log |
+| Costi di spazio | non quantificati | quantificati | ~48 B/entry di indice; record morti delle transazioni abortite recuperati dal CLEAN |
+| Realizzabilità in Common Lisp | da verificare | progettata senza codice foreign | chiamate di sistema via contrib (ADR-0017); CBOR/CRC/hash propri (ADR-0027) |
+| Complessità | 18 moduli, meccanismi aperti | un meccanismo per problema | un solo log dati, un solo log strutturale, un solo codec, una sola politica di memoria |
+
+**Rischi dopo le decisioni.** Vedi lo [stato aggiornato](registro-rischi.md#stato-dopo-gli-adr-2026-10-03).
+Restano aperti sul piano quantitativo: RSK-01 (GC: SPK-02), RSK-02 nella sola parte
+prestazionale (SPK-01), RSK-03 residuo sui flush concorrenti (SPK-03). Tutti gli altri sono
+mitigati dal progetto o accettati esplicitamente.
+
+**Decisioni che spettano all'autore.** [ADR-0028](../adr/0028-target-e-obiettivi-di-latenza.md)
+(target e latenze) e [ADR-0030](../adr/0030-scope-v1.md) (scope) sono in stato *Proposta*.
+
+**Verdetto.** Il progetto è completo sul piano dei meccanismi: ogni modulo ha un pattern
+assegnato, un formato persistente e un criterio di verifica. La Fase 0 si chiude con
+l'esecuzione di SPK-01, SPK-02, SPK-03 e del modello SPK-07, che confermano o sostituiscono
+(con nuovi ADR, non con ritocchi) le ipotesi quantitative.

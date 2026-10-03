@@ -5,6 +5,10 @@
 > durante compaction», «Compaction scheduler dinamico» della
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M11 Compaction Manager (con M13 Scheduler).
+> **Decisioni:** [ADR-0018](adr/0018-control-log-manifest-swap.md) (swap = record,
+> stabilizzazione), [ADR-0023](adr/0023-politiche-di-compaction.md) (soglie, stati di carico,
+> tombstone), [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (rilocazione
+> condizionale), [ADR-0016](adr/0016-epoch-based-reclamation.md) (reclaim).
 
 ## Due operazioni, due scopi
 

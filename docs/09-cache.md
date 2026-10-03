@@ -2,6 +2,8 @@
 
 > **Fonte:** «Cache», «Cache e snapshot» della [specifica](specifica/prompt-originale.md).
 > **Moduli:** M07 Cache Manager.
+> **Decisioni:** [ADR-0025](adr/0025-cache-per-location.md) (chiave per location, arena a
+> slot, CLOCK per partizione, ri-etichettatura alla rilocazione).
 
 ## Politica
 

@@ -3,6 +3,10 @@
 > **Fonte:** «Storage append-only», «Segmenti», «Segment metadata», «Versioni dei record» della
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M01 Storage Engine, M03 Segment Manager, M04 Segment Metadata Manager.
+> **Decisioni:** [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md) (il segmento
+> ACTIVE è il log dei dati), [ADR-0014](adr/0014-formato-record-documento-id.md) (record),
+> [ADR-0018](adr/0018-control-log-manifest-swap.md) (manifest e stati). Formati in
+> [formati-su-disco.md](formati-su-disco.md#segmento).
 
 ## Append-only
 

@@ -3,6 +3,11 @@
 > **Fonte:** «WAL» della [specifica](specifica/prompt-originale.md); riferimenti da «Transazioni
 > multiserie» e «Recovery».
 > **Moduli:** M02 WAL Manager.
+> **Decisioni:** [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md) **emenda
+> questa sezione**: il log dei dati della Serie è il segmento ACTIVE; `wal/control.log` è il
+> WAL strutturale. [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md) definisce i
+> livelli di durability e il group commit pipelined. Il testo sotto riporta la specifica
+> originale; dove differisce, prevalgono gli ADR.
 
 ## Un WAL per Serie
 

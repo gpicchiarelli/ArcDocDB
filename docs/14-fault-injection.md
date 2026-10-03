@@ -20,6 +20,7 @@ Vanno implementati test di fault injection almeno per i seguenti punti di crash.
 | FI-10 | durante rebuild index | [Recovery](11-recovery.md) | INV-D1, INV-S6 |
 | FI-11 | con snapshot attivi | [MVCC](06-mvcc-e-snapshot.md) | INV-M1, INV-M2, INV-R1 |
 | FI-12 | durante transazione multiserie | [Transazioni](05-transazioni.md) | INV-T4, INV-T5 |
+| FI-13 | durante creazione/eliminazione di una Serie (aggiunto da [ADR-0022](adr/0022-registri-come-serie-catalogo.md)) | [Modello logico](02-modello-logico.md#catalogo) | catalogo coerente con le directory; nessuna Serie a metà |
 
 ## Invarianti da verificare
 

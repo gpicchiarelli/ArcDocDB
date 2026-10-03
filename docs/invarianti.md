@@ -91,6 +91,16 @@ revisione del progetto o benchmark.
 | INV-X2 | I target di prestazione sono ipotesi finché non verificati da benchmark riproducibili; nessuna dichiarazione di superiorità da benchmark eterogenei. | Target preliminari, Confronto | revisione |
 | INV-X3 | Il codice del progetto è solo Common Lisp, finché un ADR non riapre l'uso di codice foreign. | [ADR-0001](adr/0001-common-lisp-sbcl.md) (decisione del 2026-10-01) | revisione |
 
+## Derivati dalle decisioni di progetto (ADR 0013–0030)
+
+| ID | Invariante | Fonte | Verifica |
+|---|---|---|---|
+| INV-F1 | Ogni record e ogni file persistente porta lunghezza e CRC32C; ciò che non si verifica è trattato come inesistente (coda troncata) o rigenerato (dato derivato). | [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md), [ADR-0014](adr/0014-formato-record-documento-id.md) | FI-01, FI-02, FI-10 |
+| INV-V1 | Con durability `:group` o `:strong`, nessun reader vede una versione prima che sia durevole. | [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md) | FI-01, FI-02 |
+| INV-V2 | Uno snapshot vede una transazione multiserie per intero o per niente: il suo CSN è pubblicato solo dopo la decisione durevole, e la creazione dello snapshot attende le multiserie in applicazione con CSN inferiore. | [ADR-0020](adr/0020-csn-snapshot-isolamento.md), [ADR-0021](adr/0021-2pc-intenti-outcome.md) | FI-12, modello SPK-07 |
+| INV-V3 | Una rilocazione da compaction aggiorna una entry dell'indice solo se punta ancora alla location sorgente; non sovrascrive mai una versione più nuova. | [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) | FI-06, test di concorrenza |
+| INV-V4 | Ogni modifica allo stato di una Serie (indice, intenti, versioni trattenute, delta, contatori, control log) è applicata dal writer logico della Serie. | [architettura](architettura.md#contratti) | revisione |
+
 ## Corrispondenza con i principi della specifica
 
 Tutti i 33 punti dei «Principi architetturali fondamentali» sono coperti: i principi che sono

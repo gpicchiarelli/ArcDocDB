@@ -72,8 +72,8 @@ Il codice è **solo Common Lisp** ([ADR-0001](adr/0001-common-lisp-sbcl.md)).
 
 ## Contratti tra moduli
 
-Definire le interfacce è un risultato atteso della fase di definizione architetturale. Per
-ogni modulo va prodotto, prima dell'implementazione:
+Le regole di interfaccia comuni sono fissate in [architettura.md](architettura.md#contratti).
+Per ogni modulo, prima dell'implementazione, si produce inoltre:
 
 - le operazioni offerte e i loro effetti durevoli;
 - gli invarianti che il modulo garantisce e quelli che assume dagli altri;

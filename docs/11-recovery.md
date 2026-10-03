@@ -3,6 +3,9 @@
 > **Fonte:** «Recovery» della [specifica](specifica/prompt-originale.md); riferimenti da
 > «Transazioni multiserie», «Segment metadata», «Workflow Clean/Merge».
 > **Moduli:** M12 Recovery Manager.
+> **Decisioni:** la sequenza definitiva è in [architettura.md](architettura.md#recovery);
+> meccanismi in [ADR-0018](adr/0018-control-log-manifest-swap.md), [ADR-0021](adr/0021-2pc-intenti-outcome.md),
+> [ADR-0022](adr/0022-registri-come-serie-catalogo.md).
 
 ## Compito
 

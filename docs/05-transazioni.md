@@ -3,6 +3,9 @@
 > **Fonte:** «Transazioni single-series», «Transazioni multiserie» della
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M09 Transaction Manager, M10 Multiseries Transaction Log Manager.
+> **Decisioni:** [ADR-0020](adr/0020-csn-snapshot-isolamento.md) (CSN, isolamento),
+> [ADR-0021](adr/0021-2pc-intenti-outcome.md) (intenti no-wait, OUTCOME, presumed abort,
+> troncamento). Flussi in [architettura.md](architettura.md#transazioni).
 
 Esistono due percorsi distinti. Quale si applica dipende solo da quante Serie la transazione
 **modifica**.

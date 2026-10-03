@@ -2,10 +2,14 @@
 
 ## Fase corrente
 
-**Fase 0: definizione architetturale e valutazione.** Non si scrive codice di produzione. Il
-lavoro consiste nel chiudere le [questioni aperte](docs/questioni-aperte.md) con ADR, eseguire
-gli [spike](docs/valutazione/piano-spike.md) e tenere aggiornata la
-[valutazione](docs/valutazione/README.md). Vedi la [roadmap](docs/roadmap.md).
+**Fase 0: definizione architetturale e valutazione.** La definizione è completa (ADR
+0013–0030, [architettura](docs/architettura.md), [formati](docs/formati-su-disco.md)); non si
+scrive codice di produzione. Restano: conferma di ADR-0028 e ADR-0030 da parte dell'autore ed
+esecuzione degli [spike](docs/valutazione/piano-spike.md) (SPK-01, 02, 03, 07 per primi),
+aggiornando la [valutazione](docs/valutazione/README.md). Vedi la [roadmap](docs/roadmap.md).
+
+Principio operativo: si scrive una volta sola, con la soluzione migliore nota
+([principi di ingegneria](docs/principi-di-ingegneria.md)).
 
 ## Fonti di verità, in ordine
 
@@ -41,5 +45,5 @@ gli [spike](docs/valutazione/piano-spike.md) e tenere aggiornata la
 Caricare e verificare il sistema:
 
 ```bash
-sbcl --non-interactive --eval '(asdf:load-asd (merge-pathnames "arcdocdb.asd" (uiop:getcwd)))' --eval '(asdf:test-system "arcdocdb")'
+make check
 ```

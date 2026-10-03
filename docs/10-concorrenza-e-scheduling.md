@@ -3,6 +3,10 @@
 > **Fonte:** «Concorrenza», «Thread pool dinamico», «Compaction scheduler dinamico»,
 > «Parallelismo» della [specifica](specifica/prompt-originale.md).
 > **Moduli:** M13 Scheduler, M14 Dynamic Thread Pool.
+> **Decisioni:** [ADR-0017](adr/0017-piattaforma-e-io.md) (pool CPU e pool I/O),
+> [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md) (writer mai bloccato),
+> [ADR-0016](adr/0016-epoch-based-reclamation.md) (epoche), [ADR-0023](adr/0023-politiche-di-compaction.md)
+> (stato di carico).
 
 ## Modello
 

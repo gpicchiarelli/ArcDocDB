@@ -4,6 +4,8 @@
 ;;;; La suddivisione in package per modulo (M01…M18, vedi docs/16-moduli.md) si introduce
 ;;;; con la prima milestone di implementazione.
 
+(in-package #:asdf-user)
+
 (defsystem "arcdocdb"
   :description "Database server documentale general-purpose, append-only, in Common Lisp (SBCL)."
   :author "Giacomo Picchiarelli"

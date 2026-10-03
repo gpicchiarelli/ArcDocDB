@@ -3,6 +3,9 @@
 > **Fonte:** «Snapshot / MVCC», «Index/Snapshot/Reclaim», «Cache e snapshot» della
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M08 Snapshot/MVCC Manager.
+> **Decisioni:** [ADR-0020](adr/0020-csn-snapshot-isolamento.md) (snapshot = CSN, durata
+> massima), [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (versioni trattenute),
+> [ADR-0016](adr/0016-epoch-based-reclamation.md) (reclaim).
 
 ## Che cos'è uno snapshot
 

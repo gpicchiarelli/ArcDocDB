@@ -24,6 +24,27 @@
 | [RSK-15](#rsk-15) | Bootstrap di Registri e del catalogo | B | M | — | QA-10 |
 | [RSK-16](#rsk-16) | Vincolo «solo Common Lisp» sulle primitive di I/O e SIMD | M | M | SPK-03, SPK-05, SPK-08 | QA-19, QA-22 |
 
+## Stato dopo gli ADR (2026-10-03)
+
+| ID | Stato | Effetto delle decisioni |
+|---|---|---|
+| RSK-01 | **aperto (quantitativo)** | ADR-0024 minimizza il lavoro del GC; ADR-0028 fissa il criterio (pausa ≤ 5 ms); decide SPK-02 |
+| RSK-02 | mitigato sul progetto; **aperto sulle prestazioni** | ADR-0015/0016/0018 definiscono struttura, concorrenza, rilocazione; SPK-01 e SPK-07 verificano |
+| RSK-03 | mitigato | ADR-0013: 1× scrittura; residuo: flush concorrenti di molte Serie (SPK-03) |
+| RSK-04 | mitigato | ADR-0019: writer mai bloccato; ADR-0028: target per Serie = 1/4 dell'aggregato |
+| RSK-05 | mitigato sul progetto | ADR-0020/0021: CSN dopo decisione, attesa delle multiserie in applicazione, intenti no-wait; modello SPK-07 |
+| RSK-06 | mitigato | ADR-0021: group commit e troncamento per checkpoint |
+| RSK-07 | accettato, quantificato | ~48 B/entry; riavvio dagli hint (ADR-0015) |
+| RSK-08 | accettato esplicitamente | ADR-0023: metrica e allarme, nessuna soglia di emergenza |
+| RSK-09 | mitigato | ADR-0020: durata massima degli snapshot |
+| RSK-10 | mitigato | ADR-0025: ri-etichettatura delle entry alla rilocazione |
+| RSK-11 | mitigato | ADR-0017: piattaforma di riferimento fissata; `durable-flush` per piattaforma |
+| RSK-12 | mitigato | ADR-0023: due segnali, isteresi, stati espliciti |
+| RSK-13 | mitigato | ADR-0026: indici per segmento, costruiti alla chiusura, nessuna fusione separata |
+| RSK-14 | mitigato | ADR-0030: scope v1; roadmap a fette verticali |
+| RSK-15 | mitigato | ADR-0022: configurazione incorporata, macchina a stati DDL |
+| RSK-16 | mitigato | ADR-0017/0027: chiamate di sistema via contrib; primitive proprie |
+
 ---
 
 ### RSK-01

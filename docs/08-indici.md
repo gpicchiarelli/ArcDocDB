@@ -3,6 +3,10 @@
 > **Fonte:** «Index», «Secondary index», «Secondary index delta», «Index snapshot» della
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M05 Primary Index Manager, M06 Secondary Index Manager.
+> **Decisioni:** [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (primary index Swiss
+> SWMR, hint per segmento), [ADR-0026](adr/0026-indici-secondari-segmentati.md) (indici
+> secondari **per segmento**, a formato fisso, con delta in memoria per l'ACTIVE). Formati in
+> [formati-su-disco.md](formati-su-disco.md#file-indice).
 
 ## Primary index
 

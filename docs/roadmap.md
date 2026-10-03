@@ -4,9 +4,13 @@
 
 ## Stato attuale
 
-**Fase 0 — Definizione architetturale e valutazione.** Nessun codice di produzione. Il
-repository contiene la specifica, la documentazione derivata, la valutazione preliminare e il
-sistema ASDF minimo.
+**Fase 0 — Definizione architetturale e valutazione.** Nessun codice di produzione.
+
+Al 2026-10-03 la parte di **definizione è completa**: le 26 questioni aperte sono chiuse dagli
+ADR 0013–0030, il progetto è consolidato in [architettura.md](architettura.md) e i formati in
+[formati-su-disco.md](formati-su-disco.md). Restano: la conferma dell'autore su ADR-0028 e
+ADR-0030, e la parte di **valutazione sperimentale** (spike SPK-01, SPK-02, SPK-03 e modello
+SPK-07).
 
 ## Fase 0 — Definizione architetturale e valutazione
 
@@ -24,28 +28,28 @@ misurati e i protocolli critici verificati su modello.
 | **E. Contratti** | Definire le interfacce tra i [moduli](16-moduli.md#contratti-tra-moduli) | Contratto per modulo |
 | **F. Valutazione** | Aggiornare [registro rischi](valutazione/registro-rischi.md) e [stime](valutazione/stime-ordine-di-grandezza.md) con i risultati | Verdetto di fattibilità |
 
-### Ordine consigliato
+### Ordine consigliato (parte restante)
 
-1. **QA-26** (target e obiettivi di latenza) e **QA-19** (piattaforma di riferimento): sono
-   domande a cui si risponde senza esperimenti e fissano il metro di tutto il resto.
+1. Conferma di **ADR-0028** (target, latenze, pausa GC ≤ 5 ms) e **ADR-0030** (scope).
 2. **SPK-02** (GC) e **SPK-01** (primary index): i due rischi che possono mettere in
    discussione le scelte di base.
-3. **SPK-03** (WAL e group commit) insieme a **QA-02** e **QA-05**.
-4. **SPK-07** (modelli dei protocolli) insieme a **QA-04, QA-06, QA-07, QA-09, QA-24**.
-5. **QA-01, QA-03** e filone D (formati).
-6. Spike restanti (SPK-04, SPK-05, SPK-06, SPK-08) e filone E (contratti).
+3. **SPK-07** (modello di 2PC + compaction/swap/reclaim con crash in ogni punto).
+4. **SPK-03** (flush concorrenti di molte Serie).
+5. Spike restanti (SPK-04, SPK-05, SPK-06, SPK-08), eseguibili anche durante la Fase 1.
 
 ### Criteri di uscita
 
-- [ ] Tutte le questioni di priorità A sono chiuse da un ADR.
+- [x] Tutte le questioni di priorità A sono chiuse da un ADR (2026-10-03).
+- [x] I formati persistenti sono documentati ([formati-su-disco.md](formati-su-disco.md)).
+- [x] Ogni rischio con esposizione alta ha una mitigazione decisa o è stato accettato
+      esplicitamente ([registro](valutazione/registro-rischi.md#stato-dopo-gli-adr-2026-10-03)).
+- [x] I contratti tra moduli sono definiti ([architettura](architettura.md#contratti)).
+- [ ] ADR-0028 e ADR-0030 confermati dall'autore.
 - [ ] SPK-01, SPK-02, SPK-03 eseguiti, con risultati riproducibili nel repository.
-- [ ] I modelli dei protocolli non violano gli invarianti in nessuno degli scenari FI-01…FI-12.
-- [ ] I formati persistenti sono documentati.
-- [ ] Ogni rischio con esposizione alta ha una mitigazione decisa o è stato accettato
-      esplicitamente.
+- [ ] Il modello SPK-07 non viola gli invarianti in nessuno degli scenari FI-01…FI-13.
 - [ ] I target di [13 Benchmark](13-benchmark.md) sono confermati o rivisti alla luce di stime
       e spike.
-- [ ] Decisione esplicita di procedere (o di rivedere l'architettura).
+- [ ] Decisione esplicita di procedere alla Fase 1.
 
 ## Fasi successive (schema)
 
