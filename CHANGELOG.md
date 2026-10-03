@@ -27,6 +27,12 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Cambiato
 
+- **Linguaggio visivo rifatto** ([assets/README.md](assets/README.md)): identità monocroma con un
+  solo colore, l'ambra, riservato a ciò che può cambiare; nuovo marchio; illustrazione dei
+  segmenti e diagramma del percorso di scrittura e lettura in vettoriale, chiaro e scuro; README
+  riscritto; anteprima per i social. Il controllo dei link verifica anche i percorsi delle
+  immagini.
+
 - ADR-0032 sostituisce in parte ADR-0015: il contatore seqlock passa da 8 a 64 bit, con tentativi
   limitati e ripiego sul writer, perché l'argomento a 8 bit si reggeva sui tempi e non era una
   garanzia per costruzione. Costo: +8 byte per entry (56 B).

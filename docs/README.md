@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../assets/img/mark-dark.svg">
+    <img src="../assets/img/mark-light.svg" alt="" width="48" height="48">
+  </picture>
+</p>
+
 # Documentazione di ArcDocDB
 
 Questa cartella trasforma la [specifica originale](specifica/prompt-originale.md) in documenti

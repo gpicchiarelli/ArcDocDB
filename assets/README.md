@@ -1,81 +1,127 @@
-# Identità visiva
+# Linguaggio visivo
+
+Tutto ciò che nel repository si vede — marchio, immagini, badge, pagina iniziale — segue
+queste regole. Sono poche perché devono essere rispettate sempre.
+
+## Principi
+
+1. **Un solo colore, un solo significato.** L'identità è monocroma. L'unico colore è l'ambra,
+   e indica sempre e solo *ciò che può cambiare*: il segmento `ACTIVE` nei disegni, la fase del
+   progetto tra i badge. Tutto ciò che è immutabile è inchiostro.
+2. **Niente che non serva.** Ogni elemento deve dire qualcosa del sistema. Nessuna decorazione,
+   nessuna ombra, nessun gradiente, nessuna cornice.
+3. **Il materiale è la pagina.** Le immagini hanno sfondo trasparente e si posano sulla pagina
+   di GitHub, chiara o scura. Ogni immagine esiste nelle due varianti.
+4. **Una sola forma.** La capsula: una linea con le estremità tonde. È un segmento. Marchio,
+   illustrazione e diagramma sono fatti solo di capsule, archi e linee sottili.
+5. **I numeri sono testo.** Un numero si scrive nel testo, dove può essere letto e corretto.
+   Non diventa un badge.
+
+## Colori
+
+| Nome | Chiaro | Scuro | Uso |
+|---|---|---|---|
+| Inchiostro | `#1d1d1f` | `#f5f5f7` | marchio, segmenti immutabili, testo dei nodi |
+| Grafite | `#6e6e73` | `#a1a1a6` | descrizioni, etichette, fili del diagramma |
+| Nebbia | `#d2d2d7` | `#48484a` | contorni, parentesi, tratteggi |
+| **Ambra** | `#c9892f` | `#e9a84c` | ciò che cambia: `ACTIVE`, fase corrente |
+
+Nient'altro. Verde e rosso compaiono solo dove li impone GitHub (l'esito della CI).
+
+## Tipografia
+
+Carattere di sistema, in quest'ordine: `-apple-system`, `BlinkMacSystemFont`, `SF Pro Text`,
+`Helvetica Neue`, `Helvetica`, `Arial`, `sans-serif`.
+
+| Ruolo | Corpo | Peso | Spaziatura |
+|---|---|---|---|
+| Nodo del diagramma | 17 | 500 | normale |
+| Descrizione | 15 | 400 | normale |
+| Etichetta (maiuscolo) | 11–12,5 | 600 | +1,5 – +1,8 |
+
+Il nome del progetto è testo vero nel README, non un'immagine. Le etichette in maiuscolo
+spaziato sono riservate ai nomi di stato e alle proprietà (`ACTIVE`, `IMMUTABLE`).
+
+## Marchio
+
+Un arco sopra tre segmenti: l'Archivio e ciò che custodisce. Il primo segmento è ambra.
+
+| Costruzione | Valore |
+|---|---|
+| Griglia | 64 × 64 |
+| Tratto | 5, estremità tonde, per arco e segmenti |
+| Arco | semicerchio di raggio 21, centro (32, 30) |
+| Segmenti | da x = 11 a x = 53, a y = 39, 48, 57 (passo 9) |
+| Spazio di rispetto | un tratto e mezzo su ogni lato |
+| Dimensione minima | 16 px |
+
+Non si ruota, non si deforma, non si ricolora, non si affianca al nome in un'unica immagine.
 
 ## File
 
-| File | Uso |
+| File | Contenuto |
 |---|---|
-| [`img/arcdocdb-logo.svg`](img/arcdocdb-logo.svg) | logo per sfondo chiaro |
-| [`img/arcdocdb-logo-dark.svg`](img/arcdocdb-logo-dark.svg) | logo per sfondo scuro |
-| `img/arcdocdb-hero.png` | immagine hero del README — **da generare** (vedi sotto) |
+| [`img/mark-light.svg`](img/mark-light.svg) · [`img/mark-dark.svg`](img/mark-dark.svg) | il marchio |
+| [`img/hero-light.svg`](img/hero-light.svg) · [`img/hero-dark.svg`](img/hero-dark.svg) | i segmenti di una Serie |
+| [`img/flow-light.svg`](img/flow-light.svg) · [`img/flow-dark.svg`](img/flow-dark.svg) | il percorso di una scrittura e di una lettura |
+| [`img/social.svg`](img/social.svg) · [`img/social.png`](img/social.png) | anteprima per i social, 1280 × 640 |
 
-## Palette
+La variante scura di un'immagine è la variante chiara con i quattro colori sostituiti secondo
+la tabella sopra; la geometria è identica. Ogni immagine ha `title` e `desc` per chi non la
+vede.
 
-| Colore | Esadecimale | Uso |
-|---|---|---|
-| Petrolio scuro | `#1f3f43` | testo del logo, badge di piattaforma |
-| Petrolio | `#3f7a80` | colore principale: badge, accenti |
-| Petrolio chiaro | `#5a9aa0` | badge di conteggio, secondo livello |
-| Verde esito | `#2e7d32` | badge di esito positivo |
-| Ambra | `#d4a017` | badge di fase |
-| Rosso critico | `#b71c1c` | badge «safety-critical» |
+L'anteprima per i social non si imposta da riga di comando: si carica `img/social.png` in
+*Settings → General → Social preview*.
 
-Il marchio: tre segmenti impilati (i segmenti immutabili) sotto un arco (l'Archivio).
+## Badge
 
-## Immagine hero
+Una sola riga, cinque al massimo, tutti dello stesso stile:
+`style=flat-square`, etichetta `#3a3a3c`, valore `#8e8e93`. Solo il badge della fase usa l'ambra
+`#c9892f`. Dicono che cosa è il progetto (licenza, linguaggio, runtime, dipendenze, fase); non
+contano cose. Il badge della CI, che ha i colori di GitHub, sta nella sezione *Status*.
 
-Riferimento di stile: l'hero di [GPForum](https://github.com/gpicchiarelli/GPForum), un render
-fotorealistico cinematografico in 16:9 (1672 × 941): stanza in penombra, luce dorata radente,
-materiali veri, un elemento a parete che racconta il software e un angolo tecnologico sullo
-sfondo. Per ArcDocDB: **villa di campagna, legno e ottone, tecnologia discreta**.
+## La pagina iniziale
 
-Un'immagine di questo tipo richiede un generatore di immagini; non è producibile con il codice
-del repository. Una volta generata va salvata come `img/arcdocdb-hero.png` e inserita in cima
-al `README.md` con il testo alternativo riportato sotto.
+Nell'ordine: marchio, nome, una frase, i badge, la navigazione, l'illustrazione. Poi le
+sezioni, ciascuna con un'idea sola. Frasi brevi. Tabelle senza intestazione quando le colonne
+si spiegano da sole. Nessuna emoji.
 
-### Prompt
+## Che cosa non si fa
 
-```
-Photorealistic cinematic architectural interior photograph at golden hour, 35mm lens.
-A quiet, dimly lit study inside a country villa, warm oak and walnut timber everywhere:
-vertical slatted wood panelling on the left, exposed dark ceiling beams with small brass
-track spotlights, a wide-plank oak floor with soft reflections and long amber light shafts
-from tall black steel-framed windows on the right that open onto a green Tuscan hillside
-with cypress trees in soft focus.
+- Aggiungere un colore.
+- Usare l'ambra per qualcosa che non cambia.
+- Mettere testo dentro un'immagine quando può stare nella pagina.
+- Aggiungere un badge per un numero.
+- Usare un'immagine con lo sfondo.
 
-The main wall is a monumental archive of identical leather-bound ledgers on dark oak
-shelves, hundreds of volumes in tidy rows, each spine with a small brass label, and a slim
-warm strip light along the base of the shelves. One single open ledger rests on a lit oak
-lectern in front of it.
+## Alternativa fotografica
 
-In the left background, through a glass and black steel door, a small technical room: two
-server racks with softly glowing green and amber status LEDs and a wall monitor showing a
-calm graph. The technology is discreet, integrated into the wood, never dominant.
+I progetti [GPForum](https://github.com/gpicchiarelli/GPForum) e
+[AutomaGP](https://github.com/gpicchiarelli/AutomaGP) aprono il README con un render
+fotorealistico di una stanza. Per ArcDocDB l'illustrazione è vettoriale, per i principi 2 e 3.
+Se si volesse comunque un'immagine di quella serie, va generata con un generatore di immagini
+(quella di AutomaGP è stata prodotta con l'agente di Cursor) a partire da questa descrizione.
 
-Foreground right: a long walnut table with a brass reading lamp, a ceramic cup, a closed
-laptop and a small brass hourglass. Large potted green plants near the panelling and by
-the window.
-
-Calm, serious, durable mood. Warm amber highlights against deep green-brown shadows,
-shallow depth of field, subtle film grain, volumetric dust in the light, high dynamic
-range, ultra detailed realistic materials. No people, no text, no logos, no watermark.
-```
-
-### Prompt negativo (dove supportato)
+<details>
+<summary>Descrizione per il generatore</summary>
 
 ```
-cartoon, illustration, flat vector, 3d render look, plastic, oversaturated, neon colors,
-cyberpunk, futuristic, sci-fi, people, faces, text, letters, logos, watermark, clutter
+Photorealistic cinematic interior photograph, 16:9, moody low-key lighting, warm golden light.
+A quiet study in a country villa. On the left, dark vertical slatted wood panelling with a
+server rack half hidden in shadow behind it, small green status LEDs glowing softly.
+
+The central wall is textured warm grey plaster. Mounted on it, a large backlit brass wall
+relief: a wide semicircular brass arch, and beneath it a tidy stack of long horizontal brass
+bars, like storage segments laid one above the other. All the bars are matte and softly
+rim-lit from behind; one single bar, the top one, glows with warm amber light.
+
+Below it, a long low sideboard in dark walnut with a brass desk lamp, two closed
+leather-bound ledgers and a small potted plant. On the right, a tall black-framed window
+onto lush green trees. Foreground: a dark walnut desk with an open laptop showing green
+monospaced code, a ceramic cup, a notebook with a fountain pen.
+
+Calm, serious, durable mood. Deep brown and olive shadows, warm amber highlights, shallow
+depth of field, subtle film grain. No people, no readable text, no logos, no watermark.
 ```
 
-### Variante «stanze tematiche»
-
-Aggiungere: *a long hallway of the villa with three open arched doorways in the background,
-each showing a different room in the same timber-and-brass style: a registry room with a wall
-of small oak catalogue drawers and an unrolled paper scroll on a desk; a workshop where a
-large worn ledger stands next to a small crisp new one and a brass hourglass; a quiet room
-with a single writing desk and a lamp.*
-
-### Testo alternativo
-
-> A quiet country-villa archive in warm timber and brass: a wall of identical ledgers, a
-> single open ledger under a lamp, and a discreet server room glowing in the background.
+</details>

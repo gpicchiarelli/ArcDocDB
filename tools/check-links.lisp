@@ -1,4 +1,5 @@
-;;;; check-links.lisp — verifica i link relativi (file e ancore) nei file Markdown.
+;;;; check-links.lisp — verifica i link relativi (file e ancore) nei file Markdown,
+;;;; compresi gli attributi src e srcset delle parti HTML.
 ;;;;
 ;;;; Uso:  sbcl --script tools/check-links.lisp [directory-radice]
 ;;;; Esce con codice 1 se trova link rotti. Solo Common Lisp (ADR-0001, ADR-0027).
@@ -69,6 +70,19 @@
                (setf start (1+ end))))
     (nreverse acc)))
 
+(defun attribute-targets (text)
+  "Valori relativi degli attributi src e srcset nelle parti HTML di un Markdown."
+  (let ((acc '()))
+    (dolist (marker '("src=\"" "srcset=\""))
+      (let ((start 0))
+        (loop for pos = (search marker text :start2 start) while pos
+              do (let* ((b (+ pos (length marker))) (e (position #\" text :start b)))
+                   (when e
+                     (let ((v (subseq text b e)))
+                       (unless (or (zerop (length v)) (search "://" v)) (push v acc))))
+                   (setf start (1+ pos))))))
+    acc))
+
 (defun split-anchor (target)
   (let ((h (position #\# target)))
     (if h (values (subseq target 0 h) (subseq target (1+ h))) (values target nil))))
@@ -92,7 +106,7 @@
       (dolist (file files)
         (let ((text (read-file file))
               (dir (make-pathname :name nil :type nil :defaults file)))
-          (dolist (target (links text))
+          (dolist (target (append (links text) (attribute-targets text)))
             (incf checked)
             (multiple-value-bind (rel anchor) (split-anchor target)
               (let* ((path (if (string= rel "") file
