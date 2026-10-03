@@ -31,6 +31,13 @@ Nei confronti con altri sistemi l'hardware DEVE essere identico.
 | Misti | mixed read/write; burst di sole letture; burst di scritture |
 | Transazioni | single-Series; multiserie |
 
+> **Deciso ([ADR-0036](adr/0036-leggi-di-progetto.md))** — Poiché il parallelismo è un
+> principio fondante (INV-P6), ai workload della specifica se ne aggiungono due che lo
+> verificano: **scalabilità** (lo stesso carico distribuito su 1, 2, 4, … Serie e su un numero
+> crescente di core: il throughput aggregato deve crescere finché ci sono core e banda del
+> dispositivo) e **isolamento** (un burst su una Serie, con latenza e throughput misurati
+> sulle altre). Il risultato è una misura, non un target dichiarato in anticipo (INV-X2).
+
 ## Che cosa misurare sempre
 
 Throughput; P50, P95, P99; CPU; RAM; cache hit rate; WAL bandwidth; fsync latency; NVMe

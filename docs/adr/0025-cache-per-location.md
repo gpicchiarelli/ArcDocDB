@@ -1,6 +1,6 @@
 # ADR-0025 — Cache dei record per location, arena a slot, CLOCK per partizione
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **sostituita in parte da [ADR-0044](0044-cache-acceleratore-puro.md)**: insieme associativo al posto della tabella hash (punto 3), nessuna ri-etichettatura (punto 5), nessuno svuotamento per segmento. Unità, chiave, CLOCK e partizioni restano.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-17; realizza [ADR-0010](0010-cache-clock.md)
 - **Riferimenti:** [architettura](../architettura.md#percorso-di-lettura), INV-M3

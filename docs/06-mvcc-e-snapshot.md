@@ -4,8 +4,9 @@
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M08 Snapshot/MVCC Manager.
 > **Decisioni:** [ADR-0020](adr/0020-csn-snapshot-isolamento.md) (snapshot = CSN, durata
-> massima), [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (versioni trattenute),
-> [ADR-0016](adr/0016-epoch-based-reclamation.md) (reclaim).
+> massima), [ADR-0038](adr/0038-orizzonte-di-visibilita.md) (orizzonte di visibilità,
+> registro degli snapshot), [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (versioni
+> trattenute), [ADR-0016](adr/0016-epoch-based-reclamation.md) (reclaim).
 
 ## Che cos'è uno snapshot
 
@@ -19,6 +20,12 @@ Snapshot S vede:   A = 100, B = 200
 Un'altra transazione aggiorna A e B.
 Snapshot S vede ancora:   A = 100, B = 200   (fino alla sua conclusione)
 ```
+
+> **Deciso ([ADR-0038](adr/0038-orizzonte-di-visibilita.md))** — Perché la vista non cambi
+> davvero, uno snapshot con CSN `s` nasce solo quando l'**orizzonte di visibilità** ha
+> raggiunto `s`: tutti i commit con CSN ≤ `s` sono già pubblicati, compresi i lotti il cui
+> flush era in corso quando lo snapshot è stato chiesto (INV-M4). Un GET senza snapshot non
+> attende nulla.
 
 ## Chi usa che cosa
 

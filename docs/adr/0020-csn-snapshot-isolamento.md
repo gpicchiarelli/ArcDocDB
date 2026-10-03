@@ -1,6 +1,6 @@
 # ADR-0020 — CSN di Archivio, snapshot e livelli di isolamento
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **sostituita in parte da [ADR-0038](0038-orizzonte-di-visibilita.md)**: lo snapshot nasce quando l'orizzonte di visibilità lo ha raggiunto (non attende le sole multiserie), il CSN è preso alla chiusura del lotto, la versione del documento è il CSN. Isolamento, durata massima e `snapshot-too-old` restano.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-06, QA-09 e QA-14; realizza «Snapshot/MVCC»
 - **Riferimenti:** [architettura](../architettura.md#snapshot-e-mvcc), INV-M1, INV-M2, INV-V2

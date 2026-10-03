@@ -45,10 +45,29 @@ Decisioni prese applicando i criteri del software critico richiesti dall'autore
 | ADR | Decisione | Stato |
 |---|---|---|
 | [0031](0031-software-critico-criteri-e-priorita.md) | Gerarchia delle priorità (affidabilità sopra prestazioni), classi di integrità, rigore per classe | Accettata (emenda la specifica) |
-| [0032](0032-seqlock-a-64-bit.md) | Seqlock a 64 bit, tentativi limitati, ripiego sul writer; slot a 6 parole | Accettata (sostituisce in parte 0015) |
-| [0033](0033-fail-stop-e-integrita-end-to-end.md) | Fail-stop sugli errori di I/O, verifica in lettura, corruzione a metà log, scrubbing, verificatore offline, stati di salute | Accettata |
+| [0032](0032-seqlock-a-64-bit.md) | Seqlock a 64 bit, tentativi limitati, ripiego sul writer; slot a 6 parole | Accettata (sostituisce in parte 0015; layout dello slot: 0043) |
+| [0033](0033-fail-stop-e-integrita-end-to-end.md) | Fail-stop sugli errori di I/O, verifica in lettura, corruzione a metà log, scrubbing, verificatore offline, stati di salute | Accettata (coda troncata: 0037) |
 | [0034](0034-policy-di-compilazione-e-standard-di-codifica.md) | `safety` ≥ 2, nessun avviso, divieti, linter | Accettata |
 | [0035](0035-strategia-di-verifica-e-tracciabilita.md) | Tracciabilità bidirezionale controllata, simulatore deterministico, livelli di verifica, criteri di rilascio | Accettata |
+
+## Analisi progettuale (Fase 0, 2026-10-03)
+
+Decisioni nate dall'[analisi progettuale](../analisi-progettuale.md): chiudono i rilievi
+`AP-01…AP-16`. Ognuna dichiara quali parti degli ADR precedenti sostituisce; gli ADR
+sostituiti in parte restano validi per tutto il resto e portano una nota nello stato.
+
+| ADR | Decisione | Rilievi | Stato |
+|---|---|---|---|
+| [0036](0036-leggi-di-progetto.md) | Leggi di progetto: il parallelismo è fondante; un punto di atomicità per operazione; prepara, decidi, completa; nulla si distrugge per assenza | AP-13, AP-14 | Accettata |
+| [0037](0037-lotto-sigillato.md) | Lotto sigillato: un percorso di scrittura, un flush alla volta, frontiera durevole, recovery che non tronca | AP-02, AP-03, AP-08 | Accettata |
+| [0038](0038-orizzonte-di-visibilita.md) | Orizzonte di visibilità; registro degli snapshot; la versione è il CSN | AP-01, AP-02, AP-07, AP-15 | Accettata (emenda la specifica) |
+| [0039](0039-cornice-unica-dei-record.md) | Cornice unica dei record: due CRC, quattro tipi nei segmenti, hint risolto con filtro di esistenza | AP-08, AP-11, AP-13 | Accettata |
+| [0040](0040-manifest-a-record-unico.md) | Manifest a record unico (EDIT); il catalogo decide, le directory seguono | AP-14 | Accettata |
+| [0041](0041-multiserie-segmenti-autosufficienti.md) | Multiserie: segmenti autosufficienti, abort senza traccia, conferma dopo la pubblicazione | AP-05, AP-06, AP-08 | Accettata |
+| [0042](0042-tombstone-e-indice-dei-vivi.md) | Tombstone: indice dei soli vivi, ricostruzione per CSN massimo, scarto per filtro di esistenza | AP-04, AP-11 | Accettata |
+| [0043](0043-primary-index-a-frammenti.md) | Primary index a frammenti: directory estendibile, slot a quattro parole, chiavi locali | AP-12, AP-16 | Accettata |
+| [0044](0044-cache-acceleratore-puro.md) | La cache è un acceleratore puro | AP-09 | Accettata |
+| [0045](0045-modello-di-esecuzione.md) | Compiti a completamento, migrazione senza stato, attese come parcheggi | AP-10 | Accettata |
 
 ## Decisioni di progetto (Fase 0, 2026-10-03)
 
@@ -59,20 +78,20 @@ risultato consolidato è in [architettura.md](../architettura.md) e
 
 | ADR | Decisione | Chiude | Stato |
 |---|---|---|---|
-| [0013](0013-log-structured-segmento-active-come-log.md) | Il segmento ACTIVE è il log dei dati; `wal/` è il control log | QA-02 | Accettata (emenda la specifica) |
-| [0014](0014-formato-record-documento-id.md) | Record binario con CRC32C, documenti CBOR, `_id` 1–255 byte | QA-01 | Accettata |
-| [0015](0015-primary-index-swiss-table-swmr.md) | Primary index Swiss SWMR, seqlock per slot, versioni trattenute, hint per segmento | QA-24, QA-03 | Accettata |
-| [0016](0016-epoch-based-reclamation.md) | Epoch-based reclamation | QA-16 | Accettata |
-| [0017](0017-piattaforma-e-io.md) | Linux x86-64 di riferimento; I/O bloccante su pool dedicato; `durable-flush` | QA-19 | Accettata |
-| [0018](0018-control-log-manifest-swap.md) | Control log come manifest; `SWAP` come record unico; stabilizzazione | QA-04, QA-13 | Accettata |
-| [0019](0019-durability-e-group-commit-pipelined.md) | Livelli `:async`/`:group`/`:strong`; group commit pipelined | QA-05 | Accettata |
-| [0020](0020-csn-snapshot-isolamento.md) | CSN di Archivio; snapshot = numero; SI + `:serializable`; `snapshot-too-old` | QA-06, QA-09, QA-14 | Accettata |
-| [0021](0021-2pc-intenti-outcome.md) | 2PC con intenti no-wait, record OUTCOME, presumed abort, troncamento | QA-07, QA-08 | Accettata |
-| [0022](0022-registri-come-serie-catalogo.md) | Registri è una Serie; catalogo di documenti; bootstrap | QA-10 | Accettata |
-| [0023](0023-politiche-di-compaction.md) | Soglie, stati di carico, limitatore di banda, tombstone per lineage | QA-11, QA-12, QA-15 | Accettata |
-| [0024](0024-memoria-e-gc.md) | Array specializzati a vita lunga; zero allocazione sul hot path | QA-18 | Accettata |
-| [0025](0025-cache-per-location.md) | Cache per location, arena a slot, CLOCK per partizione | QA-17 | Accettata |
-| [0026](0026-indici-secondari-segmentati.md) | Indici secondari per segmento, formato fisso, delta in memoria | QA-25 | Accettata |
+| [0013](0013-log-structured-segmento-active-come-log.md) | Il segmento ACTIVE è il log dei dati; `wal/` è il control log | QA-02 | Accettata (emenda la specifica; record committed: 0037) |
+| [0014](0014-formato-record-documento-id.md) | Record binario con CRC32C, documenti CBOR, `_id` 1–255 byte | QA-01 | Accettata (intestazione del record: 0039) |
+| [0015](0015-primary-index-swiss-table-swmr.md) | Primary index Swiss SWMR, seqlock per slot, versioni trattenute, hint per segmento | QA-24, QA-03 | Accettata (struttura: 0043; hint: 0039; ricostruzione: 0042) |
+| [0016](0016-epoch-based-reclamation.md) | Epoch-based reclamation | QA-16 | Accettata (ambito: 0043, 0045) |
+| [0017](0017-piattaforma-e-io.md) | Linux x86-64 di riferimento; I/O bloccante su pool dedicato; `durable-flush` | QA-19 | Accettata (che cosa passa dal pool di I/O: 0045) |
+| [0018](0018-control-log-manifest-swap.md) | Control log come manifest; `SWAP` come record unico; stabilizzazione | QA-04, QA-13 | Accettata (record e ordine: 0040) |
+| [0019](0019-durability-e-group-commit-pipelined.md) | Livelli `:async`/`:group`/`:strong`; group commit pipelined | QA-05 | Accettata (meccanica: 0037) |
+| [0020](0020-csn-snapshot-isolamento.md) | CSN di Archivio; snapshot = numero; SI + `:serializable`; `snapshot-too-old` | QA-06, QA-09, QA-14 | Accettata (nascita dello snapshot: 0038) |
+| [0021](0021-2pc-intenti-outcome.md) | 2PC con intenti no-wait, record OUTCOME, presumed abort, troncamento | QA-07, QA-08 | Accettata (record e conferma: 0041) |
+| [0022](0022-registri-come-serie-catalogo.md) | Registri è una Serie; catalogo di documenti; bootstrap | QA-10 | Accettata (creazione ed eliminazione: 0040) |
+| [0023](0023-politiche-di-compaction.md) | Soglie, stati di carico, limitatore di banda, tombstone per lineage | QA-11, QA-12, QA-15 | Accettata (tombstone: 0042) |
+| [0024](0024-memoria-e-gc.md) | Array specializzati a vita lunga; zero allocazione sul hot path | QA-18 | Accettata (crescita dell'indice: 0043) |
+| [0025](0025-cache-per-location.md) | Cache per location, arena a slot, CLOCK per partizione | QA-17 | Accettata (struttura, nessuna ri-etichettatura: 0044) |
+| [0026](0026-indici-secondari-segmentati.md) | Indici secondari per segmento, formato fisso, delta in memoria | QA-25 | Accettata (Bloom: 0039, 0042) |
 | [0027](0027-dipendenze-e-test.md) | Nessuna dipendenza esterna; harness proprio | QA-22 | Accettata |
 | [0028](0028-target-e-obiettivi-di-latenza.md) | Target aggregati; obiettivi numerici di latenza e di pausa GC | QA-26 | **Proposta** |
 | [0029](0029-interfacce-protocollo-query-contratto.md) | Protocollo a frame CBOR; query come dati; contratto additivo | QA-20, QA-21 | Accettata |

@@ -1,6 +1,6 @@
 # ADR-0021 — 2PC con writer non bloccante: intenti no-wait, record OUTCOME, troncamento di `multiserie.log`
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **sostituita in parte da [ADR-0041](0041-multiserie-segmenti-autosufficienti.md)**: nessun record PREPARE né esito ABORT, OUTCOME nello stesso segmento dei record prepared, conferma dopo l'applicazione, `multiserie.log` con il solo record DECISION. Restano: writer non bloccante, intenti senza attesa, *presumed abort*.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-07 e QA-08; realizza [ADR-0006](0006-transazioni-multiserie-2pc.md)
 - **Riferimenti:** [architettura](../architettura.md#transazioni-multiserie),

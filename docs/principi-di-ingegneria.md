@@ -9,6 +9,8 @@ Dal 2026-10-03 il progetto è trattato come software critico
 ([ADR-0031](adr/0031-software-critico-criteri-e-priorita.md)): l'affidabilità sta sopra le
 prestazioni, e un pattern è «il migliore» solo se lo è **anche** rispetto alle garanzie di
 integrità e alla verificabilità. Le sei condizioni sotto restano; se ne aggiunge una settima.
+Con l'[analisi progettuale](analisi-progettuale.md) se ne aggiunge un'ottava: il parallelismo
+come principio fondante.
 
 ## Che cosa significa «la soluzione migliore»
 
@@ -31,6 +33,12 @@ ArcDocDB solo se soddisfa **tutte** le condizioni:
 7. **Garantito per costruzione, non per tempi.** La correttezza non dipende dalla velocità
    relativa dei thread né da un evento «improbabile»: un argomento probabilistico o temporale
    non è una garanzia ([ADR-0032](adr/0032-seqlock-a-64-bit.md) ne è l'esempio).
+
+8. **Non introduce un punto seriale.** Il parallelismo è un principio fondante
+   ([ADR-0036](adr/0036-leggi-di-progetto.md), INV-P6): un pattern è ammesso solo se non
+   aggiunge tra Serie un lock o una scrittura condivisa per operazione. Se una garanzia di
+   livello superiore richiede un punto condiviso, l'ADR lo dichiara, lo limita e lo colloca
+   dove pesa meno ([ADR-0038](adr/0038-orizzonte-di-visibilita.md) ne è l'esempio).
 
 Se nessuna opzione soddisfa tutte le condizioni, **non si scrive codice**: si registra la
 questione, si esegue lo spike che manca e si decide dopo.

@@ -37,11 +37,17 @@ prodotto è una **misura con una raccomandazione**.
 
 - *Domanda:* una tabella hash compatta, in array specializzati, con un writer e molti reader
   senza lock, è realizzabile in solo Common Lisp con prestazioni dell'ordine richiesto?
-- *Metodo:* prototipo di tabella a indirizzamento aperto su array specializzati; carico con
-  10⁷–10⁸ entry; un thread scrive, N leggono; ridimensionamento sotto carico; variante con
-  tabella laterale delle versioni trattenute (opzione a di QA-24).
-- *Misure:* lookup/s per core e aggregati; inserimenti/s; byte per entry; effetto sulle pause
-  del GC; correttezza delle letture concorrenti.
+- *Metodo:* prototipo della tabella a frammenti di
+  [ADR-0043](../adr/0043-primary-index-a-frammenti.md) (directory estendibile, frammenti Swiss
+  a capacità fissa, slot a 4 parole, chiavi locali) su array specializzati; carico con
+  10⁷–10⁸ entry; un thread scrive, N leggono; divisioni continue sotto carico; inserimenti ed
+  eliminazioni ripetuti a popolazione costante; variante a 5 parole per le versioni
+  trattenute. Verifica sul codice generato che ogni parola sia letta e scritta con una sola
+  istruzione sulle due piattaforme.
+- *Misure:* lookup/s per core e aggregati; inserimenti/s; **byte per documento** (media e
+  intervallo); durata di una divisione; memoria a popolazione costante con ricambio di chiavi
+  (deve restare limitata); effetto sulle pause del GC; correttezza delle letture concorrenti;
+  frequenza del ripiego del seqlock.
 - *Esito:* ordine di grandezza dei lookup compatibile con il target dei GET; memoria per entry
   entro la [stima](stime-ordine-di-grandezza.md#memoria-del-primary-index); nessuna lettura
   incoerente.
@@ -55,8 +61,13 @@ prodotto è una **misura con una raccomandazione**.
 - *Metodo:* processo con (a) decine di GB in array specializzati nello heap, (b) la stessa
   memoria fuori dallo heap gestito; carico sintetico multi-thread con tasso di allocazione
   variabile per richiesta (zero, basso, alto); confronto tra configurazioni del collector.
+  In più ([ADR-0043](../adr/0043-primary-index-a-frammenti.md), [ADR-0045](../adr/0045-modello-di-esecuzione.md)):
+  la stessa memoria in decine di migliaia di frammenti da ~256 KiB anziché in pochi array
+  enormi, con sostituzione continua di frammenti; numero di thread crescente (16, 64, 256),
+  con thread fermi in chiamate di sistema.
 - *Misure:* distribuzione delle pause (P50, P99, massimo); frequenza; tempo totale in GC;
-  latenza delle richieste sintetiche.
+  latenza delle richieste sintetiche; **pausa in funzione del numero di thread** (fissa il
+  tetto del pool di I/O).
 - *Esito:* pause entro l'obiettivo numerico di P99 (da fissare con QA-26) nella configurazione
   migliore. In caso contrario: quantificare lo scarto e rivalutare ADR-0001.
 
@@ -68,7 +79,9 @@ prodotto è una **misura con una raccomandazione**.
   WAL che eseguono flush in parallelo sullo stesso dispositivo?
 - *Metodo:* append + flush a lotti su un file; variare dimensione del gruppo e del record;
   ripetere con 1, 4, 16, 64 file concorrenti; confrontare le primitive di flush disponibili;
-  confrontare singola e doppia scrittura del record (opzioni di QA-02).
+  confrontare singola e doppia scrittura del record (opzioni di QA-02). Disciplina di
+  [ADR-0037](../adr/0037-lotto-sigillato.md): un compito di I/O alla volta per file (scrive i
+  lotti chiusi, poi flush), con i lotti che si formano durante il flush.
 - *Misure:* durata del flush (distribuzione); operazioni/s durevoli; banda; scalabilità con
   il numero di file.
 - *Esito:* dati per decidere QA-02 e QA-05 e per confermare o rivedere il target «INSERT group
@@ -83,12 +96,19 @@ prodotto è una **misura con una raccomandazione**.
 - *Domanda:* qual è il tetto di throughput di un esecutore seriale per Serie su un pool
   condiviso, e come scala con il numero di Serie?
 - *Metodo:* code per Serie svuotate a lotti da worker del pool; lavoro seriale sintetico di
-  durata controllata; 1…N Serie; carico uniforme e sbilanciato.
+  durata controllata; 1…N Serie; carico uniforme e sbilanciato. Secondo
+  [ADR-0045](../adr/0045-modello-di-esecuzione.md): tratti del writer a lunghezza limitata,
+  lista delle Serie pronte toccata una volta per tratto, letture eseguite dal worker che le
+  riceve, parcheggio e ripresa dei client di un lotto; e, per il parallelismo come principio
+  fondante ([ADR-0036](../adr/0036-leggi-di-progetto.md), INV-P6), gli elementi dell'elenco
+  chiuso (CSN, orizzonte, soglia, epoca) esercitati alla frequenza prevista.
 - *Misure:* operazioni/s per Serie e aggregate; costo del passaggio di consegna; latenza in
-  coda; equità tra Serie.
+  coda; equità tra Serie; **throughput aggregato in funzione del numero di Serie e di core**;
+  tempo speso su ciascun elemento condiviso; effetto di un burst su una Serie sulle altre.
 - *Esito:* conferma che il costo del meccanismo è piccolo rispetto al
   [budget](stime-ordine-di-grandezza.md#budget-del-writer-logico); scalabilità quasi lineare
-  con le Serie finché ci sono core.
+  con le Serie finché ci sono core; nessun elemento dell'elenco chiuso diventa il collo di
+  bottiglia. In caso contrario il risultato indica quale voce rivedere.
 
 ### SPK-05
 
@@ -131,8 +151,20 @@ prodotto è una **misura con una raccomandazione**.
   writer, 2 reader, 2 slot, ogni interleaving e ogni sospensione, compreso il ripiego sul
   writer; (4) l'**idempotenza del recovery**: interruzione del recovery in ogni passo e
   riesecuzione.
+- *Modelli dell'analisi progettuale (ADR 0036–0043):* (5) **lotto e frontiera durevole**: più
+  lotti chiusi e non sincronizzati, ogni sottoinsieme perso o parziale, e in alternativa un
+  danno sotto la frontiera — il recovery conclude «coda» nel primo caso e «corruzione» nel
+  secondo, senza mai scrivere nei segmenti; (6) **orizzonte di visibilità**: due Serie, un
+  lotto in volo, una multiserie, uno snapshot creato in ogni punto, registrazione dello
+  snapshot in gara con una pubblicazione, una Serie che va in `FAULTED` con un CSN in volo;
+  (7) **segmenti autosufficienti**: rotazione, CLEAN e rigenerazione dell'hint in ogni punto
+  di una multiserie; (8) **tombstone**: eliminazioni, ricreazioni, CLEAN, MERGE di segmenti
+  non adiacenti, snapshot, riavvio in ogni punto; (9) divisione di un frammento con reader
+  concorrenti; (10) un crash prima e dopo **ogni punto di atomicità** della
+  [tabella](../analisi-progettuale.md#punti-di-atomicità).
 - *Verifica:* INV-D1, INV-T3, INV-T4, INV-M1, INV-M2, INV-R1, INV-C7, INV-C8, INV-C9, INV-I1,
-  INV-A7 negli scenari FI-01…FI-13.
+  INV-A7 negli scenari FI-01…FI-13; in più INV-F2, INV-F3, INV-V5, INV-M4, INV-M5, INV-S7,
+  INV-C11, INV-A9, INV-A10, INV-A11.
 - *Esito:* nessuna violazione; in caso contrario il controesempio guida la decisione su QA-04,
   QA-06, QA-07, QA-24. I modelli restano come riferimento per i test di fault injection.
 
@@ -156,8 +188,9 @@ prodotto è una **misura con una raccomandazione**.
   obbligatori — CRC32C a ogni lettura, `safety` 2/3, scrubbing — e i minimi di prestazione di
   [ADR-0028](../adr/0028-target-e-obiettivi-di-latenza.md) restano raggiungibili?
 - *Metodo:* (a) CRC32C in Lisp: bit a bit, a tabella (byte), *slicing-by-8*, con e senza
-  `(safety 3)`; (b) ciclo di lettura di un record da 2 KB con verifica di CRC, chiave, versione
-  e CSN, contro la stessa lettura senza verifica; (c) lo stesso ciclo compilato con `safety` 3,
+  `(safety 3)`, separatamente per l'intestazione (20 byte) e per il corpo; (b) ciclo di
+  lettura di un record da 2 KB con verifica dei due CRC, della chiave e del CSN, contro la
+  stessa lettura senza verifica; (c) lo stesso ciclo compilato con `safety` 3,
   `safety` 2 con `speed` 3 e (solo come riferimento, mai adottabile) `safety` 0, per
   quantificare il prezzo dei controlli.
 - *Misure:* byte/s del CRC per core; ns per record; overhead percentuale per verifica e per

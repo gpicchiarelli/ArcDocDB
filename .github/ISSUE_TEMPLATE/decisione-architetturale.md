@@ -12,4 +12,6 @@ labels: adr
 
 **Raccomandazione**
 
+**Che cosa rende seriale, e qual è il punto di atomicità** ([leggi di progetto](../../docs/adr/0036-leggi-di-progetto.md))
+
 **Come si verifica** (spike, modello, benchmark)

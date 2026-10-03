@@ -1,6 +1,6 @@
 # ADR-0024 — Modello di memoria: array specializzati a vita lunga, zero allocazione sul hot path
 
-- **Stato:** Accettata (ipotesi sulle pause verificata da SPK-02)
+- **Stato:** Accettata (ipotesi sulle pause verificata da SPK-02); **punto 3 precisato da [ADR-0043](0043-primary-index-a-frammenti.md)**: l'indice cresce un frammento alla volta e le strutture sostituite le ritira il collector.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-18; realizza «SIMD e ottimizzazioni native» punti 1–5
 - **Riferimenti:** [architettura](../architettura.md#memoria), RSK-01

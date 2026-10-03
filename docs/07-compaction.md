@@ -5,10 +5,12 @@
 > durante compaction», «Compaction scheduler dinamico» della
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M11 Compaction Manager (con M13 Scheduler).
-> **Decisioni:** [ADR-0018](adr/0018-control-log-manifest-swap.md) (swap = record,
-> stabilizzazione), [ADR-0023](adr/0023-politiche-di-compaction.md) (soglie, stati di carico,
-> tombstone), [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (rilocazione
-> condizionale), [ADR-0016](adr/0016-epoch-based-reclamation.md) (reclaim).
+> **Decisioni:** [ADR-0018](adr/0018-control-log-manifest-swap.md) e
+> [ADR-0040](adr/0040-manifest-a-record-unico.md) (swap = un record EDIT, deciso prima della
+> rinomina; stabilizzazione), [ADR-0023](adr/0023-politiche-di-compaction.md) (soglie, stati
+> di carico), [ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md) (tombstone),
+> [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (rilocazione condizionale),
+> [ADR-0016](adr/0016-epoch-based-reclamation.md) (reclaim).
 
 ## Due operazioni, due scopi
 
@@ -148,6 +150,14 @@ Comune a CLEAN e MERGE:
 
 Per MERGE: si leggono più segmenti, si produce un solo nuovo segmento, stesso meccanismo
 copy-on-write, sorgenti immutabili fino al reclaim.
+
+> **Deciso ([ADR-0040](adr/0040-manifest-a-record-unico.md), [ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md))** —
+> Corrispondenza con i passi: l'output è scritto come `.tmp` (5–7); il passo 9 è **un record
+> EDIT** nel control log che chiude l'output e rimuove i sorgenti, seguito dalla rinomina e
+> dalle rilocazioni dell'indice; i passi 10–13 sono stati in memoria del segmento rimosso,
+> fino all'eliminazione del file. «Record necessari» sono quelli puntati dall'indice, quelli
+> puntati dalle versioni trattenute e i tombstone non ancora scartabili; i record prepared
+> committed sono riscritti come record ordinari.
 
 Proprietà di crash-safety (dettagli in [11 Recovery](11-recovery.md)):
 

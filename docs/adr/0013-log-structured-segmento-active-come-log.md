@@ -1,6 +1,6 @@
 # ADR-0013 — Storage log-structured: il segmento ACTIVE è il log dei dati; `wal/` è il control log della Serie
 
-- **Stato:** Accettata (emenda la specifica)
+- **Stato:** Accettata (emenda la specifica); **sostituita in parte da [ADR-0037](0037-lotto-sigillato.md)**: un record è committed se sta in un lotto sigillato valido (punto 4); i tipi di record sono in [ADR-0039](0039-cornice-unica-dei-record.md).
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-02; **emenda** la sezione «WAL» e il ruolo di
   `wal/` nel «Layout fisico». Mantiene: WAL per Serie, nessun global data WAL, group commit,

@@ -1,9 +1,9 @@
 # ADR-0014 — Formato di record, documento e `_id`
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **sostituita in parte da [ADR-0039](0039-cornice-unica-dei-record.md)**: intestazione a 24 byte con due CRC, tipi PUT, TOMBSTONE, SEAL, OUTCOME (punto 3). Documento, `_id` e hash restano.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-01
-- **Riferimenti:** [formati su disco](../formati-su-disco.md#record), INV-F1
+- **Riferimenti:** [formati su disco](../formati-su-disco.md#cornice-del-record), INV-F1
 
 ## Contesto
 
@@ -21,7 +21,7 @@ Il record è l'unità scritta nei segmenti; deve essere leggibile in sequenza se
    (timestamp + casuale, nello stile ULID), che favorisce la località nelle scansioni.
 3. **Record.** Intestazione binaria a lunghezza fissa (little-endian), chiave, valore, CRC32C
    (Castagnoli) su tutto il record. Tipi: PUT, TOMBSTONE, PREPARE, COMMIT-GROUP, OUTCOME.
-   Dettaglio in [formati su disco](../formati-su-disco.md#record). Dimensione massima di un
+   Dettaglio in [formati su disco](../formati-su-disco.md#cornice-del-record). Dimensione massima di un
    record: **16 MiB − 1** (limite della location nell'indice,
    [ADR-0015](0015-primary-index-swiss-table-swmr.md)); dimensione massima del documento
    configurabile per Serie, default 4 MiB ([limiti](../limiti.md)).

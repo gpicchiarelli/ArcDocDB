@@ -53,6 +53,9 @@ per sistemi critici. Una deviazione è ammessa solo se registrata in
 | COD-33 | `defstruct` con slot `:read-only` dove il valore non cambia dopo la costruzione. | rev |
 | COD-34 | Vietati `eval`, `compile`, `load` e `intern` su dati esterni; `*read-eval*` sempre `nil`; nessun `read` su dati non fidati. | lint |
 | COD-35 | Nessun `sb-sys:with-pinned-objects` o chiamata di sistema fuori dal modulo `io`. | lint, rev |
+| COD-36 | Un file o una directory si elimina solo tramite la funzione del modulo `io` che riceve la prova della rimozione: nome `.tmp` non nominato dalla fonte di verità, oppure il record che registra la rimozione (INV-A10, [ADR-0036](../adr/0036-leggi-di-progetto.md)). | rev, test |
+| COD-37 | Il recovery apre i segmenti esistenti in sola lettura; nessuna funzione tronca un segmento (INV-A9). | rev, test |
+| COD-38 | Ogni funzione che rende durevole un cambiamento indica nella docstring il **punto di atomicità** dell'operazione e se sta prima (preparazione) o dopo (completamento idempotente) (INV-A11). | rev |
 
 ## Concorrenza
 
@@ -63,6 +66,8 @@ per sistemi critici. Una deviazione è ammessa solo se registrata in
 | COD-42 | Ogni attesa ha un limite di tempo o una condizione di uscita dimostrata; nessuna attesa illimitata su un lock tenuto da codice esterno al proprietario. | rev, test |
 | COD-43 | Vietati `without-interrupts` e `without-gcing` fuori dal modulo `io`. | lint |
 | COD-44 | Tempo, casualità, schedulazione e I/O solo tramite le interfacce iniettabili ([ADR-0035](../adr/0035-strategia-di-verifica-e-tracciabilita.md)). | lint, rev |
+| COD-45 | Un compito non si sospende: nessuna chiamata bloccante fuori dai compiti del pool di I/O; un'attesa è un parcheggio in una lista con lunghezza e tempo massimi (INV-P5, [ADR-0045](../adr/0045-modello-di-esecuzione.md)). | rev, test |
+| COD-46 | **Parallelismo.** Nessuno stato condiviso tra Serie fuori dall'elenco chiuso di [architettura](../architettura.md#archivio-coordinamento-minimo); nessuna scrittura condivisa tra Serie sul percorso di una singola operazione; ogni struttura condivisa dichiara, accanto al proprietario, quando viene toccata (commento `;;; SHARED:` con la voce dell'elenco) (INV-P6, [ADR-0036](../adr/0036-leggi-di-progetto.md)). | rev, bench |
 
 ## Documentazione e tracciabilità
 
@@ -96,3 +101,8 @@ descrizione della modifica:
 8. Il proprietario di ogni stato condiviso è dichiarato e rispettato.
 9. La matrice di tracciabilità è aggiornata e `make check` passa.
 10. Nessuna regola violata senza deviazione registrata.
+11. La modifica non introduce tra Serie un lock, un'attesa o una scrittura condivisa per
+    operazione; ciò che rende seriale è dichiarato (INV-P6).
+12. Per ogni cambiamento durevole è indicato il punto di atomicità; ciò che lo precede è
+    scartabile, ciò che lo segue è idempotente; nulla è eliminato senza un record che lo dica
+    (INV-A10, INV-A11).

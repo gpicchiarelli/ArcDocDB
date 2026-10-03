@@ -1,6 +1,6 @@
 # ADR-0032 — Seqlock a 64 bit con tentativi limitati e ripiego sul writer
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **punto 2 (layout dello slot) sostituito da [ADR-0043](0043-primary-index-a-frammenti.md)**: slot a 4 parole; al raggiungimento della soglia del contatore il frammento si ricostruisce invece di fermare la Serie. Protocollo, 64 bit e tentativi limitati restano.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** nessuna emenda; **sostituisce in parte**
   [ADR-0015](0015-primary-index-swiss-table-swmr.md) (dettaglio del seqlock e layout dello

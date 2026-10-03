@@ -90,17 +90,19 @@ Each is the best known pattern for its problem, chosen once, before the code.
 
 | | Decision | Record |
 |---|---|---|
-| Storage | The ACTIVE segment is the log. Each record is written once. | [0013](docs/adr/0013-log-structured-segmento-active-come-log.md) |
-| Index | A flat hash table in memory: one writer, lock-free readers. | [0015](docs/adr/0015-primary-index-swiss-table-swmr.md) · [0032](docs/adr/0032-seqlock-a-64-bit.md) |
+| Laws | Parallelism is foundational. One atomic point per operation. Prepare, decide, complete. Nothing is destroyed by absence. | [0036](docs/adr/0036-leggi-di-progetto.md) |
+| Storage | The ACTIVE segment is the log. Each record is written once, in sealed batches. | [0013](docs/adr/0013-log-structured-segmento-active-come-log.md) · [0037](docs/adr/0037-lotto-sigillato.md) |
+| Index | A directory of small flat hash tables in memory: one writer, lock-free readers. | [0043](docs/adr/0043-primary-index-a-frammenti.md) · [0032](docs/adr/0032-seqlock-a-64-bit.md) |
 | Secondary indexes | One immutable, fixed-format file per segment. | [0026](docs/adr/0026-indici-secondari-segmentati.md) |
-| Durability | Group commit by default. The writer never waits for a flush. | [0019](docs/adr/0019-durability-e-group-commit-pipelined.md) |
-| Snapshots | One commit sequence per Archivio. Snapshot isolation. | [0020](docs/adr/0020-csn-snapshot-isolamento.md) |
-| Transactions | Two-phase commit across Serie, with a writer that never blocks. | [0021](docs/adr/0021-2pc-intenti-outcome.md) |
-| Compaction | Copy-on-write. The swap is a single log record. | [0018](docs/adr/0018-control-log-manifest-swap.md) · [0023](docs/adr/0023-politiche-di-compaction.md) |
-| Integrity | Fail-stop on any write error. Verification on every read. | [0033](docs/adr/0033-fail-stop-e-integrita-end-to-end.md) |
+| Durability | Group commit by default. The writer never waits for a flush. | [0019](docs/adr/0019-durability-e-group-commit-pipelined.md) · [0037](docs/adr/0037-lotto-sigillato.md) |
+| Snapshots | One commit sequence per Archivio; it is also the document version. A snapshot is born when everything below it is visible. | [0020](docs/adr/0020-csn-snapshot-isolamento.md) · [0038](docs/adr/0038-orizzonte-di-visibilita.md) |
+| Transactions | Two-phase commit across Serie, with a writer that never blocks. | [0021](docs/adr/0021-2pc-intenti-outcome.md) · [0041](docs/adr/0041-multiserie-segmenti-autosufficienti.md) |
+| Compaction | Copy-on-write. The swap is a single log record. | [0040](docs/adr/0040-manifest-a-record-unico.md) · [0023](docs/adr/0023-politiche-di-compaction.md) · [0042](docs/adr/0042-tombstone-e-indice-dei-vivi.md) |
+| Integrity | Fail-stop on any write error. Verification on every read. Recovery never truncates. | [0033](docs/adr/0033-fail-stop-e-integrita-end-to-end.md) · [0039](docs/adr/0039-cornice-unica-dei-record.md) |
 | Code | Checks always on. No warnings. No dependencies. | [0034](docs/adr/0034-policy-di-compilazione-e-standard-di-codifica.md) · [0027](docs/adr/0027-dipendenze-e-test.md) |
 
-All thirty-five are in the [decision log](docs/adr/README.md).
+All forty-five are in the [decision log](docs/adr/README.md); the reasoning that ties them
+together is the [design analysis](docs/analisi-progettuale.md).
 
 ## Reliability
 
@@ -112,7 +114,7 @@ Priorities, in order. A lower one never weakens a higher one.
 |---|---|
 | No committed datum is lost or corrupted without being detected and declared. | Fault injection, protocol models, offline verifier |
 | No wrong answer is given in silence. | Verification on read, corruption tests, fuzzing |
-| Every fault in the [fault model](docs/affidabilita/analisi-dei-guasti.md) has a defined, tested response. | Twenty-four failure modes, each traced to a test |
+| Every fault in the [fault model](docs/affidabilita/analisi-dei-guasti.md) has a defined, tested response. | Twenty-seven failure modes, each traced to a test |
 | Every requirement is traced to its verification. | A [matrix](docs/tracciabilita/matrice.md) generated and checked by a tool |
 
 It does not promise the impossible. It cannot survive the loss of every copy of the data,
@@ -126,7 +128,7 @@ detectable where they can be: see the [assurance case](docs/affidabilita/README.
 | `_id` | 1 to 255 bytes |
 | Document | up to 16 MiB |
 | Segment | up to 4 GiB · 256 MiB by default |
-| Documents per server | about 750 million per 64 GB of memory |
+| Documents per server | about 650 million per 64 GB of memory (estimate) |
 
 Every limit and where it comes from: [limiti.md](docs/limiti.md).
 
@@ -138,7 +140,7 @@ Every limit and where it comes from: [limiti.md](docs/limiti.md).
 
 | | |
 |---|---|
-| Done | Specification · architecture · on-disk formats · 35 decisions · 50 invariants · 90 traced requirements |
+| Done | Specification · architecture · design analysis · on-disk formats · 45 decisions · 64 invariants · 107 traced requirements |
 | Next | Nine [experiments](docs/valutazione/piano-spike.md) that confirm or replace the quantitative assumptions |
 | Then | Ten implementation phases, each closed by a verification gate: the [roadmap](docs/roadmap.md) |
 

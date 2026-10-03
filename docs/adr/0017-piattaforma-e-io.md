@@ -1,6 +1,6 @@
 # ADR-0017 — Piattaforma di riferimento e primitive di I/O
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **punto 5 precisato da [ADR-0045](0045-modello-di-esecuzione.md)**: ogni chiamata bloccante (scritture nei log comprese) è un compito del pool di I/O; una lettura che manca la cache migra ripartendo dall'inizio.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-19
 - **Riferimenti:** [architettura](../architettura.md#thread-pool), RSK-11, RSK-16

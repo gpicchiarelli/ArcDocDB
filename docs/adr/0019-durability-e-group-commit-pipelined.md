@@ -1,6 +1,6 @@
 # ADR-0019 — Livelli di durability e group commit pipelined
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **sostituita in parte da [ADR-0037](0037-lotto-sigillato.md)**: un compito di I/O alla volta per log (non più lotti in volo sullo stesso file), CSN alla chiusura del lotto, conferma dopo la pubblicazione. I livelli restano.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-05; precisa «WAL» (group commit)
 - **Riferimenti:** [architettura](../architettura.md#percorso-di-scrittura), INV-D1, INV-V1

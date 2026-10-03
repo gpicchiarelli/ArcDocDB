@@ -44,6 +44,12 @@ Dichiarati dalla specifica:
 
 Sono le decisioni da cui discende tutto il resto; ciascuna ha un ADR.
 
+> **Deciso ([ADR-0036](adr/0036-leggi-di-progetto.md))** — Il **parallelismo è un principio
+> fondante**: non un obiettivo di prestazione ma la forma in cui lo stato è diviso. Le Serie
+> non si attendono mai; ciò che condividono è un elenco chiuso, mai pagato per singola
+> operazione (INV-P6). È la prima delle dieci [leggi](analisi-progettuale.md#le-leggi) da cui
+> discendono i meccanismi del progetto.
+
 1. Common Lisp/SBCL per la logica generale ([ADR-0001](adr/0001-common-lisp-sbcl.md)).
 2. La Serie come unità di storage e parallelismo ([ADR-0002](adr/0002-serie-unita-di-storage-e-parallelismo.md)).
 3. WAL per Serie, nessun global data WAL ([ADR-0003](adr/0003-wal-per-serie.md)).

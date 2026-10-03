@@ -12,9 +12,10 @@ tematici navigabili, con tracciabilità verso il testo di partenza, e la sottopo
 [valutazione architetturale](valutazione/README.md).
 
 **Fase corrente:** definizione architetturale e valutazione ([roadmap](roadmap.md)). La
-definizione è completa: il progetto consolidato è in [architettura.md](architettura.md), i
-formati persistenti in [formati-su-disco.md](formati-su-disco.md), le decisioni negli
-[ADR](adr/README.md). Restano gli [spike](valutazione/piano-spike.md) di verifica.
+definizione è completa ed è passata da un'[analisi progettuale](analisi-progettuale.md): il
+progetto consolidato è in [architettura.md](architettura.md), i formati persistenti in
+[formati-su-disco.md](formati-su-disco.md), le decisioni negli [ADR](adr/README.md). Restano
+gli [spike](valutazione/piano-spike.md) di verifica.
 
 ## Come leggere
 
@@ -56,7 +57,8 @@ Progetto consolidato:
 | Documento | Contenuto |
 |---|---|
 | [Architettura](architettura.md) | Il progetto completo in un documento: strutture, percorsi di lettura e scrittura, transazioni, compaction, recovery, contratti tra moduli |
-| [Formati su disco](formati-su-disco.md) | Segmento, record, hint, indici, Bloom, control log, `multiserie.log`, catalogo |
+| [Analisi progettuale](analisi-progettuale.md) | Rilettura critica del progetto: le dieci leggi (la prima: il parallelismo è fondante), i punti di atomicità, i rilievi `AP-…` con controesempi e decisioni, il bilancio di ciò che è stato tolto |
+| [Formati su disco](formati-su-disco.md) | Cornice dei record, lotto e SEAL, segmento, hint, indici, control log, `multiserie.log`, catalogo |
 | [Limiti dimensionali](limiti.md) | Limiti hard dai formati e limiti pratici dall'hardware |
 | [Principi di ingegneria](principi-di-ingegneria.md) | Criterio di ammissione dei pattern; si scrive una volta sola |
 | [Affidabilità](affidabilita/README.md) | Software critico: caso di affidabilità, analisi dei guasti (FMEA), standard di codifica, piano di verifica, deviazioni |
@@ -109,7 +111,8 @@ una facoltà.
 injection, `M01…M18` moduli, `ADR-…` decisioni, `RSK-…` rischi, `SPK-…` spike. Gli
 identificativi sono stabili: non si rinumerano, si ritirano. Aggiunti da ADR-0031: `REQ-…`
 requisiti ([tracciabilità](tracciabilita/README.md)), `FM-…` modi di guasto, `COD-…` regole di
-codifica, `DEV-…` deviazioni, `COV-…` eccezioni di copertura.
+codifica, `DEV-…` deviazioni, `COV-…` eccezioni di copertura; `AP-…` rilievi
+dell'[analisi progettuale](analisi-progettuale.md).
 
 **Lingua.** Documentazione in italiano. I termini di dominio (Archivio, Serie, Documento,
 Registri, `multiserie.log`) restano in italiano anche nel codice; i termini tecnici consolidati

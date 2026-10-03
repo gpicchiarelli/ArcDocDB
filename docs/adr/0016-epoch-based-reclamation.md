@@ -1,6 +1,6 @@
 # ADR-0016 — Epoch-based reclamation per segmenti, tabelle e indici ritirati
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **precisata da [ADR-0043](0043-primary-index-a-frammenti.md)** (l'EBR governa solo descrittori e file dei segmenti; directory e frammenti li ritira il collector) e da [ADR-0045](0045-modello-di-esecuzione.md) (una sezione di lettura è un compito).
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-16; realizza INV-R1 e INV-C10
 - **Riferimenti:** [architettura](../architettura.md#reclaim), INV-R1

@@ -47,7 +47,10 @@ verificato in revisione e dai test di mutazione sugli operatori logici.
    la stessa semantica di GET/PUT/DELETE/transazioni/snapshot; sequenze casuali di operazioni
    sul motore e sul modello con confronto di ogni risposta; con crash e recovery simulati, il
    motore deve restare uguale al modello **limitatamente a ciò che era stato confermato**.
-3. **Modelli:** protocollo 2PC + recovery; compaction + swap + reclaim; seqlock; esplorati
+3. **Modelli:** protocollo 2PC + recovery; compaction + swap + reclaim; seqlock; lotto e
+   frontiera durevole; orizzonte di visibilità e registro degli snapshot; segmenti
+   autosufficienti; tombstone; divisione di un frammento; un crash prima e dopo ogni
+   [punto di atomicità](../analisi-progettuale.md#punti-di-atomicità); esplorati
    esaustivamente su configurazioni piccole e con crash in ogni punto.
 4. **Simulazione deterministica:** il sistema intero con tempo, casualità, schedulazione e I/O
    simulati; milioni di scenari per seme; ogni errore riproducibile dal seme.
@@ -58,6 +61,10 @@ verificato in revisione e dai test di mutazione sugli operatori logici.
 8. **Saturazione:** ogni limite di risorsa (INV-A8) è portato al superamento; la risposta è un
    rifiuto controllato.
 9. **Soak:** carico misto e crash ripetuti per ore, con scrubbing e verifica periodici.
+10. **Parallelismo (INV-P6):** benchmark di scalabilità con il numero di Serie e di core, e
+    di isolamento (un burst su una Serie non altera latenza e throughput delle altre); la
+    revisione controlla che l'elenco di ciò che le Serie condividono resti quello di
+    [architettura](../architettura.md#archivio-coordinamento-minimo).
 
 ## Revisione e configurazione
 

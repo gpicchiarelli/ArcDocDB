@@ -4,8 +4,10 @@
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M09 Transaction Manager, M10 Multiseries Transaction Log Manager.
 > **Decisioni:** [ADR-0020](adr/0020-csn-snapshot-isolamento.md) (CSN, isolamento),
-> [ADR-0021](adr/0021-2pc-intenti-outcome.md) (intenti no-wait, OUTCOME, presumed abort,
-> troncamento). Flussi in [architettura.md](architettura.md#transazioni).
+> [ADR-0038](adr/0038-orizzonte-di-visibilita.md) (la versione è il CSN; orizzonte),
+> [ADR-0021](adr/0021-2pc-intenti-outcome.md) (intenti no-wait, presumed abort),
+> [ADR-0041](adr/0041-multiserie-segmenti-autosufficienti.md) (segmenti autosufficienti,
+> conferma dopo la pubblicazione). Flussi in [architettura.md](architettura.md#transazioni).
 
 Esistono due percorsi distinti. Quale si applica dipende solo da quante Serie la transazione
 **modifica**.
@@ -33,6 +35,12 @@ TX102 legge v18
 TX101 commit → v19
 TX102 verifica expected-version = 18 → conflitto → abort/retry
 ```
+
+> **Deciso ([ADR-0038](adr/0038-orizzonte-di-visibilita.md), emenda l'esempio)** — La
+> versione di un documento è il **CSN** del commit che l'ha prodotta: i numeri crescono ma non
+> sono consecutivi (non `v18 → v19`, ma ad esempio `1042 → 1077`). `expected-version` è un
+> CSN; zero significa «il documento non deve esistere». Un CSN non si ripete nemmeno dopo
+> l'eliminazione del documento (INV-M5).
 
 Il controllo della versione DEVE essere **atomico rispetto all'applicazione della modifica** da
 parte del writer della Serie (INV-T2). Poiché il writer è l'unico a mutare la Serie, «verifica
@@ -69,22 +77,30 @@ sequenceDiagram
     C->>TM: BEGIN … COMMIT (TX300: A.doc42, B.doc87)
     par PREPARE
         TM->>A: PREPARE TX300
-        A->>A: verifica versioni, append PREPARE, fsync
+        A->>A: verifica versioni, record prepared nel lotto, flush
     and
         TM->>B: PREPARE TX300
-        B->>B: verifica versioni, append PREPARE, fsync
+        B->>B: verifica versioni, record prepared nel lotto, flush
     end
     A-->>TM: prepared
     B-->>TM: prepared
     TM->>L: decisione COMMIT TX300 (durevole, group commit)
     Note over L: punto di commit
-    TM-->>C: committed
     par applicazione
-        TM->>A: COMMIT TX300 → visibile
+        TM->>A: OUTCOME TX300 → visibile
     and
-        TM->>B: COMMIT TX300 → visibile
+        TM->>B: OUTCOME TX300 → visibile
     end
+    A-->>TM: applicato
+    B-->>TM: applicato
+    TM-->>C: committed
 ```
+
+> **Deciso ([ADR-0041](adr/0041-multiserie-segmenti-autosufficienti.md))** — Il client riceve
+> `committed` **dopo** che l'esito è stato applicato in memoria su tutti i partecipanti
+> (INV-V5), così ogni lettura successiva alla conferma vede la transazione. Il punto di commit
+> resta la decisione durevole. Non esiste un record PREPARE: i record prepared sono resi
+> atomici dal SEAL del loro lotto.
 
 **Punto di commit.** La decisione `COMMIT` DEVE essere durevole in `multiserie.log` prima che
 la transazione sia considerata definitivamente committed (INV-T3). Prima di quel momento la
@@ -99,6 +115,8 @@ Se un partecipante non riesce a preparare (conflitto di versione, errore), la de
 - È il *transaction decision log*: registra decisioni, **non dati**. I dati stanno nei WAL
   delle Serie.
 - Un solo file per Archivio, in `Registri/` (INV-W2). Nessun file per transazione.
+- Contiene solo decisioni COMMIT: con *presumed abort* un abort non si registra
+  ([ADR-0041](adr/0041-multiserie-segmenti-autosufficienti.md)).
 - Usa group commit dove appropriato.
 - NON è un global data WAL (INV-W1).
 

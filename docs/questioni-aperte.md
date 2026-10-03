@@ -5,6 +5,8 @@ principale della [Fase 0](roadmap.md). Ogni questione si chiude con un ADR; la v
 marcata «Risolta da ADR-nnnn».
 
 **Stato al 2026-10-03: tutte le questioni sono chiuse da un ADR** (vedi colonna *Stato*).
+L'[analisi progettuale](analisi-progettuale.md) ha poi rivisto alcune risposte con gli ADR
+0036–0045: la colonna *Stato* indica la decisione originaria e quella che la rivede.
 Due ADR (0028, 0030) sono in stato *Proposta* perché fissano obiettivi di prodotto che
 spettano all'autore. Le sezioni di dettaglio sotto conservano le opzioni valutate e la
 motivazione della scelta è nell'ADR.
@@ -19,30 +21,30 @@ motivazione della scelta è nell'ADR.
 
 | ID | Questione | Priorità | Stato | Spike | Rischi |
 |---|---|---|---|---|---|
-| [QA-01](#qa-01) | Formato di documento e record | A | Risolta da [ADR-0014](adr/0014-formato-record-documento-id.md) | — | — |
+| [QA-01](#qa-01) | Formato di documento e record | A | Risolta da [ADR-0014](adr/0014-formato-record-documento-id.md); record rivisto da [ADR-0039](adr/0039-cornice-unica-dei-record.md) | — | — |
 | [QA-02](#qa-02) | Rapporto WAL ↔ segmenti | A | Risolta da [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md) (emenda la specifica) | SPK-03 | RSK-03 |
-| [QA-03](#qa-03) | Persistenza del primary index | A | Risolta da [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) | SPK-01 | RSK-07 |
-| [QA-04](#qa-04) | Manifest dei segmenti e atomic swap | A | Risolta da [ADR-0018](adr/0018-control-log-manifest-swap.md) | SPK-07 | RSK-02 |
-| [QA-05](#qa-05) | Livelli di durability | A | Risolta da [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md) | SPK-03 | — |
-| [QA-06](#qa-06) | TXID, ordine di commit di Archivio, snapshot multiserie | A | Risolta da [ADR-0020](adr/0020-csn-snapshot-isolamento.md) | SPK-07 | RSK-05 |
-| [QA-07](#qa-07) | Stato PREPARED: visibilità e blocco | A | Risolta da [ADR-0021](adr/0021-2pc-intenti-outcome.md) | SPK-07 | RSK-05 |
+| [QA-03](#qa-03) | Persistenza del primary index | A | Risolta da [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md); hint rivisto da [ADR-0039](adr/0039-cornice-unica-dei-record.md) | SPK-01 | RSK-07 |
+| [QA-04](#qa-04) | Manifest dei segmenti e atomic swap | A | Risolta da [ADR-0018](adr/0018-control-log-manifest-swap.md); rivista da [ADR-0040](adr/0040-manifest-a-record-unico.md) | SPK-07 | RSK-02 |
+| [QA-05](#qa-05) | Livelli di durability | A | Risolta da [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md); meccanica rivista da [ADR-0037](adr/0037-lotto-sigillato.md) | SPK-03 | — |
+| [QA-06](#qa-06) | TXID, ordine di commit di Archivio, snapshot multiserie | A | Risolta da [ADR-0020](adr/0020-csn-snapshot-isolamento.md); rivista da [ADR-0038](adr/0038-orizzonte-di-visibilita.md) | SPK-07 | RSK-05 |
+| [QA-07](#qa-07) | Stato PREPARED: visibilità e blocco | A | Risolta da [ADR-0021](adr/0021-2pc-intenti-outcome.md); rivista da [ADR-0041](adr/0041-multiserie-segmenti-autosufficienti.md) | SPK-07 | RSK-05 |
 | [QA-08](#qa-08) | Troncamento di `multiserie.log` | B | Risolta da [ADR-0021](adr/0021-2pc-intenti-outcome.md) | — | RSK-06 |
 | [QA-09](#qa-09) | Livelli di isolamento | A | Risolta da [ADR-0020](adr/0020-csn-snapshot-isolamento.md) | SPK-07 | — |
-| [QA-10](#qa-10) | Natura fisica di Registri e del catalogo | B | Risolta da [ADR-0022](adr/0022-registri-come-serie-catalogo.md) | — | RSK-15 |
+| [QA-10](#qa-10) | Natura fisica di Registri e del catalogo | B | Risolta da [ADR-0022](adr/0022-registri-come-serie-catalogo.md); DDL rivisto da [ADR-0040](adr/0040-manifest-a-record-unico.md) | — | RSK-15 |
 | [QA-11](#qa-11) | Soglie di CLEAN e MERGE | C | Risolta da [ADR-0023](adr/0023-politiche-di-compaction.md) | SPK-06 | — |
 | [QA-12](#qa-12) | Definizione di basso carico; preemption e starvation del MERGE | B | Risolta da [ADR-0023](adr/0023-politiche-di-compaction.md) | SPK-06 | RSK-08, RSK-12 |
 | [QA-13](#qa-13) | Timestamp di stabilizzazione | B | Risolta da [ADR-0018](adr/0018-control-log-manifest-swap.md) | — | — |
 | [QA-14](#qa-14) | Snapshot longevi | B | Risolta da [ADR-0020](adr/0020-csn-snapshot-isolamento.md) | — | RSK-09 |
-| [QA-15](#qa-15) | Vita dei tombstone | B | Risolta da [ADR-0023](adr/0023-politiche-di-compaction.md) | — | — |
+| [QA-15](#qa-15) | Vita dei tombstone | B | Risolta da [ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md) (sostituisce la regola di ADR-0023) | — | — |
 | [QA-16](#qa-16) | Tracciamento dei reader per il reclaim | B | Risolta da [ADR-0016](adr/0016-epoch-based-reclamation.md) | SPK-01 | — |
-| [QA-17](#qa-17) | Granularità e chiave della cache | B | Risolta da [ADR-0025](adr/0025-cache-per-location.md) | SPK-05 | RSK-10 |
+| [QA-17](#qa-17) | Granularità e chiave della cache | B | Risolta da [ADR-0025](adr/0025-cache-per-location.md); rivista da [ADR-0044](adr/0044-cache-acceleratore-puro.md) | SPK-05 | RSK-10 |
 | [QA-18](#qa-18) | GC di SBCL e memoria fuori heap | A | Risolta da [ADR-0024](adr/0024-memoria-e-gc.md) (ipotesi verificata da SPK-02) | SPK-02 | RSK-01 |
-| [QA-19](#qa-19) | Piattaforma di riferimento e primitive di I/O | A | Risolta da [ADR-0017](adr/0017-piattaforma-e-io.md) | SPK-03, SPK-05 | RSK-11 |
+| [QA-19](#qa-19) | Piattaforma di riferimento e primitive di I/O | A | Risolta da [ADR-0017](adr/0017-piattaforma-e-io.md); precisata da [ADR-0045](adr/0045-modello-di-esecuzione.md) | SPK-03, SPK-05 | RSK-11 |
 | [QA-20](#qa-20) | Protocollo di rete e linguaggio di query | C | Risolta da [ADR-0029](adr/0029-interfacce-protocollo-query-contratto.md) | — | — |
 | [QA-21](#qa-21) | Schema/contratto della Serie | C | Risolta da [ADR-0029](adr/0029-interfacce-protocollo-query-contratto.md) | — | — |
 | [QA-22](#qa-22) | Dipendenze e framework di test | B | Risolta da [ADR-0027](adr/0027-dipendenze-e-test.md) | — | — |
 | [QA-23](#qa-23) | Funzioni fuori dallo scope v1 | C | Proposta: [ADR-0030](adr/0030-scope-v1.md) | — | RSK-14 |
-| [QA-24](#qa-24) | Primary index: MVCC, concorrenza, rilocazione | A | Risolta da [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) | SPK-01, SPK-07 | RSK-02 |
+| [QA-24](#qa-24) | Primary index: MVCC, concorrenza, rilocazione | A | Risolta da [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md); struttura rivista da [ADR-0043](adr/0043-primary-index-a-frammenti.md) | SPK-01, SPK-07 | RSK-02 |
 | [QA-25](#qa-25) | Indici secondari: sincronia, snapshot, persistenza | B | Risolta da [ADR-0026](adr/0026-indici-secondari-segmentati.md) | — | RSK-13 |
 | [QA-26](#qa-26) | Target: per Serie o aggregati; obiettivi numerici di latenza | A | Proposta: [ADR-0028](adr/0028-target-e-obiettivi-di-latenza.md) | — | RSK-04 |
 

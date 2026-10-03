@@ -12,7 +12,13 @@ Il problema e i vincoli. Che cosa rende necessaria una decisione adesso.
 
 ## Decisione
 
-Che cosa si è deciso, in forma prescrittiva.
+Che cosa si è deciso, in forma prescrittiva. Ogni decisione risponde anche alle due domande
+delle [leggi di progetto](0036-leggi-di-progetto.md):
+
+- **che cosa rende seriale**, e a quale livello (il parallelismo è fondante: nessun punto
+  condiviso tra Serie fuori dall'elenco chiuso);
+- **qual è il punto di atomicità**, se l'operazione cambia lo stato durevole (che cosa è
+  preparazione, che cosa è completamento).
 
 ## Conseguenze
 

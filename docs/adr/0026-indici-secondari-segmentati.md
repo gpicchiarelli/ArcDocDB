@@ -1,6 +1,6 @@
 # ADR-0026 — Indici secondari segmentati: un file immutabile a formato fisso per segmento, delta in memoria per l'ACTIVE
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **precisata da [ADR-0039](0039-cornice-unica-dei-record.md) e [ADR-0042](0042-tombstone-e-indice-dei-vivi.md)**: il filtro di Bloom sulle chiavi è una sezione dell'hint e serve allo scarto dei tombstone; i filtri sui valori sono una sezione dei file `.idx`; il file `.bloom` non esiste. Il delta dell'`ACTIVE` è fatto di soli array in aggiunta (nessun ART in memoria).
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-25; realizza «Secondary index», «Secondary index
   delta», «Index snapshot». Decisione dell'autore (2026-10-03): gli indici hanno formato

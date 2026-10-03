@@ -45,3 +45,11 @@ e le scelte rinviate ai benchmark (2Q, SIMD) dipendono da essi.
 - Affidabilità: stati di salute di Serie e Archivio, segmenti in quarantena, avanzamento dello
   scrubbing, ripieghi del seqlock, Serie in `:async`
   ([ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md)).
+- Dall'[analisi progettuale](analisi-progettuale.md): CSN in volo e distanza tra CSN e
+  orizzonte, attesa alla nascita degli snapshot ([ADR-0038](adr/0038-orizzonte-di-visibilita.md));
+  lunghezza di ogni lista di parcheggio ([ADR-0045](adr/0045-modello-di-esecuzione.md));
+  divisioni di frammenti e byte per documento dell'indice
+  ([ADR-0043](adr/0043-primary-index-a-frammenti.md)); verifiche fallite in cache
+  ([ADR-0044](adr/0044-cache-acceleratore-puro.md)); tombstone conservati
+  ([ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md)); oggetti sconosciuti trovati al
+  riavvio ([ADR-0036](adr/0036-leggi-di-progetto.md)).

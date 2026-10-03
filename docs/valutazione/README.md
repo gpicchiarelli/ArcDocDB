@@ -93,6 +93,19 @@ Restano aperti sul piano quantitativo: RSK-01 (GC: SPK-02), RSK-02 nella sola pa
 prestazionale (SPK-01), RSK-03 residuo sui flush concorrenti (SPK-03). Tutti gli altri sono
 mitigati dal progetto o accettati esplicitamente.
 
+**Analisi progettuale.** Dopo questa rivalutazione l'insieme delle decisioni è stato riletto
+come un tutto ([analisi progettuale](../analisi-progettuale.md)). Tre righe della tabella
+sopra erano ottimistiche: la **correttezza** aveva cinque difetti (uno snapshot poteva
+cambiare vista; un crash ordinario poteva diventare un guasto; la regola dei tombstone poteva
+far riapparire documenti eliminati; un esito poteva essere scartato prima dei record che
+risolve; il CSN poteva invertire un ordine causale); i **costi di spazio** dell'indice
+valevano solo al riempimento massimo; la **complessità** contava più meccanismi del
+necessario. Gli ADR 0036–0045 chiudono i rilievi e riducono i meccanismi: un punto di
+atomicità per operazione, una cornice di record, un tipo di record per log di controllo, una
+tabella concorrente. Il giudizio sull'impianto non cambia; cambia la fiducia nei dettagli,
+che ora poggia su controesempi cercati e non trovati più, e che il modello SPK-07 deve
+confermare.
+
 **Decisioni che spettano all'autore.** [ADR-0028](../adr/0028-target-e-obiettivi-di-latenza.md)
 (target e latenze) e [ADR-0030](../adr/0030-scope-v1.md) (scope) sono in stato *Proposta*.
 

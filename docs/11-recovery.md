@@ -4,8 +4,11 @@
 > «Transazioni multiserie», «Segment metadata», «Workflow Clean/Merge».
 > **Moduli:** M12 Recovery Manager.
 > **Decisioni:** la sequenza definitiva è in [architettura.md](architettura.md#recovery);
-> meccanismi in [ADR-0018](adr/0018-control-log-manifest-swap.md), [ADR-0021](adr/0021-2pc-intenti-outcome.md),
-> [ADR-0022](adr/0022-registri-come-serie-catalogo.md).
+> meccanismi in [ADR-0036](adr/0036-leggi-di-progetto.md) (un punto di atomicità, recovery non
+> distruttivo), [ADR-0037](adr/0037-lotto-sigillato.md) (coda o corruzione),
+> [ADR-0040](adr/0040-manifest-a-record-unico.md) (manifest, riconciliazione),
+> [ADR-0041](adr/0041-multiserie-segmenti-autosufficienti.md) (esiti delle multiserie),
+> [ADR-0022](adr/0022-registri-come-serie-catalogo.md) (bootstrap).
 
 ## Compito
 
@@ -41,7 +44,11 @@ Il Recovery Manager DEVE essere in grado di ricostruire il sistema dopo un crash
 
 > **Deciso ([architettura](architettura.md#recovery))** — La specifica elenca le attività ma non
 > l'ordine. L'ordine seguente rispetta le dipendenze tra le attività; il recovery è idempotente
-> (INV-A7).
+> (INV-A7) e **non distruttivo** (INV-A9): non tronca e non modifica alcun segmento. Per ogni
+> Serie il passo 5 legge l'`ACTIVE` lotto per lotto, e l'unico effetto durevole è la rinomina
+> di un control log compattato che chiude il vecchio `ACTIVE` alla sua lunghezza valida e ne
+> apre uno nuovo. Il passo 7 non scrive nei segmenti: gli esiti COMMIT ricavati da
+> `multiserie.log` sono registrati in quello stesso record di chiusura.
 
 | # | Passo | Perché in questo punto |
 |---|---|---|
@@ -69,9 +76,13 @@ Con riferimento ai passi del [workflow](07-compaction.md#workflow):
 | dopo lo swap, prima di OBSOLETE (10) | output visibile, sorgente ancora `CLOSED` | segnare il sorgente `OBSOLETE` |
 | durante il reclaim (11–13) | sorgente `OBSOLETE`/`RECLAIMABLE`, eventualmente file già rimosso | dopo un riavvio non esistono reader né snapshot precedenti: il reclaim può essere completato |
 
-> **Deciso (QA-04 → [ADR-0018](adr/0018-control-log-manifest-swap.md))** — Per riconoscere uno swap incompleto serve una registrazione autorevole e
+> **Deciso (QA-04 → [ADR-0018](adr/0018-control-log-manifest-swap.md), [ADR-0040](adr/0040-manifest-a-record-unico.md))** — Per riconoscere uno swap incompleto serve una registrazione autorevole e
 > atomica dell'insieme dei segmenti validi di una Serie (un *manifest*, oppure record dedicati
-> nel WAL della Serie). È la decisione che rende deterministica tutta la tabella qui sopra.
+> nel WAL della Serie). È la decisione che rende deterministica tutta la tabella qui sopra:
+> lo swap è **un record EDIT**. Prima dell'EDIT l'output è un `.tmp` e si elimina; dopo, il
+> recovery completa rinomina ed eliminazione dei sorgenti. Uno «swap parziale» non esiste. Un
+> file con nome definitivo che il manifest non conosce non viene eliminato: è un'anomalia
+> segnalata (INV-A10).
 
 ## Questioni decise e rischi
 

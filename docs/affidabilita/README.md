@@ -27,13 +27,14 @@ dichiari** (ADR-0031 §2a).
 | Sotto-affermazione | Argomento | Evidenza |
 |---|---|---|
 | A1 — Un dato confermato come committed è durevole | scrittura una volta, flush prima della conferma, fail-stop sugli errori | INV-D1, INV-A1, INV-V1; FI-01, FI-02, FI-05; modello SPK-07 *(da produrre)* |
-| A2 — Un crash in qualsiasi punto non perde dati e non lascia stati ambigui | log append-only con CRC, control log, swap a record unico, recovery idempotente | INV-F1, INV-C7…C9, INV-A7; FI-01…FI-13; simulatore *(da produrre)* |
-| A3 — Una transazione multiserie è atomica anche con crash | decisione durevole unica, presumed abort, OUTCOME | INV-T3, INV-T4, INV-V2; FI-03…FI-05, FI-12; modello SPK-07 *(da produrre)* |
+| A2 — Un crash in qualsiasi punto non perde dati e non lascia stati ambigui | lotti sigillati, un punto di atomicità per operazione, coda o corruzione decidibili dal contenuto, recovery idempotente che non tronca e non elimina per assenza | INV-F1…F3, INV-C7…C9, INV-A7, INV-A9…A11; FI-01…FI-13; simulatore *(da produrre)* |
+| A3 — Una transazione multiserie è atomica anche con crash | decisione durevole unica, presumed abort, esito nel segmento stesso dei record prepared | INV-T3, INV-T4, INV-V2, INV-S7; FI-03…FI-05, FI-12; modello SPK-07 *(da produrre)* |
 | A4 — Un dato rovinato dopo la scrittura viene rilevato prima di essere usato | verifica in lettura, scrubbing, quarantena | INV-A2, INV-A6; corruzione deliberata, fuzzing *(da produrre)* |
 | A5 — Nessuna risposta errata silenziosa | verifica end-to-end, controlli di tipo e limiti sempre attivi, errori tipizzati | INV-A2…A4; compilazione senza avvisi, linter *(attivi)* |
-| A6 — Letture e scritture concorrenti non osservano stati intermedi | seqlock a 64 bit, EBR, writer unico | INV-I1, INV-V3, INV-V4, INV-M1…M3; modello e stress con scheduler iniettabile *(da produrre)* |
+| A6 — Letture e scritture concorrenti non osservano stati intermedi | seqlock a 64 bit su una sola tabella concorrente, EBR, writer unico, orizzonte di visibilità per gli snapshot | INV-I1, INV-V3…V5, INV-M1…M5; modello e stress con thread reali *(da produrre)* |
+| A9 — Un documento eliminato non riappare e uno vivo non scompare | indice dei soli vivi, ricostruzione per CSN massimo, tombstone scartati solo con il filtro di esistenza | INV-C11; test di proprietà con riavvii e MERGE non adiacenti *(da produrre)* |
 | A7 — Ogni requisito è verificato | tracciabilità bidirezionale controllata | INV-A5; `make trace` *(attivo)* |
-| A8 — Le risorse non si esauriscono in modo non definito | limiti su tutto, backpressure | INV-A8; test di saturazione *(da produrre)* |
+| A8 — Le risorse non si esauriscono in modo non definito | limiti su tutto, backpressure, attese come parcheggi limitati, indice che cresce un frammento alla volta | INV-A8, INV-P5, INV-I3; test di saturazione *(da produrre)* |
 
 ## Che cosa il sistema non promette
 

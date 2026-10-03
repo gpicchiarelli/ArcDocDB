@@ -4,8 +4,10 @@
 > [specifica](specifica/prompt-originale.md).
 > **Moduli:** M01 Storage Engine, M03 Segment Manager, M04 Segment Metadata Manager.
 > **Decisioni:** [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md) (il segmento
-> ACTIVE è il log dei dati), [ADR-0014](adr/0014-formato-record-documento-id.md) (record),
-> [ADR-0018](adr/0018-control-log-manifest-swap.md) (manifest e stati). Formati in
+> ACTIVE è il log dei dati), [ADR-0037](adr/0037-lotto-sigillato.md) (lotti sigillati),
+> [ADR-0039](adr/0039-cornice-unica-dei-record.md) (record),
+> [ADR-0040](adr/0040-manifest-a-record-unico.md) (manifest e stati),
+> [ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md) (tombstone). Formati in
 > [formati-su-disco.md](formati-su-disco.md#segmento).
 
 ## Append-only
@@ -73,10 +75,14 @@ stateDiagram-v2
 
 Le transizioni sono a senso unico: nessuno stato torna ad ACTIVE.
 
-> **Deciso ([ADR-0018](adr/0018-control-log-manifest-swap.md))** — La specifica non nomina lo stato di un segmento prodotto dalla compaction.
+> **Deciso ([ADR-0018](adr/0018-control-log-manifest-swap.md), [ADR-0040](adr/0040-manifest-a-record-unico.md))** — La specifica non nomina lo stato di un segmento prodotto dalla compaction.
 > Poiché nasce immutabile, viene qui trattato come `CLOSED` dal momento dello swap. Prima dello
 > swap il file è in costruzione e non è visibile (INV-C7): non è uno stato del modello, ma un
-> file temporaneo che il recovery può scartare.
+> file `.tmp` che il recovery scarta. Di **durevole** c'è solo l'appartenenza di un segmento
+> all'insieme registrato nel manifest (`ACTIVE`, `CLOSED`, rimosso): `OBSOLETE`,
+> `RECLAIMABLE` e `DELETED` sono stati in memoria di un segmento rimosso. Un `ACTIVE` vive in
+> un solo processo: dopo un riavvio viene chiuso alla sua lunghezza valida e ne nasce uno
+> nuovo (INV-A9).
 
 > **Proposta** — Per `live = 0` la specifica prevede «DELETE direttamente». Qui si intende:
 > nessuna copia e nessun segmento di output, ma il segmento attraversa comunque
@@ -124,12 +130,14 @@ La classificazione è dinamica: una versione `LIVE` diventa `SNAPSHOT-LIVE` o `D
 documento viene aggiornato, e `SNAPSHOT-LIVE` diventa `DEAD` quando l'ultimo snapshot che la
 vede termina.
 
-> **Deciso (QA-15 → [ADR-0023](adr/0023-politiche-di-compaction.md))** — Un tombstone è a sua volta un record: la specifica non dice quando può
-> essere scartato dalla compaction.
+> **Deciso (QA-15 → [ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md))** — Un tombstone è a sua volta un record: la specifica non dice quando può
+> essere scartato dalla compaction. Si scarta quando è superato da una versione più recente o
+> quando nessun altro segmento può contenere un record più vecchio della stessa chiave
+> (INV-C11); l'indice in memoria contiene solo i documenti vivi.
 
 ## Questioni decise che toccano lo storage
 
-- **QA-01** ([ADR-0014](adr/0014-formato-record-documento-id.md)) — formato dei record (intestazione, checksum, codifica del documento).
+- **QA-01** ([ADR-0014](adr/0014-formato-record-documento-id.md), [ADR-0039](adr/0039-cornice-unica-dei-record.md)) — formato dei record (intestazione, checksum, codifica del documento).
 - **QA-02** ([ADR-0013](adr/0013-log-structured-segmento-active-come-log.md)) — rapporto tra WAL e segmenti: il dato viene scritto due volte, oppure il segmento
   ACTIVE viene alimentato in modo che il WAL sia troncabile presto?
-- **QA-04** ([ADR-0018](adr/0018-control-log-manifest-swap.md)) — dove è registrato in modo autorevole l'insieme dei segmenti di una Serie (manifest).
+- **QA-04** ([ADR-0018](adr/0018-control-log-manifest-swap.md), [ADR-0040](adr/0040-manifest-a-record-unico.md)) — dove è registrato in modo autorevole l'insieme dei segmenti di una Serie (manifest).

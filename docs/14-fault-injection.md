@@ -67,3 +67,9 @@ Il fault injection condiziona il progetto fin dall'inizio; non si aggiunge alla 
   ([FM-03](affidabilita/analisi-dei-guasti.md#fm-03)).
 - Oltre al crash, il simulatore inietta errori di I/O, corruzioni e scritture perse: vedi
   l'[analisi dei guasti](affidabilita/analisi-dei-guasti.md).
+- In FI-01 e FI-02 il simulatore rende persistente **un sottoinsieme qualsiasi** dei lotti
+  non ancora sincronizzati, anche non in ordine e anche a metà: il recovery deve concludere
+  «coda» e non «corruzione» ([ADR-0037](adr/0037-lotto-sigillato.md), INV-F3).
+- Ogni scenario si esprime come «crash prima o dopo il punto di atomicità» dell'operazione
+  ([ADR-0036](adr/0036-leggi-di-progetto.md)); dopo ogni recovery si confrontano byte a byte
+  i segmenti con quelli di prima (INV-A9).

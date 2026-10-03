@@ -45,28 +45,41 @@ secondo, ~4.000 segmenti per TB.
 
 ## Memoria del primary index
 
-Layout deciso in [ADR-0015](../adr/0015-primary-index-swiss-table-swmr.md) e rivisto da
-[ADR-0032](../adr/0032-seqlock-a-64-bit.md): 1 byte di controllo + 6 parole da 64 bit per slot
-(hash, chiave, location, lunghezza/versione, CSN, contatore seqlock) = 49 byte, a fattore di
-carico 7/8 ≈ **56 byte per documento**, più la key arena (lunghezza della chiave; 16 byte per
-gli id generati).
+Layout deciso in [ADR-0043](../adr/0043-primary-index-a-frammenti.md): frammenti a capacità
+fissa, 1 byte di controllo + 4 parole da 64 bit per slot (CSN, location, chiave e lunghezza,
+contatore seqlock) = **33 byte per slot**, più le chiavi nell'area locale del frammento (16
+byte per gli id generati).
 
-| Documenti | Indice | Key arena (id 16 B) | Totale | Dati live a 2 KB/doc |
-|---|---|---|---|---|
-| 100 milioni | ~5,6 GB | 1,6 GB | ~7,2 GB | 200 GB |
-| 1 miliardo | ~56 GB | 16 GB | ~72 GB | 2 TB |
+Il costo per documento dipende dal riempimento, che in una tabella a hashing estendibile
+oscilla per ogni frammento tra 7/16 (subito dopo una divisione) e 7/8 (subito prima):
 
-→ Con ~15 % della RAM riservato a cache e runtime, un server da 64 GB ospita circa **750
-milioni** di documenti e uno da 128 GB circa **1,5 miliardi**. Questa memoria non è lavoro per
-il GC ([ADR-0024](../adr/0024-memoria-e-gc.md)). Il costo di affidabilità rispetto al layout
-precedente è +8 byte per entry (+17 %): accettato (ADR-0031).
+| Riempimento | Slot | Chiave (id 16 B, area al 75 %) | Totale per documento |
+|---|---|---|---|
+| massimo (7/8) | ~38 B | ~18 B | ~56 B |
+| medio atteso (~0,61) | ~54 B | ~21 B | **~75–80 B** |
+| minimo (7/16) | ~75 B | ~37 B | ~112 B |
+
+| Documenti | Memoria dell'indice (media) | Dati live a 2 KB/doc |
+|---|---|---|
+| 100 milioni | ~8 GB | 200 GB |
+| 1 miliardo | ~80 GB | 2 TB |
+
+→ Con ~15 % della RAM riservato a cache e runtime, un server da 64 GB ospita circa **650
+milioni** di documenti e uno da 128 GB circa **1,3 miliardi**. Questa memoria non è lavoro per
+il GC ([ADR-0024](../adr/0024-memoria-e-gc.md)). I documenti eliminati non occupano memoria.
+
+Nota sulla stima precedente («56 byte per entry», 750 milioni per 64 GB): era il valore al
+riempimento massimo di una tabella unica, vero solo nell'istante prima di un raddoppio; la
+stessa tabella, in media, costava più di 90 byte per documento e durante il raddoppio
+richiedeva il triplo della memoria ([analisi progettuale](../analisi-progettuale.md#ap-12)).
+Il riempimento medio effettivo è una delle misure di SPK-01.
 
 ## Tempo di riavvio
 
 | Strategia (QA-03) | Lavoro al riavvio per 1 miliardo di documenti / 2 TB | Ordine di grandezza |
 |---|---|---|
 | Ricostruzione dai segmenti | leggere 2 TB a 1–5 GB/s | da ~7 a ~35 minuti |
-| File di hint per segmento | leggere ~32 GB e reinserire 1 miliardo di entry | decine di secondi – pochi minuti |
+| File di hint per segmento | leggere ~24 GB di entry più le chiavi e reinserire 1 miliardo di entry, in parallelo e in qualsiasi ordine | decine di secondi – pochi minuti |
 | Checkpoint della tabella | caricare 30–40 GB + replay del WAL recente | decine di secondi |
 
 → La ricostruzione completa è accettabile come rete di sicurezza (l'indice è un dato
@@ -89,6 +102,12 @@ copia di un record da 2 KB nel buffer (~0,1–0,2 µs), controllo di versione, c
 L'ordine di grandezza è compatibile con ~1 M ops/s per Serie **solo se** nella parte seriale
 non c'è altro: niente parsing, validazione, allocazione, aggiornamento sincrono di indici
 secondari. A 2 M ops/s su una singola Serie non resta margine.
+
+Il **CRC** merita una riga a sé. Un CRC32C tabellare in Common Lisp costa nell'ordine di
+1–2 µs per un record da 2 KB (stima, SPK-09): se lo calcolasse il writer, da solo consumerebbe
+gran parte del budget a 300k ops/s. Per questo il record ha due CRC
+([ADR-0039](../adr/0039-cornice-unica-dei-record.md)): quello del corpo è calcolato dal worker
+della richiesta, in parallelo; il writer calcola solo quello dell'intestazione, 20 byte.
 
 → I target di scrittura sono verosimili come *aggregato su più Serie*; come valore *per
 singola Serie* la fascia alta è al limite. Per questo QA-26 va chiarita subito, e gli indici
@@ -120,7 +139,9 @@ transazione attende in media circa un flush.
 | 5 ms | 200 | 1.500 | ~5 ms |
 
 - La latenza delle scritture durevoli non può scendere sotto la durata del flush: l'obiettivo
-  numerico di P99 (QA-26) deve tenerne conto, distinto per livello di durability.
+  numerico di P99 (QA-26) deve tenerne conto, distinto per livello di durability. Con un
+  compito di I/O alla volta per log ([ADR-0037](../adr/0037-lotto-sigillato.md)) una scrittura
+  attende tra uno e due flush: quello in corso al suo arrivo e il proprio.
 - Un WAL per Serie significa **N flussi di flush concorrenti** sullo stesso dispositivo. Se il
   dispositivo serializza i flush, il vantaggio dell'indipendenza tra Serie si riduce proprio
   sul percorso durevole. È un'ipotesi da misurare (SPK-03), con impatto diretto su ADR-0003.

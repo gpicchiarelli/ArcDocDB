@@ -54,6 +54,25 @@
 | RSK-20 | residuo dichiarato | ADR-0031: strumenti automatici, lista di controllo, rilettura su dati |
 | RSK-02 (aggiornamento) | mitigato più a fondo | ADR-0032: seqlock a 64 bit, nessun argomento temporale |
 
+## Stato dopo l'analisi progettuale (2026-10-03)
+
+L'[analisi progettuale](../analisi-progettuale.md) ha trovato difetti in mitigazioni date per
+acquisite; le decisioni 0036–0045 li chiudono sul progetto. Restano da verificare su modello
+(SPK-07) e con misure.
+
+| ID | Stato | Effetto delle decisioni |
+|---|---|---|
+| RSK-02 | mitigato sul progetto; **aperto sulle prestazioni** | ADR-0043: frammenti; nessun fermo del writer né picco di memoria alla crescita; slot a 4 parole. SPK-01 misura |
+| RSK-03 | mitigato; residuo dichiarato | ADR-0037: un crash ordinario non è più classificato come corruzione; resta RES-05 (danno a riposo dell'ultimo flush) |
+| RSK-04 | mitigato più a fondo | ADR-0039: nessun lavoro per byte nel writer oltre alla copia; nessun TXID per operazione |
+| RSK-05 | mitigato più a fondo | ADR-0038: l'orizzonte copre anche i lotti in volo (prima uno snapshot poteva cambiare vista); ADR-0041: l'esito non può essere separato dai record che risolve |
+| RSK-07 | accettato, **stima corretta** | ~75–80 B per documento in media, ~650 milioni di documenti per 64 GB (prima: 56 B, valore valido solo al riempimento massimo) |
+| RSK-10 | accettato, da misurare | ADR-0044: nessuna ri-etichettatura; la perdita di calore dopo la compaction si misura (SPK-05) prima di aggiungere un meccanismo |
+| RSK-13 | **aperto (quantitativo)** | il costo di una query cresce con il numero di segmenti: limite dichiarato in [limiti.md](../limiti.md); filtri sui valori nei file indice |
+| RSK-15 | mitigato più a fondo | ADR-0040: creazione con directory `.tmp`, nessuno stato `creating`, nessuna eliminazione per assenza |
+| RSK-01 | **aperto (quantitativo)** | in più: pausa in funzione del numero di thread e dei frammenti sostituiti (SPK-02) |
+| RSK-18, RSK-20 | residuo dichiarato, ridotto | ADR-0036: un difetto nel calcolo di manifest o catalogo lascia un oggetto sconosciuto segnalato, non una perdita; il recovery non scrive nei segmenti |
+
 ---
 
 ### RSK-01

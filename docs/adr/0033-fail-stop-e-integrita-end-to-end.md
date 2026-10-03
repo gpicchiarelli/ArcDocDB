@@ -1,6 +1,6 @@
 # ADR-0033 — Fail-stop, integrità end-to-end, politica degli errori
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **§4 sostituito da [ADR-0037](0037-lotto-sigillato.md)** (coda o corruzione si decidono con la frontiera durevole dei SEAL; il recovery non tronca; anche i log di controllo hanno una coda legittima); verifica in lettura precisata da [ADR-0039](0039-cornice-unica-dei-record.md) §4 e, per la cache, da [ADR-0044](0044-cache-acceleratore-puro.md).
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** nessuna emenda; specifica **come** si realizzano «recovery
   crash-safe» e «nessun dato committed deve andare perso» in presenza di guasti; precisa

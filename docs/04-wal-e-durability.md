@@ -6,8 +6,10 @@
 > **Decisioni:** [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md) **emenda
 > questa sezione**: il log dei dati della Serie è il segmento ACTIVE; `wal/control.log` è il
 > WAL strutturale. [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md) definisce i
-> livelli di durability e il group commit pipelined. Il testo sotto riporta la specifica
-> originale; dove differisce, prevalgono gli ADR.
+> livelli di durability; [ADR-0037](adr/0037-lotto-sigillato.md) la meccanica: lotti
+> sigillati, un compito di I/O alla volta per log, conferma dopo la pubblicazione, frontiera
+> durevole. Il testo sotto riporta la specifica originale; dove differisce, prevalgono gli
+> ADR.
 
 ## Un WAL per Serie
 
@@ -75,7 +77,11 @@ MERGE e per lo [scheduler](10-concorrenza-e-scheduling.md).
   `fsync` non garantisce la persistenza su supporto fisico (serve `F_FULLFSYNC`); i test di
   durability vanno quindi interpretati per piattaforma.
 
-> **Deciso ([ADR-0014](adr/0014-formato-record-documento-id.md), [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md))** —
-> Ogni record porta lunghezza e CRC32C, così il recovery distingue un record completo da una
-> coda troncata (scenario FI-01) e una coda troncata da una corruzione a metà log. Formato in
-> [formati-su-disco.md](formati-su-disco.md#record).
+> **Deciso ([ADR-0039](adr/0039-cornice-unica-dei-record.md), [ADR-0037](adr/0037-lotto-sigillato.md))** —
+> Ogni record porta lunghezze e due CRC32C (intestazione e corpo); ogni lotto è chiuso da un
+> SEAL che ne fissa il contenuto e dichiara la frontiera durevole. Così il recovery distingue
+> un lotto completo da una coda (scenario FI-01) e una coda da una corruzione, senza dipendere
+> dall'ordine in cui il supporto ha reso persistenti le scritture (INV-F2, INV-F3). Nelle
+> transazioni multiserie non esiste un record PREPARE: i record prepared sono resi atomici dal
+> SEAL del loro lotto ([ADR-0041](adr/0041-multiserie-segmenti-autosufficienti.md)). Formato in
+> [formati-su-disco.md](formati-su-disco.md#cornice-del-record).

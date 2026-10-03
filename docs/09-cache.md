@@ -2,8 +2,9 @@
 
 > **Fonte:** «Cache», «Cache e snapshot» della [specifica](specifica/prompt-originale.md).
 > **Moduli:** M07 Cache Manager.
-> **Decisioni:** [ADR-0025](adr/0025-cache-per-location.md) (chiave per location, arena a
-> slot, CLOCK per partizione, ri-etichettatura alla rilocazione).
+> **Decisioni:** [ADR-0025](adr/0025-cache-per-location.md) (chiave per location, CLOCK per
+> partizione), [ADR-0044](adr/0044-cache-acceleratore-puro.md) (acceleratore puro: insiemi
+> associativi, nessuna ri-etichettatura, sistema corretto anche senza cache).
 
 ## Politica
 
@@ -32,8 +33,10 @@ una versione incompatibile con il proprio snapshot (INV-M3).
 > una entry non può diventare «vecchia», non serve invalidazione sugli update e la
 > compatibilità con gli snapshot è garantita per costruzione, perché ogni reader arriva alla
 > cache con la location della versione che il suo snapshot deve vedere. La rilocazione fatta da
-> CLEAN/MERGE cambia le location: le entry in cache vengono ri-etichettate con la nuova
-> location, senza perdere calore (RSK-10).
+> CLEAN/MERGE cambia le location: i record rilocati rientrano in cache alla prima lettura
+> ([ADR-0044](adr/0044-cache-acceleratore-puro.md)); la perdita di calore è misurata, non
+> compensata con un meccanismo (RSK-10). La cache non partecipa ad alcun protocollo e il
+> sistema dà le stesse risposte con la cache disattivata (INV-A12).
 
 ## Questioni decise e rischi
 

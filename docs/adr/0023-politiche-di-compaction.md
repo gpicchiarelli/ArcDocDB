@@ -1,6 +1,6 @@
 # ADR-0023 — Politiche di compaction: soglie, stati di carico, tombstone
 
-- **Stato:** Accettata (valori di default tarabili dai benchmark)
+- **Stato:** Accettata (valori di default tarabili dai benchmark); **sezione «Tombstone» sostituita da [ADR-0042](0042-tombstone-e-indice-dei-vivi.md)** (la regola per lineage non è sicura). Soglie, stati di carico e limitatore restano.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-11, QA-12 e QA-15; realizza [ADR-0007](0007-clean-e-merge-distinti.md) e [ADR-0008](0008-merge-opportunistico.md)
 - **Riferimenti:** [architettura](../architettura.md#compaction), INV-C5, INV-C6, INV-P4

@@ -25,7 +25,32 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   (`tools/lint.lisp`), controllo della tracciabilità (`tools/check-trace.lisp`).
 - SPK-09 (costo dei controlli di affidabilità).
 
+- **Analisi progettuale** ([docs/analisi-progettuale.md](docs/analisi-progettuale.md)) e ADR
+  0036–0045: dieci leggi di progetto — la prima: **il parallelismo è un principio fondante**,
+  con l'elenco chiuso di ciò che le Serie condividono — tabella dei punti di atomicità, sedici
+  rilievi `AP-…`; quattordici nuovi invarianti (INV-F2, F3, V5, M4, M5, S7, C11, I3, P5, P6,
+  A9…A12), 107 requisiti, 27 modi di guasto, rischio residuo RES-05.
+
 ### Cambiato
+
+- **Correzioni di progetto dall'analisi (nessun codice toccato, formati mai implementati):**
+  - uno snapshot nasce quando l'orizzonte di visibilità lo ha raggiunto: prima poteva vedere
+    comparire un lotto in volo (ADR-0038);
+  - coda o corruzione di un log si decidono con la frontiera durevole dei SEAL: prima un crash
+    ordinario con più lotti in volo portava la Serie in `FAULTED`; il recovery non tronca più
+    (ADR-0037);
+  - tombstone scartati con il filtro di esistenza: la regola per lineage faceva riapparire
+    documenti eliminati dopo un MERGE di segmenti non adiacenti (ADR-0042);
+  - l'esito di una multiserie sta nello stesso segmento dei record che risolve: prima un CLEAN
+    poteva perderlo (ADR-0041);
+  - primary index a frammenti: nessun raddoppio che triplica la memoria e ferma il writer; slot
+    a 4 parole; stima corretta a ~75–80 byte per documento (ADR-0043).
+- **Semplificazioni:** la versione di un documento è il CSN; una sola cornice di record con due
+  CRC (24 byte); quattro tipi di record nei segmenti; control log con il solo record EDIT;
+  `multiserie.log` con il solo record DECISION; nessun file `.bloom`, nessun lineage, nessuno
+  stato `creating`; cache senza ri-etichettatura; EBR solo per i file (ADR 0038–0044).
+- **Modello di esecuzione:** compiti a completamento, attese come parcheggi, ogni chiamata
+  bloccante nel pool di I/O (ADR-0045).
 
 - **Linguaggio visivo rifatto** ([assets/README.md](assets/README.md)): identità monocroma con un
   solo colore, l'ambra, riservato a ciò che può cambiare; nuovo marchio; illustrazione dei

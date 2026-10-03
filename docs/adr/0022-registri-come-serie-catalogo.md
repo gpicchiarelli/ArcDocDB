@@ -1,6 +1,6 @@
 # ADR-0022 — Registri è una Serie; il catalogo è fatto di documenti
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **sostituita in parte da [ADR-0040](0040-manifest-a-record-unico.md)** §5: creazione con directory `.tmp` e documento come decisione, stati `active` e `dropping` (punto 3). Il resto resta.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-10; realizza «Serie speciale Registri», «Catalogo»
 - **Riferimenti:** [architettura](../architettura.md#archivio-e-registri), RSK-15

@@ -1,6 +1,6 @@
 # ADR-0018 — Control log della Serie: manifest dei segmenti e swap atomico
 
-- **Stato:** Accettata
+- **Stato:** Accettata; **sostituita in parte da [ADR-0040](0040-manifest-a-record-unico.md)**: un solo tipo di record (EDIT), decisione prima della rinomina, nessun timestamp né lineage nel log, nessuna eliminazione per assenza. Restano: il control log è il manifest; lo swap è un solo record.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-04 e QA-13; realizza INV-C7, INV-C8, INV-C9
 - **Riferimenti:** [formati su disco](../formati-su-disco.md#control-log),

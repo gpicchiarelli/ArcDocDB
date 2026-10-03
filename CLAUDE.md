@@ -2,8 +2,9 @@
 
 ## Fase corrente
 
-**Fase 0: definizione architetturale e valutazione.** La definizione è completa (35 ADR,
-[architettura](docs/architettura.md), [formati](docs/formati-su-disco.md)); non si scrive
+**Fase 0: definizione architetturale e valutazione.** La definizione è completa (45 ADR,
+[architettura](docs/architettura.md), [formati](docs/formati-su-disco.md)) ed è passata da
+un'[analisi progettuale](docs/analisi-progettuale.md) (ADR 0036–0045); non si scrive
 codice di produzione. Restano: conferma di ADR-0028 e ADR-0030 da parte dell'autore ed
 esecuzione degli [spike](docs/valutazione/piano-spike.md) (SPK-01, 02, 03, 07, 09 per primi),
 aggiornando la [valutazione](docs/valutazione/README.md). Vedi la [roadmap](docs/roadmap.md).
@@ -25,6 +26,14 @@ valgono per ogni modifica:
 - **Standard di codifica:** `docs/affidabilita/standard-di-codifica.md`; `safety` ≥ 2, nessun
   avviso, nessun `ignore-errors`, `truly-the`, `eval`; `make lint`.
 - **Nessun argomento probabilistico o temporale come garanzia** (vedi ADR-0032).
+- **Il parallelismo è un principio fondante (ADR-0036, INV-P6):** le Serie non si attendono
+  mai; tra Serie nessun lock e nessuna scrittura condivisa per operazione; ciò che è condiviso
+  è l'elenco chiuso in [architettura](docs/architettura.md#archivio-coordinamento-minimo).
+  Ogni meccanismo dichiara che cosa rende seriale; una voce nuova nell'elenco richiede un ADR.
+- **Leggi di progetto (ADR-0036):** ogni operazione durevole ha un solo punto di atomicità
+  (SEAL, EDIT, DECISION, documento di catalogo); si prepara in `.tmp`, si decide con un record,
+  si completa dopo; nulla si distrugge per assenza; il recovery non tronca. Un meccanismo che
+  non discende dalle [leggi](docs/analisi-progettuale.md#le-leggi) richiede un ADR.
 - **Deviazioni** solo se registrate e approvate (`docs/affidabilita/deviazioni.md`).
 
 ## Fonti di verità, in ordine
@@ -43,7 +52,7 @@ valgono per ogni modifica:
   `> **Deciso (… → ADR-nnnn)** —` o `> **Aperto (QA-nn)** —`. Non presentare un'interpretazione come requisito.
 - Numeri di prestazione: solo da misure riproducibili, altrimenti sono dichiarati target o
   stime (INV-X2).
-- Identificativi (`INV-`, `QA-`, `FI-`, `RSK-`, `SPK-`, `REQ-`, `FM-`, `COD-`, `M01…M18`, `ADR-`) stabili: non si
+- Identificativi (`INV-`, `QA-`, `FI-`, `RSK-`, `SPK-`, `REQ-`, `FM-`, `COD-`, `AP-`, `M01…M18`, `ADR-`) stabili: non si
   rinumerano; una voce chiusa si marca, non si cancella.
 
 ## Convenzioni

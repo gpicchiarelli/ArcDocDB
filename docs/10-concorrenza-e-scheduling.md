@@ -3,7 +3,9 @@
 > **Fonte:** «Concorrenza», «Thread pool dinamico», «Compaction scheduler dinamico»,
 > «Parallelismo» della [specifica](specifica/prompt-originale.md).
 > **Moduli:** M13 Scheduler, M14 Dynamic Thread Pool.
-> **Decisioni:** [ADR-0017](adr/0017-piattaforma-e-io.md) (pool CPU e pool I/O),
+> **Decisioni:** [ADR-0017](adr/0017-piattaforma-e-io.md) (pool di calcolo e pool di I/O),
+> [ADR-0045](adr/0045-modello-di-esecuzione.md) (compiti a completamento, attese come
+> parcheggi, migrazione delle letture),
 > [ADR-0019](adr/0019-durability-e-group-commit-pipelined.md) (writer mai bloccato),
 > [ADR-0016](adr/0016-epoch-based-reclamation.md) (epoche), [ADR-0023](adr/0023-politiche-di-compaction.md)
 > (stato di carico).
@@ -40,6 +42,12 @@ Il writer serializza **solo ciò che deve essere serializzato** all'interno dell
 > record avvengono nel worker che riceve la richiesta; al writer restano controllo di versione,
 > assegnazione dell'ordine, append al WAL/segmento e aggiornamento dell'indice. Da questo
 > dipende il tetto di throughput per singola Serie (RSK-04, QA-26).
+
+> **Deciso ([ADR-0036](adr/0036-leggi-di-progetto.md))** — Il parallelismo è un **principio
+> fondante**, non un obiettivo di prestazione: tra Serie non c'è alcun lock né alcuna
+> scrittura condivisa per singola operazione, e ciò che è condiviso è l'elenco chiuso di
+> [architettura](architettura.md#archivio-coordinamento-minimo) (INV-P6). Ogni meccanismo
+> dichiara che cosa rende seriale.
 
 ## Isolamento tra Serie
 
@@ -101,9 +109,11 @@ traffico utente  >  WAL/durability  >  CLEAN necessario  >  MERGE opportunistico
 - **QA-26** ([ADR-0028](adr/0028-target-e-obiettivi-di-latenza.md)) — I target di throughput sono per Serie o aggregati?
 - **RSK-04** — Tetto del writer singolo; **RSK-12** — stabilità del controllore (molti segnali,
   rischio di oscillazione); **RSK-01** — pause del GC come fonte di contesa globale.
-- Le chiamate bloccanti (`fsync`, letture da NVMe) occupano un worker per la loro durata: il
-  dimensionamento del pool deve distinguere worker bloccati su I/O da worker che usano CPU
-  (QA-19).
+- Le chiamate bloccanti (`write`, `fsync`, letture da NVMe) occupano un worker per la loro
+  durata: sono tutte compiti del **pool di I/O**; un worker di calcolo non si blocca mai
+  (INV-P5, [ADR-0045](adr/0045-modello-di-esecuzione.md)). Il tetto del pool di I/O limita la
+  concorrenza sul dispositivo e, poiché il collector ferma ogni thread, anche la pausa del GC
+  (SPK-02).
 
 ## Metriche
 

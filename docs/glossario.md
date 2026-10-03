@@ -37,11 +37,11 @@
 | **DELETED** | Segmento eliminato. |
 | **Segment metadata** | Contatori e tempi di un segmento; dati derivati, ricostruibili. |
 | **Tombstone** | Record che marca l'eliminazione di un documento. |
-| **Location** | Posizione di una versione: segment-id, offset, length, version. |
+| **Location** | Posizione di una versione: segment-id, offset, length, version. La versione è il CSN (ADR-0038). |
 | **LIVE** | Versione raggiungibile dall'indice corrente. |
 | **SNAPSHOT-LIVE** | Versione non più corrente ma necessaria a uno snapshot attivo. |
 | **DEAD** | Versione non raggiungibile né dall'indice corrente né da snapshot attivi. |
-| **Manifest** | (Proposta, QA-04) Registrazione autorevole dell'insieme dei segmenti validi di una Serie. |
+| **Manifest** | Registrazione autorevole dell'insieme dei segmenti di una Serie: è il control log (ADR-0018, ADR-0040). |
 
 ## Compaction
 
@@ -70,7 +70,7 @@
 | **PREPARE** | Prima fase del 2PC: il partecipante registra in modo durevole di poter eseguire il commit. |
 | **Punto di commit** | Momento in cui la decisione COMMIT è durevole in `multiserie.log`. |
 | **Optimistic version checking (OCC)** | Al commit si verifica che la versione letta sia ancora quella corrente; altrimenti conflitto. |
-| **Expected-version** | La versione che la transazione si aspetta di trovare al commit. |
+| **Expected-version** | La versione che la transazione si aspetta di trovare al commit: un CSN; zero = il documento non deve esistere (ADR-0038). |
 
 ## Concorrenza
 
@@ -88,19 +88,45 @@
 
 | Termine | Definizione |
 |---|---|
-| **Control log** | `wal/control.log`: log strutturale della Serie (segmenti, swap, stati, checkpoint). ADR-0013, ADR-0018. |
+| **Control log** | `wal/control.log`: il manifest della Serie, una sequenza di record EDIT. ADR-0013, ADR-0018, ADR-0040. |
 | **CSN** | Commit Sequence Number: contatore di Archivio che ordina i commit e definisce la visibilità. ADR-0020. |
 | **File hint** | Indice primario di un segmento chiuso, da cui si ricostruisce l'indice in memoria. ADR-0015. |
-| **Key arena** | Area di memoria contigua che contiene le chiavi `_id` di una Serie. ADR-0015. |
-| **Versioni trattenute** | Tabella delle versioni non più correnti ancora visibili a uno snapshot. ADR-0015. |
+| **Key arena** | *(ritirato)* Area unica delle chiavi di una Serie (ADR-0015). Sostituita dall'area chiavi locale di ogni frammento (ADR-0043). |
+| **Versioni trattenute** | Tabella delle versioni non più correnti ancora visibili a uno snapshot. ADR-0015, ADR-0038. |
 | **Seqlock** | Contatore per slot che permette letture senza lock e rileva le scritture concorrenti. ADR-0032. |
-| **EBR** | Epoch-based reclamation: un oggetto ritirato si elimina quando ogni reader ha superato l'epoca del ritiro. ADR-0016. |
+| **EBR** | Epoch-based reclamation: un segmento rimosso si elimina quando ogni reader ha superato l'epoca della rimozione. Governa solo descrittori e file. ADR-0016, ADR-0043. |
 | **Intento** | Modifica di una transazione multiserie preparata e non ancora decisa su un documento. ADR-0021. |
-| **OUTCOME** | Record che registra nel segmento l'esito (COMMIT/ABORT) di una multiserie. ADR-0021. |
-| **Presumed abort** | Regola di recovery: senza decisione COMMIT durevole, la transazione è abortita. ADR-0021. |
-| **Lineage** | Il più piccolo segment-id tra gli antenati di un segmento; governa lo scarto dei tombstone. ADR-0023. |
+| **OUTCOME** | Record che registra, nello stesso segmento dei record prepared, il COMMIT di una multiserie con il suo CSN. ADR-0021, ADR-0041. |
+| **Presumed abort** | Senza decisione COMMIT durevole la transazione è abortita; un abort non scrive alcun record. ADR-0021, ADR-0041. |
+| **Lineage** | *(ritirato)* Il più piccolo segment-id tra gli antenati di un segmento (ADR-0023). La regola che lo usava non era sicura: sostituita dal filtro di esistenza (ADR-0042). |
 | **Stato di carico** | `basso` / `normale` / `alto`: governa CLEAN e MERGE. ADR-0023. |
 | **Rilocazione condizionale** | Aggiornamento di una entry dell'indice dopo la compaction, applicato solo se punta ancora alla location sorgente. ADR-0015. |
+
+## Termini introdotti dall'analisi progettuale
+
+| Termine | Definizione |
+|---|---|
+| **Unità di parallelismo** | Ciò che procede senza attendere i propri pari: Archivio, Serie, reader, lotto, segmento, frammento. Il parallelismo è il principio fondante del progetto. ADR-0036. |
+| **Elenco chiuso** | Gli unici elementi che le Serie condividono, con costo e frequenza dichiarati; nessuno è pagato per singola operazione. ADR-0036. |
+| **Punto di atomicità** | L'unico record durevole che decide un'operazione: prima c'è preparazione scartabile, dopo completamento idempotente. ADR-0036. |
+| **Prepara, decidi, completa** | Ordine di ogni operazione durevole: oggetto `.tmp`, record nella fonte di verità, allineamento del file system. ADR-0036. |
+| **Lotto** | Unità di atomicità, durability e pubblicazione di un log: record seguiti da un SEAL. ADR-0037. |
+| **SEAL** | Record che chiude un lotto e ne fissa file, posizione, numero di record, contenuto, CSN e frontiera durevole. ADR-0037, ADR-0039. |
+| **Frontiera durevole** | Posizione fino alla quale un log era durevole quando un lotto è stato chiuso; scritta nel SEAL, distingue una coda da una corruzione. ADR-0037. |
+| **Lunghezza valida** | Estensione di un segmento chiuso registrata nel manifest; i byte oltre non ne fanno parte. ADR-0040. |
+| **Versioni in sospeso** | Versioni scritte ma non ancora pubblicate (lotti in attesa del flush, intenti delle multiserie); le vede solo il writer. ADR-0037. |
+| **Orizzonte di visibilità** | Il più grande CSN sotto il quale ogni commit è pubblicato; uno snapshot nasce quando l'orizzonte lo ha raggiunto. ADR-0038. |
+| **CSN in volo** | CSN già preso il cui commit non è ancora pubblicato. ADR-0038. |
+| **Soglia** | Minimo CSN tra gli snapshot attivi, pubblicato dal registro degli snapshot; il writer trattiene una versione se la soglia è inferiore al CSN nuovo. ADR-0038. |
+| **Cornice** | Intestazione di 24 byte comune a tutti i record di tutti i log, con CRC dell'intestazione e CRC del corpo. ADR-0039. |
+| **EDIT** | L'unico tipo di record del control log: apre, chiude, rimuove segmenti. ADR-0040. |
+| **DECISION** | L'unico tipo di record di `multiserie.log`: il COMMIT di una transazione, con CSN e partecipanti. ADR-0041. |
+| **Segmento autosufficiente** | Segmento chiuso che si interpreta da solo: l'esito di ogni suo record prepared è nel segmento o nel record che lo ha chiuso. ADR-0041. |
+| **Filtro di esistenza** | Sezione Bloom dell'hint sulle chiavi del segmento; decide quando un tombstone si può scartare. ADR-0039, ADR-0042. |
+| **Frammento** | Tabella Swiss a capacità fissa con le proprie chiavi; il primary index è una directory di frammenti. ADR-0043. |
+| **Compito** | Unità di lavoro eseguita da un worker dall'inizio alla fine senza sospendersi. ADR-0045. |
+| **Parcheggio** | Attesa realizzata registrando il contesto della richiesta in una lista limitata, senza occupare un worker. ADR-0045. |
+| **Migrazione** | Passaggio di una lettura dal pool di calcolo al pool di I/O, ripartendo dall'inizio. ADR-0045. |
 
 ## Affidabilità
 
@@ -110,9 +136,9 @@
 | **Fail-stop** | A fronte di un guasto non recuperabile il componente si ferma invece di proseguire con uno stato incerto. ADR-0033. |
 | **HEALTHY / DEGRADED / FAULTED** | Stati di salute di una Serie; `MULTI-DISABLED` per l'Archivio. ADR-0033. |
 | **Quarantena** | Stato di un segmento con dati non verificabili: non viene letto né compattato. ADR-0033. |
-| **Verifica in lettura** | Controllo di CRC32C, chiave, versione e CSN prima di restituire un record. ADR-0033. |
+| **Verifica in lettura** | Controllo dei CRC32C di intestazione e corpo, della chiave e del CSN prima di restituire un record. ADR-0033, ADR-0039. |
 | **Scrubbing** | Rilettura periodica dei segmenti chiusi per rilevare alterazioni latenti. ADR-0033. |
-| **Scansione di risincronizzazione** | Ricerca di record validi dopo un'anomalia nel log, per distinguere coda troncata da corruzione. ADR-0033. |
+| **Scansione di risincronizzazione** | Ricerca di SEAL validi dopo un'anomalia nel log: la frontiera durevole che dichiarano distingue una coda da una corruzione. ADR-0033, ADR-0037. |
 | **Verificatore offline** | `arcdocdb-verify`: controlla in sola lettura formati, CRC e coerenza di un Archivio. ADR-0033. |
 | **Simulatore deterministico** | Esecuzione del sistema con tempo, casualità, schedulazione e I/O simulati, riproducibile da seme. ADR-0035. |
 | **Test differenziale** | Stessa sequenza di operazioni sul motore e su un modello di riferimento; i risultati devono coincidere. ADR-0035. |
@@ -133,3 +159,4 @@
 | `FM-` | Modo di guasto | [affidabilita/analisi-dei-guasti.md](affidabilita/analisi-dei-guasti.md) |
 | `COD-` | Regola di codifica | [affidabilita/standard-di-codifica.md](affidabilita/standard-di-codifica.md) |
 | `DEV-` / `COV-` | Deviazione / eccezione di copertura | [affidabilita/deviazioni.md](affidabilita/deviazioni.md) |
+| `AP-` | Rilievo dell'analisi progettuale | [analisi-progettuale.md](analisi-progettuale.md) |
