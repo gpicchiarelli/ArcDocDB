@@ -73,7 +73,7 @@ una volta; i percorsi caldi non allocano ([ADR-0024](adr/0024-memoria-e-gc.md)).
 
 | Struttura | Per | Contenuto | Crescita |
 |---|---|---|---|
-| Primary index | Serie | tabella Swiss: byte di controllo + 5 parole/slot | sostituzione + scambio atomico |
+| Primary index | Serie | tabella Swiss: byte di controllo + 6 parole/slot | sostituzione + scambio atomico |
 | Key arena | Serie | chiavi `_id` contigue | chunk da 64 MB |
 | Versioni trattenute | Serie | `chiave → (csn-da, csn-a, location, versione)` | solo con snapshot attivi |
 | Intenti | Serie | `chiave → txid` prepared | piccola |
@@ -152,7 +152,7 @@ Tabella Swiss SWMR con seqlock per slot, key arena, versioni trattenute, rilocaz
 condizionale; persistenza tramite file hint per segmento
 ([ADR-0015](adr/0015-primary-index-swiss-table-swmr.md)).
 
-Slot (5 parole + 1 byte di controllo):
+Slot (6 parole + 1 byte di controllo = 49 B; ~56 B per entry a fattore di carico 7/8):
 
 | Parola | Contenuto |
 |---|---|
@@ -160,7 +160,8 @@ Slot (5 parole + 1 byte di controllo):
 | 1 | key-off (40 bit) · key-len (8) · tipo (8) · flag (8) |
 | 2 | segment-id (32) · offset (32) |
 | 3 | length (24) · versione (40) |
-| 4 | csn (56) · seqlock (8) |
+| 4 | csn (64) |
+| 5 | contatore seqlock (64), [ADR-0032](adr/0032-seqlock-a-64-bit.md) |
 
 I limiti che discendono da questo layout sono in [limiti.md](limiti.md).
 
@@ -240,6 +241,26 @@ Ordine ([11](11-recovery.md), [ADR-0022](adr/0022-registri-come-serie-catalogo.m
 4. CSN = massimo osservato + 1; stabilizzazione dei segmenti = fine recovery.
 5. Apertura al traffico.
 
+## Affidabilità
+
+Il progetto è software critico ([ADR-0031](adr/0031-software-critico-criteri-e-priorita.md)); le
+prestazioni sono subordinate. Ciò che questo significa nell'architettura:
+
+| Aspetto | Meccanismo | Riferimento |
+|---|---|---|
+| Stati di salute | Serie `HEALTHY`/`DEGRADED`/`FAULTED`; Archivio `HEALTHY`/`MULTI-DISABLED`/`FAULTED` | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md) |
+| Errori di I/O | fail-stop, mai retry; riserva di spazio contro `ENOSPC` | ADR-0033 §2 |
+| Verifica | CRC32C e confronto con l'indice a ogni lettura, da disco e da cache | ADR-0033 §3 |
+| Corruzione a metà log | scansione di risincronizzazione: coda troncata contro corruzione | ADR-0033 §4 |
+| Recovery | idempotente, descritto da record durevoli | ADR-0033 §5 |
+| Rilevamento latente | scrubbing entro 7 giorni; verificatore offline | ADR-0033 §6–7 |
+| Codice | `safety` ≥ 2, nessun avviso, divieti, linter | [ADR-0034](adr/0034-policy-di-compilazione-e-standard-di-codifica.md) |
+| Concorrenza | seqlock a 64 bit con tentativi limitati e ripiego sul writer | ADR-0032 |
+| Verifica del sistema | modelli, simulatore, fault injection, differenziale, fuzzing, mutazione | ADR-0035 |
+| Tracciabilità | requisiti, matrice generata, `make trace` | [tracciabilità](tracciabilita/README.md) |
+
+Analisi completa dei guasti e delle risposte: [affidabilita/analisi-dei-guasti.md](affidabilita/analisi-dei-guasti.md).
+
 ## Scheduler e osservabilità
 
 Metriche per worker e per Serie, istogrammi log-lineari, senza allocazione; lo scheduler
@@ -265,6 +286,14 @@ Regole di interfaccia tra moduli ([16](16-moduli.md)), derivate dagli ADR:
 5. **Ogni file persistente** ha magic, versione, lunghezza e CRC32C per record o per file
    (INV-F1).
 6. **Ogni dato derivato dichiara la propria fonte** e ha una procedura di ricostruzione.
+7. **Tempo, casualità, schedulazione e I/O passano da interfacce iniettabili**
+   ([ADR-0035](adr/0035-strategia-di-verifica-e-tracciabilita.md)): in test il sistema intero
+   gira in un simulatore deterministico riproducibile da seme.
+8. **Un dato non verificato non lascia il motore** (INV-A2): ogni record letto è controllato
+   (CRC32C, chiave, versione, CSN) prima di essere restituito.
+9. **Un errore di scrittura o di flush è fatale per la Serie** (INV-A1) e non è mai ritentato.
+10. **Nessun ciclo e nessuna attesa illimitati** (INV-A8); ogni risorsa ha un limite
+    controllato.
 
 ## Moduli
 
@@ -274,9 +303,10 @@ indicano per ciascuno il meccanismo. Package: `arcdocdb.<modulo>`; moduli di sup
 
 ## Che cosa resta da misurare
 
-Le decisioni sono prese; tre ipotesi quantitative restano da verificare con gli spike prima
+Le decisioni sono prese; quattro ipotesi quantitative restano da verificare con gli spike prima
 della Fase 1 ([valutazione](valutazione/README.md#rivalutazione-2026-10-03)):
 
 1. pause del GC con heap grande e allocazione nulla (SPK-02, criterio ≤ 5 ms);
 2. throughput e correttezza del primary index SWMR (SPK-01);
-3. scalabilità dei flush concorrenti di molte Serie (SPK-03).
+3. scalabilità dei flush concorrenti di molte Serie (SPK-03);
+4. costo dei controlli di affidabilità, CRC in lettura e `safety` ≥ 2 (SPK-09).

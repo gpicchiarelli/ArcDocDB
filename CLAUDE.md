@@ -11,6 +11,22 @@ aggiornando la [valutazione](docs/valutazione/README.md). Vedi la [roadmap](docs
 Principio operativo: si scrive una volta sola, con la soluzione migliore nota
 ([principi di ingegneria](docs/principi-di-ingegneria.md)).
 
+## Software critico (ADR-0031)
+
+L'affidabilità è il fine ultimo; le prestazioni sono ragionevoli e subordinate. Regole che
+valgono per ogni modifica:
+
+- **Priorità:** integrità dei dati committed › correttezza › comportamento definito nei guasti
+  › verificabilità › disponibilità › prestazioni. Mai indebolire un livello alto per uno basso.
+- **Mai promettere l'impossibile:** il sistema rende gli errori *rilevabili e dichiarati*, non
+  impossibili. Nei documenti si dichiarano sempre i limiti (analisi dei guasti, rischi residui).
+- **Tracciabilità:** ogni requisito in `docs/tracciabilita/requisiti.lisp`; dopo una modifica
+  `make trace-write` e `make trace`; nel codice `;;; REQ: REQ-…`, nei test l'ID nel nome.
+- **Standard di codifica:** `docs/affidabilita/standard-di-codifica.md`; `safety` ≥ 2, nessun
+  avviso, nessun `ignore-errors`, `truly-the`, `eval`; `make lint`.
+- **Nessun argomento probabilistico o temporale come garanzia** (vedi ADR-0032).
+- **Deviazioni** solo se registrate e approvate (`docs/affidabilita/deviazioni.md`).
+
 ## Fonti di verità, in ordine
 
 1. [docs/specifica/prompt-originale.md](docs/specifica/prompt-originale.md) — non si modifica
@@ -27,7 +43,7 @@ Principio operativo: si scrive una volta sola, con la soluzione migliore nota
   `> **Aperto (QA-nn)** —`. Non presentare un'interpretazione come requisito.
 - Numeri di prestazione: solo da misure riproducibili, altrimenti sono dichiarati target o
   stime (INV-X2).
-- Identificativi (`INV-`, `QA-`, `FI-`, `RSK-`, `SPK-`, `M01…M18`, `ADR-`) stabili: non si
+- Identificativi (`INV-`, `QA-`, `FI-`, `RSK-`, `SPK-`, `REQ-`, `FM-`, `COD-`, `M01…M18`, `ADR-`) stabili: non si
   rinumerano; una voce chiusa si marca, non si cancella.
 
 ## Convenzioni

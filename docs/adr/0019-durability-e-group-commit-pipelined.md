@@ -38,6 +38,8 @@ dimensione, cioè si adatta al carico senza timer).
 Pattern: group commit pipelined (MySQL binlog group commit; PostgreSQL WAL writer); livelli
 di sincronizzazione configurabili (PostgreSQL `synchronous_commit`).
 
+> **Revisione 2026-10-03 ([ADR-0033](0033-fail-stop-e-integrita-end-to-end.md) §10):** `:async` non è mai il default, richiede una scelta esplicita per Serie, è vietato per Registri e per i partecipanti a transazioni multiserie.
+
 ## Conseguenze
 
 - Il writer non si blocca mai su I/O: il tetto per Serie è dettato dalla CPU, non dal flush.

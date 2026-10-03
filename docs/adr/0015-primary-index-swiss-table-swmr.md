@@ -1,6 +1,6 @@
 # ADR-0015 — Primary index: tabella Swiss single-writer/multi-reader, seqlock per slot, versioni trattenute
 
-- **Stato:** Accettata (precisa l'interpretazione di INV-I1 per il primary index)
+- **Stato:** Accettata (precisa l'interpretazione di INV-I1 per il primary index); **sostituita in parte da [ADR-0032](0032-seqlock-a-64-bit.md)**: seqlock a 64 bit con tentativi limitati e layout dello slot a 6 parole (56 B per entry). Dove questo ADR dice 8 bit e 48 byte, vale ADR-0032.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-24 e QA-03; precisa «Index snapshot» per il
   primary index

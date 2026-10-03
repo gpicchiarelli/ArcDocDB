@@ -84,7 +84,7 @@ progetto consolidato è in [architettura.md](../architettura.md) e
 | Isolamento tra Serie | buono | buono, quantificato | un incremento atomico per lotto è l'unico costo condiviso ([architettura](../architettura.md#archivio-coordinamento-minimo)) |
 | Prestazioni | banda al limite con doppia scrittura | 1× scrittura | log-structured (ADR-0013); indici per segmento senza lavoro extra nel writer (ADR-0026) |
 | Recuperabilità | riavvio proporzionale ai dati | proporzionale ai documenti | hint per segmento (ADR-0015); ogni stato intermedio riconoscibile dal control log |
-| Costi di spazio | non quantificati | quantificati | ~48 B/entry di indice; record morti delle transazioni abortite recuperati dal CLEAN |
+| Costi di spazio | non quantificati | quantificati | ~56 B/entry di indice; record morti delle transazioni abortite recuperati dal CLEAN |
 | Realizzabilità in Common Lisp | da verificare | progettata senza codice foreign | chiamate di sistema via contrib (ADR-0017); CBOR/CRC/hash propri (ADR-0027) |
 | Complessità | 18 moduli, meccanismi aperti | un meccanismo per problema | un solo log dati, un solo log strutturale, un solo codec, una sola politica di memoria |
 

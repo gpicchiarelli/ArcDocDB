@@ -3,6 +3,13 @@
 > Decisione dell'autore (2026-10-03): si scrive una volta sola, con la soluzione migliore
 > nota. Non si scrive codice «da migliorare dopo».
 
+## Software critico
+
+Dal 2026-10-03 il progetto è trattato come software critico
+([ADR-0031](adr/0031-software-critico-criteri-e-priorita.md)): l'affidabilità sta sopra le
+prestazioni, e un pattern è «il migliore» solo se lo è **anche** rispetto alle garanzie di
+integrità e alla verificabilità. Le sei condizioni sotto restano; se ne aggiunge una settima.
+
 ## Che cosa significa «la soluzione migliore»
 
 «10/10» non è un voto oggettivo; è un criterio di ammissione. Un pattern è ammesso in
@@ -21,6 +28,9 @@ ArcDocDB solo se soddisfa **tutte** le condizioni:
    allocazioni sul hot path.
 6. **Verificabile.** Esiste un modo per dimostrare che funziona: modello esplorabile, test di
    fault injection, benchmark riproducibile.
+7. **Garantito per costruzione, non per tempi.** La correttezza non dipende dalla velocità
+   relativa dei thread né da un evento «improbabile»: un argomento probabilistico o temporale
+   non è una garanzia ([ADR-0032](adr/0032-seqlock-a-64-bit.md) ne è l'esempio).
 
 Se nessuna opzione soddisfa tutte le condizioni, **non si scrive codice**: si registra la
 questione, si esegue lo spike che manca e si decide dopo.

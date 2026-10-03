@@ -45,6 +45,15 @@
                    (push (if (zerop n) slug (format nil "~A-~D" slug n)) acc)))))
     acc))
 
+(defun explicit-ids (text)
+  "Ancore esplicite <a id=\"x\"> (riconosciute da GitHub) presenti nel testo."
+  (let ((acc '()) (marker "<a id=\"") (start 0))
+    (loop for pos = (search marker text :start2 start) while pos
+          do (let* ((b (+ pos (length marker))) (e (position #\" text :start b)))
+               (when e (push (subseq text b e) acc))
+               (setf start (1+ pos))))
+    acc))
+
 (defun links (text)
   "Tutti i target di link Markdown ](...) non assoluti."
   (let ((acc '()) (start 0))
@@ -74,7 +83,8 @@
     (flet ((anchors-of (path)
              (or (gethash (namestring path) heading-cache)
                  (setf (gethash (namestring path) heading-cache)
-                       (headings (read-file path))))))
+                       (let ((text (read-file path)))
+                         (append (headings text) (explicit-ids text)))))))
       (dolist (file files)
         (let ((text (read-file file))
               (dir (make-pathname :name nil :type nil :defaults file)))

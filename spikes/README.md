@@ -28,3 +28,4 @@ Esperimenti della fase di valutazione. Il piano, con domande, metodi e criteri d
 | SPK-06 Interferenza della compaction e controllore | da avviare |
 | SPK-07 Modelli dei protocolli | da avviare |
 | SPK-08 SIMD e codice generato | da avviare |
+| SPK-09 Costo dei controlli di affidabilità | da avviare |

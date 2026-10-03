@@ -45,26 +45,28 @@ secondo, ~4.000 segmenti per TB.
 
 ## Memoria del primary index
 
-Layout deciso in [ADR-0015](../adr/0015-primary-index-swiss-table-swmr.md): 1 byte di
-controllo + 5 parole da 64 bit per slot (hash, chiave, location, lunghezza/versione,
-CSN/seqlock) = 41 byte, a fattore di carico 7/8 ≈ **48 byte per documento**, più la key arena
-(lunghezza della chiave + 0 byte di overhead; 16 byte per gli id generati).
+Layout deciso in [ADR-0015](../adr/0015-primary-index-swiss-table-swmr.md) e rivisto da
+[ADR-0032](../adr/0032-seqlock-a-64-bit.md): 1 byte di controllo + 6 parole da 64 bit per slot
+(hash, chiave, location, lunghezza/versione, CSN, contatore seqlock) = 49 byte, a fattore di
+carico 7/8 ≈ **56 byte per documento**, più la key arena (lunghezza della chiave; 16 byte per
+gli id generati).
 
-| Documenti | Indice | Key arena (id 16 B) | Dati live a 2 KB/doc |
-|---|---|---|---|
-| 100 milioni | ~4,8 GB | 1,6 GB | 200 GB |
-| 1 miliardo | ~48 GB | 16 GB | 2 TB |
+| Documenti | Indice | Key arena (id 16 B) | Totale | Dati live a 2 KB/doc |
+|---|---|---|---|---|
+| 100 milioni | ~5,6 GB | 1,6 GB | ~7,2 GB | 200 GB |
+| 1 miliardo | ~56 GB | 16 GB | ~72 GB | 2 TB |
 
-→ Su una macchina da 64–128 GB il primary index limita la capacità a circa 1 miliardo di
-documenti per server (64 GB di indice + arena a 1 miliardo), in concorrenza con la cache.
-Questa memoria non è lavoro per il GC ([ADR-0024](../adr/0024-memoria-e-gc.md)).
+→ Con ~15 % della RAM riservato a cache e runtime, un server da 64 GB ospita circa **750
+milioni** di documenti e uno da 128 GB circa **1,5 miliardi**. Questa memoria non è lavoro per
+il GC ([ADR-0024](../adr/0024-memoria-e-gc.md)). Il costo di affidabilità rispetto al layout
+precedente è +8 byte per entry (+17 %): accettato (ADR-0031).
 
 ## Tempo di riavvio
 
 | Strategia (QA-03) | Lavoro al riavvio per 1 miliardo di documenti / 2 TB | Ordine di grandezza |
 |---|---|---|
 | Ricostruzione dai segmenti | leggere 2 TB a 1–5 GB/s | da ~7 a ~35 minuti |
-| File di hint per segmento | leggere ~30–40 GB e reinserire 1 miliardo di entry | decine di secondi – pochi minuti |
+| File di hint per segmento | leggere ~32 GB e reinserire 1 miliardo di entry | decine di secondi – pochi minuti |
 | Checkpoint della tabella | caricare 30–40 GB + replay del WAL recente | decine di secondi |
 
 → La ricostruzione completa è accettabile come rete di sicurezza (l'indice è un dato

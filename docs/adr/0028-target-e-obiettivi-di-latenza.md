@@ -1,6 +1,6 @@
 # ADR-0028 — Target per Serie e aggregati; obiettivi numerici di latenza
 
-- **Stato:** Proposta (richiede conferma dell'autore: fissa obiettivi di prodotto)
+- **Stato:** Proposta (richiede conferma dell'autore: fissa obiettivi di prodotto). Rivista il 2026-10-03 in applicazione di [ADR-0031](0031-software-critico-criteri-e-priorita.md).
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-26; precisa «Target preliminari»
 - **Riferimenti:** [13 Benchmark](../13-benchmark.md), [stime](../valutazione/stime-ordine-di-grandezza.md)
@@ -36,3 +36,27 @@
 
 - *Target per Serie uguali agli aggregati:* incompatibile con un writer per Serie
   ([budget](../valutazione/stime-ordine-di-grandezza.md#budget-del-writer-logico)).
+
+## Revisione 2026-10-03: obiettivi e minimi vincolanti
+
+Con l'affidabilità come fine ultimo ([ADR-0031](0031-software-critico-criteri-e-priorita.md)) i
+target della specifica restano **obiettivi** e si aggiungono **minimi vincolanti**: valori
+ragionevoli, raggiungibili con tutti i controlli di affidabilità attivi
+([ADR-0033](0033-fail-stop-e-integrita-end-to-end.md), [ADR-0034](0034-policy-di-compilazione-e-standard-di-codifica.md)).
+Un minimo non raggiunto è un difetto; un obiettivo non raggiunto è un'informazione.
+
+| Operazione (hardware di riferimento) | Obiettivo (specifica) | **Minimo vincolante** |
+|---|---|---|
+| GET `_id`, cache/indice, aggregato | 1–4 M ops/s | **300 k ops/s** |
+| GET `_id`, NVMe, aggregato | 150–600 k ops/s | **50 k ops/s** |
+| INSERT `:group`, aggregato (≥ 8 Serie) | 300 k–1 M ops/s | **100 k ops/s** (≥ 25 k per Serie) |
+| UPDATE / DELETE, aggregato | 400 k–1,5 M ops/s | **100 k ops/s** |
+| Query indicizzata semplice | 500 k–2 M ops/s | **50 k ops/s** |
+| Scansione sequenziale | 1–5+ GB/s | **500 MB/s** |
+| CLEAN | 0,5–3+ GB/s | **200 MB/s** |
+| Transazioni multiserie `:group` | decine–centinaia di migliaia/s | **10 k tx/s** |
+| P99 delle operazioni | tabella sopra | **3 × i valori della tabella sopra** |
+| Pausa massima del GC (P99.9) | 5 ms | **20 ms** |
+
+I minimi sono proposte: l'autore le conferma o le modifica. Il costo dei controlli è misurato
+da SPK-09; i minimi si verificano con benchmark riproducibili (REQ-AFF-012).

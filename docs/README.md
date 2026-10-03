@@ -17,6 +17,7 @@ Ordine consigliato per chi arriva per la prima volta:
 2. [Modello logico](02-modello-logico.md) — Server, Archivio, Serie, Documento, Registri.
 3. [Invarianti](invarianti.md) — le regole che nessuna implementazione può violare.
 4. I documenti di sottosistema (tabella sotto), nell'ordine che serve.
+   Per l'approccio da software critico: [affidabilità](affidabilita/README.md).
 5. [Valutazione architetturale](valutazione/README.md) — che cosa regge, che cosa è
    rischioso, come lo si verifica.
 6. [Questioni aperte](questioni-aperte.md) — ciò che la specifica non decide ancora.
@@ -51,6 +52,8 @@ Progetto consolidato:
 | [Formati su disco](formati-su-disco.md) | Segmento, record, hint, indici, Bloom, control log, `multiserie.log`, catalogo |
 | [Limiti dimensionali](limiti.md) | Limiti hard dai formati e limiti pratici dall'hardware |
 | [Principi di ingegneria](principi-di-ingegneria.md) | Criterio di ammissione dei pattern; si scrive una volta sola |
+| [Affidabilità](affidabilita/README.md) | Software critico: caso di affidabilità, analisi dei guasti (FMEA), standard di codifica, piano di verifica, deviazioni |
+| [Tracciabilità](tracciabilita/README.md) | Requisiti `REQ-…`, matrice generata e controllata da `make trace` |
 
 Documenti trasversali:
 
@@ -94,7 +97,9 @@ una facoltà.
 
 **Identificativi.** `INV-…` invarianti, `QA-…` questioni aperte, `FI-…` scenari di fault
 injection, `M01…M18` moduli, `ADR-…` decisioni, `RSK-…` rischi, `SPK-…` spike. Gli
-identificativi sono stabili: non si rinumerano, si ritirano.
+identificativi sono stabili: non si rinumerano, si ritirano. Aggiunti da ADR-0031: `REQ-…`
+requisiti ([tracciabilità](tracciabilita/README.md)), `FM-…` modi di guasto, `COD-…` regole di
+codifica, `DEV-…` deviazioni, `COV-…` eccezioni di copertura.
 
 **Lingua.** Documentazione in italiano. I termini di dominio (Archivio, Serie, Documento,
 Registri, `multiserie.log`) restano in italiano anche nel codice; i termini tecnici consolidati

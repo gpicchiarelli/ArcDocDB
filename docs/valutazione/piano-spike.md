@@ -27,6 +27,7 @@ prodotto è una **misura con una raccomandazione**.
 | [SPK-06](#spk-06) | Interferenza della compaction e controllore di carico | QA-11, QA-12 | RSK-08, RSK-12 | 5 |
 | [SPK-07](#spk-07) | Modelli dei protocolli | QA-04, QA-06, QA-07, QA-09, QA-24 | RSK-02, RSK-05 | 3 |
 | [SPK-08](#spk-08) | SIMD e codice generato | QA-19 | RSK-11, RSK-16 | 5 |
+| [SPK-09](#spk-09) | Costo dei controlli di affidabilità | ADR-0033, ADR-0034 | RSK-19 | 1 |
 
 ---
 
@@ -125,8 +126,12 @@ prodotto è una **misura con una raccomandazione**.
   piccole: (1) 2PC con writer non bloccante, `multiserie.log`, recovery; (2) CLEAN/MERGE con
   writer concorrente, swap, reader, snapshot, reclaim. L'esploratore è un programma Common
   Lisp.
-- *Verifica:* INV-D1, INV-T3, INV-T4, INV-M1, INV-M2, INV-R1, INV-C7, INV-C8, INV-C9 negli
-  scenari FI-01…FI-12.
+- *Modelli aggiuntivi (ADR-0032, ADR-0033):* (3) il protocollo del seqlock a 64 bit con 1
+  writer, 2 reader, 2 slot, ogni interleaving e ogni sospensione, compreso il ripiego sul
+  writer; (4) l'**idempotenza del recovery**: interruzione del recovery in ogni passo e
+  riesecuzione.
+- *Verifica:* INV-D1, INV-T3, INV-T4, INV-M1, INV-M2, INV-R1, INV-C7, INV-C8, INV-C9, INV-I1,
+  INV-A7 negli scenari FI-01…FI-13.
 - *Esito:* nessuna violazione; in caso contrario il controesempio guida la decisione su QA-04,
   QA-06, QA-07, QA-24. I modelli restano come riferimento per i test di fault injection.
 
@@ -141,3 +146,22 @@ prodotto è una **misura con una raccomandazione**.
   supporto SIMD esplicito su x86-64 e ARM64.
 - *Esito:* elenco dei cicli dove il codice tipizzato basta e di quelli dove servirebbe un
   intervento; nessuna ottimizzazione viene introdotta in questa fase (INV-X1).
+
+### SPK-09
+
+**Costo dei controlli di affidabilità.**
+
+- *Domanda:* quanto costano, in Common Lisp tipizzato, i controlli che il progetto rende
+  obbligatori — CRC32C a ogni lettura, `safety` 2/3, scrubbing — e i minimi di prestazione di
+  [ADR-0028](../adr/0028-target-e-obiettivi-di-latenza.md) restano raggiungibili?
+- *Metodo:* (a) CRC32C in Lisp: bit a bit, a tabella (byte), *slicing-by-8*, con e senza
+  `(safety 3)`; (b) ciclo di lettura di un record da 2 KB con verifica di CRC, chiave, versione
+  e CSN, contro la stessa lettura senza verifica; (c) lo stesso ciclo compilato con `safety` 3,
+  `safety` 2 con `speed` 3 e (solo come riferimento, mai adottabile) `safety` 0, per
+  quantificare il prezzo dei controlli.
+- *Misure:* byte/s del CRC per core; ns per record; overhead percentuale per verifica e per
+  `safety`; allocazione per operazione (obiettivo: 0).
+- *Esito:* i minimi di throughput sono raggiungibili con **tutti** i controlli attivi e
+  `safety` ≥ 2. Se non lo sono: si cambia algoritmo (ad esempio slicing-by-8, verifica a
+  blocchi) e si registra in un ADR; **non** si rimuove un controllo (ADR-0031 §5).
+

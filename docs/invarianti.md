@@ -101,6 +101,19 @@ revisione del progetto o benchmark.
 | INV-V3 | Una rilocazione da compaction aggiorna una entry dell'indice solo se punta ancora alla location sorgente; non sovrascrive mai una versione più nuova. | [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) | FI-06, test di concorrenza |
 | INV-V4 | Ogni modifica allo stato di una Serie (indice, intenti, versioni trattenute, delta, contatori, control log) è applicata dal writer logico della Serie. | [architettura](architettura.md#contratti) | revisione |
 
+## Affidabilità (ADR-0031…0035)
+
+| ID | Invariante | Fonte | Verifica |
+|---|---|---|---|
+| INV-A1 | Un errore di scrittura, di flush, di rinomina o di sincronizzazione della directory non è mai ritentato né ignorato: la Serie (o l'Archivio, per `multiserie.log` e Registri) passa in `FAULTED` e nessuna operazione del lotto è confermata. | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md) | simulatore con errori di I/O; FI-02 |
+| INV-A2 | Ogni record letto, da disco o da cache, è verificato (CRC32C e corrispondenza di chiave, versione e CSN con l'indice) prima di essere restituito; un dato non verificato non lascia mai il motore. | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md) | corruzione deliberata, fuzzing, bit flip in memoria |
+| INV-A3 | Nessun codice di prodotto è compilato con `safety` inferiore a 2; i controlli di tipo e di limiti sono sempre attivi; `truly-the` è vietato. | [ADR-0034](adr/0034-policy-di-compilazione-e-standard-di-codifica.md) | `make lint`, compilazione senza avvisi |
+| INV-A4 | Nessun errore è silenzioso: ogni condizione di errore è un tipo dichiarato, gestito o propagato; `ignore-errors` è vietato; le asserzioni sugli invarianti restano attive in produzione e in C1 portano la Serie in `FAULTED`. | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md), [ADR-0034](adr/0034-policy-di-compilazione-e-standard-di-codifica.md) | `make lint`, revisione, mutation testing |
+| INV-A5 | Ogni requisito ha identificativo, fonte, classe e metodo di verifica; ogni invariante e ogni scenario di fault injection è coperto da almeno un requisito; la matrice è generata e controllata. | [ADR-0035](adr/0035-strategia-di-verifica-e-tracciabilita.md) | `make trace` |
+| INV-A6 | I segmenti chiusi sono verificati periodicamente (scrubbing) contro CRC, hint, indici e control log; ogni ciclo completo avviene entro 7 giorni; un errore porta il segmento in quarantena prima che serva. | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md) | test dello scrubber, metrica |
+| INV-A7 | Il recovery è idempotente: interromperlo in qualsiasi punto e rieseguirlo produce lo stesso stato finale. | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md) | interruzione in ogni punto nel simulatore |
+| INV-A8 | Ogni risorsa è limitata da un valore configurato e controllato (code, buffer, richieste, connessioni, snapshot, tentativi, ricorsione, memoria); il superamento produce un rifiuto esplicito, mai un degrado non definito; nessun ciclo è illimitato. | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md), [ADR-0032](adr/0032-seqlock-a-64-bit.md) | test di saturazione, revisione |
+
 ## Corrispondenza con i principi della specifica
 
 Tutti i 33 punti dei «Principi architetturali fondamentali» sono coperti: i principi che sono

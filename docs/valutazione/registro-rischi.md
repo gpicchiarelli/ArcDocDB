@@ -23,6 +23,10 @@
 | [RSK-14](#rsk-14) | Ampiezza del progetto | A | M | — | QA-23 |
 | [RSK-15](#rsk-15) | Bootstrap di Registri e del catalogo | B | M | — | QA-10 |
 | [RSK-16](#rsk-16) | Vincolo «solo Common Lisp» sulle primitive di I/O e SIMD | M | M | SPK-03, SPK-05, SPK-08 | QA-19, QA-22 |
+| [RSK-17](#rsk-17) | Copia unica dei dati: perdita del supporto = perdita dei dati | M | A | backup (ADR-0030), verificatore | — |
+| [RSK-18](#rsk-18) | Difetti nella base di fiducia: SBCL (compilatore, GC, runtime), sistema operativo, firmware | B | A | CI su due piattaforme, soak, controlli end-to-end | — |
+| [RSK-19](#rsk-19) | Il costo dei controlli di affidabilità (CRC in lettura, safety ≥ 2, scrubbing) supera il budget di prestazione | M | M | SPK-09 | — |
+| [RSK-20](#rsk-20) | Indipendenza della verifica limitata: autore unico | A | M | strumenti, liste di controllo, revisione su dati | — |
 
 ## Stato dopo gli ADR (2026-10-03)
 
@@ -34,7 +38,7 @@
 | RSK-04 | mitigato | ADR-0019: writer mai bloccato; ADR-0028: target per Serie = 1/4 dell'aggregato |
 | RSK-05 | mitigato sul progetto | ADR-0020/0021: CSN dopo decisione, attesa delle multiserie in applicazione, intenti no-wait; modello SPK-07 |
 | RSK-06 | mitigato | ADR-0021: group commit e troncamento per checkpoint |
-| RSK-07 | accettato, quantificato | ~48 B/entry; riavvio dagli hint (ADR-0015) |
+| RSK-07 | accettato, quantificato | ~56 B/entry (ADR-0032); riavvio dagli hint (ADR-0015) |
 | RSK-08 | accettato esplicitamente | ADR-0023: metrica e allarme, nessuna soglia di emergenza |
 | RSK-09 | mitigato | ADR-0020: durata massima degli snapshot |
 | RSK-10 | mitigato | ADR-0025: ri-etichettatura delle entry alla rilocazione |
@@ -44,6 +48,11 @@
 | RSK-14 | mitigato | ADR-0030: scope v1; roadmap a fette verticali |
 | RSK-15 | mitigato | ADR-0022: configurazione incorporata, macchina a stati DDL |
 | RSK-16 | mitigato | ADR-0017/0027: chiamate di sistema via contrib; primitive proprie |
+| RSK-17 | **aperto** | ADR-0030 (proposta): backup consistente e verificatore offline nella v1; mirroring in v1.1 |
+| RSK-18 | residuo dichiarato | ADR-0033/0034: verifica end-to-end, controlli sempre attivi; versione di SBCL fissata; CI su Linux e macOS |
+| RSK-19 | **aperto (quantitativo)** | ADR-0031 §5: i minimi di prestazione sono ragionevoli; SPK-09 misura il costo |
+| RSK-20 | residuo dichiarato | ADR-0031: strumenti automatici, lista di controllo, rilettura su dati |
+| RSK-02 (aggiornamento) | mitigato più a fondo | ADR-0032: seqlock a 64 bit, nessun argomento temporale |
 
 ---
 
@@ -186,3 +195,41 @@ e SIMD. Tutto deve essere ottenuto con SBCL, i suoi contrib ed eventuali libreri
   (checksum, hash); riaprire il vincolo con un ADR solo davanti a una misura.
 - *Lato positivo:* un solo linguaggio, un solo modello di memoria da capire, nessun confine
   foreign da attraversare sul hot path.
+
+### RSK-17
+
+**Copia unica dei dati.** Un solo dispositivo nella v1: la perdita del supporto è perdita dei
+dati, qualunque sia la qualità del software. Con l'affidabilità come fine ultimo è il rischio
+residuo più grande ([analisi dei guasti](../affidabilita/analisi-dei-guasti.md), RES-03).
+
+- *Mitigazioni:* backup consistente (segmenti chiusi, control log, hint a un CSN) verificabile
+  dal verificatore offline; i segmenti immutabili rendono il backup incrementale e poco
+  costoso; mirroring dei segmenti su un secondo percorso come estensione prevista.
+- *Decisione richiesta all'autore:* [ADR-0030](../adr/0030-scope-v1.md) (backup e verificatore
+  nella v1).
+
+### RSK-18
+
+**Base di fiducia.** Compilatore, GC e runtime di SBCL, kernel e firmware non sono qualificati.
+
+- *Mitigazioni:* verifica end-to-end (CRC e confronto con l'indice a ogni lettura); controlli
+  di tipo e limiti sempre attivi; versione di SBCL fissata; CI su Linux e macOS; soak test.
+- *Limite:* un difetto che produce un dato sbagliato **con CRC valido** non è rilevabile da
+  dentro.
+
+### RSK-19
+
+**Costo dei controlli.** CRC32C in Common Lisp tipizzato, `safety` ≥ 2, scrubbing in
+background: tutti consumano CPU e banda.
+
+- *Mitigazioni:* i minimi di prestazione di [ADR-0028](../adr/0028-target-e-obiettivi-di-latenza.md)
+  sono ragionevoli per costruzione; SPK-09 misura throughput del CRC (anche a tabelle) e
+  overhead; se un minimo non è raggiunto si interviene su algoritmi, non sui controlli.
+
+### RSK-20
+
+**Indipendenza limitata.** Chi scrive è anche chi verifica.
+
+- *Mitigazioni:* strumenti che non dipendono dall'autore (linter, tracciabilità, simulatore,
+  modelli, fuzzing, mutation testing); lista di controllo di revisione; rilettura da un secondo
+  revisore su dati verificabili ([piano di verifica](../affidabilita/piano-di-verifica.md)).

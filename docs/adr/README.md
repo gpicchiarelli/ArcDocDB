@@ -36,6 +36,20 @@ specifica.
 | [0011](0011-thread-pool-dinamico.md) | Thread pool dinamico con EWMA/AIMD/isteresi | Accettata |
 | [0012](0012-simd-guidato-dai-benchmark.md) | SIMD solo dove i benchmark lo giustificano | Accettata |
 
+## Software critico (Fase 0, 2026-10-03)
+
+Decisioni prese applicando i criteri del software critico richiesti dall'autore
+([ADR-0031](0031-software-critico-criteri-e-priorita.md)); formano un blocco con le
+[analisi di affidabilità](../affidabilita/README.md).
+
+| ADR | Decisione | Stato |
+|---|---|---|
+| [0031](0031-software-critico-criteri-e-priorita.md) | Gerarchia delle priorità (affidabilità sopra prestazioni), classi di integrità, rigore per classe | Accettata (emenda la specifica) |
+| [0032](0032-seqlock-a-64-bit.md) | Seqlock a 64 bit, tentativi limitati, ripiego sul writer; slot a 6 parole | Accettata (sostituisce in parte 0015) |
+| [0033](0033-fail-stop-e-integrita-end-to-end.md) | Fail-stop sugli errori di I/O, verifica in lettura, corruzione a metà log, scrubbing, verificatore offline, stati di salute | Accettata |
+| [0034](0034-policy-di-compilazione-e-standard-di-codifica.md) | `safety` ≥ 2, nessun avviso, divieti, linter | Accettata |
+| [0035](0035-strategia-di-verifica-e-tracciabilita.md) | Tracciabilità bidirezionale controllata, simulatore deterministico, livelli di verifica, criteri di rilascio | Accettata |
+
 ## Decisioni di progetto (Fase 0, 2026-10-03)
 
 Chiudono le [questioni aperte](../questioni-aperte.md). Ogni ADR cita il pattern adottato e

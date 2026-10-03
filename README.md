@@ -16,10 +16,12 @@
   <a href="docs/adr/0001-common-lisp-sbcl.md"><img src="https://img.shields.io/badge/Common%20Lisp-100%25-3f7a80.svg" alt="100% Common Lisp"></a>
   <a href="https://www.sbcl.org/"><img src="https://img.shields.io/badge/SBCL-2.6%2B-1f3f43.svg" alt="SBCL 2.6+"></a>
   <a href="docs/roadmap.md"><img src="https://img.shields.io/badge/phase-0%20%C2%B7%20architecture-d4a017.svg" alt="Phase 0: architecture"></a>
-  <a href="docs/adr/README.md"><img src="https://img.shields.io/badge/ADRs-30-5a9aa0.svg" alt="30 ADRs"></a>
-  <a href="docs/invarianti.md"><img src="https://img.shields.io/badge/invariants-42-5a9aa0.svg" alt="42 invariants"></a>
+  <a href="docs/adr/README.md"><img src="https://img.shields.io/badge/ADRs-35-5a9aa0.svg" alt="35 ADRs"></a>
+  <a href="docs/invarianti.md"><img src="https://img.shields.io/badge/invariants-50-5a9aa0.svg" alt="50 invariants"></a>
   <a href="docs/questioni-aperte.md"><img src="https://img.shields.io/badge/open%20questions-0-2e7d32.svg" alt="0 open questions"></a>
-  <a href="docs/valutazione/piano-spike.md"><img src="https://img.shields.io/badge/spikes-0%2F8-9e9e9e.svg" alt="Spikes 0/8"></a>
+  <a href="docs/tracciabilita/matrice.md"><img src="https://img.shields.io/badge/requirements-90%20traced-2e7d32.svg" alt="90 requirements traced"></a>
+  <a href="docs/affidabilita/README.md"><img src="https://img.shields.io/badge/design-safety--critical-b71c1c.svg" alt="Safety-critical design"></a>
+  <a href="docs/valutazione/piano-spike.md"><img src="https://img.shields.io/badge/spikes-0%2F9-9e9e9e.svg" alt="Spikes 0/9"></a>
   <img src="https://img.shields.io/badge/dependencies-0-2e7d32.svg" alt="Zero dependencies">
   <a href="https://github.com/gpicchiarelli/ArcDocDB/commits/main"><img src="https://img.shields.io/github/last-commit/gpicchiarelli/ArcDocDB.svg?color=3f7a80" alt="Last commit"></a>
   <a href="https://github.com/gpicchiarelli/ArcDocDB/commits/main"><img src="https://img.shields.io/github/commit-activity/m/gpicchiarelli/ArcDocDB.svg?color=3f7a80" alt="Commit activity"></a>
@@ -44,6 +46,10 @@ Most databases are built to be fast on launch day and unpredictable at the tail.
 designed backwards from **predictable P99**: a data layout where every write is one sequential
 append, every read is a lock-free probe in memory, and background work is strictly
 subordinate to user traffic.
+
+It is engineered like **safety-critical software**: reliability outranks speed, every
+requirement is traced to a verification by a tool, and a datum that cannot be verified is never
+returned — see [Reliability](#reliability).
 
 It is a **document** engine, not a CMS backend: it stores opaque, versioned documents under
 a unique `_id`, with schemas, secondary indexes, snapshots and transactions on top.
@@ -120,10 +126,31 @@ The full design is a single document: **[docs/architettura.md](docs/architettura
 | **Reclamation** | Epoch-based — no per-read shared writes | [0016](docs/adr/0016-epoch-based-reclamation.md) |
 | **Cache** | Keyed by immutable location: never stale, never invalidated | [0025](docs/adr/0025-cache-per-location.md) |
 | **Memory / GC** | Long-lived specialized arrays, zero allocation on hot paths | [0024](docs/adr/0024-memoria-e-gc.md) |
+| **Integrity** | End-to-end CRC32C on every read (disk *and* cache), fail-stop on any write/flush error, scrubbing, offline verifier | [0033](docs/adr/0033-fail-stop-e-integrita-end-to-end.md) |
+| **Code policy** | `safety` ≥ 2 always, zero compiler warnings, banned constructs checked by a linter | [0034](docs/adr/0034-policy-di-compilazione-e-standard-di-codifica.md) |
+| **Verification** | Deterministic simulation, model-checked protocols, fault injection, differential testing, fuzzing, mutation testing | [0035](docs/adr/0035-strategia-di-verifica-e-tracciabilita.md) |
 | **Dependencies** | None. SBCL and its contribs only; own CBOR, CRC32C, hash, test harness | [0027](docs/adr/0027-dipendenze-e-test.md) |
 
 Every pattern is admitted by one rule: *the best known solution for the problem, decided once,
 before the code* — see [principi di ingegneria](docs/principi-di-ingegneria.md).
+
+## Reliability
+
+Priorities, in order ([ADR-0031](docs/adr/0031-software-critico-criteri-e-priorita.md)):
+**committed data integrity → functional correctness → defined behaviour under faults →
+verifiability → availability → performance.** A lower priority never weakens a higher one.
+
+| What the design guarantees | How it is checked |
+|---|---|
+| No committed datum is lost or corrupted **without being detected and declared** | fault injection FI-01…FI-13, model of the protocols, offline verifier |
+| No silent wrong answer: unverified data never leaves the engine | verify-on-read, corruption testing, fuzzing |
+| Every fault in the [fault model](docs/affidabilita/analisi-dei-guasti.md) has a defined, tested response | 24-entry FMEA, each traced to a test |
+| Every requirement traces to a verification | [matrix](docs/tracciabilita/matrice.md), generated and checked by `make trace` |
+
+**What it cannot promise**, stated up front: survival of the loss of every copy of the data
+(hence backup in v1), a kernel or firmware that lies about a flush, defects in the compiler or
+runtime (made *detectable*, not impossible), and protection from an adversary. See the
+[assurance case](docs/affidabilita/README.md).
 
 ## Limits
 
@@ -133,7 +160,7 @@ before the code* — see [principi di ingegneria](docs/principi-di-ingegneria.md
 | Document | up to 16 MiB (default per-Serie cap 4 MiB) |
 | Segment | up to 4 GiB (default target 256 MiB) |
 | Versions per document | 2⁴⁰ |
-| Documents per server | ~1 billion per 64 GB of RAM (primary index lives in memory, ~48 B/entry) |
+| Documents per server | ~750 million per 64 GB of RAM, ~1.5 billion per 128 GB (primary index lives in memory, ~56 B/entry + key) |
 | Serie per Archivio | thousands out of the box |
 
 Full table, with the origin of each limit: **[docs/limiti.md](docs/limiti.md)**.
@@ -145,9 +172,10 @@ Full table, with the origin of each limit: **[docs/limiti.md](docs/limiti.md)**.
 | | |
 |---|---|
 | ✅ Specification, consolidated architecture, on-disk formats | [specifica](docs/specifica/prompt-originale.md) · [architettura](docs/architettura.md) · [formati](docs/formati-su-disco.md) |
-| ✅ 26 open questions closed by 30 ADRs | [ADR](docs/adr/README.md) |
+| ✅ 26 open questions closed; safety-critical criteria adopted — 35 ADRs | [ADR](docs/adr/README.md) |
+| ✅ Fault model (FMEA), coding standard, verification plan, 90 traced requirements | [affidabilità](docs/affidabilita/README.md) · [tracciabilità](docs/tracciabilita/README.md) |
 | ✅ Critical evaluation, estimates, risk register | [valutazione](docs/valutazione/README.md) |
-| ⏳ Spikes: GC pauses, primary index, concurrent flush, protocol model | [piano](docs/valutazione/piano-spike.md) |
+| ⏳ Spikes: GC pauses, primary index, concurrent flush, protocol model, cost of the integrity checks | [piano](docs/valutazione/piano-spike.md) |
 | ⏳ Author sign-off on targets and v1 scope | [ADR-0028](docs/adr/0028-target-e-obiettivi-di-latenza.md) · [ADR-0030](docs/adr/0030-scope-v1.md) |
 
 Performance numbers in the documents are **targets or estimates**, never results
@@ -161,7 +189,7 @@ Requires SBCL and ASDF (bundled with SBCL). Nothing else.
 ```bash
 git clone https://github.com/gpicchiarelli/ArcDocDB.git
 cd ArcDocDB
-make check      # smoke tests + documentation link/anchor check
+make check      # strict build + tests, linter (+ self-test), traceability, doc links
 ```
 
 ## Repository map
@@ -171,7 +199,7 @@ make check      # smoke tests + documentation link/anchor check
 | [`docs/`](docs/README.md) | specification, design, evaluation, ADRs, invariants, glossary |
 | [`src/`](src) · [`tests/`](tests) | ASDF system (minimal in Phase 0) |
 | [`spikes/`](spikes/README.md) | disposable experiments, one folder per spike |
-| [`tools/`](tools) | repository tooling, in Common Lisp |
+| [`tools/`](tools) | strict build, linter, traceability and link checkers — all Common Lisp |
 
 ## Contributing
 
