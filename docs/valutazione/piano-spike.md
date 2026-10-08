@@ -28,6 +28,7 @@ prodotto è una **misura con una raccomandazione**.
 | [SPK-07](#spk-07) | Modelli dei protocolli | QA-04, QA-06, QA-07, QA-09, QA-24 | RSK-02, RSK-05 | 3 |
 | [SPK-08](#spk-08) | SIMD e codice generato | QA-19 | RSK-11, RSK-16 | 5 |
 | [SPK-09](#spk-09) | Costo dei controlli di affidabilità | ADR-0033, ADR-0034 | RSK-19 | 1 |
+| [SPK-10](#spk-10) | Limiti, formati e migrazione v2 | ADR-0048 | RSK-02, RSK-07, RSK-19 | 1, prima del motore |
 
 ---
 
@@ -207,3 +208,20 @@ prodotto è una **misura con una raccomandazione**.
 ## Estensione v2 da eseguire
 
 SPK-01: slot a 5 parole, chiavi fino a 65.535 byte, budget delle arene e split. SPK-09: lunghezze v2, documento 16 MiB/16 MiB+1, chiavi ai confini, profondità 100/101, fuzzing e conversione interrotta. Le misure v1 rimangono valide solo per v1. ADR-0049 richiede inoltre un esperimento oltre RAM con indice maggiore della cache.
+
+### SPK-10
+
+**Limiti, formati e migrazione v2.**
+
+- *Domanda:* il contratto di ADR-0048 è rappresentabile e controllato nei confini
+  senza interpretare v1 come v2, allocare da lunghezze non verificate o perdere sorgenti?
+- *Metodo:* [quattro moduli](../../spikes/SPK-10-v2-limits/README.md) in parallelo:
+  codec e hint con versioni esplicite, frammento con slot v2 e arene limitate,
+  validatore CBOR iterativo e modello finito della conversione. Check indipendenti,
+  compilazione stretta e integrazione del parent; benchmark in serie.
+- *Misure:* throughput e allocazioni di verifica e lookup per chiavi di diverse
+  lunghezze, byte dell'arena e picco transitorio; stati e controesempi di migrazione.
+- *Esito:* fixture ai confini, rifiuti espliciti su overflow, troncamenti e budget;
+  mutanti di pubblicazione non verificata o reclaim precoce rilevati. Subset CBOR,
+  directory, memoria debole e filesystem reale non coperti sono dichiarati, non
+  assunti verificati. Il gate del motore resta distinto dal successo dello spike.

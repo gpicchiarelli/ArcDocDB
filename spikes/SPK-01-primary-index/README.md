@@ -265,6 +265,39 @@ dell'agente. I numeri di `inline-hash-100k.sexp` descrivono il kernel hash
 precedente a questo microfix. Il parent esegue le repliche con heap 4 GiB
 a 100.000 e 10^7 documenti, riportando allocazione residua effettiva.
 
+**Esito della verifica** — `--check` passato con compilazione senza warning
+o style-warning, incluse larghezze 4/5, golden del FASL precedente, CSN/location
+u64 alti, root hit/miss, fallback forzato e thread con cleanup. Disassemblato
+in `out/reader-after-microfix-disassembly.txt`: `leggi` resta autonoma; kernel
+hash e helper elencati sono incorporati, senza chiamate alle funzioni ponte.
+Aritmetica e accessi u64 sono visibili; restano tre rami di boxing da 32 byte
+per CSN/location/CSN finale quando non rappresentabili come fixnum, al confine
+dei valori restituiti. Le barriere ARM64 e i controlli degli array restano nel
+codice. Nessuna misura di allocazione dopo questo microfix è stata eseguita
+dall'agente.
+
+Il disassemblato precedente di `scrivi-chiave`, conservato in
+`out/key-before-microfix-disassembly.txt`, già mostrava XOR e scrittura byte
+senza allocazione sul percorso valido; non si attribuisce quindi un risparmio
+di 32 byte/op alla sola dichiarazione di `alto`. L'effetto degli INLINE sulle
+allocazioni del reader va misurato nelle repliche del parent.
+
 ## Ambito del formato
+
+### Repliche del parent con heap 4 GiB
+
+> **Proposta (profilazione successiva)** — isolare generazione della chiave,
+> hash con risultato in array u64 e API `leggi` su chiave fissa. Dopo warmup,
+> un milione di chiamate per caso, processo dedicato: clock e byte allocati
+> del processo. Confrontare `speed 2` e `speed 3` nel reader mantenendo
+> `safety 3`; nessun cambio del formato o dei controlli. Questa diagnostica
+> serve ad attribuire il residuo, non misura il database.
+
+La [campagna pubblicata](../../docs/valutazione/risultati-2026-10-08.md) conserva
+anche i risultati dopo il microfix completo: GET 3,557 M/s e 47,99 B/op a
+100.000 documenti; 2,098 M/s e 48,00 B/op a 10 milioni, con 75.400.960 GET
+effettivi. Alla scala maggiore: 82,21 B/doc di payload e massimo split
+98,827 ms, causa non profilata. Nessuna garanzia di allocazione nulla o pausa
+indipendente dalla dimensione. I dati grezzi identificano sorgenti e comandi.
 
 Questo esperimento esercita il layout v1. Il layout v2 a 5 parole e le chiavi estese di ADR-0048 richiedono una campagna distinta: i risultati qui non lo verificano.

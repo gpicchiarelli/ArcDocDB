@@ -16,6 +16,10 @@ SPK-03, SPK-07, SPK-09, con `make spikes-check` e `make spikes-bench`. SPK-07 ha
 trovato un controesempio nell'anello dell'orizzonte, corretto da
 [ADR-0046](adr/0046-orizzonte-con-registro-limitato.md).
 
+La [campagna locale 2026-10-08](valutazione/risultati-2026-10-08.md) conserva
+misure e dati grezzi dei cinque spike v1. Restano il formato v2, i modelli
+mancanti e le misure sulla piattaforma di riferimento; il gate non è chiuso.
+
 ## Fase 0 — Definizione architetturale e valutazione
 
 Scopo: arrivare all'implementazione con le decisioni strutturali prese, i rischi principali

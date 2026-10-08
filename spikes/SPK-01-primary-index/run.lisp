@@ -4,9 +4,10 @@
 
 (defun spk01-opzioni (args)
   (let ((mode :bench) (options nil))
-    (when (and args (member (first args) '("--check" "--bench") :test #'string=))
-      (setf mode (if (string= (pop args) "--check") :check :bench)))
-    (when (and (eq mode :check) args) (error "--check non accetta opzioni benchmark."))
+    (when (and args (member (first args) '("--check" "--bench" "--profile") :test #'string=))
+      (setf mode (cdr (assoc (pop args) '(("--check" . :check) ("--bench" . :bench)
+                                       ("--profile" . :profile)) :test #'string=))))
+    (when (and (not (eq mode :bench)) args) (error "Check/profile non accettano opzioni benchmark."))
     (loop repeat (ceiling (length args) 2) do
       (let* ((name (pop args)) (value (pop args))
              (key (cdr (assoc name '(("--documents" . :documents) ("--seconds" . :seconds)
@@ -36,8 +37,19 @@
              (benchmark (symbol-function (or (find-symbol "BENCHMARK" package)
                                             (error "BENCHMARK assente."))))
              (verification (funcall check)))
-        (if (eq mode :check) verification
-            (list :spike :spk-01 :check verification :benchmark (apply benchmark options)))))))
+        (case mode
+          (:check verification)
+          (:profile
+           (handler-bind ((warning (lambda (c) (error "Compilazione profilo: ~A" c))))
+             (multiple-value-bind (output warnings failure)
+                 (compile-file (merge-pathnames "profile.lisp" base)
+                               :output-file (merge-pathnames "out/profile.fasl" base)
+                               :verbose nil :print nil)
+               (when (or warnings failure (null output)) (error "Compilazione profilo fallita."))
+               (load output :verbose nil :print nil)))
+           (funcall (symbol-function (find-symbol "PROFILE" package))))
+          (:bench (list :spike :spk-01 :check verification
+                        :benchmark (apply benchmark options))))))))
 
 (let ((*read-eval* nil) (*print-readably* nil) (*print-escape* t) (*print-pretty* t))
   (handler-case (progn (write (spk01-main)) (terpri) (finish-output))

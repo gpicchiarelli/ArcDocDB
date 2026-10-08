@@ -5,8 +5,16 @@
 Esperimenti della fase di valutazione. Il piano, con domande, metodi e criteri di esito, è in
 [docs/valutazione/piano-spike.md](../docs/valutazione/piano-spike.md).
 
+La [campagna locale 2026-10-08](../docs/valutazione/risultati-2026-10-08.md)
+conserva misure e [dati grezzi](results/2026-10-08/baseline.lisp) nel repository.
+Gli esperimenti usano il formato v1; non verificano il formato v2.
+
+I limiti aggiornati hanno un esperimento distinto:
+[SPK-10 — limiti, formati e migrazione v2](SPK-10-v2-limits/README.md).
+
 ## Regole
 
+- Ogni prova e benchmark segue il [registro strutturato](../docs/valutazione/registro-delle-prove.md), compresi fallimenti e diagnostiche.
 - Codice **solo Common Lisp** su SBCL ([ADR-0001](../docs/adr/0001-common-lisp-sbcl.md)).
 - Uno spike è codice usa-e-getta: non viene promosso a codice di produzione; al più ne ispira
   il progetto.

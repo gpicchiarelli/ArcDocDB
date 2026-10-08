@@ -82,7 +82,27 @@ acquisite; le decisioni 0036–0045 li chiudono sul progetto. Restano da verific
 
 ---
 
+## Stato dopo la prima campagna locale (2026-10-08)
+
+Fonte: [misure e dati grezzi](risultati-2026-10-08.md). Nessun rischio è chiuso
+dai soli microbenchmark v1; il formato v2 richiede evidenze proprie.
+
+| Rischio | Evidenza | Azione restante |
+|---|---|---|
+| RSK-01 | 48 casi a 128 MiB; chiamate GC con 64 worker attivi possono durare decine di ms o più; non è tempo STW esatto | pool reale, worker parcheggiati/I/O, heap grandi e Linux |
+| RSK-02, RSK-07 | check differenziale e stress passano; 64,23 B/doc di payload a 100.000 documenti; costo O(2^G) della directory precisato da ADR-0050 | scala, churn lungo, layout v2, pubblicazione e memoria debole |
+| RSK-03, RSK-11 | F_FULLFSYNC circa 4 ms con un file; mediana circa 12 ms con quattro file | pipeline reale, numero di Serie, campagna Linux e fault injection |
+| RSK-05 | anello dell'orizzonte corretto; prova del CSN prepared aggiunta con ADR-0047 | resolver autorevole, interleaving mancanti e crash reali |
+| RSK-19 | slicing-by-8 circa 0,7 GB/s sui corpi; inline evita boxing osservato del CSN nel kernel verificato | I/O, v2, disassemblato x86-64 e misura del percorso completo |
+
+Le vecchie righe sul costo C della manutenzione e sull'assenza di picchi sono
+storiche: slot, chiavi, directory, oggetti trattenuti e collector hanno costi
+distinti. La correzione non aggiunge coordinamento fra Serie.
+
+---
+
 ### RSK-01
+
 
 **Pause del GC di SBCL.** Il collector di SBCL ferma tutti i thread durante una collezione:
 è una contesa *globale*, che attraversa l'isolamento tra Serie. Con heap grandi e alta

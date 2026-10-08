@@ -18,6 +18,8 @@ che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
 | [Stime di ordine di grandezza](stime-ordine-di-grandezza.md) | Plausibilità dei target rispetto ai limiti dell'hardware |
 | [Registro dei rischi](registro-rischi.md) | Rischi `RSK-…` con esposizione, mitigazione e verifica |
 | [Piano degli spike](piano-spike.md) | Esperimenti `SPK-…` che misurano le ipotesi critiche |
+| [Risultati locali 2026-10-08](risultati-2026-10-08.md) | Campagna seriale, output grezzi, ottimizzazioni, limiti e lavoro restante |
+| [Registro delle prove](registro-delle-prove.md) | Schema, metadata, conservazione di prove, diagnostiche, fallimenti e benchmark |
 
 ## Criteri di valutazione
 
@@ -123,3 +125,22 @@ dalla verifica dei requisiti del motore, che conservano lo stato `progettato`.
 assegnato, un formato persistente e un criterio di verifica. La Fase 0 si chiude con
 l'esecuzione di SPK-01, SPK-02, SPK-03 e del modello SPK-07, che confermano o sostituiscono
 (con nuovi ADR, non con ritocchi) le ipotesi quantitative.
+
+## Evidenze locali 2026-10-08
+
+La [prima campagna](risultati-2026-10-08.md) completa i cinque runner: indice v1
+a 100.000 documenti, GC a 128 MiB con 48 profili, 12 casi append/flush, modelli
+finiti e CRC/OUTCOME. L'inlining del verificatore conserva `safety 3` ed elimina
+le allocazioni osservate nel benchmark anche per CSN massimo. Il throughput
+dell'indice iniziale non nasconde 152 byte allocati per lookup: è il primo
+percorso da ottimizzare. La directory ha costo separato dagli slot
+([ADR-0050](../adr/0050-pubblicazione-e-costi-della-directory.md)).
+
+GC con molti worker attivi e flush durevoli concorrenti restano vincoli da
+misurare nel pool reale. I risultati sono locali e v1: non chiudono i minimi,
+il gate v2, le scale superiori, la piattaforma Linux o il modello completo.
+
+La replica dell'indice v1 a **10 milioni di documenti** completa gli INSERT,
+misura 2,098 M GET/s e 82,21 B/doc di payload. L'inlining riduce le allocazioni
+GET a circa 48 B/op nel campione da 100.000; il massimo split alla scala maggiore
+è 98,827 ms. Restano profiling, scala superiore e v2: non si chiude il rischio.

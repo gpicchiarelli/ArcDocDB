@@ -165,6 +165,13 @@ caricare il core compilato e invocare l'API:
 
 ## Limiti e risultato
 
+Il parent ha eseguito le misure estese in serie e il confronto con verificatore
+e accumulatore inline. [Risultati e dati grezzi](../../docs/valutazione/risultati-2026-10-08.md):
+il kernel verificato a `safety 3` con corpo da 2.048 byte e CSN massimo passa da
+circa 5.103 a 4.947 ns/op e da 31,864 B/op a zero byte osservati nella finestra.
+I controlli restano identici. Questo non dimostra zero allocazioni per il parser
+pubblico o per altri workload, né verifica il formato v2.
+
 Verifica eseguita il 2026-10-08: SBCL 2.6.9, ARM64, Apple M4, Darwin 27.0.0
 (dati restituiti dal runtime). `--check` passa con compilazione stretta e senza
 warning/style-warning. Verificato anche il comando assoluto da `/tmp`.

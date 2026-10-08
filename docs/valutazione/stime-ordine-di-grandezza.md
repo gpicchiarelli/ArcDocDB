@@ -45,6 +45,17 @@ secondo, ~4.000 segmenti per TB.
 
 ## Memoria del primary index
 
+Misura locale v1: 64,22656 B/documento di payload degli array a 100.000
+documenti, prima e dopo 50.000 sostituzioni di chiave
+([campagna 2026-10-08](risultati-2026-10-08.md)). Esclusi header, runtime,
+garbage e frammenti trattenuti: non sostituisce le stime di capacità v2.
+Il costo della directory e della memoria transitoria è separato da C slot
+([ADR-0050](../adr/0050-pubblicazione-e-costi-della-directory.md)).
+
+A 10 milioni di documenti il payload v1 misurato è 82,2099968 B/doc,
+822.099.968 byte. Il dato supera il valore a 100.000 documenti perché cambia
+il riempimento dei frammenti; non è una capacità garantita o un dato v2.
+
 Layout deciso in [ADR-0043](../adr/0043-primary-index-a-frammenti.md): frammenti a capacità
 fissa, 1 byte di controllo + 4 parole da 64 bit per slot (CSN, location, chiave e lunghezza,
 contatore seqlock) = **33 byte per slot**, più le chiavi nell'area locale del frammento (16
