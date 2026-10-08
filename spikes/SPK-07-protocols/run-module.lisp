@@ -1,0 +1,33 @@
+;;;; Runner C4 di un modello SPK-07, con compilazione rigorosa.
+;;; REQ: REQ-VAL-001 REQ-AFF-017
+(require :asdf)
+(require :sb-posix)
+(declaim (optimize (safety 3) (debug 3)))
+
+(defun compila-modello (source output)
+  "Avvisi e valori warnings/failure sono fatali; solo il FASL valido è caricato."
+  (handler-bind ((warning (lambda (c) (error "Compilazione modello: ~A" c))))
+    (multiple-value-bind (fasl warnings failure)
+        (compile-file source :output-file output :verbose nil :print nil)
+      (when (or warnings failure (null fasl)) (error "Modello non compilato: ~A" source))
+      (load fasl :verbose nil :print nil))))
+
+(let* ((args (uiop:command-line-arguments))
+       (moduli '(("pubblicazione" . "ARCDOCDB.SPK07.PUBBLICAZIONE")
+                 ("scadenza" . "ARCDOCDB.SPK07.SCADENZA")
+                 ("compaction" . "ARCDOCDB.SPK07.COMPACTION")
+                 ("memoria" . "ARCDOCDB.SPK07.MEMORIA")))
+       (entry (assoc (first args) moduli :test #'equal))
+       (base (uiop:pathname-directory-pathname *load-truename*))
+       (out (merge-pathnames (format nil "out/module-~D-~D/" (get-universal-time)
+                                    (sb-posix:getpid)) base)))
+  (unless (and (= (length args) 1) entry) (error "Uso: run-module.lisp nome-modello"))
+  (ensure-directories-exist out)
+  (compila-modello (merge-pathnames "core.lisp" base) (merge-pathnames "core.fasl" out))
+  (compila-modello (merge-pathnames (format nil "~A.lisp" (car entry)) base)
+                  (merge-pathnames "module.fasl" out))
+  (let* ((package (find-package (cdr entry))) (symbol (and package (find-symbol "CHECK" package))))
+    (unless (and symbol (fboundp symbol)) (error "API del modello assente: ~A" (cdr entry)))
+    (let ((result (funcall (symbol-function symbol))) (*print-readably* t))
+      (unless (eq :ok (getf result :status)) (error "Modello fallito: ~S" result))
+      (write result :pretty t) (terpri))))
