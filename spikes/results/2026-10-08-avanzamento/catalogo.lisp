@@ -48,5 +48,11 @@
   (:ARTIFACT #A((24) BASE-CHAR . "merged-verification.lisp") :VARIANT
    #A((12) BASE-CHAR . "merged-check") :FORMATS NIL)
   (:ARTIFACT #A((24) BASE-CHAR . "merged-spikes-check.lisp") :VARIANT
-   #A((19) BASE-CHAR . "merged-spikes-check") :FORMATS NIL))
+   #A((19) BASE-CHAR . "merged-spikes-check") :FORMATS NIL)
+  (:ARTIFACT #A((23) BASE-CHAR . "final-verification.lisp") :VARIANT
+   #A((17) BASE-CHAR . "final-clean-check") :FORMATS NIL)
+  (:ARTIFACT #A((23) BASE-CHAR . "final-spikes-check.lisp") :VARIANT
+   #A((18) BASE-CHAR . "final-spikes-check") :FORMATS NIL)
+  (:ARTIFACT #A((25) BASE-CHAR . "final-evidence-check.lisp") :VARIANT
+   #A((20) BASE-CHAR . "final-evidence-check") :FORMATS NIL))
  :LIMITS (:LOCAL-CAMPAIGN :FINITE-DOMAIN :NO-PRODUCT-READINESS-CLAIM))
