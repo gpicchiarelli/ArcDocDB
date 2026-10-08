@@ -60,6 +60,8 @@
   (:kind :failed-attempt :formats nil :variant :writer-pool-parking-compilation
    :artifact "spk04-check-parking-failed.lisp"
    :process-artifact "spk04-check-parking-failed-process.lisp")
+  (:kind :failed-attempt :formats nil :variant :checkpoint-link-verification
+   :artifact "checkpoint-links-failed.lisp")
   (:kind :recorder-negative-control :formats nil :variant :command-exit1
    :artifact "record-command-expected-failure.lisp" :expected-exit-code 1))
  :limits (:local-campaign :partial-product-coverage :no-reference-platform-claim))

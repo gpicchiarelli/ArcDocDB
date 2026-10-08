@@ -136,7 +136,7 @@ Il record conserva anche i tentativi precedenti se occorrono riparazioni.
 Compilazione strict: `:status :ok`, `warnings nil`, `failure nil`; caricamento
 del FASL e `check`: `:status :ok`. Stdout/stderr catturati vuoti, nessun warning
 o style-warning. Il risultato e i blob sono in
-[`out/migrazione-check.lisp`](out/migrazione-check.lisp), una singola plist
+[`v2-migrazione-check.lisp`](../results/2026-10-08/v2-migrazione-check.lisp), una singola plist
 schema 1 leggibile con `*read-eval* nil`. Il sorgente verificato ha blob Git
 `cab850dc32ff9908b487b24edf3e1df2cc90008c`; il CRC reference SPK-09 ha blob
 `80cdac4c0e52703618e1f274413b2ecbe00e6b14`.
