@@ -114,4 +114,9 @@
    :FORMATS NIL)
   (:ARTIFACT #A((26) BASE-CHAR . "verifica-integrazione.lisp") :VARIANT
    #A((48) BASE-CHAR . "make check su commit integrato e checkout pulito")
+   :FORMATS NIL)
+  (:ARTIFACT #A((38) BASE-CHAR . "verifica-pubblicazione-incompleta.lisp")
+   :VARIANT
+   #A((74) BASE-CHAR
+      . "verifica fallita: artefatto composito mancante, errore del packaging :pass")
    :FORMATS NIL)))

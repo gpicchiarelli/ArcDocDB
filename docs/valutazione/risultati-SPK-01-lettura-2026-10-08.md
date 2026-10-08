@@ -162,3 +162,7 @@ include output originali e risultati di ogni processo, conservando anche
 le dipendenze del lavoro già integrato su I/O e bitmap. Le note informative
 del compilatore SBCL rimangono negli stream originali. La verifica non
 promuove requisiti del motore sulla base delle sole prove sperimentali.
+È conservato il [rifiuto durante la pubblicazione](../../spikes/results/2026-10-08-lettura/verifica-pubblicazione-incompleta.lisp):
+il packager iniziale non accettava il risultato legacy `:pass` e il catalogo
+riferiva un artefatto composito ancora mancante. Il packaging corretto conserva
+gli esiti originali `:ok`/`:pass`; la verifica viene ripetuta prima del push.
