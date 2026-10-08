@@ -86,6 +86,12 @@
    :artifact "spk07-scadenza-003.lisp")
   (:kind :module-check :formats nil :variant :compaction-with-active-writer
    :artifact "spk07-compaction-campaign.lisp" :includes-failed-attempts t)
+  (:kind :command-verification :formats nil :variant :protocols-trace-regeneration
+   :artifact "spk07-final-trace-write.lisp")
+  (:kind :command-verification :formats (1 2) :variant :protocols-clean-checkout-final
+   :artifact "spk07-final-verification.lisp")
+  (:kind :check :formats (1 2) :variant :full-spikes-with-protocol-extensions
+   :artifact "spk07-final-spikes-check.lisp")
   (:kind :recorder-negative-control :formats nil :variant :command-exit1
    :artifact "record-command-expected-failure.lisp" :expected-exit-code 1))
  :limits (:local-campaign :partial-product-coverage :no-reference-platform-claim))
