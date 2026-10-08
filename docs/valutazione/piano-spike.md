@@ -120,6 +120,12 @@ prodotto è una **misura con una raccomandazione**.
 
 **Percorso di lettura dei segmenti.**
 
+> **Proposta** — [Esperimento eseguibile](../../spikes/SPK-05-segment-read/README.md)
+> su file immutabili da 16 MiB: confronto pread/mmap con lo stesso verificatore,
+> accessi casuali e scansioni, 1/2/4 worker e tre repliche. Il metodo dichiara
+> page cache non controllata, payload sintetico e profilo di allocazione separato;
+> dataset oltre RAM, cache propria e piattaforma di riferimento restano da misurare.
+
 - *Domanda:* come si legge un record da un segmento immutabile senza copiare né allocare, e
   con quale concorrenza di I/O?
 - *Metodo:* confronto tra letture posizionali in buffer riutilizzati e mappatura in memoria;

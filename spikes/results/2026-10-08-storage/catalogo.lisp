@@ -1,0 +1,36 @@
+(:SCHEMA-VERSION 1 :KIND :EVIDENCE-CATALOG :DATE "2026-10-08" :PATH-BASE
+ #A((34) BASE-CHAR . "spikes/results/2026-10-08-storage/") :ENTRIES
+ ((:KIND :CHECK :FORMATS (1 2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "check-iniziale.lisp")
+  (:KIND :CHECK :FORMATS (1 2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "check-confini.lisp")
+  (:KIND :TOOL-SELF-TEST :FORMATS NIL :VARIANT :STORAGE-METADATA :ARTIFACT
+   "benchmark-self-test.lisp")
+  (:KIND :BENCHMARK :FORMATS (2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "benchmark-iniziale.lisp")
+  (:KIND :TOOL-SELF-TEST :FORMATS NIL :VARIANT :STORAGE-METADATA :ARTIFACT
+   "copertura-self-test.lisp")
+  (:KIND :COVERAGE :FORMATS (1 2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "copertura-iniziale.lisp")
+  (:KIND :TOOL-SELF-TEST :FORMATS NIL :VARIANT :STORAGE-METADATA :ARTIFACT
+   "mutazioni-self-test.lisp")
+  (:KIND :FAILED-ATTEMPT :FORMATS (1 2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "mutazioni-iniziali-fallite.lisp")
+  (:KIND :CHECK :FORMATS (1 2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "check-finale.lisp")
+  (:KIND :MUTATION :FORMATS (1 2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "mutazioni-finali.lisp")
+  (:KIND :MUTATION-REGRESSION :FORMATS (1 2) :VARIANT :STORAGE-METADATA
+   :ARTIFACT "mutazioni-fondazioni.lisp")
+  (:KIND :BENCHMARK :FORMATS (2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "benchmark-finale.lisp")
+  (:KIND :COVERAGE :FORMATS (1 2) :VARIANT :STORAGE-METADATA :ARTIFACT
+   "copertura-finale.lisp")
+  (:KIND :FAILED-ATTEMPT :FORMATS (1 2) :VARIANT :UNMATCHED-PARENTHESIS
+   :ARTIFACT "compilazione-iniziale-fallita.lisp")
+  (:KIND :RAW-COVERAGE :FORMATS (1 2) :ARTIFACT "copertura-dati.lisp")
+  (:KIND :INTEGRATED-CHECK :FORMATS (1 2) :ARTIFACT "verifica-integrata.lisp")
+  (:KIND :TOOL-SELF-TEST :FORMATS NIL :ARTIFACT
+   "benchmark-self-test-integrato.lisp")
+  (:KIND :TOOL-SELF-TEST :FORMATS NIL :ARTIFACT
+   "mutazioni-self-test-integrato.lisp")))

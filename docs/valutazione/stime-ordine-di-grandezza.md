@@ -144,6 +144,12 @@ volo contemporaneamente.
 asincrono. Il thread pool dinamico deve distinguere i worker che usano CPU da quelli in attesa
 di I/O (QA-19), e la scelta va fatta con il vincolo «solo Common Lisp».
 
+> **Proposta** — La [campagna SPK-05](risultati-SPK-05-2026-10-08.md)
+> misura un file appena scritto da 16 MiB, con page cache non controllata.
+> Non sostituisce le stime NVMe sopra e non conferma il target GET: servono
+> dataset oltre RAM e piattaforma di riferimento. Il delta di allocazione
+> nullo del ciclo isolato non include indice, cache o servizio della richiesta.
+
 ## Group commit
 
 Sia *f* la durata di un flush. Una Serie può fare al più 1/*f* flush al secondo; ogni

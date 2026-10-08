@@ -196,6 +196,10 @@ cache indicizzata per location perde il calore dei record spostati.
 - *Mitigazioni:* decidere la modalità di lettura (QA-19); valutare il trasferimento delle
   entry calde durante la compaction; misurare prima di complicare.
 
+> **Proposta** — La [campagna SPK-05](risultati-SPK-05-2026-10-08.md)
+> confronta pread e mapping su file da 16 MiB. Non esercita cache propria,
+> rilocazioni o dataset oltre RAM: RSK-10 rimane quantitativamente aperto.
+
 ### RSK-11
 
 **Piattaforme.** Sviluppo su macOS/ARM64; l'hardware di riferimento (16–32 core, NVMe PCIe
@@ -247,6 +251,11 @@ e SIMD. Tutto deve essere ottenuto con SBCL, i suoi contrib ed eventuali libreri
 - *Mitigazioni:* verificare negli spike che flush, letture posizionali e operazioni atomiche
   siano disponibili senza allocazione; scrivere in Common Lisp le poche primitive necessarie
   (checksum, hash); riaprire il vincolo con un ADR solo davanti a una misura.
+
+> **Proposta** — [SPK-05](risultati-SPK-05-2026-10-08.md) esegue pread,
+> mmap e verifica CRC in Common Lisp/SBCL su macOS ARM64. Il ciclo isolato
+> finale non mostra allocazioni nel campione; Linux e le altre primitive
+> rimangono da verificare. La disponibilità locale non chiude RSK-16.
 - *Lato positivo:* un solo linguaggio, un solo modello di memoria da capire, nessun confine
   foreign da attraversare sul hot path.
 

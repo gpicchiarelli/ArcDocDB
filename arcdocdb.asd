@@ -16,7 +16,12 @@
                 :serial t
                 :components ((:file "package") (:file "conditions")
                              (:file "binary") (:file "crc32c")
-                             (:file "record") (:file "batch"))))
+                             (:file "record") (:file "batch")))
+               (:module "storage"
+                :serial t
+                :components ((:file "package") (:file "formats") (:file "segment-header")
+                             (:file "control-payload") (:file "payload-record")
+                             (:file "payload-write"))))
   :in-order-to ((test-op (test-op "arcdocdb/tests"))))
 
 (defsystem "arcdocdb/tests"
@@ -30,7 +35,12 @@
                (:module "foundation"
                 :serial t
                 :components ((:file "support") (:file "binary")
-                             (:file "record") (:file "batch"))))
+                             (:file "record") (:file "batch")))
+               (:module "storage"
+                :serial t
+                :components ((:file "support") (:file "segment-header")
+                             (:file "control-payload"))))
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
-             (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)))
+             (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)))

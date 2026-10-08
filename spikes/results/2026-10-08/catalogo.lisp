@@ -92,6 +92,33 @@
    :artifact "spk07-final-verification.lisp")
   (:kind :check :formats (1 2) :variant :full-spikes-with-protocol-extensions
    :artifact "spk07-final-spikes-check.lisp")
+  (:kind :check :formats (2) :variant :segment-read-initial
+   :artifact "spk05-check-initial.lisp")
+  (:kind :benchmark :formats (2) :variant :segment-read-callback-initial
+   :artifact "spk05-bench-initial.lisp")
+  (:kind :check :formats (2) :variant :segment-read-native-inline-shared-sap
+   :artifact "spk05-check-inline-shared-sap.lisp")
+  (:kind :benchmark :formats (2) :variant :segment-read-native-inline-shared-sap
+   :artifact "spk05-bench-inline-shared-sap.lisp")
+  (:kind :check :formats (2) :variant :segment-read-native-inline-branch-sap
+   :artifact "spk05-check.lisp")
+  (:kind :benchmark :formats (2) :variant :segment-read-native-inline-branch-sap
+   :artifact "spk05-bench.lisp")
+  (:kind :command-verification :formats (1 2) :variant :segment-read-full-verification
+   :artifact "spk05-full-check.lisp")
+  (:kind :failed-attempt :formats (2) :variant :segment-read-controller-compilation
+   :artifact "spk05-check-compilation-failed.lisp"
+   :process-artifact "spk05-check-compilation-failed-process.lisp")
+  (:kind :module-check :formats nil :variant :segment-read-io-first
+   :artifact "spk05-io-first-check.lisp")
+  (:kind :module-check :formats nil :variant :segment-read-io-short-and-errors
+   :artifact "spk05-io-check.lisp")
+  (:kind :failed-attempt :formats (2) :variant :segment-read-record-compilation
+   :artifact "spk05-record-compilation-failed.lisp")
+  (:kind :module-check :formats (2) :variant :segment-read-record-fixtures
+   :artifact "spk05-record-check.lisp")
+  (:kind :command-verification :formats (1 2) :variant :storage-segment-read-complete-verification
+   :artifact "sviluppo-verifica.lisp")
   (:kind :recorder-negative-control :formats nil :variant :command-exit1
    :artifact "record-command-expected-failure.lisp" :expected-exit-code 1))
  :limits (:local-campaign :partial-product-coverage :no-reference-platform-claim))

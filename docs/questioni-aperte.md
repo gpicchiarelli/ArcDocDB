@@ -234,6 +234,10 @@ condivisa a ogni lettura).
 [09](09-cache.md)), ripartizione del budget tra Serie, rapporto con la page cache del sistema
 operativo, definizione misurabile di scan pollution.
 
+> **Proposta** — La [campagna SPK-05](valutazione/risultati-SPK-05-2026-10-08.md)
+> esercita pread e mapping su file piccoli, senza cache propria né compaction.
+> Non determina il budget o la granularità della cache e non cambia ADR-0025/0044.
+
 ### QA-18
 
 **GC di SBCL e memoria.** Quali strutture vivono nello heap gestito e quali fuori.
@@ -253,6 +257,11 @@ architettura. Lo sviluppo avviene su macOS/ARM64.
   (su macOS `fsync` non garantisce la persistenza su supporto: serve `F_FULLFSYNC`); I/O
   bloccante su worker contro I/O asincrono; lettura dei segmenti con letture posizionali o
   mappatura in memoria.
+
+> **Proposta** — Le primitive sono esercitate nella
+> [campagna SPK-05](valutazione/risultati-SPK-05-2026-10-08.md) locale macOS/ARM64.
+> Il mapping resta un confronto; ADR-0017 prescrive pread. Linux x86-64,
+> cache fredda e dataset oltre RAM restano da misurare.
 
 ---
 

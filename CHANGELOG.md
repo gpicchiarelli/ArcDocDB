@@ -7,6 +7,10 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- SPK-05: letture pread e mmap di file immutabili, CRC/chiave/stamp verificati,
+  errori I/O e worker espliciti; 36 confronti locali per variante e profilo
+  senza allocazioni osservate nel ciclo finale. Varianti e fallimenti conservati.
+
 - SPK-04: writer sperimentale su pool, code limitate, modelli di parcheggio
   e ripartenza delle letture; controlli e 54 benchmark diagnostici conservati,
   con limiti e tentativi falliti espliciti.

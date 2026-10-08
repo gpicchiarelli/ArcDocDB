@@ -21,6 +21,7 @@ che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
 | [Risultati locali 2026-10-08](risultati-2026-10-08.md) | Campagna seriale, output grezzi, ottimizzazioni, limiti e lavoro restante |
 | [Registro delle prove](registro-delle-prove.md) | Schema, metadata, conservazione di prove, diagnostiche, fallimenti e benchmark |
 | [SPK-04, prima campagna](risultati-SPK-04-2026-10-08.md) | Writer su pool, attese limitate, modelli di lettura e benchmark diagnostici |
+| [SPK-05, prima campagna](risultati-SPK-05-2026-10-08.md) | Letture reali pread/mmap, verifica dei record, allocazioni e confronto locale |
 
 ## Criteri di valutazione
 

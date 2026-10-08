@@ -106,3 +106,10 @@ significative sulla piattaforma di riferimento; la Fase 0 resta aperta.
 ## Gate del formato v2
 
 Prima del motore: campagne dei limiti ADR-0048 (documenti, profondità, chiavi), decoder v1/v2, migrazione interrotta e budget del nuovo slot. Aggiornare SPK-01 e SPK-09 con risultati distinti. La ricerca oltre RAM (ADR-0049) richiede confronto e ADR prima di cambiare lo scope v1.
+
+## Avanzamento SPK-05
+
+> **Proposta** — Il [confronto locale](valutazione/risultati-SPK-05-2026-10-08.md)
+> aggiunge letture posizionali e mapping di file reali, con controlli CRC,
+> chiave e stamp. La scelta pread di ADR-0017 resta confermata dal progetto;
+> dataset oltre RAM, granularità della cache e target NVMe restano da verificare.

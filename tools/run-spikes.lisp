@@ -17,6 +17,7 @@
     ("SPK-02" . "spikes/SPK-02-gc/run.lisp")
     ("SPK-03" . "spikes/SPK-03-group-commit/run.lisp")
     ("SPK-04" . "spikes/SPK-04-writer-pool/run.lisp")
+    ("SPK-05" . "spikes/SPK-05-segment-read/run.lisp")
     ("SPK-07" . "spikes/SPK-07-protocols/run.lisp")
     ("SPK-09" . "spikes/SPK-09-integrity/run.lisp")
     ("SPK-10" . "spikes/SPK-10-v2-limits/run.lisp")))
@@ -39,6 +40,8 @@
                 (namestring (merge-pathnames "core.lisp" (cdr entry))))
           (when (string= (car entry) "SPK-04")
             '("spikes/SPK-04-writer-pool/pool.lisp" "spikes/SPK-04-writer-pool/parcheggi.lisp"))
+          (when (string= (car entry) "SPK-05")
+            '("spikes/SPK-05-segment-read/io.lisp" "spikes/SPK-05-segment-read/record.lisp"))
           (when (string= (car entry) "SPK-07")
             '("spikes/SPK-07-protocols/pubblicazione.lisp"
               "spikes/SPK-07-protocols/scadenza.lisp"
@@ -71,6 +74,8 @@
         (loop for path in (append '("tools/run-spikes.lisp"
                                     "spikes/SPK-04-writer-pool/pool.lisp"
                                     "spikes/SPK-04-writer-pool/parcheggi.lisp"
+                                    "spikes/SPK-05-segment-read/io.lisp"
+                                    "spikes/SPK-05-segment-read/record.lisp"
                                     "spikes/SPK-07-protocols/pubblicazione.lisp"
                                     "spikes/SPK-07-protocols/scadenza.lisp"
                                     "spikes/SPK-07-protocols/compaction.lisp"

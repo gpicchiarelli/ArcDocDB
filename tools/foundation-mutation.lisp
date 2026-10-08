@@ -1,5 +1,5 @@
 ;;;; Mutazioni mirate in copie isolate; nessun sorgente del repository viene riscritto.
-;;;; Uso: --run directory-nuova/ oppure --self-test
+;;;; Uso: --run directory-nuova/ [foundation|storage] oppure --self-test
 ;;;; REQ: REQ-FOR-003 REQ-FOR-004 REQ-AFF-002 REQ-LIM-001 REQ-LIM-003 REQ-VAL-001
 (require :asdf)
 (defpackage #:arcdocdb.foundation.mutation (:use #:cl))
@@ -19,6 +19,24 @@
     ("batch-stamp" "batch.lisp" "(/= stamp actual-stamp)" "(= stamp actual-stamp)")
     ("byte-budget" "batch.lisp" "(> (- next pos) remaining)" "(>= (- next pos) remaining)")))
 
+(defparameter *storage-mutants*
+  '(("segment-crc" "segment-header.lisp" "(unless (= (leggi-u32 buffer (+ start +segment-crc-offset+))"
+                                          "(unless (/= (leggi-u32 buffer (+ start +segment-crc-offset+))")
+    ("segment-magic-and-or" "segment-header.lisp" "(and (= (leggi-u32 buffer start)"
+                                                   "(or (= (leggi-u32 buffer start)")
+    ("segment-identity-and-or" "segment-header.lisp" "(and (loop for i below +serie-id-bytes+"
+                                                      "(or (loop for i below +serie-id-bytes+")
+    ("reserved-and-or" "segment-header.lisp" "(and (zero-range-p buffer" "(or (zero-range-p buffer")
+    ("metadata-budget" "formats.lisp" "(> actual budget)" "(>= actual budget)")
+    ("closed-minimum" "control-payload.lisp" "(<= +segment-header-bytes+" "(< +segment-header-bytes+")
+    ("cumulative-outcomes" "control-payload.lisp" "(esigi-budget outcomes (- max-esiti total)"
+                                                  "(esigi-budget outcomes max-esiti")
+    ("edit-exact-consumption" "control-payload.lisp" "(unless (= end (spazio-ripetuto removed-start"
+                                                   "(unless (>= end (spazio-ripetuto removed-start")
+    ("decision-minimum" "control-payload.lisp" "(< count +min-participants+)" "(<= count +min-participants+)")
+    ("decision-exact-consumption" "control-payload.lisp" "(unless (= end (spazio-ripetuto parts-start"
+                                                       "(unless (>= end (spazio-ripetuto parts-start")))
+
 (defun read-text (path)
   (uiop:read-file-string path :external-format :utf-8))
 
@@ -27,19 +45,25 @@
     (unless pos (error "foundation-mutation.lisp: mutazione non applicabile: ~S" before))
     (concatenate 'string (subseq text 0 pos) after (subseq text (+ pos (length before))))))
 
-(defun copy-foundations (directory)
+(defun copy-test-system (directory)
   (dolist (file (append '("arcdocdb.asd" "src/package.lisp" "tests/smoke.lisp" "tools/build.lisp")
                        (mapcar #'enough-namestring (directory "src/foundation/*.lisp"))
-                       (mapcar #'enough-namestring (directory "tests/foundation/*.lisp"))))
+                       (mapcar #'enough-namestring (directory "tests/foundation/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/storage/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/storage/*.lisp"))))
     (let ((target (merge-pathnames file directory)))
       (ensure-directories-exist target)
       (uiop:copy-file file target))))
 
-(defun run-mutant (mutant directory)
+(defun detected-p (text exit)
+  "Un errore prima dell'avvio dei test non conta come rilevamento."
+  (and (not (zerop exit)) (search "ok    ARCDOCDB:*VERSION*" text)))
+
+(defun run-mutant (mutant directory scope)
   (destructuring-bind (name file before after) mutant
-    (let* ((path (merge-pathnames "src/foundation/" directory))
+    (let* ((path (merge-pathnames (format nil "src/~A/" scope) directory))
            (source (merge-pathnames file path)) (log (merge-pathnames "test.log" directory)))
-      (copy-foundations directory)
+      (copy-test-system directory)
       (let ((modified (substitute-first (read-text source) before after)))
         (with-open-file (stream source :direction :output :if-exists :supersede)
           (write-string modified stream)))
@@ -49,23 +73,30 @@
                             :ignore-error-status t)
         (declare (ignore out err))
         (let* ((text (read-text log))
-               (detected (and (not (zerop exit)) (search "ok    ARCDOCDB:*VERSION*" text))))
+               (detected (detected-p text exit)))
           (unless detected
             (error "foundation-mutation.lisp: COD-61, ~A sopravvissuto o non compilabile; ~A" name log))
           (list :name name :result :detected :exit-code exit))))))
 
 (let ((args (rest sb-ext:*posix-argv*)))
   (cond ((equal args '("--self-test"))
-         (unless (string= "xAxB" (substitute-first "xBxB" "B" "A"))
-           (error "foundation-mutation.lisp: COD-60, sostituzione errata."))
+         (unless (and (string= "xAxB" (substitute-first "xBxB" "B" "A"))
+                      (detected-p "ok    ARCDOCDB:*VERSION*" 1)
+                      (not (detected-p "ok    ARCDOCDB:*VERSION*" 0))
+                      (not (detected-p "compilation aborted" 1)))
+           (error "foundation-mutation.lisp: COD-60, sostituzione o classificazione errata."))
          (format t "Mutazioni: self-test superato.~%"))
-        ((and (= (length args) 2) (string= (first args) "--run"))
-         (let ((directory (uiop:ensure-directory-pathname (second args))))
+        ((and (<= 2 (length args) 3) (string= (first args) "--run")
+              (or (= (length args) 2)
+                  (member (third args) '("foundation" "storage") :test #'string=)))
+         (let ((directory (uiop:ensure-directory-pathname (second args)))
+               (scope (or (third args) "foundation")))
            (when (probe-file directory)
              (error "foundation-mutation.lisp: destinazione già presente: ~A" directory))
            (ensure-directories-exist directory)
-           (write (loop for mutant in *mutants* for i from 0
-                        collect (run-mutant mutant (merge-pathnames (format nil "~D/" i) directory)))
+           (write (loop for mutant in (if (string= scope "storage") *storage-mutants* *mutants*)
+                        for i from 0 collect (run-mutant mutant
+                                               (merge-pathnames (format nil "~D/" i) directory) scope))
                   :pretty t)
            (terpri)))
-        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/."))))
+        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage]."))))

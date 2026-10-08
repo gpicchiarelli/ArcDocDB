@@ -1,5 +1,5 @@
 ;;;; Copertura con contrib SBCL; processo e cache separati dai benchmark.
-;;;; Uso: --report directory/ oppure --self-test directory/
+;;;; Uso: --report directory/ [foundation|storage] oppure --self-test directory/
 ;;;; REQ: REQ-FOR-003 REQ-AFF-002 REQ-LIM-001 REQ-VAL-001
 (require :asdf)
 (require :sb-cover)
@@ -25,7 +25,7 @@
         (error "foundation-coverage.lisp: COD-60, ramo mancante non rilevato.")))
     (format t "Copertura: self-test del ramo mancante superato.~%")))
 
-(defun coverage (directory)
+(defun coverage (directory scope)
   (let ((root (truename "./")))
     (asdf:initialize-output-translations
      `(:output-translations (,root ,(merge-pathnames "fasl/" directory))
@@ -35,20 +35,24 @@
       (asdf:load-asd (merge-pathnames "arcdocdb.asd" root))
       (asdf:load-system "arcdocdb" :force t)
       (asdf:load-system "arcdocdb/tests" :force t)
-      (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run))
+      (uiop:symbol-call (if (string= scope "storage")
+                           '#:arcdocdb.storage.tests '#:arcdocdb.foundation.tests) '#:run))
     (sb-cover:save-coverage-in-file (merge-pathnames "coverage-state.lisp" directory))
     (let ((report (sb-cover:report directory :if-matches
-                                  (lambda (path) (search "/src/foundation/" path)))))
+                                  (lambda (path) (search (format nil "/src/~A/" scope) path)))))
       (unless report
-        (error "foundation-coverage.lisp: COD-60, nessun dato per src/foundation/."))
+        (error "foundation-coverage.lisp: COD-60, nessun dato per src/~A/." scope))
       (format t "Rapporto: ~A~%" report))))
 
 (let ((args (rest sb-ext:*posix-argv*)))
-  (unless (and (= (length args) 2) (member (first args) '("--report" "--self-test")
-                                         :test #'string=))
-    (error "foundation-coverage.lisp: usare --report directory/ o --self-test directory/."))
-  (let ((directory (uiop:ensure-directory-pathname (second args))))
+  (unless (and (<= 2 (length args) 3) (member (first args) '("--report" "--self-test")
+                                            :test #'string=)
+               (or (= (length args) 2)
+                   (member (third args) '("foundation" "storage") :test #'string=)))
+    (error "foundation-coverage.lisp: usare --report directory/ [foundation|storage] o --self-test directory/."))
+  (let ((directory (uiop:ensure-directory-pathname (second args)))
+        (scope (or (third args) "foundation")))
     (ensure-directories-exist directory)
     (if (string= (first args) "--self-test")
         (self-test directory)
-        (coverage directory))))
+        (coverage directory scope))))
