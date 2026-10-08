@@ -116,3 +116,12 @@ record (`:argv`, `:stdin`, `*read-eval* nil`); non si carica il record come codi
 FASL del core e del modulo hanno lo stesso prefisso del record e restano in
 `out/`. Le prove non modificano core, runner, documenti normativi o Git.
 Il gate generale resta aperto per i limiti di questo metodo e gli altri compiti.
+
+## Evidenza conservata nel repository
+
+Il [record finale](../results/2026-10-08/spk07-pubblicazione-final.lisp)
+è conservato insieme al fallimento iniziale, al tentativo con contatore
+errato e ai due controlli di esaurimento del budget nel
+[catalogo](../results/2026-10-08/catalogo.lisp). I record originali non sono
+riscritti; l'integrazione aggiunge il marcatore REQ nel sorgente e verifica
+il nuovo blob con la suite completa.

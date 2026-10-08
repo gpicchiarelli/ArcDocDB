@@ -179,6 +179,12 @@ prodotto è una **misura con una raccomandazione**.
 > dell'anello dell'orizzonte e verifica il registro limitato che lo sostituisce. Le lacune
 > residue sono dichiarate nell'output; SPK-07 non è ancora completo ai fini del gate.
 
+> **Proposta** — L'estensione locale del 2026-10-08 aggiunge modelli finiti
+> di pubblicazione, scadenza, compaction con writer ACTIVE e osservazione delle
+> barriere. I [metodi preregistrati e risultati](../../spikes/SPK-07-protocols/README.md)
+> distinguono domini, assunzioni e controlli negativi. Memoria architetturale
+> completa con più reader/slot e crash byte per byte restano nel gate.
+
 ### SPK-08
 
 **SIMD e codice generato.**

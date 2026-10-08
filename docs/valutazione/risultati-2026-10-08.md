@@ -213,9 +213,25 @@ compaction/ricostruzione, 25 di riconciliazione/recovery.
 
 Il controesempio dell'anello è corretto da ADR-0046; i mutanti di forget precoce,
 reclaim con riferimenti, seqlock non validato e soglia snapshot omessa sono
-rilevati. Restano pubblicazione dei frammenti, memoria debole, scadenza snapshot,
-crash sui byte reali e compaction con writer attivo. Non è copertura FI-01…FI-13
-su un motore esistente.
+rilevati. La suite è ora estesa con modelli di pubblicazione, scadenza snapshot,
+compaction con writer ACTIVE e ordini osservati delle barriere. Il
+[metodo e risultato dei moduli](../../spikes/SPK-07-protocols/README.md#estensione-dei-modelli--2026-10-08)
+conserva i confini di ciascuna enumerazione; il
+[record integrato](../../spikes/results/2026-10-08/spk07-integrated-check.lisp)
+contiene risultati decodificati, hash dei sorgenti e output originale.
+
+Pubblicazione: 25 esplorazioni, 64.316 stati complessivi, 12 modelli corretti e
+6 controlli negativi. Scadenza: 67.558 stati positivi, 14 witness di copertura
+e 5 mutanti rilevati. Compaction: 98 grafi positivi, 7.994 stati, 11.592
+proiezioni logiche di crash e 8 mutanti rilevati. Barriere: 280 ordini corretti
+senza violazioni; ciascuno dei 4 mutanti produce 54 violazioni in 840 ordini.
+I conteggi dei diversi moduli non sono sommati: unità e domini sono diversi.
+
+I mutanti senza ricontrollo root violano il contratto di generazione, ma
+restano linearizzabili nelle storie esplorate. Restano memoria debole completa
+con più slot/reader e crash sui byte reali. Non è copertura FI-01…FI-13 su un
+motore esistente; non è un benchmark di prestazioni. Tutti i tentativi, anche
+falliti o con contatori corretti in seguito, sono nel catalogo delle prove.
 
 ## SPK-09 — integrità e ottimizzazione
 

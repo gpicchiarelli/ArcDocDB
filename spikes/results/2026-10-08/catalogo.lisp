@@ -62,6 +62,30 @@
    :process-artifact "spk04-check-parking-failed-process.lisp")
   (:kind :failed-attempt :formats nil :variant :checkpoint-link-verification
    :artifact "checkpoint-links-failed.lisp")
+  (:kind :command-verification :formats (1 2) :variant :checkpoint-clean-checkout
+   :artifact "checkpoint-verification.lisp")
+  (:kind :command-verification :formats nil :variant :seqlock-observation-orders
+   :artifact "spk07-memoria-check.lisp")
+  (:kind :check :formats nil :variant :protocol-models-extended
+   :artifact "spk07-integrated-check.lisp")
+  (:kind :module-check :formats nil :variant :fragment-publication
+   :artifact "spk07-pubblicazione-final.lisp")
+  (:kind :failed-attempt :formats nil :variant :fragment-publication-runtime-arguments
+   :artifact "spk07-pubblicazione-001-failed.lisp")
+  (:kind :module-check :formats nil :variant :fragment-publication-counter-corrected-later
+   :artifact "spk07-pubblicazione-002.lisp")
+  (:kind :recorder-negative-control :formats nil :variant :publication-state-budget
+   :artifact "spk07-pubblicazione-state-budget.lisp")
+  (:kind :recorder-negative-control :formats nil :variant :publication-step-budget
+   :artifact "spk07-pubblicazione-step-budget.lisp")
+  (:kind :failed-attempt :formats nil :variant :snapshot-expiry-compilation
+   :artifact "spk07-scadenza-001-failed.lisp")
+  (:kind :module-check :formats nil :variant :snapshot-expiry-counter-corrected-later
+   :artifact "spk07-scadenza-002.lisp")
+  (:kind :module-check :formats nil :variant :snapshot-expiry
+   :artifact "spk07-scadenza-003.lisp")
+  (:kind :module-check :formats nil :variant :compaction-with-active-writer
+   :artifact "spk07-compaction-campaign.lisp" :includes-failed-attempts t)
   (:kind :recorder-negative-control :formats nil :variant :command-exit1
    :artifact "record-command-expected-failure.lisp" :expected-exit-code 1))
  :limits (:local-campaign :partial-product-coverage :no-reference-platform-claim))

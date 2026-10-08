@@ -84,6 +84,8 @@ reader più nuovo ancora attivo, terminale. I conteggi sono misurati dal grafo.
 assunzioni. Usa l'esploratore e `require-outcome` del core esistente, caricato
 prima del modulo, aggiungendo il confronto esatto della violazione attesa.
 Limite iniziale: 500.000 stati per esplorazione; un limite esaurito è fallimento.
+Durante l'integrazione il limite è ridotto a 200.000; il grafo osservato
+resta di 67.507 stati. Il nuovo blob è verificato nella campagna integrata.
 
 Ogni tentativo di compilazione/check ha un nuovo record leggibile come dati
 con `*read-eval* nil`, schema 1, in `out/scadenza-attempt-NNN.sexp`.
@@ -162,6 +164,12 @@ Il blob del metodo nel record 003 è quello precedente a questa annotazione dei
 risultati; il blob del modulo è quello finale compilato. Il gate resta aperto:
 questo risultato copre scadenza/reclaim nel dominio finito dichiarato, senza
 chiudere memoria debole o gli altri ambiti esclusi. Nessun benchmark o commit.
+
+I record [001](../results/2026-10-08/spk07-scadenza-001-failed.lisp),
+[002](../results/2026-10-08/spk07-scadenza-002.lisp) e
+[003](../results/2026-10-08/spk07-scadenza-003.lisp) sono conservati nel
+repository senza modificare i dati originali. Il limite ridotto e il
+marcatore REQ aggiunti durante l'integrazione sono verificati separatamente.
 
 ## Limiti e conflitti
 

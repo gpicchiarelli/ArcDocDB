@@ -39,6 +39,12 @@
                 (namestring (merge-pathnames "core.lisp" (cdr entry))))
           (when (string= (car entry) "SPK-04")
             '("spikes/SPK-04-writer-pool/pool.lisp" "spikes/SPK-04-writer-pool/parcheggi.lisp"))
+          (when (string= (car entry) "SPK-07")
+            '("spikes/SPK-07-protocols/pubblicazione.lisp"
+              "spikes/SPK-07-protocols/scadenza.lisp"
+              "spikes/SPK-07-protocols/compaction.lisp"
+              "spikes/SPK-07-protocols/memoria.lisp"
+              "spikes/SPK-07-protocols/suite.lisp"))
           (when (string= (car entry) "SPK-10")
             '("spikes/SPK-10-v2-limits/codec.lisp" "spikes/SPK-10-v2-limits/indice.lisp"
               "spikes/SPK-10-v2-limits/cbor.lisp" "spikes/SPK-10-v2-limits/migrazione.lisp"
@@ -65,6 +71,11 @@
         (loop for path in (append '("tools/run-spikes.lisp"
                                     "spikes/SPK-04-writer-pool/pool.lisp"
                                     "spikes/SPK-04-writer-pool/parcheggi.lisp"
+                                    "spikes/SPK-07-protocols/pubblicazione.lisp"
+                                    "spikes/SPK-07-protocols/scadenza.lisp"
+                                    "spikes/SPK-07-protocols/compaction.lisp"
+                                    "spikes/SPK-07-protocols/memoria.lisp"
+                                    "spikes/SPK-07-protocols/suite.lisp"
                                     "spikes/SPK-01-primary-index/profile.lisp"
                                     "spikes/SPK-10-v2-limits/codec.lisp"
                                     "spikes/SPK-10-v2-limits/indice.lisp"

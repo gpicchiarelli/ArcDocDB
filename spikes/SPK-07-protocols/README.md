@@ -15,15 +15,24 @@ registrazione di snapshot, seqlock, lotti e frontiera durevole,
 tombstone e ricostruzione indipendente dall'ordine. Le varianti difettose servono come
 controlli negativi: la suite deve trovare un controesempio, altrimenti fallisce.
 
+La suite integra anche quattro moduli con metodo preregistrato:
+[pubblicazione](metodo-pubblicazione.md), [scadenza](metodo-scadenza.md),
+[compaction con writer ACTIVE](metodo-compaction.md) e
+[ordini di osservazione delle barriere](metodo-memoria.md).
+
 ## Esecuzione
 
 ```bash
-sbcl --noinform --no-userinit --script spikes/SPK-07-protocols/run.lisp --check
+sbcl --noinform --no-userinit --no-sysinit --script tools/run-spikes.lisp --check SPK-07
 ```
 
 Il codice è compilato con `safety 3`; warning e style-warning interrompono l'esecuzione.
-L'output è una plist con conteggi, dimensioni del modello e controesempi. Nessuna casualità
-o dipendenza esterna. I file compilati vanno in `out/`, ignorata da Git.
+L'harness conserva una plist schema 1 con comando, ambiente, revisione, hash dei
+sorgenti prima/dopo, risultati decodificati, output originale e fallimenti.
+Il risultato contiene conteggi, dimensioni del modello e controesempi. Nessuna
+casualità; gli ordini non dipendono dal clock. I file compilati vanno in `out/`,
+ignorata da Git. Una prova individuale usa `run-module.lisp nome-modello` tramite
+`tools/record-command.lisp`, come descritto nel metodo delle barriere.
 
 ## Limiti dichiarati prima dell'esecuzione
 
@@ -35,10 +44,13 @@ o dipendenza esterna. I file compilati vanno in `out/`, ignorata da Git.
   il risultato non prova configurazioni arbitrarie.
 - Gli scenari corrispondono a FI-01…FI-13 a livello astratto; non sostituiscono fault
   injection su un motore né crash reali su file system.
-- Il gate della Fase 0 resta aperto finché le lacune indicate nel risultato non sono coperte:
-  pubblicazione dei frammenti, scadenza degli snapshot, memoria debole, crash byte per byte e
-  compaction con writer attivo. Il modello tombstone assume un filtro esatto senza falsi
-  negativi e non mantiene snapshot attivi.
+- Il gate della Fase 0 resta aperto: manca un modello architetturale completo della
+  memoria debole, con più reader/slot, e restano crash byte per byte e fault injection
+  sul motore. Pubblicazione, scadenza e writer ACTIVE sono coperti soltanto nei
+  domini finiti dichiarati dai rispettivi metodi.
+- Il modello tombstone di base assume un filtro esatto senza falsi negativi e non
+  mantiene snapshot attivi; l'estensione compaction aggiunge uno snapshot e un
+  filtro conservativo «forse», senza provare la policy concreta di ammissione MERGE.
 
 ## Ambiente e risultato
 
@@ -68,3 +80,28 @@ Tre controlli negativi aggiuntivi sono rilevati: decisione dimenticata prima deg
 durevoli, reclaim con riferimenti ancora attivi, lettura senza validazione del seqlock. La
 registrazione senza pubblicare la soglia perde inoltre la versione necessaria a uno
 snapshot. I risultati positivi dipendono dalle assunzioni dichiarate sopra.
+
+## Estensione dei modelli — 2026-10-08
+
+| Modulo | Esplorazione osservata | Controlli negativi rilevati |
+|---|---|---:|
+| Pubblicazione | 25 esplorazioni, 64.316 stati complessivi, 110.401 transizioni | 6 |
+| Scadenza | 2 grafi corretti, 67.558 stati, 256.971 transizioni; 14 witness positivi | 5 |
+| Compaction con writer ACTIVE | 98 grafi corretti, 7.994 stati, 16.952 transizioni; 11.592 proiezioni di crash | 8 |
+| Ordini osservati delle barriere | 280 ordini corretti; 840 ordini per ciascuno dei quattro mutanti | 4 |
+
+Pubblicazione conserva anche tre esplorazioni delle storie dei mutanti di
+generazione e quattro witness di raggiungibilità. Omettere il ricontrollo root
+viola il contratto di generazione nel modello, ma le storie esplorate restano
+linearizzabili: il risultato non dichiara una perdita di linearizzabilità.
+
+Scadenza distingue pin snapshot ed epoche degli accessi già ammessi. Tutti i
+67.507 stati del grafo lifetime hanno un percorso astratto verso un terminale;
+questo non è un limite temporale per un reader bloccato. Compaction confronta
+latest e storico con una storia committed indipendente; i crash sono proiezioni
+logiche, non arresti reali del filesystem.
+
+Le tensioni normative INV-I1/ADR-0043, ritardo di reclaim con reader bloccato in
+ADR-0016 e ammissione MERGE con snapshot sono dichiarate nei metodi. Questi
+spike non cambiano decisioni o requisiti del motore. Prove, tentativi falliti e
+limiti sono conservati nel [catalogo](../results/2026-10-08/catalogo.lisp).

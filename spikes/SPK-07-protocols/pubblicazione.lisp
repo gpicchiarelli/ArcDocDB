@@ -1,6 +1,6 @@
 ;;;; SPK-07: modello finito SC, non implementazione dell'indice.
 ;;; Metodo registrato in metodo-pubblicazione.md prima della compilazione.
-;;; REQ-IDX-003/007; ADR0043/0050; INV-I1/I3/A8/P1.
+;;; REQ: REQ-IDX-003 REQ-IDX-007 REQ-AFF-017 REQ-VAL-001
 (defpackage :arcdocdb.spk07.pubblicazione
   (:use :cl) (:export :check))
 (in-package :arcdocdb.spk07.pubblicazione)

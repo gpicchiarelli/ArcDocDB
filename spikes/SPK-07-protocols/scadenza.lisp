@@ -1,9 +1,10 @@
 ;;;; SPK-07: modello finito, non codice del motore. Metodo preregistrato a fianco.
+;;; REQ: REQ-IDX-002 REQ-AFF-017 REQ-VAL-001
 (defpackage :arcdocdb.spk07.scadenza (:use :cl) (:export :check))
 (in-package :arcdocdb.spk07.scadenza)
 (declaim (optimize (safety 3) (speed 1) (debug 3)))
 
-(defconstant +state-limit+ 500000)
+(defconstant +state-limit+ 200000)
 (defconstant +no-snapshot+ 3)
 
 (defun replacing (state key value)

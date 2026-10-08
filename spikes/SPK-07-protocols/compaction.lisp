@@ -1,4 +1,5 @@
 ;;;; SPK-07: modello finito e logico, senza codice di produzione o operazioni reali su file.
+;;; REQ: REQ-CMP-002 REQ-CMP-005 REQ-CMP-007 REQ-CMP-008 REQ-CMP-009 REQ-VAL-001
 ;;;; Metodo registrato in metodo-compaction.md prima della prima esecuzione.
 (defpackage :arcdocdb.spk07.compaction
   (:use :cl)

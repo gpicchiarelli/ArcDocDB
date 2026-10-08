@@ -1,0 +1,2339 @@
+(:SCHEMA-VERSION 1 :KIND :COMMAND-VERIFICATION :MODULE :SPK07-PUBBLICAZIONE
+ :STATUS :OK :MODE :CHECK :RECORD-PATH
+ #A((110) BASE-CHAR
+    . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/out/pubblicazione-4000478744-91419-record.lisp")
+ :ARGV
+ ("/opt/homebrew/bin/sbcl" "--dynamic-space-size" "1024" "--noinform"
+  "--no-sysinit" "--no-userinit" "--disable-debugger" "--script" "/dev/stdin")
+ :STDIN
+ #A((1028) BASE-CHAR . "(require :asdf)
+(declaim (optimize (safety 3) (speed 1) (debug 3)))
+(handler-bind ((warning (lambda (c) (error \"Avviso fatale: ~A\" c))))
+  (flet ((strict-compile (source output)
+           (multiple-value-bind (path warnings failure) (compile-file source :output-file output)
+             (when (or warnings failure (null path)) (error \"Compilazione fallita: ~S\" source))
+             (load path))))
+    (strict-compile #P\"/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/core.lisp\" #P\"/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/out/pubblicazione-4000478744-91419-core.fasl\")
+    (strict-compile #P\"/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/pubblicazione.lisp\" #P\"/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/out/pubblicazione-4000478744-91419-module.fasl\")
+    (let ((result (uiop:symbol-call :arcdocdb.spk07.pubblicazione :check)))
+      (format t \"SPK07-RESULT~%\")
+      (with-standard-io-syntax (write result :readably t :pretty nil) (terpri)))))
+")
+ :CWD "/Users/gpicchiarelli/Documents/ArcDocDB" :ENVIRONMENT
+ (:IMPLEMENTATION #A((4) BASE-CHAR . "SBCL") :VERSION
+  #A((5) BASE-CHAR . "2.6.9") :OS #A((6) BASE-CHAR . "Darwin") :OS-VERSION
+  #A((6) BASE-CHAR . "27.0.0") :MACHINE #A((5) BASE-CHAR . "ARM64") :CPU
+  #A((8) BASE-CHAR . "Apple M4") :HARDWARE-RAW "hw.model: Mac16,3
+hw.memsize: 17179869184
+machdep.cpu.brand_string: Apple M4
+"
+  :HEAP-MIB 1024 :LANG #A((7) BASE-CHAR . "C.UTF-8") :LC-ALL
+  #A((7) BASE-CHAR . "C.UTF-8") :TIMEZONE "Europe/Rome" :USER-INIT NIL
+  :SYSTEM-INIT NIL :SAFETY 3 :FATAL-WARNING T :FATAL-STYLE-WARNING T)
+ :GIT-PROVENANCE :NOT-COLLECTED-USER-FORBIDS-GIT :SOURCE-BEFORE
+ ((:PATH
+   #A((73) BASE-CHAR
+      . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/core.lisp")
+   :KIND :SOURCE-BLOB :BYTE-LENGTH 15029 :DIGEST-ALGORITHM :MD5 :DIGEST
+   #A((32) BASE-CHAR . "a8bc7548ebee035a536677709e1e909e") :ENCODING :UTF-8
+   :CONTENT
+   ";;;; SPK-07: esplorazione finita, deterministica, senza codice del motore.
+;;; REQ: REQ-AFF-007 REQ-AFF-008 REQ-AFF-009 REQ-AFF-017 REQ-AFF-018 REQ-AFF-019
+;;; REQ: REQ-MVC-005 REQ-MVC-007 REQ-TXM-007 REQ-TXM-008 REQ-CMP-008 REQ-IDX-002
+;;; REQ: REQ-MVC-008
+(defpackage :arcdocdb.spk07 (:use :cl) (:export :check))
+(in-package :arcdocdb.spk07)
+(declaim (optimize (safety 3) (speed 1) (debug 3)))
+
+(defun changed (state index value)
+  (let ((copy (copy-list state)))
+    (setf (nth index copy) value)
+    copy))
+
+(defun witness (state parents)
+  (let ((steps nil))
+    (loop repeat (hash-table-count parents)
+          for info = (gethash state parents)
+          while (cdr info)
+          do (push (cdr info) steps) (setf state (car info)))
+    steps))
+
+(defun explore (name initial successors violation &key (limit 200000))
+  \"BFS; le chiavi sono stati immutabili. Il limite esaurito è un errore, mai successo.\"
+  (let ((parents (make-hash-table :test 'equal))
+        (queue (make-array 16 :adjustable t :fill-pointer 0))
+        (cursor 0) (edges 0))
+    (setf (gethash initial parents) (cons nil nil))
+    (vector-push-extend initial queue)
+    (loop while (< cursor (length queue)) do
+      (let* ((state (aref queue cursor)) (failure (funcall violation state)))
+        (incf cursor)
+        (when failure
+          (return-from explore
+            (list :model name :states (hash-table-count parents) :edges edges
+                  :violation failure :witness (witness state parents) :state state)))
+        (dolist (edge (funcall successors state))
+          (incf edges)
+          (let ((next (cdr edge)))
+            (unless (nth-value 1 (gethash next parents))
+              (when (>= (hash-table-count parents) limit)
+                (error \"Limite di ~D stati nel modello ~A\" limit name))
+              (setf (gethash next parents) (cons state (car edge)))
+              (vector-push-extend next queue))))))
+    (list :model name :states (hash-table-count parents) :edges edges :violation nil)))
+
+;;; Anello: crediti sui soli pendenti contro distanza issued-H e insieme dei pendenti.
+(defun horizon-edges (state policy)
+  (destructuring-bind (issued horizon ring status) state
+    (let ((edges nil))
+      (when (and (< issued 6)
+                 (< (if (eq policy :distance) (- issued horizon) (count 1 status)) 2))
+        (push (cons (list :allocate (1+ issued))
+                    (list (1+ issued) horizon (copy-list ring) (append status '(1)))) edges))
+      (dotimes (i issued)
+        (when (= (nth i status) 1)
+          (let ((r (copy-list ring)) (s (copy-list status)) (h horizon) (c (1+ i)))
+            (setf (nth i s) 2)
+            (if (eq policy :set)
+                (setf h (or (position 1 s) issued))
+                (progn
+                  (setf (nth (mod c 4) r) c)
+                  (loop repeat 4 while (= (nth (mod (1+ h) 4) r) (1+ h)) do (incf h))))
+            (push (cons (list :publish c) (list issued h r s)) edges))))
+      edges)))
+
+(defun horizon-violation (state)
+  (destructuring-bind (issued horizon ring status) state
+    (declare (ignore ring))
+    (cond ((loop for c from 1 to horizon thereis (/= (nth (1- c) status) 2))
+           :horizon-skips-pending)
+          ((and (not (member 1 status)) (/= horizon issued)) :horizon-stalled)
+          (t nil))))
+
+;;; 2PC: local 0->append->flush->apply->outcome-append->outcome-flush.
+;;; :decision 0->append->flush; si dimentica solo dopo entrambi gli esiti durevoli.
+(defun multi-edges (state mutant)
+  (destructuring-bind (a b decision forgotten ack rotated-a rotated-b) state
+    (let ((edges nil))
+      (dotimes (i 2)
+        (let ((local (nth i state)))
+          (when (or (< local 2)
+                    (and (= local 2) (= decision 2)) (<= 3 local 4))
+            (push (cons (list :participant i :step (1+ local))
+                        (changed state i (1+ local))) edges))))
+      (when (and (< decision 2) (>= a 2) (>= b 2))
+        (push (cons (list :decision (1+ decision))
+                    (changed state 2 (1+ decision))) edges))
+      (when (and (= decision 2) (not forgotten)
+                 (>= a (if (eq mutant :forget-early) 3 5))
+                 (>= b (if (eq mutant :forget-early) 3 5)))
+        (push (cons :forget (changed state 3 t)) edges))
+      (when (and (= decision 2) (>= a 3) (>= b 3) (not ack))
+        (push (cons :ack (changed state 4 t)) edges))
+      (when (and (= a 5) (not rotated-a))
+        (push (cons :rotate-a (changed state 5 t)) edges))
+      (when (and (= b 5) (not rotated-b))
+        (push (cons :rotate-b (changed state 6 t)) edges))
+      edges)))
+
+(defun multi-violation (state)
+  \"Crash in ogni stato: la decisione durevole è l'oracolo, gli esiti locali la sostituiscono.\"
+  (destructuring-bind (a b decision forgotten ack rotated-a rotated-b) state
+    (let ((committed (= decision 2))
+          (ra (or (= a 5) (and (= decision 2) (not forgotten))))
+          (rb (or (= b 5) (and (= decision 2) (not forgotten)))))
+      (cond ((and committed (not (and ra rb))) :committed-lost-after-crash)
+            ((not (eql ra rb)) :partial-commit)
+            ((and ack (or (< a 3) (< b 3))) :ack-before-visibility)
+            ((or (and rotated-a (< a 5)) (and rotated-b (< b 5))) :non-self-contained)
+            (t nil)))))
+
+;;; EDIT: sorgente e output distinti; riferimenti reader/snapshot prima dell'eliminazione.
+;;; Stato fase=0..6, riferimenti; il crash usa l'EDIT durevole, non l'indice in memoria.
+(defun edit-edges (state mutant)
+  (destructuring-bind (phase pins) state
+    (let ((edges nil))
+      (when (and (< phase 6)
+                 (or (/= phase 5) (= pins 0) (eq mutant :reclaim-pinned)))
+        (push (cons (list :phase (1+ phase)) (list (1+ phase) pins)) edges))
+      (when (> pins 0)
+        (push (cons :release (list phase (1- pins))) edges))
+      edges)))
+
+(defun edit-violation (state)
+  (destructuring-bind (phase pins) state
+    (cond ((and (= phase 6) (> pins 0)) :reclaimed-pinned-source)
+          (t nil))))
+
+(defun recover-edit (phase)
+  \"Prima dell'EDIT (fase3) resta sorgente; dopo, completa sempre l'output durevole.\"
+  (if (< phase 3) :source :output))
+
+;;; Seqlock: due campi con somma 100, aggiornati in passi separati.
+;;; Stato=(writer-step reader-step seq x y s1 rx ry s2 result), -1=nessun risultato.
+(defun seq-edges (state mutant)
+  (let ((edges nil) (w (first state)) (r (second state)))
+    (when (< w 4)
+      (let ((s (changed state 0 (1+ w))))
+        (case w
+          (0 (setf (nth 2 s) 1))
+          (1 (setf (nth 3 s) 30))
+          (2 (setf (nth 4 s) 70))
+          (3 (setf (nth 2 s) 2))
+          (otherwise (error \"Passo writer inatteso\")))
+        (push (cons (list :writer w) s) edges)))
+    (when (< r 5)
+      (let ((s (changed state 1 (1+ r))))
+        (case r
+          (0 (setf (nth 5 s) (nth 2 state)))
+          (1 (setf (nth 6 s) (nth 3 state)))
+          (2 (setf (nth 7 s) (nth 4 state)))
+          (3 (setf (nth 8 s) (nth 2 state)))
+          (4 (when (or mutant (and (= (nth 5 s) (nth 8 s)) (evenp (nth 5 s))))
+               (setf (nth 9 s) (+ (nth 6 s) (nth 7 s)))))
+          (otherwise (error \"Passo reader inatteso\")))
+        (push (cons (list :reader r) s) edges)))
+    edges))
+
+(defun seq-violation (state)
+  (unless (member (nth 9 state) '(-1 100)) :torn-read))
+
+;;; Registrazione: soglia sentinella, lettura s, pubblicazione versione, nascita snapshot.
+;;; write che non ha letto la soglia precede la pubblicazione della registrazione.
+(defun snapshot-edges (state protect)
+  (destructuring-bind (w r threshold snapshot retained current horizon first-read) state
+    (declare (ignore snapshot retained current horizon first-read))
+    (let ((edges nil))
+      (when (< w 3)
+        (let ((s (changed state 0 (1+ w))))
+          (case w
+            (0 nil) ; assegna CSN=1
+            (1 (setf (nth 4 s) (< threshold 1) (nth 5 s) 1))
+            (2 (setf (nth 6 s) 1))
+            (otherwise (error \"Passo snapshot writer\")))
+          (push (cons (list :writer w) s) edges)))
+      (when (and (< r 3) (or (/= r 2) (>= (nth 6 state) (nth 3 state))))
+        (let ((s (changed state 1 (1+ r))))
+          (case r
+            (0 (when protect (setf (nth 2 s) (nth 6 state))))
+            (1 (setf (nth 3 s) (if (> w 0) 1 0)))
+            (2 (setf (nth 7 s) t))
+            (otherwise (error \"Passo snapshot reader\")))
+          (push (cons (list :snapshot r) s) edges)))
+      edges)))
+
+(defun snapshot-violation (state)
+  (destructuring-bind (w r threshold snapshot retained current horizon first-read) state
+    (declare (ignore w r threshold horizon))
+    (when (and first-read (= snapshot 0) (= current 1) (not retained))
+      :snapshot-old-version-lost)))
+
+;;; Enumerazione persistenza log: prefisso durevole, quattro stati per lotto non durevole.
+(defun valid-prefix (states)
+  (or (position-if-not (lambda (x) (eq x :valid)) states) (length states)))
+
+(defun classify-log (states durable-prefix)
+  (let ((p (valid-prefix states)))
+    (if (loop for i from p below (length states)
+              thereis (and (eq (nth i states) :valid) (> durable-prefix p)))
+        :corruption :tail)))
+
+(defun log-cases ()
+  (let ((count 0) (damage-count 0))
+    (dotimes (durable 4)
+      (dotimes (mask (expt 4 (- 3 durable)))
+        (let ((states (make-list durable :initial-element :valid)))
+          (dotimes (i (- 3 durable))
+            (setf states (append states
+                                (list (nth (ldb (byte 2 (* 2 i)) mask)
+                                           '(:absent :partial :bad-crc :valid))))))
+          (assert (eq (classify-log states durable) :tail))
+          (assert (>= (valid-prefix states) durable))
+          (incf count))))
+    ;; un SEAL successivo attesta che entrambi i primi lotti erano già durevoli.
+    (dotimes (bad 2)
+      (let ((states '(:valid :valid :valid)))
+        (setf states (changed states bad :bad-crc))
+        (assert (eq (classify-log states 2) :corruption))
+        (incf damage-count)))
+    (list :model :sealed-log :persistence-cases count :corruption-cases damage-count
+          :limitation :unwitnessed-last-flush :violation nil)))
+
+;;; Tombstone: ogni record=(csn . kind), oracolo indipendente per CSN massimo.
+(defun logical-value (segments)
+  (let ((winner nil))
+    (dolist (segment segments)
+      (dolist (record segment)
+        (when (or (null winner) (> (car record) (car winner))) (setf winner record))))
+    (and winner (eq (cdr winner) :put) (car winner))))
+
+(defun compact-tombstones (segments sources)
+  (let* ((outside (loop for s in segments for i from 0 unless (member i sources) collect s))
+         (inside (loop for s in segments for i from 0 when (member i sources) append s))
+         (max-csn (loop for s in segments maximize (loop for r in s maximize (car r))))
+         (live (logical-value segments)) (output nil))
+    (dolist (record inside)
+      (when (or (and live (= (car record) live))
+                (and (eq (cdr record) :delete) (= (car record) max-csn)
+                     (loop for s in outside thereis
+                           (loop for older in s thereis (< (car older) (car record))))))
+        (push record output)))
+    (append outside (list output))))
+
+(defun permutations (items)
+  (if (null items) (list nil)
+      (loop for x in items append
+            (mapcar (lambda (rest) (cons x rest))
+                    (permutations (remove x items :count 1 :test #'equal))))))
+
+(defun tombstone-cases ()
+  (let ((count 0))
+    (dotimes (kinds 16)
+      (let* ((segments (loop for i below 4 collect
+                            (list (cons (1+ i) (if (logbitp i kinds) :delete :put)))))
+             (expected (logical-value segments)))
+        (loop for sources-mask from 1 below 16 do
+          (let* ((sources (loop for i below 4 when (logbitp i sources-mask) collect i))
+                 (output (compact-tombstones segments sources)))
+            (dolist (order (permutations output))
+              (assert (eql expected (logical-value order)))
+              (incf count))))))
+    (list :model :tombstones :cases count :records 4 :snapshots :not-modelled
+          :bloom :exact-no-false-negatives :violation nil)))
+
+(defun edit-cases ()
+  (let ((count 0))
+    (dotimes (phase 7)
+      (let ((once (recover-edit phase)))
+        (assert (eq once (recover-edit (if (eq once :output) 6 0))))
+        (incf count)))
+    ;; Le tabelle catalogo e manifest hanno lo stesso algoritmo di riconciliazione.
+    (dolist (object '(:segment :directory))
+      (declare (ignore object))
+      (dolist (name '(:tmp :final :missing))
+        (dolist (truth '(:unknown :active :removed))
+          (let ((action (case truth
+                          (:unknown (if (eq name :tmp) :discard :report))
+                          (:active (case name (:tmp :rename) (:final :use)
+                                         (:missing :fault) (otherwise (error \"Nome\"))))
+                          (:removed :remove) (otherwise (error \"Fonte\")))))
+            (when (and (eq name :final) (eq truth :unknown)) (assert (eq action :report)))
+            (incf count)))))
+    (list :model :recovery-and-catalogue :cases count :violation nil)))
+
+(defun require-outcome (report expected-violation)
+  (unless (if expected-violation (getf report :violation) (null (getf report :violation)))
+    (error \"Esito inatteso nel modello: ~S\" report))
+  report)
+
+(defun check ()
+  (let ((reports nil))
+    (dolist (policy '(:pending :distance :set))
+      (push (require-outcome
+             (explore (list :horizon policy) '(0 0 (0 0 0 0) ())
+                      (lambda (s) (horizon-edges s policy)) #'horizon-violation)
+             (eq policy :pending)) reports))
+    (dolist (mutant '(nil :forget-early))
+      (push (require-outcome
+             (explore (list :multiserie mutant) '(0 0 0 nil nil nil nil)
+                      (lambda (s) (multi-edges s mutant)) #'multi-violation)
+             mutant) reports))
+    (dolist (mutant '(nil :reclaim-pinned))
+      (push (require-outcome
+             (explore (list :edit-reclaim mutant) '(0 2)
+                      (lambda (s) (edit-edges s mutant)) #'edit-violation)
+             mutant) reports))
+    (dolist (mutant '(nil :no-seqlock-validation))
+      (push (require-outcome
+             (explore (list :seqlock mutant) '(0 0 0 10 90 0 0 0 0 -1)
+                      (lambda (s) (seq-edges s mutant)) #'seq-violation)
+             mutant) reports))
+    (dolist (protect '(nil t))
+      (push (require-outcome
+             (explore (list :snapshot protect) '(0 0 99 0 nil 0 0 nil)
+                      (lambda (s) (snapshot-edges s protect)) #'snapshot-violation)
+             (not protect)) reports))
+    (list :spike :spk-07 :status :pass :reports (nreverse reports)
+          :enumerations (list (log-cases) (tombstone-cases) (edit-cases))
+          :coverage :bounded-abstract-models
+          :pending '(:fragment-publication :snapshot-expiry :weak-memory
+                     :byte-level-crash :compaction-with-active-writer)
+          :gate :open)))
+")
+  (:PATH
+   #A((82) BASE-CHAR
+      . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/pubblicazione.lisp")
+   :KIND :SOURCE-BLOB :BYTE-LENGTH 24866 :DIGEST-ALGORITHM :MD5 :DIGEST
+   #A((32) BASE-CHAR . "e463fb00a74bc376dd1f67fe2269e90b") :ENCODING :UTF-8
+   :CONTENT ";;;; SPK-07: modello finito SC, non implementazione dell'indice.
+;;; Metodo registrato in metodo-pubblicazione.md prima della compilazione.
+;;; REQ-IDX-003/007; ADR0043/0050; INV-I1/I3/A8/P1.
+(defpackage :arcdocdb.spk07.pubblicazione
+  (:use :cl) (:export :check))
+(in-package :arcdocdb.spk07.pubblicazione)
+(declaim (optimize (safety 3) (speed 1) (debug 3)))
+
+(define-condition model-budget-exhausted (error)
+  ((resource :initarg :resource :reader budget-resource)
+   (limit :initarg :limit :reader budget-limit))
+  (:report (lambda (condition stream)
+             (format stream \"Budget ~A esaurito: ~D\"
+                     (budget-resource condition) (budget-limit condition)))))
+
+(defun budget-error (resource limit)
+  (error 'model-budget-exhausted :resource resource :limit limit))
+
+;;; Specifica indipendente: due chiavi e tuple complete, senza slot/root.
+(defun reference-initial ()
+  '((:a . (:hit 1 101)) (:b . :miss)))
+
+(defun scenario (kind change protection)
+  (list :kind kind :change change :protection protection
+        :key (if (eq change :insert) :b :a)
+        :new-value (if (eq change :delete) :miss '(:hit 2 202))))
+
+(defun root-tag (root) (list (first root) (second root)))
+(defun key-position (key) (ecase key (:a 0) (:b 1)))
+
+(defun initial-state ()
+  (list :steps 0 :writer :invoke-write :reader :idle
+        :root '(0 0 (0 0)) :prepared-root nil
+        :fragments '((0 (:a :seq 0 :version 1 :location 101 :live t :ctrl :occupied)
+                        (:b :seq 0 :version 0 :location 0 :live nil :ctrl :empty)))
+        :frozen-old nil :retired nil :reclaimed nil
+        :snapshot nil :fragment nil :protected nil :epoch nil
+        :tries 0 :first-seq nil :last-seq nil
+        :version nil :location nil :live nil :candidate :none :result :none
+        :acceptance nil :bad-access nil :captured-before-write nil
+        :features 0 :history nil))
+
+(defun fragment-slots (state id)
+  (or (cdr (assoc id (getf state :fragments)))
+      (error \"Frammento inesistente: ~S\" id)))
+
+(defun slot (state id key)
+  (cdr (assoc key (fragment-slots state id))))
+
+(defun add-event (state event)
+  (setf (getf state :history) (append (getf state :history) (list event))))
+
+(defun feature (state bit)
+  (setf (getf state :features) (logior (getf state :features) bit)))
+
+(defun release-protection (state)
+  (setf (getf state :protected) nil (getf state :epoch) nil))
+
+;;; Instrumentation de l'accès, indépendante de la décision de validation.
+;;; Les fragments reclaimed restent des données fantômes pour le witness.
+(defun note-access (state field)
+  (when (member (getf state :fragment) (getf state :reclaimed))
+    (setf (getf state :bad-access)
+          (list :fragment (getf state :fragment) :field field
+                :protection (getf state :protected) :epoch (getf state :epoch)))))
+
+(defun writer-transition (state config)
+  (unless (eq (getf state :writer) :done)
+    (let* ((next (copy-tree state)) (phase (getf state :writer))
+           (key (getf config :key)) (target (slot next 0 key))
+           (value (getf config :new-value)))
+      (flet ((advance (pc) (setf (getf next :writer) pc)))
+        (ecase phase
+          (:invoke-write
+           (add-event next (list :invoke :write :write key value))
+           (advance :odd))
+          (:odd (setf (getf target :seq) 1) (advance :version))
+          (:version
+           (unless (eq value :miss) (setf (getf target :version) (second value)))
+           (advance :location))
+          (:location
+           (unless (eq value :miss) (setf (getf target :location) (third value)))
+           (advance :live))
+          (:live (setf (getf target :live) (not (eq value :miss))) (advance :even))
+          (:even (setf (getf target :seq) 2) (advance :control))
+          (:control
+           (setf (getf target :ctrl) (if (eq value :miss) :deleted :occupied))
+           (advance :respond-write))
+          (:respond-write (add-event next '(:respond :write :ok))
+                          (advance :invoke-maintenance))
+          (:invoke-maintenance
+           (add-event next '(:invoke :maintenance :maintenance nil nil))
+           (advance :build-first))
+          (:build-first
+           (push (cons 1 (if (eq (getf config :kind) :rebuild)
+                             (copy-tree (fragment-slots state 0))
+                             (list (copy-tree (assoc :a (fragment-slots state 0))))))
+                 (getf next :fragments))
+           (advance :build-second))
+          (:build-second
+           (when (eq (getf config :kind) :split)
+             (push (list 2 (copy-tree (assoc :b (fragment-slots state 0))))
+                   (getf next :fragments)))
+           (advance :build-root))
+          (:build-root
+           (setf (getf next :prepared-root)
+                 (list 1 1 (if (eq (getf config :kind) :split) '(1 2) '(1 1))))
+           (advance :publish))
+          (:publish
+           (setf (getf next :root) (getf next :prepared-root)
+                 (getf next :retired) '(0)
+                 (getf next :frozen-old) (copy-tree (fragment-slots state 0)))
+           (advance :respond-maintenance))
+          (:respond-maintenance
+           (add-event next '(:respond :maintenance :ok)) (advance :done))))
+      (cons (list :writer phase :key key) next))))
+
+(defun reject-attempt (next reason)
+  (ecase reason
+    (:root (feature next (if (eq (getf next :candidate) :miss) 2 1)))
+    (:seqlock (feature next 4)))
+  (release-protection next)
+  (setf (getf next :reader) (if (= (getf next :tries) 2) :fallback :enter)
+        (getf next :snapshot) nil (getf next :fragment) nil
+        (getf next :candidate) :none))
+
+(defun reader-transition (state config mutant)
+  (let ((phase (getf state :reader)))
+    (unless (or (eq phase :done)
+                (and (eq phase :fallback) (not (eq (getf state :writer) :done))))
+      (let* ((next (copy-tree state)) (key (getf config :key))
+             (target (and (getf state :fragment)
+                          (slot state (getf state :fragment) key)))
+             (label (list :reader phase :attempt (getf state :tries))))
+        (ecase phase
+          (:idle
+           (add-event next (list :invoke :lookup :lookup key nil))
+           (setf (getf next :reader) :enter))
+          (:enter
+           (when (eq (getf config :protection) :epoch)
+             (setf (getf next :epoch) (second (getf state :root))))
+           (setf (getf next :reader) :acquire))
+          (:acquire
+           ;; Riferimento forte: caricamento e possesso sono indivisibili.
+           (setf (getf next :snapshot) (copy-tree (getf state :root))
+                 (getf next :fragment) (nth (key-position key) (third (getf state :root)))
+                 (getf next :protected) (eq (getf config :protection) :ref)
+                 (getf next :captured-before-write)
+                 (not (null (member (getf state :writer) '(:invoke-write :odd))))
+                 (getf next :reader) (if (eq mutant :early-release) :early-release :probe))
+           (incf (getf next :tries)))
+          (:early-release (release-protection next) (setf (getf next :reader) :probe))
+          (:probe
+           (note-access next :control)
+           (if (and target (eq (getf target :ctrl) :occupied))
+               (setf (getf next :reader) :seq-first)
+               (setf (getf next :candidate) :miss (getf next :reader) :barrier)))
+          (:seq-first
+           (note-access next :seq-first)
+           (setf (getf next :first-seq) (getf target :seq))
+           (if (and (oddp (getf target :seq)) (not (eq mutant :skip-fields)))
+               (progn (reject-attempt next :seqlock)
+                      (setf label (append label '(:reject :seqlock))))
+               (setf (getf next :reader) :read-version)))
+          (:read-version (note-access next :version)
+                         (setf (getf next :version) (getf target :version)
+                               (getf next :reader) :read-location))
+          (:read-location (note-access next :location)
+                          (setf (getf next :location) (getf target :location)
+                                (getf next :reader) :read-live))
+          (:read-live (note-access next :live)
+                      (setf (getf next :live) (getf target :live)
+                            (getf next :reader) :seq-last))
+          (:seq-last (note-access next :seq-last)
+                     (setf (getf next :last-seq) (getf target :seq)
+                           (getf next :reader) :validate-fields))
+          (:validate-fields
+           (if (or (eq mutant :skip-fields)
+                   (and (= (getf state :first-seq) (getf state :last-seq))
+                        (evenp (getf state :last-seq))))
+               (setf (getf next :candidate)
+                     (if (getf state :live)
+                         (list :hit (getf state :version) (getf state :location)) :miss)
+                     (getf next :reader) :barrier)
+               (progn (reject-attempt next :seqlock)
+                      (setf label (append label '(:reject :seqlock))))))
+          (:barrier (setf (getf next :reader) :validate-root))
+          (:validate-root
+           (let* ((captured (root-tag (getf state :snapshot)))
+                  (current (root-tag (getf state :root)))
+                  (skip (or (eq mutant :skip-root)
+                            (and (eq mutant :skip-miss-root)
+                                 (eq (getf state :candidate) :miss)))))
+             (if (or skip (equal captured current))
+                 (setf (getf next :result) (getf state :candidate)
+                       (getf next :acceptance)
+                       (list :captured captured :current current :checked (not skip))
+                       (getf next :reader) :respond)
+                 (progn (reject-attempt next :root)
+                        (setf label (append label (list :reject :root
+                                                       :candidate (getf state :candidate))))))))
+          (:respond
+           (add-event next (list :respond :lookup (getf state :result)))
+           (release-protection next) (setf (getf next :reader) :done))
+          (:fallback
+           ;; Service du writer abstrait, après ses opérations sérielles.
+           ;; Lecture atomique de la root courante, jamais du fragment retiré.
+           (let* ((id (nth (key-position key) (third (getf state :root))))
+                  (current (slot state id key))
+                  (value (if (and current (getf current :live))
+                             (list :hit (getf current :version) (getf current :location))
+                             :miss)))
+             (feature next 8)
+             (setf (getf next :result) value (getf next :reader) :done
+                   (getf next :acceptance) '(:fallback t))
+             (add-event next (list :respond :lookup value))
+             (release-protection next))))
+        (cons label next)))))
+
+(defun reclaim-transition (state config)
+  (when (and (getf state :retired) (not (getf state :reclaimed))
+             (if (eq (getf config :protection) :ref)
+                 (not (and (getf state :protected)
+                           (member 0 (third (getf state :snapshot)))))
+                 (not (and (getf state :epoch) (<= (getf state :epoch) 0)))))
+    (let ((next (copy-tree state)))
+      (setf (getf next :reclaimed) '(0))
+      (cons '(:reclaimer :reclaim 0) next))))
+
+(defun successors (state config mutant step-limit)
+  (let ((edges (remove nil (list (writer-transition state config)
+                                 (reader-transition state config mutant)
+                                 (reclaim-transition state config)))))
+    (when (and edges (>= (getf state :steps) step-limit))
+      (budget-error :execution-steps step-limit))
+    (dolist (edge edges)
+      (setf (getf (cdr edge) :steps) (1+ (getf state :steps))))
+    edges))
+
+;;; Oracolo della storia: riceve esclusivamente invocazioni/risposte e specifica.
+(defun history-operations (history)
+  (let ((operations nil))
+    (loop for event in history for time from 0 do
+      (ecase (first event)
+        (:invoke
+         (when (assoc (second event) operations) (error \"Invocazione duplicata\"))
+         (push (cons (second event)
+                     (list :id (second event) :kind (third event) :key (fourth event)
+                           :argument (fifth event) :invoke time :response nil :result nil))
+               operations))
+        (:respond
+         (let ((operation (cdr (assoc (second event) operations))))
+           (unless operation (error \"Risposta senza invocazione\"))
+           (when (getf operation :response) (error \"Risposta duplicata\"))
+           (setf (getf operation :response) time (getf operation :result) (third event))))))
+    (when (> (length operations) 3) (budget-error :history-operations 3))
+    (mapcar #'cdr (nreverse operations))))
+
+(defun linearization (history)
+  \"Cerca un'estensione finita: pendenti omessi o completati, precedenza reale.\"
+  (let* ((operations (history-operations history))
+         (complete (remove-if-not (lambda (op) (getf op :response)) operations))
+         (pending (remove-if (lambda (op) (getf op :response)) operations))
+         (nodes 0))
+    (labels ((search-order (remaining map order)
+               (incf nodes)
+               (when (> nodes 128) (budget-error :linearization-nodes 128))
+               (when (null remaining)
+                 (return-from linearization (values t (nreverse order) nodes)))
+               (dolist (op remaining)
+                 (unless (some (lambda (other)
+                                 (and (getf other :response)
+                                      (< (getf other :response) (getf op :invoke))))
+                               (remove op remaining :test #'eq))
+                   (let ((next-map (copy-tree map)) (valid t))
+                     (ecase (getf op :kind)
+                       (:write (setf (cdr (assoc (getf op :key) next-map))
+                                     (getf op :argument)))
+                       (:maintenance)
+                       (:lookup
+                        (when (getf op :response)
+                          (setf valid (equal (getf op :result)
+                                             (cdr (assoc (getf op :key) map)))))))
+                     (when valid
+                       (search-order (remove op remaining :test #'eq)
+                                     next-map (cons (getf op :id) order))))))))
+      (dotimes (mask (ash 1 (length pending)))
+        (search-order (append complete
+                              (loop for op in pending for bit from 0
+                                    when (logbitp bit mask) collect op))
+                      (copy-tree (reference-initial)) nil)))
+    (values nil nil nodes)))
+
+(defun response-history (state)
+  (if (eq (getf state :reader) :respond)
+      (append (getf state :history) (list (list :respond :lookup (getf state :result))))
+      (getf state :history)))
+
+(defun response-present-p (state)
+  (member (getf state :reader) '(:respond :done)))
+
+(defun data-oracle (state config)
+  (cond
+    ((getf state :bad-access)
+     (list :kind :access-to-reclaimed :access (getf state :bad-access)))
+    ((and (getf state :frozen-old)
+          (not (equal (getf state :frozen-old) (fragment-slots state 0))))
+     '(:kind :modified-retired-fragment))
+    ((response-present-p state)
+     (let* ((result (getf state :result))
+            (initial (cdr (assoc (getf config :key) (reference-initial)))))
+       (if (not (or (eq result :miss) (equal result initial)
+                    (equal result (getf config :new-value))))
+           (list :kind :incoherent-result :result result)
+           (multiple-value-bind (valid order nodes) (linearization (response-history state))
+             (declare (ignore order nodes))
+             (unless valid (list :kind :not-linearizable
+                                 :history (response-history state)))))))))
+
+(defun generation-oracle (state)
+  (let ((acceptance (getf state :acceptance)))
+    (when (and (response-present-p state) acceptance
+               (not (getf acceptance :fallback))
+               (not (equal (getf acceptance :captured) (getf acceptance :current))))
+      (multiple-value-bind (valid order nodes) (linearization (response-history state))
+        (list :kind :generation-contract :acceptance acceptance
+              :result (getf state :result) :linearizable valid
+              :linearization order :oracle-nodes nodes
+              :classification (if valid :generation-only :also-not-linearizable))))))
+
+(defun protocol-oracle (state config)
+  (or (data-oracle state config) (generation-oracle state)))
+
+(defun terminal-p (state)
+  (and (eq (getf state :writer) :done) (eq (getf state :reader) :done)
+       (getf state :reclaimed)))
+
+(defun reachability-query (query state config)
+  (when (and (response-present-p state) (null (data-oracle state config)))
+    (case query
+      (:retry-hit (when (logtest 1 (getf state :features)) :retry-hit-returned))
+      (:retry-miss (when (logtest 2 (getf state :features)) :retry-miss-returned))
+      (:fallback (when (logtest 8 (getf state :features)) :bounded-fallback-returned))
+      (:old-root-updated
+       (when (and (getf state :captured-before-write)
+                  (getf state :snapshot) (= (first (getf state :snapshot)) 0)
+                  (= (first (getf state :root)) 1)
+                  (equal (getf state :result) (getf config :new-value)))
+         (multiple-value-bind (valid order nodes) (linearization (response-history state))
+           (list :kind :old-root-updated-after-acquisition :linearizable valid
+                 :linearization order :oracle-nodes nodes)))))))
+
+(defun check (&key (state-limit 200000) (step-limit 64))
+  \"CHECK breve; un budget insufficiente fallisce, non promuove la copertura.\"
+  (unless (and (integerp state-limit) (<= 1 state-limit 200000)
+               (integerp step-limit) (<= 1 step-limit 64))
+    (error \"Budget ammessi: stati 1..200000, passi 1..64\"))
+  (let ((reports nil) (remaining state-limit) (total-edges 0) (max-steps 0))
+    (labels
+        ((run-model (config mutant mode &optional query)
+           (when (<= remaining 0) (budget-error :suite-states state-limit))
+           (let ((visited 0) (terminals 0) (hits 0) (misses 0)
+                 (fallbacks 0) (max-tries 0) (local-steps 0) (oracle-nodes 0))
+             (let* ((name (list :publication (getf config :kind) (getf config :change)
+                                (getf config :protection) mutant mode query))
+                    (report
+                      (arcdocdb.spk07::explore
+                       name (initial-state)
+                       (lambda (state)
+                         (let ((edges (successors state config mutant step-limit)))
+                           (when (and (null edges) (not (terminal-p state)))
+                             (error \"Stallo nel modello: ~S\" state))
+                           edges))
+                       (lambda (state)
+                         (incf visited)
+                         (setf local-steps (max local-steps (getf state :steps))
+                               max-tries (max max-tries (getf state :tries)))
+                         (when (terminal-p state) (incf terminals))
+                         (when (response-present-p state)
+                           (if (eq (getf state :result) :miss) (incf misses) (incf hits))
+                           (when (logtest 8 (getf state :features)) (incf fallbacks))
+                           (multiple-value-bind (valid order nodes)
+                               (linearization (response-history state))
+                             (declare (ignore valid order))
+                             (setf oracle-nodes (max oracle-nodes nodes))))
+                         (ecase mode
+                           (:protocol (protocol-oracle state config))
+                           (:data-history (data-oracle state config))
+                           (:reachability (reachability-query query state config))))
+                       :limit remaining)))
+               (decf remaining (getf report :states))
+               (incf total-edges (getf report :edges))
+               (setf max-steps (max max-steps local-steps))
+               (setf report
+                     (append report
+                             (list :config config :mutant mutant :oracle mode
+                                   :visited visited :terminal-states terminals
+                                   :observed-hit-states hits :observed-miss-states misses
+                                   :observed-fallback-states fallbacks
+                                   :max-tries max-tries :max-steps local-steps
+                                   :max-oracle-nodes oracle-nodes
+                                   :count-unit :distinct-states-not-traces)))
+               (arcdocdb.spk07::require-outcome
+                report (or (eq mode :reachability) (and mutant (eq mode :protocol))))
+               (when (and (not (getf report :violation)) (zerop terminals))
+                 (error \"Nessun terminale completo: ~S\" name))
+               (push report reports)
+               report))))
+      ;; Positivi: rebuild/split, hit aggiornato, miss->hit, hit->miss, ref/epoch.
+      (dolist (kind '(:rebuild :split))
+        (dolist (change '(:update :insert :delete))
+          (dolist (protection '(:ref :epoch))
+            (run-model (scenario kind change protection) nil :protocol))))
+      ;; Witness mirati e controllo dati/storia sull'intero dominio del mutante.
+      (dolist (spec '((:skip-root :update) (:skip-root :insert) (:skip-miss-root :insert)))
+        (destructuring-bind (mutant change) spec
+          (let* ((config (scenario :split change :ref))
+                 (negative (run-model config mutant :protocol)))
+            (unless (and (eq (getf (getf negative :violation) :kind) :generation-contract)
+                         (getf (getf negative :violation) :linearizable))
+              (error \"Witness di generazione non mirato: ~S\" negative))
+            (run-model config mutant :data-history))))
+      (dolist (protection '(:ref :epoch))
+        (let ((report (run-model (scenario :split :update protection)
+                                 :early-release :protocol)))
+          (unless (eq (getf (getf report :violation) :kind) :access-to-reclaimed)
+            (error \"Witness reclaim non mirato\"))))
+      (let ((report (run-model (scenario :rebuild :update :ref) :skip-fields :protocol)))
+        (unless (eq (getf (getf report :violation) :kind) :incoherent-result)
+          (error \"Witness dei campi non mirato\")))
+      (dolist (spec '((:retry-hit :update) (:retry-miss :insert) (:fallback :update)))
+        (destructuring-bind (query change) spec
+          (run-model (scenario :split change :ref) nil :reachability query)))
+      (run-model (scenario :rebuild :update :ref) :skip-root :reachability :old-root-updated))
+    (list :schema-version 1 :spike :spk-07 :module :pubblicazione :status :ok
+          :reports (nreverse reports)
+          :counts (list :explorations (length reports) :states (- state-limit remaining)
+                        :edges total-edges :max-execution-steps max-steps)
+          :limits (list :states-per-exploration 200000 :suite-states state-limit
+                        :execution-steps step-limit :reader-attempts 2
+                        :history-operations 3 :linearization-nodes 128
+                        :keys 2 :source-fragments 1 :writes 1 :maintenance-operations 1
+                        :on-budget-exhaustion :error)
+          :assumptions '(:sequential-consistency :atomic-root-and-generation
+                         :immutable-directory :single-serial-writer
+                         :seqlock-does-not-wrap :generation-does-not-wrap :no-aba
+                         :strong-reference-acquisition-atomic
+                         :epoch-announced-before-root :retired-fragments-frozen
+                         :fallback-atomic-on-owner-after-finite-writer-work
+                         :fair-scheduling-for-eventual-service)
+          :conflicts '((:inv-i1-literal-immutability :adr0043-mutable-slots
+                        :interpretation :immutable-roots-and-retired-fragments)
+                       (:adr0043-initial-reference-linearization
+                        :corrected-by :adr0050 :oracle :finite-operation-history))
+          :generation-mutants :generation-only-witnesses-with-linearizable-histories
+          :omitted '(:weak-memory :snapshot-expiry :machine-code :crashes :persistence
+                     :directory-and-key-costs :full-swiss-probing :unbounded-histories
+                     :gc-timing :production-fallback :external-resource-implementation)
+          :coverage :bounded-sc-publication :gate :open)))
+")
+  (:PATH
+   #A((87) BASE-CHAR
+      . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/metodo-pubblicazione.md")
+   :KIND :SOURCE-BLOB :BYTE-LENGTH 5011 :DIGEST-ALGORITHM :MD5 :DIGEST
+   #A((32) BASE-CHAR . "fdebd21988dd1fd488c051ce86f57108") :ENCODING :UTF-8
+   :CONTENT
+   "# SPK-07 — Metodo della pubblicazione (registrato prima delle prove)
+
+Ambito: solo `pubblicazione.lisp`, package `arcdocdb.spk07.pubblicazione`,
+Common Lisp/SBCL con safety 3. Il core esistente viene caricato prima del modulo.
+Riferimenti letti: ADR0043, ADR0050, INV-I1, INV-I3, INV-A8, INV-P1,
+REQ-IDX-003/007. Nessun componente di produzione, benchmark o decisione nuova.
+
+Il modello SC enumera interleaving di un writer, un lookup e un ritiro.
+Due chiavi, un frammento sorgente, una scrittura e una manutenzione seriale
+(rebuild oppure split) bastano a distinguere hit aggiornato, miss diventato hit
+e hit diventato miss. Lo split instrada le due chiavi in frammenti diversi;
+il rebuild mantiene l'alias delle due voci. Root e generazione sono una coppia
+immutabile pubblicata in un passo indivisibile, dopo la costruzione privata.
+Il vecchio frammento può cambiare sotto seqlock prima del ritiro, poi è congelato.
+Versione, location, flag live e controllo sono passi distinti del writer.
+Il reader protegge prima del sondaggio, legge i campi separatamente, valida
+il seqlock, passa una barriera SC astratta e ricontrolla root/generazione anche
+su miss. Due tentativi condividono il budget; il fallback è un lookup atomico
+eseguito dal writer dopo i suoi lavori finiti. La schedulazione del fallback
+e la sua implementazione non sono oggetto di questa prova.
+
+Due astrazioni di durata: riferimento forte alla root (che mantiene i frammenti)
+e annuncio epoch prima del caricamento della root. Il reclaim esige il ritiro
+e l'assenza di protezioni pertinenti. ADR0043 assegna i frammenti heap al GC e
+l'EBR alle risorse esterne: la variante epoch verifica solo l'astrazione di
+durata, non cambia questa decisione e non simula un contatore comune di prodotto.
+
+Gli oracoli sono separati dalle transizioni: (1) ogni risultato hit è una
+tupla completa ammessa dalla specifica; (2) nessun accesso usa un frammento
+reclaimed; (3) il contratto di generazione confronta la coppia catturata con
+quella presente al punto di accettazione, non alla risposta successiva;
+(4) un enumeratore indipendente cerca una serializzazione della storia finita
+di invocazioni/risposte rispettando precedenze in tempo reale. La manutenzione
+è un'identità sulla mappa astratta. Operazioni pendenti possono essere omesse
+o completate; l'oracolo non usa root, campi o il punto di linearizzazione del
+protocollo. Una lettura della vecchia root non è respinta per questo solo fatto.
+
+Controlli negativi: omettere il ricontrollo di tutte le risposte oppure solo
+dei miss; rilasciare la protezione prima del sondaggio; omettere la validazione
+dei campi/seqlock nel caso hit. Ogni mutante deve produrre un witness mirato.
+Per i mutanti di generazione si esplora anche il solo oracolo dati/storia:
+se non viola linearizzabilità nel dominio finito, lo si dichiara esplicitamente.
+Query di raggiungibilità positive devono testimoniare retry hit/miss, fallback
+e lettura coerente aggiornata della vecchia root dopo la sostituzione.
+
+Budget: massimo 200000 stati per esplorazione e complessivi del CHECK,
+64 passi per esecuzione, due tentativi del reader, tre operazioni nella storia,
+128 nodi per ricerca di serializzazione. Un budget esaurito solleva errore;
+nessun taglio è interpretato come successo. Conteggi di stati/transizioni,
+accettazioni, risultati e terminali sono effettivi; non contano tutte le tracce.
+La fine di ogni esecuzione completa richiede writer e reader conclusi e reclaim.
+
+Ogni tentativo di compilazione/check avvia un figlio SBCL con inizializzazioni
+disabilitate e avvisi, inclusi style-warning, fatali. Un recorder Common Lisp
+su stdin conserva un nuovo record plist `:schema-version 1` in `out/`:
+argv/stdin esatti, ambiente, sorgenti come blob integrali e digest MD5 prima/dopo,
+risultato decodificato, limiti, stdout/stderr grezzi, exit code e fallimenti.
+Il record iniziale è scritto prima del figlio; i sorgenti devono essere stabili.
+Git non viene consultato: commit e blob Git sono dichiarati non acquisiti.
+FASL e record ricevono nomi nuovi. Non si misura throughput o latenza del motore.
+
+Limiti dichiarati: memoria debole, disassemblato/barriere reali, snapshot expiry,
+crash/persistenza, costi della directory/chiavi, wrap, allocator e scheduling
+del runtime esclusi. Generazioni/seqlock non fanno wrap, nessun ABA né
+riutilizzo di identità. Il probing Swiss completo, collisioni e capacità reali
+sono astratti in due posizioni di directory e un controllo per chiave.
+SC rende la barriera un passo di ordine esplicito, senza validarne il codice.
+
+Tensione normativa da segnalare: la lettura letterale di INV-I1 («gli indici
+sono immutabili per i reader») è più forte degli aggiornamenti di slot sotto
+seqlock consentiti da ADR0043. Qui sono immutabili root/directory e frammenti
+ritirati, mentre lo slot pubblicato può essere aggiornato prima del ritiro.
+ADR0050 corregge inoltre il vecchio istante di linearizzazione proposto in
+ADR0043. Nessun testo normativo o gate viene modificato.
+"))
+ :SOURCE-AFTER
+ ((:PATH
+   #A((73) BASE-CHAR
+      . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/core.lisp")
+   :KIND :SOURCE-BLOB :BYTE-LENGTH 15029 :DIGEST-ALGORITHM :MD5 :DIGEST
+   #A((32) BASE-CHAR . "a8bc7548ebee035a536677709e1e909e") :ENCODING :UTF-8
+   :CONTENT
+   ";;;; SPK-07: esplorazione finita, deterministica, senza codice del motore.
+;;; REQ: REQ-AFF-007 REQ-AFF-008 REQ-AFF-009 REQ-AFF-017 REQ-AFF-018 REQ-AFF-019
+;;; REQ: REQ-MVC-005 REQ-MVC-007 REQ-TXM-007 REQ-TXM-008 REQ-CMP-008 REQ-IDX-002
+;;; REQ: REQ-MVC-008
+(defpackage :arcdocdb.spk07 (:use :cl) (:export :check))
+(in-package :arcdocdb.spk07)
+(declaim (optimize (safety 3) (speed 1) (debug 3)))
+
+(defun changed (state index value)
+  (let ((copy (copy-list state)))
+    (setf (nth index copy) value)
+    copy))
+
+(defun witness (state parents)
+  (let ((steps nil))
+    (loop repeat (hash-table-count parents)
+          for info = (gethash state parents)
+          while (cdr info)
+          do (push (cdr info) steps) (setf state (car info)))
+    steps))
+
+(defun explore (name initial successors violation &key (limit 200000))
+  \"BFS; le chiavi sono stati immutabili. Il limite esaurito è un errore, mai successo.\"
+  (let ((parents (make-hash-table :test 'equal))
+        (queue (make-array 16 :adjustable t :fill-pointer 0))
+        (cursor 0) (edges 0))
+    (setf (gethash initial parents) (cons nil nil))
+    (vector-push-extend initial queue)
+    (loop while (< cursor (length queue)) do
+      (let* ((state (aref queue cursor)) (failure (funcall violation state)))
+        (incf cursor)
+        (when failure
+          (return-from explore
+            (list :model name :states (hash-table-count parents) :edges edges
+                  :violation failure :witness (witness state parents) :state state)))
+        (dolist (edge (funcall successors state))
+          (incf edges)
+          (let ((next (cdr edge)))
+            (unless (nth-value 1 (gethash next parents))
+              (when (>= (hash-table-count parents) limit)
+                (error \"Limite di ~D stati nel modello ~A\" limit name))
+              (setf (gethash next parents) (cons state (car edge)))
+              (vector-push-extend next queue))))))
+    (list :model name :states (hash-table-count parents) :edges edges :violation nil)))
+
+;;; Anello: crediti sui soli pendenti contro distanza issued-H e insieme dei pendenti.
+(defun horizon-edges (state policy)
+  (destructuring-bind (issued horizon ring status) state
+    (let ((edges nil))
+      (when (and (< issued 6)
+                 (< (if (eq policy :distance) (- issued horizon) (count 1 status)) 2))
+        (push (cons (list :allocate (1+ issued))
+                    (list (1+ issued) horizon (copy-list ring) (append status '(1)))) edges))
+      (dotimes (i issued)
+        (when (= (nth i status) 1)
+          (let ((r (copy-list ring)) (s (copy-list status)) (h horizon) (c (1+ i)))
+            (setf (nth i s) 2)
+            (if (eq policy :set)
+                (setf h (or (position 1 s) issued))
+                (progn
+                  (setf (nth (mod c 4) r) c)
+                  (loop repeat 4 while (= (nth (mod (1+ h) 4) r) (1+ h)) do (incf h))))
+            (push (cons (list :publish c) (list issued h r s)) edges))))
+      edges)))
+
+(defun horizon-violation (state)
+  (destructuring-bind (issued horizon ring status) state
+    (declare (ignore ring))
+    (cond ((loop for c from 1 to horizon thereis (/= (nth (1- c) status) 2))
+           :horizon-skips-pending)
+          ((and (not (member 1 status)) (/= horizon issued)) :horizon-stalled)
+          (t nil))))
+
+;;; 2PC: local 0->append->flush->apply->outcome-append->outcome-flush.
+;;; :decision 0->append->flush; si dimentica solo dopo entrambi gli esiti durevoli.
+(defun multi-edges (state mutant)
+  (destructuring-bind (a b decision forgotten ack rotated-a rotated-b) state
+    (let ((edges nil))
+      (dotimes (i 2)
+        (let ((local (nth i state)))
+          (when (or (< local 2)
+                    (and (= local 2) (= decision 2)) (<= 3 local 4))
+            (push (cons (list :participant i :step (1+ local))
+                        (changed state i (1+ local))) edges))))
+      (when (and (< decision 2) (>= a 2) (>= b 2))
+        (push (cons (list :decision (1+ decision))
+                    (changed state 2 (1+ decision))) edges))
+      (when (and (= decision 2) (not forgotten)
+                 (>= a (if (eq mutant :forget-early) 3 5))
+                 (>= b (if (eq mutant :forget-early) 3 5)))
+        (push (cons :forget (changed state 3 t)) edges))
+      (when (and (= decision 2) (>= a 3) (>= b 3) (not ack))
+        (push (cons :ack (changed state 4 t)) edges))
+      (when (and (= a 5) (not rotated-a))
+        (push (cons :rotate-a (changed state 5 t)) edges))
+      (when (and (= b 5) (not rotated-b))
+        (push (cons :rotate-b (changed state 6 t)) edges))
+      edges)))
+
+(defun multi-violation (state)
+  \"Crash in ogni stato: la decisione durevole è l'oracolo, gli esiti locali la sostituiscono.\"
+  (destructuring-bind (a b decision forgotten ack rotated-a rotated-b) state
+    (let ((committed (= decision 2))
+          (ra (or (= a 5) (and (= decision 2) (not forgotten))))
+          (rb (or (= b 5) (and (= decision 2) (not forgotten)))))
+      (cond ((and committed (not (and ra rb))) :committed-lost-after-crash)
+            ((not (eql ra rb)) :partial-commit)
+            ((and ack (or (< a 3) (< b 3))) :ack-before-visibility)
+            ((or (and rotated-a (< a 5)) (and rotated-b (< b 5))) :non-self-contained)
+            (t nil)))))
+
+;;; EDIT: sorgente e output distinti; riferimenti reader/snapshot prima dell'eliminazione.
+;;; Stato fase=0..6, riferimenti; il crash usa l'EDIT durevole, non l'indice in memoria.
+(defun edit-edges (state mutant)
+  (destructuring-bind (phase pins) state
+    (let ((edges nil))
+      (when (and (< phase 6)
+                 (or (/= phase 5) (= pins 0) (eq mutant :reclaim-pinned)))
+        (push (cons (list :phase (1+ phase)) (list (1+ phase) pins)) edges))
+      (when (> pins 0)
+        (push (cons :release (list phase (1- pins))) edges))
+      edges)))
+
+(defun edit-violation (state)
+  (destructuring-bind (phase pins) state
+    (cond ((and (= phase 6) (> pins 0)) :reclaimed-pinned-source)
+          (t nil))))
+
+(defun recover-edit (phase)
+  \"Prima dell'EDIT (fase3) resta sorgente; dopo, completa sempre l'output durevole.\"
+  (if (< phase 3) :source :output))
+
+;;; Seqlock: due campi con somma 100, aggiornati in passi separati.
+;;; Stato=(writer-step reader-step seq x y s1 rx ry s2 result), -1=nessun risultato.
+(defun seq-edges (state mutant)
+  (let ((edges nil) (w (first state)) (r (second state)))
+    (when (< w 4)
+      (let ((s (changed state 0 (1+ w))))
+        (case w
+          (0 (setf (nth 2 s) 1))
+          (1 (setf (nth 3 s) 30))
+          (2 (setf (nth 4 s) 70))
+          (3 (setf (nth 2 s) 2))
+          (otherwise (error \"Passo writer inatteso\")))
+        (push (cons (list :writer w) s) edges)))
+    (when (< r 5)
+      (let ((s (changed state 1 (1+ r))))
+        (case r
+          (0 (setf (nth 5 s) (nth 2 state)))
+          (1 (setf (nth 6 s) (nth 3 state)))
+          (2 (setf (nth 7 s) (nth 4 state)))
+          (3 (setf (nth 8 s) (nth 2 state)))
+          (4 (when (or mutant (and (= (nth 5 s) (nth 8 s)) (evenp (nth 5 s))))
+               (setf (nth 9 s) (+ (nth 6 s) (nth 7 s)))))
+          (otherwise (error \"Passo reader inatteso\")))
+        (push (cons (list :reader r) s) edges)))
+    edges))
+
+(defun seq-violation (state)
+  (unless (member (nth 9 state) '(-1 100)) :torn-read))
+
+;;; Registrazione: soglia sentinella, lettura s, pubblicazione versione, nascita snapshot.
+;;; write che non ha letto la soglia precede la pubblicazione della registrazione.
+(defun snapshot-edges (state protect)
+  (destructuring-bind (w r threshold snapshot retained current horizon first-read) state
+    (declare (ignore snapshot retained current horizon first-read))
+    (let ((edges nil))
+      (when (< w 3)
+        (let ((s (changed state 0 (1+ w))))
+          (case w
+            (0 nil) ; assegna CSN=1
+            (1 (setf (nth 4 s) (< threshold 1) (nth 5 s) 1))
+            (2 (setf (nth 6 s) 1))
+            (otherwise (error \"Passo snapshot writer\")))
+          (push (cons (list :writer w) s) edges)))
+      (when (and (< r 3) (or (/= r 2) (>= (nth 6 state) (nth 3 state))))
+        (let ((s (changed state 1 (1+ r))))
+          (case r
+            (0 (when protect (setf (nth 2 s) (nth 6 state))))
+            (1 (setf (nth 3 s) (if (> w 0) 1 0)))
+            (2 (setf (nth 7 s) t))
+            (otherwise (error \"Passo snapshot reader\")))
+          (push (cons (list :snapshot r) s) edges)))
+      edges)))
+
+(defun snapshot-violation (state)
+  (destructuring-bind (w r threshold snapshot retained current horizon first-read) state
+    (declare (ignore w r threshold horizon))
+    (when (and first-read (= snapshot 0) (= current 1) (not retained))
+      :snapshot-old-version-lost)))
+
+;;; Enumerazione persistenza log: prefisso durevole, quattro stati per lotto non durevole.
+(defun valid-prefix (states)
+  (or (position-if-not (lambda (x) (eq x :valid)) states) (length states)))
+
+(defun classify-log (states durable-prefix)
+  (let ((p (valid-prefix states)))
+    (if (loop for i from p below (length states)
+              thereis (and (eq (nth i states) :valid) (> durable-prefix p)))
+        :corruption :tail)))
+
+(defun log-cases ()
+  (let ((count 0) (damage-count 0))
+    (dotimes (durable 4)
+      (dotimes (mask (expt 4 (- 3 durable)))
+        (let ((states (make-list durable :initial-element :valid)))
+          (dotimes (i (- 3 durable))
+            (setf states (append states
+                                (list (nth (ldb (byte 2 (* 2 i)) mask)
+                                           '(:absent :partial :bad-crc :valid))))))
+          (assert (eq (classify-log states durable) :tail))
+          (assert (>= (valid-prefix states) durable))
+          (incf count))))
+    ;; un SEAL successivo attesta che entrambi i primi lotti erano già durevoli.
+    (dotimes (bad 2)
+      (let ((states '(:valid :valid :valid)))
+        (setf states (changed states bad :bad-crc))
+        (assert (eq (classify-log states 2) :corruption))
+        (incf damage-count)))
+    (list :model :sealed-log :persistence-cases count :corruption-cases damage-count
+          :limitation :unwitnessed-last-flush :violation nil)))
+
+;;; Tombstone: ogni record=(csn . kind), oracolo indipendente per CSN massimo.
+(defun logical-value (segments)
+  (let ((winner nil))
+    (dolist (segment segments)
+      (dolist (record segment)
+        (when (or (null winner) (> (car record) (car winner))) (setf winner record))))
+    (and winner (eq (cdr winner) :put) (car winner))))
+
+(defun compact-tombstones (segments sources)
+  (let* ((outside (loop for s in segments for i from 0 unless (member i sources) collect s))
+         (inside (loop for s in segments for i from 0 when (member i sources) append s))
+         (max-csn (loop for s in segments maximize (loop for r in s maximize (car r))))
+         (live (logical-value segments)) (output nil))
+    (dolist (record inside)
+      (when (or (and live (= (car record) live))
+                (and (eq (cdr record) :delete) (= (car record) max-csn)
+                     (loop for s in outside thereis
+                           (loop for older in s thereis (< (car older) (car record))))))
+        (push record output)))
+    (append outside (list output))))
+
+(defun permutations (items)
+  (if (null items) (list nil)
+      (loop for x in items append
+            (mapcar (lambda (rest) (cons x rest))
+                    (permutations (remove x items :count 1 :test #'equal))))))
+
+(defun tombstone-cases ()
+  (let ((count 0))
+    (dotimes (kinds 16)
+      (let* ((segments (loop for i below 4 collect
+                            (list (cons (1+ i) (if (logbitp i kinds) :delete :put)))))
+             (expected (logical-value segments)))
+        (loop for sources-mask from 1 below 16 do
+          (let* ((sources (loop for i below 4 when (logbitp i sources-mask) collect i))
+                 (output (compact-tombstones segments sources)))
+            (dolist (order (permutations output))
+              (assert (eql expected (logical-value order)))
+              (incf count))))))
+    (list :model :tombstones :cases count :records 4 :snapshots :not-modelled
+          :bloom :exact-no-false-negatives :violation nil)))
+
+(defun edit-cases ()
+  (let ((count 0))
+    (dotimes (phase 7)
+      (let ((once (recover-edit phase)))
+        (assert (eq once (recover-edit (if (eq once :output) 6 0))))
+        (incf count)))
+    ;; Le tabelle catalogo e manifest hanno lo stesso algoritmo di riconciliazione.
+    (dolist (object '(:segment :directory))
+      (declare (ignore object))
+      (dolist (name '(:tmp :final :missing))
+        (dolist (truth '(:unknown :active :removed))
+          (let ((action (case truth
+                          (:unknown (if (eq name :tmp) :discard :report))
+                          (:active (case name (:tmp :rename) (:final :use)
+                                         (:missing :fault) (otherwise (error \"Nome\"))))
+                          (:removed :remove) (otherwise (error \"Fonte\")))))
+            (when (and (eq name :final) (eq truth :unknown)) (assert (eq action :report)))
+            (incf count)))))
+    (list :model :recovery-and-catalogue :cases count :violation nil)))
+
+(defun require-outcome (report expected-violation)
+  (unless (if expected-violation (getf report :violation) (null (getf report :violation)))
+    (error \"Esito inatteso nel modello: ~S\" report))
+  report)
+
+(defun check ()
+  (let ((reports nil))
+    (dolist (policy '(:pending :distance :set))
+      (push (require-outcome
+             (explore (list :horizon policy) '(0 0 (0 0 0 0) ())
+                      (lambda (s) (horizon-edges s policy)) #'horizon-violation)
+             (eq policy :pending)) reports))
+    (dolist (mutant '(nil :forget-early))
+      (push (require-outcome
+             (explore (list :multiserie mutant) '(0 0 0 nil nil nil nil)
+                      (lambda (s) (multi-edges s mutant)) #'multi-violation)
+             mutant) reports))
+    (dolist (mutant '(nil :reclaim-pinned))
+      (push (require-outcome
+             (explore (list :edit-reclaim mutant) '(0 2)
+                      (lambda (s) (edit-edges s mutant)) #'edit-violation)
+             mutant) reports))
+    (dolist (mutant '(nil :no-seqlock-validation))
+      (push (require-outcome
+             (explore (list :seqlock mutant) '(0 0 0 10 90 0 0 0 0 -1)
+                      (lambda (s) (seq-edges s mutant)) #'seq-violation)
+             mutant) reports))
+    (dolist (protect '(nil t))
+      (push (require-outcome
+             (explore (list :snapshot protect) '(0 0 99 0 nil 0 0 nil)
+                      (lambda (s) (snapshot-edges s protect)) #'snapshot-violation)
+             (not protect)) reports))
+    (list :spike :spk-07 :status :pass :reports (nreverse reports)
+          :enumerations (list (log-cases) (tombstone-cases) (edit-cases))
+          :coverage :bounded-abstract-models
+          :pending '(:fragment-publication :snapshot-expiry :weak-memory
+                     :byte-level-crash :compaction-with-active-writer)
+          :gate :open)))
+")
+  (:PATH
+   #A((82) BASE-CHAR
+      . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/pubblicazione.lisp")
+   :KIND :SOURCE-BLOB :BYTE-LENGTH 24866 :DIGEST-ALGORITHM :MD5 :DIGEST
+   #A((32) BASE-CHAR . "e463fb00a74bc376dd1f67fe2269e90b") :ENCODING :UTF-8
+   :CONTENT ";;;; SPK-07: modello finito SC, non implementazione dell'indice.
+;;; Metodo registrato in metodo-pubblicazione.md prima della compilazione.
+;;; REQ-IDX-003/007; ADR0043/0050; INV-I1/I3/A8/P1.
+(defpackage :arcdocdb.spk07.pubblicazione
+  (:use :cl) (:export :check))
+(in-package :arcdocdb.spk07.pubblicazione)
+(declaim (optimize (safety 3) (speed 1) (debug 3)))
+
+(define-condition model-budget-exhausted (error)
+  ((resource :initarg :resource :reader budget-resource)
+   (limit :initarg :limit :reader budget-limit))
+  (:report (lambda (condition stream)
+             (format stream \"Budget ~A esaurito: ~D\"
+                     (budget-resource condition) (budget-limit condition)))))
+
+(defun budget-error (resource limit)
+  (error 'model-budget-exhausted :resource resource :limit limit))
+
+;;; Specifica indipendente: due chiavi e tuple complete, senza slot/root.
+(defun reference-initial ()
+  '((:a . (:hit 1 101)) (:b . :miss)))
+
+(defun scenario (kind change protection)
+  (list :kind kind :change change :protection protection
+        :key (if (eq change :insert) :b :a)
+        :new-value (if (eq change :delete) :miss '(:hit 2 202))))
+
+(defun root-tag (root) (list (first root) (second root)))
+(defun key-position (key) (ecase key (:a 0) (:b 1)))
+
+(defun initial-state ()
+  (list :steps 0 :writer :invoke-write :reader :idle
+        :root '(0 0 (0 0)) :prepared-root nil
+        :fragments '((0 (:a :seq 0 :version 1 :location 101 :live t :ctrl :occupied)
+                        (:b :seq 0 :version 0 :location 0 :live nil :ctrl :empty)))
+        :frozen-old nil :retired nil :reclaimed nil
+        :snapshot nil :fragment nil :protected nil :epoch nil
+        :tries 0 :first-seq nil :last-seq nil
+        :version nil :location nil :live nil :candidate :none :result :none
+        :acceptance nil :bad-access nil :captured-before-write nil
+        :features 0 :history nil))
+
+(defun fragment-slots (state id)
+  (or (cdr (assoc id (getf state :fragments)))
+      (error \"Frammento inesistente: ~S\" id)))
+
+(defun slot (state id key)
+  (cdr (assoc key (fragment-slots state id))))
+
+(defun add-event (state event)
+  (setf (getf state :history) (append (getf state :history) (list event))))
+
+(defun feature (state bit)
+  (setf (getf state :features) (logior (getf state :features) bit)))
+
+(defun release-protection (state)
+  (setf (getf state :protected) nil (getf state :epoch) nil))
+
+;;; Instrumentation de l'accès, indépendante de la décision de validation.
+;;; Les fragments reclaimed restent des données fantômes pour le witness.
+(defun note-access (state field)
+  (when (member (getf state :fragment) (getf state :reclaimed))
+    (setf (getf state :bad-access)
+          (list :fragment (getf state :fragment) :field field
+                :protection (getf state :protected) :epoch (getf state :epoch)))))
+
+(defun writer-transition (state config)
+  (unless (eq (getf state :writer) :done)
+    (let* ((next (copy-tree state)) (phase (getf state :writer))
+           (key (getf config :key)) (target (slot next 0 key))
+           (value (getf config :new-value)))
+      (flet ((advance (pc) (setf (getf next :writer) pc)))
+        (ecase phase
+          (:invoke-write
+           (add-event next (list :invoke :write :write key value))
+           (advance :odd))
+          (:odd (setf (getf target :seq) 1) (advance :version))
+          (:version
+           (unless (eq value :miss) (setf (getf target :version) (second value)))
+           (advance :location))
+          (:location
+           (unless (eq value :miss) (setf (getf target :location) (third value)))
+           (advance :live))
+          (:live (setf (getf target :live) (not (eq value :miss))) (advance :even))
+          (:even (setf (getf target :seq) 2) (advance :control))
+          (:control
+           (setf (getf target :ctrl) (if (eq value :miss) :deleted :occupied))
+           (advance :respond-write))
+          (:respond-write (add-event next '(:respond :write :ok))
+                          (advance :invoke-maintenance))
+          (:invoke-maintenance
+           (add-event next '(:invoke :maintenance :maintenance nil nil))
+           (advance :build-first))
+          (:build-first
+           (push (cons 1 (if (eq (getf config :kind) :rebuild)
+                             (copy-tree (fragment-slots state 0))
+                             (list (copy-tree (assoc :a (fragment-slots state 0))))))
+                 (getf next :fragments))
+           (advance :build-second))
+          (:build-second
+           (when (eq (getf config :kind) :split)
+             (push (list 2 (copy-tree (assoc :b (fragment-slots state 0))))
+                   (getf next :fragments)))
+           (advance :build-root))
+          (:build-root
+           (setf (getf next :prepared-root)
+                 (list 1 1 (if (eq (getf config :kind) :split) '(1 2) '(1 1))))
+           (advance :publish))
+          (:publish
+           (setf (getf next :root) (getf next :prepared-root)
+                 (getf next :retired) '(0)
+                 (getf next :frozen-old) (copy-tree (fragment-slots state 0)))
+           (advance :respond-maintenance))
+          (:respond-maintenance
+           (add-event next '(:respond :maintenance :ok)) (advance :done))))
+      (cons (list :writer phase :key key) next))))
+
+(defun reject-attempt (next reason)
+  (ecase reason
+    (:root (feature next (if (eq (getf next :candidate) :miss) 2 1)))
+    (:seqlock (feature next 4)))
+  (release-protection next)
+  (setf (getf next :reader) (if (= (getf next :tries) 2) :fallback :enter)
+        (getf next :snapshot) nil (getf next :fragment) nil
+        (getf next :candidate) :none))
+
+(defun reader-transition (state config mutant)
+  (let ((phase (getf state :reader)))
+    (unless (or (eq phase :done)
+                (and (eq phase :fallback) (not (eq (getf state :writer) :done))))
+      (let* ((next (copy-tree state)) (key (getf config :key))
+             (target (and (getf state :fragment)
+                          (slot state (getf state :fragment) key)))
+             (label (list :reader phase :attempt (getf state :tries))))
+        (ecase phase
+          (:idle
+           (add-event next (list :invoke :lookup :lookup key nil))
+           (setf (getf next :reader) :enter))
+          (:enter
+           (when (eq (getf config :protection) :epoch)
+             (setf (getf next :epoch) (second (getf state :root))))
+           (setf (getf next :reader) :acquire))
+          (:acquire
+           ;; Riferimento forte: caricamento e possesso sono indivisibili.
+           (setf (getf next :snapshot) (copy-tree (getf state :root))
+                 (getf next :fragment) (nth (key-position key) (third (getf state :root)))
+                 (getf next :protected) (eq (getf config :protection) :ref)
+                 (getf next :captured-before-write)
+                 (not (null (member (getf state :writer) '(:invoke-write :odd))))
+                 (getf next :reader) (if (eq mutant :early-release) :early-release :probe))
+           (incf (getf next :tries)))
+          (:early-release (release-protection next) (setf (getf next :reader) :probe))
+          (:probe
+           (note-access next :control)
+           (if (and target (eq (getf target :ctrl) :occupied))
+               (setf (getf next :reader) :seq-first)
+               (setf (getf next :candidate) :miss (getf next :reader) :barrier)))
+          (:seq-first
+           (note-access next :seq-first)
+           (setf (getf next :first-seq) (getf target :seq))
+           (if (and (oddp (getf target :seq)) (not (eq mutant :skip-fields)))
+               (progn (reject-attempt next :seqlock)
+                      (setf label (append label '(:reject :seqlock))))
+               (setf (getf next :reader) :read-version)))
+          (:read-version (note-access next :version)
+                         (setf (getf next :version) (getf target :version)
+                               (getf next :reader) :read-location))
+          (:read-location (note-access next :location)
+                          (setf (getf next :location) (getf target :location)
+                                (getf next :reader) :read-live))
+          (:read-live (note-access next :live)
+                      (setf (getf next :live) (getf target :live)
+                            (getf next :reader) :seq-last))
+          (:seq-last (note-access next :seq-last)
+                     (setf (getf next :last-seq) (getf target :seq)
+                           (getf next :reader) :validate-fields))
+          (:validate-fields
+           (if (or (eq mutant :skip-fields)
+                   (and (= (getf state :first-seq) (getf state :last-seq))
+                        (evenp (getf state :last-seq))))
+               (setf (getf next :candidate)
+                     (if (getf state :live)
+                         (list :hit (getf state :version) (getf state :location)) :miss)
+                     (getf next :reader) :barrier)
+               (progn (reject-attempt next :seqlock)
+                      (setf label (append label '(:reject :seqlock))))))
+          (:barrier (setf (getf next :reader) :validate-root))
+          (:validate-root
+           (let* ((captured (root-tag (getf state :snapshot)))
+                  (current (root-tag (getf state :root)))
+                  (skip (or (eq mutant :skip-root)
+                            (and (eq mutant :skip-miss-root)
+                                 (eq (getf state :candidate) :miss)))))
+             (if (or skip (equal captured current))
+                 (setf (getf next :result) (getf state :candidate)
+                       (getf next :acceptance)
+                       (list :captured captured :current current :checked (not skip))
+                       (getf next :reader) :respond)
+                 (progn (reject-attempt next :root)
+                        (setf label (append label (list :reject :root
+                                                       :candidate (getf state :candidate))))))))
+          (:respond
+           (add-event next (list :respond :lookup (getf state :result)))
+           (release-protection next) (setf (getf next :reader) :done))
+          (:fallback
+           ;; Service du writer abstrait, après ses opérations sérielles.
+           ;; Lecture atomique de la root courante, jamais du fragment retiré.
+           (let* ((id (nth (key-position key) (third (getf state :root))))
+                  (current (slot state id key))
+                  (value (if (and current (getf current :live))
+                             (list :hit (getf current :version) (getf current :location))
+                             :miss)))
+             (feature next 8)
+             (setf (getf next :result) value (getf next :reader) :done
+                   (getf next :acceptance) '(:fallback t))
+             (add-event next (list :respond :lookup value))
+             (release-protection next))))
+        (cons label next)))))
+
+(defun reclaim-transition (state config)
+  (when (and (getf state :retired) (not (getf state :reclaimed))
+             (if (eq (getf config :protection) :ref)
+                 (not (and (getf state :protected)
+                           (member 0 (third (getf state :snapshot)))))
+                 (not (and (getf state :epoch) (<= (getf state :epoch) 0)))))
+    (let ((next (copy-tree state)))
+      (setf (getf next :reclaimed) '(0))
+      (cons '(:reclaimer :reclaim 0) next))))
+
+(defun successors (state config mutant step-limit)
+  (let ((edges (remove nil (list (writer-transition state config)
+                                 (reader-transition state config mutant)
+                                 (reclaim-transition state config)))))
+    (when (and edges (>= (getf state :steps) step-limit))
+      (budget-error :execution-steps step-limit))
+    (dolist (edge edges)
+      (setf (getf (cdr edge) :steps) (1+ (getf state :steps))))
+    edges))
+
+;;; Oracolo della storia: riceve esclusivamente invocazioni/risposte e specifica.
+(defun history-operations (history)
+  (let ((operations nil))
+    (loop for event in history for time from 0 do
+      (ecase (first event)
+        (:invoke
+         (when (assoc (second event) operations) (error \"Invocazione duplicata\"))
+         (push (cons (second event)
+                     (list :id (second event) :kind (third event) :key (fourth event)
+                           :argument (fifth event) :invoke time :response nil :result nil))
+               operations))
+        (:respond
+         (let ((operation (cdr (assoc (second event) operations))))
+           (unless operation (error \"Risposta senza invocazione\"))
+           (when (getf operation :response) (error \"Risposta duplicata\"))
+           (setf (getf operation :response) time (getf operation :result) (third event))))))
+    (when (> (length operations) 3) (budget-error :history-operations 3))
+    (mapcar #'cdr (nreverse operations))))
+
+(defun linearization (history)
+  \"Cerca un'estensione finita: pendenti omessi o completati, precedenza reale.\"
+  (let* ((operations (history-operations history))
+         (complete (remove-if-not (lambda (op) (getf op :response)) operations))
+         (pending (remove-if (lambda (op) (getf op :response)) operations))
+         (nodes 0))
+    (labels ((search-order (remaining map order)
+               (incf nodes)
+               (when (> nodes 128) (budget-error :linearization-nodes 128))
+               (when (null remaining)
+                 (return-from linearization (values t (nreverse order) nodes)))
+               (dolist (op remaining)
+                 (unless (some (lambda (other)
+                                 (and (getf other :response)
+                                      (< (getf other :response) (getf op :invoke))))
+                               (remove op remaining :test #'eq))
+                   (let ((next-map (copy-tree map)) (valid t))
+                     (ecase (getf op :kind)
+                       (:write (setf (cdr (assoc (getf op :key) next-map))
+                                     (getf op :argument)))
+                       (:maintenance)
+                       (:lookup
+                        (when (getf op :response)
+                          (setf valid (equal (getf op :result)
+                                             (cdr (assoc (getf op :key) map)))))))
+                     (when valid
+                       (search-order (remove op remaining :test #'eq)
+                                     next-map (cons (getf op :id) order))))))))
+      (dotimes (mask (ash 1 (length pending)))
+        (search-order (append complete
+                              (loop for op in pending for bit from 0
+                                    when (logbitp bit mask) collect op))
+                      (copy-tree (reference-initial)) nil)))
+    (values nil nil nodes)))
+
+(defun response-history (state)
+  (if (eq (getf state :reader) :respond)
+      (append (getf state :history) (list (list :respond :lookup (getf state :result))))
+      (getf state :history)))
+
+(defun response-present-p (state)
+  (member (getf state :reader) '(:respond :done)))
+
+(defun data-oracle (state config)
+  (cond
+    ((getf state :bad-access)
+     (list :kind :access-to-reclaimed :access (getf state :bad-access)))
+    ((and (getf state :frozen-old)
+          (not (equal (getf state :frozen-old) (fragment-slots state 0))))
+     '(:kind :modified-retired-fragment))
+    ((response-present-p state)
+     (let* ((result (getf state :result))
+            (initial (cdr (assoc (getf config :key) (reference-initial)))))
+       (if (not (or (eq result :miss) (equal result initial)
+                    (equal result (getf config :new-value))))
+           (list :kind :incoherent-result :result result)
+           (multiple-value-bind (valid order nodes) (linearization (response-history state))
+             (declare (ignore order nodes))
+             (unless valid (list :kind :not-linearizable
+                                 :history (response-history state)))))))))
+
+(defun generation-oracle (state)
+  (let ((acceptance (getf state :acceptance)))
+    (when (and (response-present-p state) acceptance
+               (not (getf acceptance :fallback))
+               (not (equal (getf acceptance :captured) (getf acceptance :current))))
+      (multiple-value-bind (valid order nodes) (linearization (response-history state))
+        (list :kind :generation-contract :acceptance acceptance
+              :result (getf state :result) :linearizable valid
+              :linearization order :oracle-nodes nodes
+              :classification (if valid :generation-only :also-not-linearizable))))))
+
+(defun protocol-oracle (state config)
+  (or (data-oracle state config) (generation-oracle state)))
+
+(defun terminal-p (state)
+  (and (eq (getf state :writer) :done) (eq (getf state :reader) :done)
+       (getf state :reclaimed)))
+
+(defun reachability-query (query state config)
+  (when (and (response-present-p state) (null (data-oracle state config)))
+    (case query
+      (:retry-hit (when (logtest 1 (getf state :features)) :retry-hit-returned))
+      (:retry-miss (when (logtest 2 (getf state :features)) :retry-miss-returned))
+      (:fallback (when (logtest 8 (getf state :features)) :bounded-fallback-returned))
+      (:old-root-updated
+       (when (and (getf state :captured-before-write)
+                  (getf state :snapshot) (= (first (getf state :snapshot)) 0)
+                  (= (first (getf state :root)) 1)
+                  (equal (getf state :result) (getf config :new-value)))
+         (multiple-value-bind (valid order nodes) (linearization (response-history state))
+           (list :kind :old-root-updated-after-acquisition :linearizable valid
+                 :linearization order :oracle-nodes nodes)))))))
+
+(defun check (&key (state-limit 200000) (step-limit 64))
+  \"CHECK breve; un budget insufficiente fallisce, non promuove la copertura.\"
+  (unless (and (integerp state-limit) (<= 1 state-limit 200000)
+               (integerp step-limit) (<= 1 step-limit 64))
+    (error \"Budget ammessi: stati 1..200000, passi 1..64\"))
+  (let ((reports nil) (remaining state-limit) (total-edges 0) (max-steps 0))
+    (labels
+        ((run-model (config mutant mode &optional query)
+           (when (<= remaining 0) (budget-error :suite-states state-limit))
+           (let ((visited 0) (terminals 0) (hits 0) (misses 0)
+                 (fallbacks 0) (max-tries 0) (local-steps 0) (oracle-nodes 0))
+             (let* ((name (list :publication (getf config :kind) (getf config :change)
+                                (getf config :protection) mutant mode query))
+                    (report
+                      (arcdocdb.spk07::explore
+                       name (initial-state)
+                       (lambda (state)
+                         (let ((edges (successors state config mutant step-limit)))
+                           (when (and (null edges) (not (terminal-p state)))
+                             (error \"Stallo nel modello: ~S\" state))
+                           edges))
+                       (lambda (state)
+                         (incf visited)
+                         (setf local-steps (max local-steps (getf state :steps))
+                               max-tries (max max-tries (getf state :tries)))
+                         (when (terminal-p state) (incf terminals))
+                         (when (response-present-p state)
+                           (if (eq (getf state :result) :miss) (incf misses) (incf hits))
+                           (when (logtest 8 (getf state :features)) (incf fallbacks))
+                           (multiple-value-bind (valid order nodes)
+                               (linearization (response-history state))
+                             (declare (ignore valid order))
+                             (setf oracle-nodes (max oracle-nodes nodes))))
+                         (ecase mode
+                           (:protocol (protocol-oracle state config))
+                           (:data-history (data-oracle state config))
+                           (:reachability (reachability-query query state config))))
+                       :limit remaining)))
+               (decf remaining (getf report :states))
+               (incf total-edges (getf report :edges))
+               (setf max-steps (max max-steps local-steps))
+               (setf report
+                     (append report
+                             (list :config config :mutant mutant :oracle mode
+                                   :visited visited :terminal-states terminals
+                                   :observed-hit-states hits :observed-miss-states misses
+                                   :observed-fallback-states fallbacks
+                                   :max-tries max-tries :max-steps local-steps
+                                   :max-oracle-nodes oracle-nodes
+                                   :count-unit :distinct-states-not-traces)))
+               (arcdocdb.spk07::require-outcome
+                report (or (eq mode :reachability) (and mutant (eq mode :protocol))))
+               (when (and (not (getf report :violation)) (zerop terminals))
+                 (error \"Nessun terminale completo: ~S\" name))
+               (push report reports)
+               report))))
+      ;; Positivi: rebuild/split, hit aggiornato, miss->hit, hit->miss, ref/epoch.
+      (dolist (kind '(:rebuild :split))
+        (dolist (change '(:update :insert :delete))
+          (dolist (protection '(:ref :epoch))
+            (run-model (scenario kind change protection) nil :protocol))))
+      ;; Witness mirati e controllo dati/storia sull'intero dominio del mutante.
+      (dolist (spec '((:skip-root :update) (:skip-root :insert) (:skip-miss-root :insert)))
+        (destructuring-bind (mutant change) spec
+          (let* ((config (scenario :split change :ref))
+                 (negative (run-model config mutant :protocol)))
+            (unless (and (eq (getf (getf negative :violation) :kind) :generation-contract)
+                         (getf (getf negative :violation) :linearizable))
+              (error \"Witness di generazione non mirato: ~S\" negative))
+            (run-model config mutant :data-history))))
+      (dolist (protection '(:ref :epoch))
+        (let ((report (run-model (scenario :split :update protection)
+                                 :early-release :protocol)))
+          (unless (eq (getf (getf report :violation) :kind) :access-to-reclaimed)
+            (error \"Witness reclaim non mirato\"))))
+      (let ((report (run-model (scenario :rebuild :update :ref) :skip-fields :protocol)))
+        (unless (eq (getf (getf report :violation) :kind) :incoherent-result)
+          (error \"Witness dei campi non mirato\")))
+      (dolist (spec '((:retry-hit :update) (:retry-miss :insert) (:fallback :update)))
+        (destructuring-bind (query change) spec
+          (run-model (scenario :split change :ref) nil :reachability query)))
+      (run-model (scenario :rebuild :update :ref) :skip-root :reachability :old-root-updated))
+    (list :schema-version 1 :spike :spk-07 :module :pubblicazione :status :ok
+          :reports (nreverse reports)
+          :counts (list :explorations (length reports) :states (- state-limit remaining)
+                        :edges total-edges :max-execution-steps max-steps)
+          :limits (list :states-per-exploration 200000 :suite-states state-limit
+                        :execution-steps step-limit :reader-attempts 2
+                        :history-operations 3 :linearization-nodes 128
+                        :keys 2 :source-fragments 1 :writes 1 :maintenance-operations 1
+                        :on-budget-exhaustion :error)
+          :assumptions '(:sequential-consistency :atomic-root-and-generation
+                         :immutable-directory :single-serial-writer
+                         :seqlock-does-not-wrap :generation-does-not-wrap :no-aba
+                         :strong-reference-acquisition-atomic
+                         :epoch-announced-before-root :retired-fragments-frozen
+                         :fallback-atomic-on-owner-after-finite-writer-work
+                         :fair-scheduling-for-eventual-service)
+          :conflicts '((:inv-i1-literal-immutability :adr0043-mutable-slots
+                        :interpretation :immutable-roots-and-retired-fragments)
+                       (:adr0043-initial-reference-linearization
+                        :corrected-by :adr0050 :oracle :finite-operation-history))
+          :generation-mutants :generation-only-witnesses-with-linearizable-histories
+          :omitted '(:weak-memory :snapshot-expiry :machine-code :crashes :persistence
+                     :directory-and-key-costs :full-swiss-probing :unbounded-histories
+                     :gc-timing :production-fallback :external-resource-implementation)
+          :coverage :bounded-sc-publication :gate :open)))
+")
+  (:PATH
+   #A((87) BASE-CHAR
+      . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/metodo-pubblicazione.md")
+   :KIND :SOURCE-BLOB :BYTE-LENGTH 5011 :DIGEST-ALGORITHM :MD5 :DIGEST
+   #A((32) BASE-CHAR . "fdebd21988dd1fd488c051ce86f57108") :ENCODING :UTF-8
+   :CONTENT
+   "# SPK-07 — Metodo della pubblicazione (registrato prima delle prove)
+
+Ambito: solo `pubblicazione.lisp`, package `arcdocdb.spk07.pubblicazione`,
+Common Lisp/SBCL con safety 3. Il core esistente viene caricato prima del modulo.
+Riferimenti letti: ADR0043, ADR0050, INV-I1, INV-I3, INV-A8, INV-P1,
+REQ-IDX-003/007. Nessun componente di produzione, benchmark o decisione nuova.
+
+Il modello SC enumera interleaving di un writer, un lookup e un ritiro.
+Due chiavi, un frammento sorgente, una scrittura e una manutenzione seriale
+(rebuild oppure split) bastano a distinguere hit aggiornato, miss diventato hit
+e hit diventato miss. Lo split instrada le due chiavi in frammenti diversi;
+il rebuild mantiene l'alias delle due voci. Root e generazione sono una coppia
+immutabile pubblicata in un passo indivisibile, dopo la costruzione privata.
+Il vecchio frammento può cambiare sotto seqlock prima del ritiro, poi è congelato.
+Versione, location, flag live e controllo sono passi distinti del writer.
+Il reader protegge prima del sondaggio, legge i campi separatamente, valida
+il seqlock, passa una barriera SC astratta e ricontrolla root/generazione anche
+su miss. Due tentativi condividono il budget; il fallback è un lookup atomico
+eseguito dal writer dopo i suoi lavori finiti. La schedulazione del fallback
+e la sua implementazione non sono oggetto di questa prova.
+
+Due astrazioni di durata: riferimento forte alla root (che mantiene i frammenti)
+e annuncio epoch prima del caricamento della root. Il reclaim esige il ritiro
+e l'assenza di protezioni pertinenti. ADR0043 assegna i frammenti heap al GC e
+l'EBR alle risorse esterne: la variante epoch verifica solo l'astrazione di
+durata, non cambia questa decisione e non simula un contatore comune di prodotto.
+
+Gli oracoli sono separati dalle transizioni: (1) ogni risultato hit è una
+tupla completa ammessa dalla specifica; (2) nessun accesso usa un frammento
+reclaimed; (3) il contratto di generazione confronta la coppia catturata con
+quella presente al punto di accettazione, non alla risposta successiva;
+(4) un enumeratore indipendente cerca una serializzazione della storia finita
+di invocazioni/risposte rispettando precedenze in tempo reale. La manutenzione
+è un'identità sulla mappa astratta. Operazioni pendenti possono essere omesse
+o completate; l'oracolo non usa root, campi o il punto di linearizzazione del
+protocollo. Una lettura della vecchia root non è respinta per questo solo fatto.
+
+Controlli negativi: omettere il ricontrollo di tutte le risposte oppure solo
+dei miss; rilasciare la protezione prima del sondaggio; omettere la validazione
+dei campi/seqlock nel caso hit. Ogni mutante deve produrre un witness mirato.
+Per i mutanti di generazione si esplora anche il solo oracolo dati/storia:
+se non viola linearizzabilità nel dominio finito, lo si dichiara esplicitamente.
+Query di raggiungibilità positive devono testimoniare retry hit/miss, fallback
+e lettura coerente aggiornata della vecchia root dopo la sostituzione.
+
+Budget: massimo 200000 stati per esplorazione e complessivi del CHECK,
+64 passi per esecuzione, due tentativi del reader, tre operazioni nella storia,
+128 nodi per ricerca di serializzazione. Un budget esaurito solleva errore;
+nessun taglio è interpretato come successo. Conteggi di stati/transizioni,
+accettazioni, risultati e terminali sono effettivi; non contano tutte le tracce.
+La fine di ogni esecuzione completa richiede writer e reader conclusi e reclaim.
+
+Ogni tentativo di compilazione/check avvia un figlio SBCL con inizializzazioni
+disabilitate e avvisi, inclusi style-warning, fatali. Un recorder Common Lisp
+su stdin conserva un nuovo record plist `:schema-version 1` in `out/`:
+argv/stdin esatti, ambiente, sorgenti come blob integrali e digest MD5 prima/dopo,
+risultato decodificato, limiti, stdout/stderr grezzi, exit code e fallimenti.
+Il record iniziale è scritto prima del figlio; i sorgenti devono essere stabili.
+Git non viene consultato: commit e blob Git sono dichiarati non acquisiti.
+FASL e record ricevono nomi nuovi. Non si misura throughput o latenza del motore.
+
+Limiti dichiarati: memoria debole, disassemblato/barriere reali, snapshot expiry,
+crash/persistenza, costi della directory/chiavi, wrap, allocator e scheduling
+del runtime esclusi. Generazioni/seqlock non fanno wrap, nessun ABA né
+riutilizzo di identità. Il probing Swiss completo, collisioni e capacità reali
+sono astratti in due posizioni di directory e un controllo per chiave.
+SC rende la barriera un passo di ordine esplicito, senza validarne il codice.
+
+Tensione normativa da segnalare: la lettura letterale di INV-I1 («gli indici
+sono immutabili per i reader») è più forte degli aggiornamenti di slot sotto
+seqlock consentiti da ADR0043. Qui sono immutabili root/directory e frammenti
+ritirati, mentre lo slot pubblicato può essere aggiornato prima del ritiro.
+ADR0050 corregge inoltre il vecchio istante di linearizzazione proposto in
+ADR0043. Nessun testo normativo o gate viene modificato.
+"))
+ :SOURCE-STABILITY :STABLE :START 4000478744 :END 4000478745 :LIMITS
+ (:SUITE-STATES 200000 :STATES-PER-MODEL 200000 :STEPS 64 :READER-ATTEMPTS 2
+  :ORACLE-NODES 128 :HISTORY-OPERATIONS 3)
+ :STDOUT "SPK07-RESULT
+(:SCHEMA-VERSION 1 :SPIKE :SPK-07 :MODULE :PUBBLICAZIONE :STATUS :OK :REPORTS ((:MODEL (:PUBLICATION :REBUILD :UPDATE :REF NIL :PROTOCOL NIL) :STATES 4045 :EDGES 7255 :VIOLATION NIL :CONFIG (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4045 :TERMINAL-STATES 85 :OBSERVED-HIT-STATES 622 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :REBUILD :UPDATE :EPOCH NIL :PROTOCOL NIL) :STATES 4357 :EDGES 7723 :VIOLATION NIL :CONFIG (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :EPOCH :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4357 :TERMINAL-STATES 85 :OBSERVED-HIT-STATES 638 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :REBUILD :INSERT :REF NIL :PROTOCOL NIL) :STATES 1621 :EDGES 2775 :VIOLATION NIL :CONFIG (:KIND :REBUILD :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1621 :TERMINAL-STATES 59 :OBSERVED-HIT-STATES 294 :OBSERVED-MISS-STATES 210 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :REBUILD :INSERT :EPOCH NIL :PROTOCOL NIL) :STATES 1709 :EDGES 2907 :VIOLATION NIL :CONFIG (:KIND :REBUILD :CHANGE :INSERT :PROTECTION :EPOCH :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1709 :TERMINAL-STATES 59 :OBSERVED-HIT-STATES 302 :OBSERVED-MISS-STATES 210 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :REBUILD :DELETE :REF NIL :PROTOCOL NIL) :STATES 3773 :EDGES 6247 :VIOLATION NIL :CONFIG (:KIND :REBUILD :CHANGE :DELETE :PROTECTION :REF :KEY :A :NEW-VALUE :MISS) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3773 :TERMINAL-STATES 167 :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1136 :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :REBUILD :DELETE :EPOCH NIL :PROTOCOL NIL) :STATES 3917 :EDGES 6463 :VIOLATION NIL :CONFIG (:KIND :REBUILD :CHANGE :DELETE :PROTECTION :EPOCH :KEY :A :NEW-VALUE :MISS) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3917 :TERMINAL-STATES 167 :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1164 :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF NIL :PROTOCOL NIL) :STATES 4045 :EDGES 7255 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4045 :TERMINAL-STATES 85 :OBSERVED-HIT-STATES 622 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :EPOCH NIL :PROTOCOL NIL) :STATES 4357 :EDGES 7723 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :EPOCH :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4357 :TERMINAL-STATES 85 :OBSERVED-HIT-STATES 638 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :INSERT :REF NIL :PROTOCOL NIL) :STATES 1621 :EDGES 2775 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1621 :TERMINAL-STATES 59 :OBSERVED-HIT-STATES 294 :OBSERVED-MISS-STATES 210 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :INSERT :EPOCH NIL :PROTOCOL NIL) :STATES 1709 :EDGES 2907 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :EPOCH :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1709 :TERMINAL-STATES 59 :OBSERVED-HIT-STATES 302 :OBSERVED-MISS-STATES 210 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :DELETE :REF NIL :PROTOCOL NIL) :STATES 3773 :EDGES 6247 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :DELETE :PROTECTION :REF :KEY :A :NEW-VALUE :MISS) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3773 :TERMINAL-STATES 167 :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1136 :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :DELETE :EPOCH NIL :PROTOCOL NIL) :STATES 3917 :EDGES 6463 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :DELETE :PROTECTION :EPOCH :KEY :A :NEW-VALUE :MISS) :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3917 :TERMINAL-STATES 167 :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1164 :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF :SKIP-ROOT :PROTOCOL NIL) :STATES 2795 :EDGES 4861 :VIOLATION (:KIND :GENERATION-CONTRACT :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :RESULT (:HIT 2 202) :LINEARIZABLE T :LINEARIZATION (:WRITE :LOOKUP) :ORACLE-NODES 3 :CLASSIFICATION :GENERATION-ONLY) :WITNESS ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A) (:WRITER :LIVE :KEY :A) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:WRITER :PUBLISH :KEY :A) (:READER :PROBE :ATTEMPT 1) (:READER :SEQ-FIRST :ATTEMPT 1) (:READER :READ-VERSION :ATTEMPT 1) (:READER :READ-LOCATION :ATTEMPT 1) (:READER :READ-LIVE :ATTEMPT 1) (:READER :SEQ-LAST :ATTEMPT 1) (:READER :VALIDATE-FIELDS :ATTEMPT 1) (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1)) :STATE (:STEPS 25 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))) :FROZEN-OLD ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T :EPOCH NIL :TRIES 1 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CANDIDATE (:HIT 2 202) :RESULT (:HIT 2 202) :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL) (:INVOKE :LOOKUP :LOOKUP :A NIL))) :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-ROOT :ORACLE :PROTOCOL :VISITED 2566 :TERMINAL-STATES 0 :OBSERVED-HIT-STATES 186 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 2 :MAX-TRIES 2 :MAX-STEPS 25 :MAX-ORACLE-NODES 4 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF :SKIP-ROOT :DATA-HISTORY NIL) :STATES 3821 :EDGES 6759 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-ROOT :ORACLE :DATA-HISTORY :VISITED 3821 :TERMINAL-STATES 97 :OBSERVED-HIT-STATES 670 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 20 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-ROOT :PROTOCOL NIL) :STATES 776 :EDGES 1278 :VIOLATION (:KIND :GENERATION-CONTRACT :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :RESULT :MISS :LINEARIZABLE T :LINEARIZATION (:LOOKUP :WRITE) :ORACLE-NODES 4 :CLASSIFICATION :GENERATION-ONLY) :WITNESS ((:WRITER :INVOKE-WRITE :KEY :B) (:WRITER :ODD :KEY :B) (:WRITER :VERSION :KEY :B) (:WRITER :LOCATION :KEY :B) (:WRITER :LIVE :KEY :B) (:WRITER :EVEN :KEY :B) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:READER :PROBE :ATTEMPT 1) (:WRITER :CONTROL :KEY :B) (:WRITER :RESPOND-WRITE :KEY :B) (:WRITER :INVOKE-MAINTENANCE :KEY :B) (:WRITER :BUILD-FIRST :KEY :B) (:WRITER :BUILD-SECOND :KEY :B) (:WRITER :BUILD-ROOT :KEY :B) (:WRITER :PUBLISH :KEY :B) (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1)) :STATE (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (1 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))) :FROZEN-OLD ((:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL :LOCATION NIL :LIVE NIL :CANDIDATE :MISS :RESULT :MISS :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY ((:INVOKE :WRITE :WRITE :B (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :B NIL) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL))) :CONFIG (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-ROOT :ORACLE :PROTOCOL :VISITED 689 :TERMINAL-STATES 0 :OBSERVED-HIT-STATES 1 :OBSERVED-MISS-STATES 130 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 1 :MAX-STEPS 19 :MAX-ORACLE-NODES 4 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-ROOT :DATA-HISTORY NIL) :STATES 1345 :EDGES 2185 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-ROOT :ORACLE :DATA-HISTORY :VISITED 1345 :TERMINAL-STATES 67 :OBSERVED-HIT-STATES 282 :OBSERVED-MISS-STATES 242 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 1 :MAX-STEPS 28 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-MISS-ROOT :PROTOCOL NIL) :STATES 776 :EDGES 1278 :VIOLATION (:KIND :GENERATION-CONTRACT :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :RESULT :MISS :LINEARIZABLE T :LINEARIZATION (:LOOKUP :WRITE) :ORACLE-NODES 4 :CLASSIFICATION :GENERATION-ONLY) :WITNESS ((:WRITER :INVOKE-WRITE :KEY :B) (:WRITER :ODD :KEY :B) (:WRITER :VERSION :KEY :B) (:WRITER :LOCATION :KEY :B) (:WRITER :LIVE :KEY :B) (:WRITER :EVEN :KEY :B) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:READER :PROBE :ATTEMPT 1) (:WRITER :CONTROL :KEY :B) (:WRITER :RESPOND-WRITE :KEY :B) (:WRITER :INVOKE-MAINTENANCE :KEY :B) (:WRITER :BUILD-FIRST :KEY :B) (:WRITER :BUILD-SECOND :KEY :B) (:WRITER :BUILD-ROOT :KEY :B) (:WRITER :PUBLISH :KEY :B) (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1)) :STATE (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (1 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))) :FROZEN-OLD ((:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL :LOCATION NIL :LIVE NIL :CANDIDATE :MISS :RESULT :MISS :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY ((:INVOKE :WRITE :WRITE :B (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :B NIL) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL))) :CONFIG (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-MISS-ROOT :ORACLE :PROTOCOL :VISITED 689 :TERMINAL-STATES 0 :OBSERVED-HIT-STATES 1 :OBSERVED-MISS-STATES 130 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 1 :MAX-STEPS 19 :MAX-ORACLE-NODES 4 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-MISS-ROOT :DATA-HISTORY NIL) :STATES 1529 :EDGES 2573 :VIOLATION NIL :CONFIG (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-MISS-ROOT :ORACLE :DATA-HISTORY :VISITED 1529 :TERMINAL-STATES 63 :OBSERVED-HIT-STATES 274 :OBSERVED-MISS-STATES 242 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF :EARLY-RELEASE :PROTOCOL NIL) :STATES 1346 :EDGES 2223 :VIOLATION (:KIND :ACCESS-TO-RECLAIMED :ACCESS (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL)) :WITNESS ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A) (:WRITER :LIVE :KEY :A) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:WRITER :PUBLISH :KEY :A) (:READER :EARLY-RELEASE :ATTEMPT 1) (:RECLAIMER :RECLAIM 0) (:READER :PROBE :ATTEMPT 1)) :STATE (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :SEQ-FIRST :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))) :FROZEN-OLD ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) :RETIRED (0) :RECLAIMED (0) :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED NIL :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL :LOCATION NIL :LIVE NIL :CANDIDATE :NONE :RESULT :NONE :ACCEPTANCE NIL :BAD-ACCESS (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL) :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL) (:INVOKE :LOOKUP :LOOKUP :A NIL))) :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT :EARLY-RELEASE :ORACLE :PROTOCOL :VISITED 1121 :TERMINAL-STATES 0 :OBSERVED-HIT-STATES 24 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 19 :MAX-ORACLE-NODES 2 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :EPOCH :EARLY-RELEASE :PROTOCOL NIL) :STATES 1362 :EDGES 2247 :VIOLATION (:KIND :ACCESS-TO-RECLAIMED :ACCESS (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL)) :WITNESS ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A) (:WRITER :LIVE :KEY :A) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:WRITER :PUBLISH :KEY :A) (:READER :EARLY-RELEASE :ATTEMPT 1) (:RECLAIMER :RECLAIM 0) (:READER :PROBE :ATTEMPT 1)) :STATE (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :SEQ-FIRST :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))) :FROZEN-OLD ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) :RETIRED (0) :RECLAIMED (0) :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED NIL :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL :LOCATION NIL :LIVE NIL :CANDIDATE :NONE :RESULT :NONE :ACCEPTANCE NIL :BAD-ACCESS (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL) :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL) (:INVOKE :LOOKUP :LOOKUP :A NIL))) :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :EPOCH :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT :EARLY-RELEASE :ORACLE :PROTOCOL :VISITED 1137 :TERMINAL-STATES 0 :OBSERVED-HIT-STATES 24 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 19 :MAX-ORACLE-NODES 2 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :REBUILD :UPDATE :REF :SKIP-FIELDS :PROTOCOL NIL) :STATES 1029 :EDGES 1557 :VIOLATION (:KIND :INCOHERENT-RESULT :RESULT (:HIT 2 101)) :WITNESS ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:READER :PROBE :ATTEMPT 1) (:READER :SEQ-FIRST :ATTEMPT 1) (:READER :READ-VERSION :ATTEMPT 1) (:READER :READ-LOCATION :ATTEMPT 1) (:READER :READ-LIVE :ATTEMPT 1) (:READER :SEQ-LAST :ATTEMPT 1) (:READER :VALIDATE-FIELDS :ATTEMPT 1) (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1)) :STATE (:STEPS 15 :WRITER :LOCATION :READER :RESPOND :ROOT (0 0 (0 0)) :PREPARED-ROOT NIL :FRAGMENTS ((0 (:A :SEQ 1 :VERSION 2 :LOCATION 101 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))) :FROZEN-OLD NIL :RETIRED NIL :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T :EPOCH NIL :TRIES 1 :FIRST-SEQ 1 :LAST-SEQ 1 :VERSION 2 :LOCATION 101 :LIVE T :CANDIDATE (:HIT 2 101) :RESULT (:HIT 2 101) :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (0 0) :CHECKED T) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :A NIL))) :CONFIG (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-FIELDS :ORACLE :PROTOCOL :VISITED 778 :TERMINAL-STATES 0 :OBSERVED-HIT-STATES 16 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 1 :MAX-STEPS 15 :MAX-ORACLE-NODES 3 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF NIL :REACHABILITY :RETRY-HIT) :STATES 3785 :EDGES 6763 :VIOLATION :RETRY-HIT-RETURNED :WITNESS ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A) (:WRITER :LIVE :KEY :A) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:READER :PROBE :ATTEMPT 1) (:READER :SEQ-FIRST :ATTEMPT 1 :REJECT :SEQLOCK) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A) (:READER :ENTER :ATTEMPT 1) (:READER :ACQUIRE :ATTEMPT 1) (:WRITER :PUBLISH :KEY :A) (:WRITER :RESPOND-MAINTENANCE :KEY :A) (:READER :PROBE :ATTEMPT 2) (:READER :SEQ-FIRST :ATTEMPT 2) (:READER :READ-VERSION :ATTEMPT 2) (:READER :READ-LOCATION :ATTEMPT 2) (:READER :READ-LIVE :ATTEMPT 2) (:READER :SEQ-LAST :ATTEMPT 2) (:READER :VALIDATE-FIELDS :ATTEMPT 2) (:READER :BARRIER :ATTEMPT 2) (:READER :VALIDATE-ROOT :ATTEMPT 2 :REJECT :ROOT :CANDIDATE (:HIT 2 202)) (:READER :FALLBACK :ATTEMPT 2)) :STATE (:STEPS 31 :WRITER :DONE :READER :DONE :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))) :FROZEN-OLD ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) :RETIRED (0) :RECLAIMED NIL :SNAPSHOT NIL :FRAGMENT NIL :PROTECTED NIL :EPOCH NIL :TRIES 2 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CANDIDATE :NONE :RESULT (:HIT 2 202) :ACCEPTANCE (:FALLBACK T) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 13 :HISTORY ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :A NIL) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL) (:RESPOND :MAINTENANCE :OK) (:RESPOND :LOOKUP (:HIT 2 202)))) :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :REACHABILITY :VISITED 3706 :TERMINAL-STATES 49 :OBSERVED-HIT-STATES 463 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 21 :MAX-TRIES 2 :MAX-STEPS 31 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :INSERT :REF NIL :REACHABILITY :RETRY-MISS) :STATES 1479 :EDGES 2496 :VIOLATION :RETRY-MISS-RETURNED :WITNESS ((:WRITER :INVOKE-WRITE :KEY :B) (:WRITER :ODD :KEY :B) (:WRITER :VERSION :KEY :B) (:WRITER :LOCATION :KEY :B) (:WRITER :LIVE :KEY :B) (:WRITER :EVEN :KEY :B) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:READER :PROBE :ATTEMPT 1) (:WRITER :CONTROL :KEY :B) (:WRITER :RESPOND-WRITE :KEY :B) (:WRITER :INVOKE-MAINTENANCE :KEY :B) (:WRITER :BUILD-FIRST :KEY :B) (:WRITER :BUILD-SECOND :KEY :B) (:WRITER :BUILD-ROOT :KEY :B) (:WRITER :PUBLISH :KEY :B) (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1 :REJECT :ROOT :CANDIDATE :MISS) (:READER :ENTER :ATTEMPT 1) (:READER :ACQUIRE :ATTEMPT 1) (:READER :PROBE :ATTEMPT 2) (:READER :SEQ-FIRST :ATTEMPT 2) (:READER :READ-VERSION :ATTEMPT 2) (:READER :READ-LOCATION :ATTEMPT 2) (:READER :READ-LIVE :ATTEMPT 2) (:READER :SEQ-LAST :ATTEMPT 2) (:READER :VALIDATE-FIELDS :ATTEMPT 2) (:READER :BARRIER :ATTEMPT 2) (:READER :VALIDATE-ROOT :ATTEMPT 2)) :STATE (:STEPS 30 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (1 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))) :FROZEN-OLD ((:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (1 1 (1 2)) :FRAGMENT 2 :PROTECTED T :EPOCH NIL :TRIES 2 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CANDIDATE (:HIT 2 202) :RESULT (:HIT 2 202) :ACCEPTANCE (:CAPTURED (1 1) :CURRENT (1 1) :CHECKED T) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 2 :HISTORY ((:INVOKE :WRITE :WRITE :B (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :B NIL) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL))) :CONFIG (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :REACHABILITY :VISITED 1456 :TERMINAL-STATES 47 :OBSERVED-HIT-STATES 235 :OBSERVED-MISS-STATES 210 :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 30 :MAX-ORACLE-NODES 6 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF NIL :REACHABILITY :FALLBACK) :STATES 2599 :EDGES 4522 :VIOLATION :BOUNDED-FALLBACK-RETURNED :WITNESS ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A) (:WRITER :LIVE :KEY :A) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:READER :PROBE :ATTEMPT 1) (:READER :SEQ-FIRST :ATTEMPT 1 :REJECT :SEQLOCK) (:READER :ENTER :ATTEMPT 1) (:READER :ACQUIRE :ATTEMPT 1) (:READER :PROBE :ATTEMPT 2) (:READER :SEQ-FIRST :ATTEMPT 2 :REJECT :SEQLOCK) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A) (:WRITER :PUBLISH :KEY :A) (:WRITER :RESPOND-MAINTENANCE :KEY :A) (:READER :FALLBACK :ATTEMPT 2)) :STATE (:STEPS 24 :WRITER :DONE :READER :DONE :ROOT (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)) (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))) :FROZEN-OLD ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) :RETIRED (0) :RECLAIMED NIL :SNAPSHOT NIL :FRAGMENT NIL :PROTECTED NIL :EPOCH NIL :TRIES 2 :FIRST-SEQ 1 :LAST-SEQ NIL :VERSION NIL :LOCATION NIL :LIVE NIL :CANDIDATE :NONE :RESULT (:HIT 2 202) :ACCEPTANCE (:FALLBACK T) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 12 :HISTORY ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :A NIL) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL) (:RESPOND :MAINTENANCE :OK) (:RESPOND :LOOKUP (:HIT 2 202)))) :CONFIG (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT NIL :ORACLE :REACHABILITY :VISITED 2386 :TERMINAL-STATES 0 :OBSERVED-HIT-STATES 160 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 1 :MAX-TRIES 2 :MAX-STEPS 24 :MAX-ORACLE-NODES 4 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES) (:MODEL (:PUBLICATION :REBUILD :UPDATE :REF :SKIP-ROOT :REACHABILITY :OLD-ROOT-UPDATED) :STATES 2830 :EDGES 4919 :VIOLATION (:KIND :OLD-ROOT-UPDATED-AFTER-ACQUISITION :LINEARIZABLE T :LINEARIZATION (:WRITE :LOOKUP) :ORACLE-NODES 3) :WITNESS ((:WRITER :INVOKE-WRITE :KEY :A) (:READER :IDLE :ATTEMPT 0) (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0) (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A) (:WRITER :LIVE :KEY :A) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A) (:WRITER :PUBLISH :KEY :A) (:READER :PROBE :ATTEMPT 1) (:READER :SEQ-FIRST :ATTEMPT 1) (:READER :READ-VERSION :ATTEMPT 1) (:READER :READ-LOCATION :ATTEMPT 1) (:READER :READ-LIVE :ATTEMPT 1) (:READER :SEQ-LAST :ATTEMPT 1) (:READER :VALIDATE-FIELDS :ATTEMPT 1) (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1)) :STATE (:STEPS 25 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 1)) :PREPARED-ROOT (1 1 (1 1)) :FRAGMENTS ((1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))) :FROZEN-OLD ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED) (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)) :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T :EPOCH NIL :TRIES 1 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CANDIDATE (:HIT 2 202) :RESULT (:HIT 2 202) :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE T :FEATURES 0 :HISTORY ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :A NIL) (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL))) :CONFIG (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE (:HIT 2 202)) :MUTANT :SKIP-ROOT :ORACLE :REACHABILITY :VISITED 2602 :TERMINAL-STATES 1 :OBSERVED-HIT-STATES 204 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 3 :MAX-TRIES 2 :MAX-STEPS 25 :MAX-ORACLE-NODES 4 :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)) :COUNTS (:EXPLORATIONS 1 :STATES 64316 :EDGES 110401 :MAX-EXECUTION-STEPS 39) :LIMITS (:STATES-PER-EXPLORATION 200000 :SUITE-STATES 200000 :EXECUTION-STEPS 64 :READER-ATTEMPTS 2 :HISTORY-OPERATIONS 3 :LINEARIZATION-NODES 128 :KEYS 2 :SOURCE-FRAGMENTS 1 :WRITES 1 :MAINTENANCE-OPERATIONS 1 :ON-BUDGET-EXHAUSTION :ERROR) :ASSUMPTIONS (:SEQUENTIAL-CONSISTENCY :ATOMIC-ROOT-AND-GENERATION :IMMUTABLE-DIRECTORY :SINGLE-SERIAL-WRITER :SEQLOCK-DOES-NOT-WRAP :GENERATION-DOES-NOT-WRAP :NO-ABA :STRONG-REFERENCE-ACQUISITION-ATOMIC :EPOCH-ANNOUNCED-BEFORE-ROOT :RETIRED-FRAGMENTS-FROZEN :FALLBACK-ATOMIC-ON-OWNER-AFTER-FINITE-WRITER-WORK :FAIR-SCHEDULING-FOR-EVENTUAL-SERVICE) :CONFLICTS ((:INV-I1-LITERAL-IMMUTABILITY :ADR0043-MUTABLE-SLOTS :INTERPRETATION :IMMUTABLE-ROOTS-AND-RETIRED-FRAGMENTS) (:ADR0043-INITIAL-REFERENCE-LINEARIZATION :CORRECTED-BY :ADR0050 :ORACLE :FINITE-OPERATION-HISTORY)) :GENERATION-MUTANTS :GENERATION-ONLY-WITNESSES-WITH-LINEARIZABLE-HISTORIES :OMITTED (:WEAK-MEMORY :SNAPSHOT-EXPIRY :MACHINE-CODE :CRASHES :PERSISTENCE :DIRECTORY-AND-KEY-COSTS :FULL-SWISS-PROBING :UNBOUNDED-HISTORIES :GC-TIMING :PRODUCTION-FALLBACK :EXTERNAL-RESOURCE-IMPLEMENTATION) :COVERAGE :BOUNDED-SC-PUBLICATION :GATE :OPEN)
+"
+ :STDERR "" :EXIT-CODE 0 :RESULT
+ (:SCHEMA-VERSION 1 :SPIKE :SPK-07 :MODULE :PUBBLICAZIONE :STATUS :OK :REPORTS
+  ((:MODEL (:PUBLICATION :REBUILD :UPDATE :REF NIL :PROTOCOL NIL) :STATES 4045
+    :EDGES 7255 :VIOLATION NIL :CONFIG
+    (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4045 :TERMINAL-STATES 85
+    :OBSERVED-HIT-STATES 622 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :REBUILD :UPDATE :EPOCH NIL :PROTOCOL NIL) :STATES
+    4357 :EDGES 7723 :VIOLATION NIL :CONFIG
+    (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :EPOCH :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4357 :TERMINAL-STATES 85
+    :OBSERVED-HIT-STATES 638 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :REBUILD :INSERT :REF NIL :PROTOCOL NIL) :STATES 1621
+    :EDGES 2775 :VIOLATION NIL :CONFIG
+    (:KIND :REBUILD :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1621 :TERMINAL-STATES 59
+    :OBSERVED-HIT-STATES 294 :OBSERVED-MISS-STATES 210
+    :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :REBUILD :INSERT :EPOCH NIL :PROTOCOL NIL) :STATES
+    1709 :EDGES 2907 :VIOLATION NIL :CONFIG
+    (:KIND :REBUILD :CHANGE :INSERT :PROTECTION :EPOCH :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1709 :TERMINAL-STATES 59
+    :OBSERVED-HIT-STATES 302 :OBSERVED-MISS-STATES 210
+    :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :REBUILD :DELETE :REF NIL :PROTOCOL NIL) :STATES 3773
+    :EDGES 6247 :VIOLATION NIL :CONFIG
+    (:KIND :REBUILD :CHANGE :DELETE :PROTECTION :REF :KEY :A :NEW-VALUE :MISS)
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3773 :TERMINAL-STATES 167
+    :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1136
+    :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :REBUILD :DELETE :EPOCH NIL :PROTOCOL NIL) :STATES
+    3917 :EDGES 6463 :VIOLATION NIL :CONFIG
+    (:KIND :REBUILD :CHANGE :DELETE :PROTECTION :EPOCH :KEY :A :NEW-VALUE
+     :MISS)
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3917 :TERMINAL-STATES 167
+    :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1164
+    :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF NIL :PROTOCOL NIL) :STATES 4045
+    :EDGES 7255 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4045 :TERMINAL-STATES 85
+    :OBSERVED-HIT-STATES 622 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :EPOCH NIL :PROTOCOL NIL) :STATES 4357
+    :EDGES 7723 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :EPOCH :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 4357 :TERMINAL-STATES 85
+    :OBSERVED-HIT-STATES 638 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    28 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :INSERT :REF NIL :PROTOCOL NIL) :STATES 1621
+    :EDGES 2775 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1621 :TERMINAL-STATES 59
+    :OBSERVED-HIT-STATES 294 :OBSERVED-MISS-STATES 210
+    :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :INSERT :EPOCH NIL :PROTOCOL NIL) :STATES 1709
+    :EDGES 2907 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :EPOCH :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 1709 :TERMINAL-STATES 59
+    :OBSERVED-HIT-STATES 302 :OBSERVED-MISS-STATES 210
+    :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :DELETE :REF NIL :PROTOCOL NIL) :STATES 3773
+    :EDGES 6247 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :DELETE :PROTECTION :REF :KEY :A :NEW-VALUE :MISS)
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3773 :TERMINAL-STATES 167
+    :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1136
+    :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :DELETE :EPOCH NIL :PROTOCOL NIL) :STATES 3917
+    :EDGES 6463 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :DELETE :PROTECTION :EPOCH :KEY :A :NEW-VALUE :MISS)
+    :MUTANT NIL :ORACLE :PROTOCOL :VISITED 3917 :TERMINAL-STATES 167
+    :OBSERVED-HIT-STATES 116 :OBSERVED-MISS-STATES 1164
+    :OBSERVED-FALLBACK-STATES 40 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF :SKIP-ROOT :PROTOCOL NIL) :STATES
+    2795 :EDGES 4861 :VIOLATION
+    (:KIND :GENERATION-CONTRACT :ACCEPTANCE
+     (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :RESULT (:HIT 2 202)
+     :LINEARIZABLE T :LINEARIZATION (:WRITE :LOOKUP) :ORACLE-NODES 3
+     :CLASSIFICATION :GENERATION-ONLY)
+    :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A)
+     (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A)
+     (:WRITER :LIVE :KEY :A) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A)
+     (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A)
+     (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A)
+     (:WRITER :BUILD-ROOT :KEY :A) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:WRITER :PUBLISH :KEY :A) (:READER :PROBE :ATTEMPT 1)
+     (:READER :SEQ-FIRST :ATTEMPT 1) (:READER :READ-VERSION :ATTEMPT 1)
+     (:READER :READ-LOCATION :ATTEMPT 1) (:READER :READ-LIVE :ATTEMPT 1)
+     (:READER :SEQ-LAST :ATTEMPT 1) (:READER :VALIDATE-FIELDS :ATTEMPT 1)
+     (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1))
+    :STATE
+    (:STEPS 25 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2))
+     :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+      (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)))
+     :FROZEN-OLD
+     ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+     :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T
+     :EPOCH NIL :TRIES 1 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202
+     :LIVE T :CANDIDATE (:HIT 2 202) :RESULT (:HIT 2 202) :ACCEPTANCE
+     (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL
+     :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY
+     ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:RESPOND :WRITE :OK)
+      (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)
+      (:INVOKE :LOOKUP :LOOKUP :A NIL)))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-ROOT :ORACLE :PROTOCOL :VISITED 2566 :TERMINAL-STATES 0
+    :OBSERVED-HIT-STATES 186 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    2 :MAX-TRIES 2 :MAX-STEPS 25 :MAX-ORACLE-NODES 4 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF :SKIP-ROOT :DATA-HISTORY NIL)
+    :STATES 3821 :EDGES 6759 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-ROOT :ORACLE :DATA-HISTORY :VISITED 3821 :TERMINAL-STATES 97
+    :OBSERVED-HIT-STATES 670 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    20 :MAX-TRIES 2 :MAX-STEPS 37 :MAX-ORACLE-NODES 6 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-ROOT :PROTOCOL NIL) :STATES
+    776 :EDGES 1278 :VIOLATION
+    (:KIND :GENERATION-CONTRACT :ACCEPTANCE
+     (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :RESULT :MISS :LINEARIZABLE
+     T :LINEARIZATION (:LOOKUP :WRITE) :ORACLE-NODES 4 :CLASSIFICATION
+     :GENERATION-ONLY)
+    :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :B) (:WRITER :ODD :KEY :B)
+     (:WRITER :VERSION :KEY :B) (:WRITER :LOCATION :KEY :B)
+     (:WRITER :LIVE :KEY :B) (:WRITER :EVEN :KEY :B) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:READER :PROBE :ATTEMPT 1) (:WRITER :CONTROL :KEY :B)
+     (:WRITER :RESPOND-WRITE :KEY :B) (:WRITER :INVOKE-MAINTENANCE :KEY :B)
+     (:WRITER :BUILD-FIRST :KEY :B) (:WRITER :BUILD-SECOND :KEY :B)
+     (:WRITER :BUILD-ROOT :KEY :B) (:WRITER :PUBLISH :KEY :B)
+     (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1))
+    :STATE
+    (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2))
+     :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (1 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)))
+     :FROZEN-OLD
+     ((:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+     :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T
+     :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL :LOCATION
+     NIL :LIVE NIL :CANDIDATE :MISS :RESULT :MISS :ACCEPTANCE
+     (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL
+     :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY
+     ((:INVOKE :WRITE :WRITE :B (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :B NIL)
+      (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-ROOT :ORACLE :PROTOCOL :VISITED 689 :TERMINAL-STATES 0
+    :OBSERVED-HIT-STATES 1 :OBSERVED-MISS-STATES 130 :OBSERVED-FALLBACK-STATES
+    0 :MAX-TRIES 1 :MAX-STEPS 19 :MAX-ORACLE-NODES 4 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-ROOT :DATA-HISTORY NIL)
+    :STATES 1345 :EDGES 2185 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-ROOT :ORACLE :DATA-HISTORY :VISITED 1345 :TERMINAL-STATES 67
+    :OBSERVED-HIT-STATES 282 :OBSERVED-MISS-STATES 242
+    :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 1 :MAX-STEPS 28 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-MISS-ROOT :PROTOCOL NIL)
+    :STATES 776 :EDGES 1278 :VIOLATION
+    (:KIND :GENERATION-CONTRACT :ACCEPTANCE
+     (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :RESULT :MISS :LINEARIZABLE
+     T :LINEARIZATION (:LOOKUP :WRITE) :ORACLE-NODES 4 :CLASSIFICATION
+     :GENERATION-ONLY)
+    :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :B) (:WRITER :ODD :KEY :B)
+     (:WRITER :VERSION :KEY :B) (:WRITER :LOCATION :KEY :B)
+     (:WRITER :LIVE :KEY :B) (:WRITER :EVEN :KEY :B) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:READER :PROBE :ATTEMPT 1) (:WRITER :CONTROL :KEY :B)
+     (:WRITER :RESPOND-WRITE :KEY :B) (:WRITER :INVOKE-MAINTENANCE :KEY :B)
+     (:WRITER :BUILD-FIRST :KEY :B) (:WRITER :BUILD-SECOND :KEY :B)
+     (:WRITER :BUILD-ROOT :KEY :B) (:WRITER :PUBLISH :KEY :B)
+     (:READER :BARRIER :ATTEMPT 1) (:READER :VALIDATE-ROOT :ATTEMPT 1))
+    :STATE
+    (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2))
+     :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (1 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)))
+     :FROZEN-OLD
+     ((:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+     :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T
+     :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL :LOCATION
+     NIL :LIVE NIL :CANDIDATE :MISS :RESULT :MISS :ACCEPTANCE
+     (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL
+     :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY
+     ((:INVOKE :WRITE :WRITE :B (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :B NIL)
+      (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-MISS-ROOT :ORACLE :PROTOCOL :VISITED 689 :TERMINAL-STATES 0
+    :OBSERVED-HIT-STATES 1 :OBSERVED-MISS-STATES 130 :OBSERVED-FALLBACK-STATES
+    0 :MAX-TRIES 1 :MAX-STEPS 19 :MAX-ORACLE-NODES 4 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :INSERT :REF :SKIP-MISS-ROOT :DATA-HISTORY NIL)
+    :STATES 1529 :EDGES 2573 :VIOLATION NIL :CONFIG
+    (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-MISS-ROOT :ORACLE :DATA-HISTORY :VISITED 1529
+    :TERMINAL-STATES 63 :OBSERVED-HIT-STATES 274 :OBSERVED-MISS-STATES 242
+    :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 39 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF :EARLY-RELEASE :PROTOCOL NIL)
+    :STATES 1346 :EDGES 2223 :VIOLATION
+    (:KIND :ACCESS-TO-RECLAIMED :ACCESS
+     (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL))
+    :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A)
+     (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A)
+     (:WRITER :LIVE :KEY :A) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A)
+     (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A)
+     (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A)
+     (:WRITER :BUILD-ROOT :KEY :A) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:WRITER :PUBLISH :KEY :A) (:READER :EARLY-RELEASE :ATTEMPT 1)
+     (:RECLAIMER :RECLAIM 0) (:READER :PROBE :ATTEMPT 1))
+    :STATE
+    (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :SEQ-FIRST :ROOT
+     (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+      (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)))
+     :FROZEN-OLD
+     ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+     :RETIRED (0) :RECLAIMED (0) :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED
+     NIL :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL
+     :LOCATION NIL :LIVE NIL :CANDIDATE :NONE :RESULT :NONE :ACCEPTANCE NIL
+     :BAD-ACCESS (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL)
+     :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY
+     ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:RESPOND :WRITE :OK)
+      (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)
+      (:INVOKE :LOOKUP :LOOKUP :A NIL)))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :EARLY-RELEASE :ORACLE :PROTOCOL :VISITED 1121 :TERMINAL-STATES 0
+    :OBSERVED-HIT-STATES 24 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 0
+    :MAX-TRIES 2 :MAX-STEPS 19 :MAX-ORACLE-NODES 2 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :EPOCH :EARLY-RELEASE :PROTOCOL NIL)
+    :STATES 1362 :EDGES 2247 :VIOLATION
+    (:KIND :ACCESS-TO-RECLAIMED :ACCESS
+     (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL))
+    :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A)
+     (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A)
+     (:WRITER :LIVE :KEY :A) (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A)
+     (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A)
+     (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A)
+     (:WRITER :BUILD-ROOT :KEY :A) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:WRITER :PUBLISH :KEY :A) (:READER :EARLY-RELEASE :ATTEMPT 1)
+     (:RECLAIMER :RECLAIM 0) (:READER :PROBE :ATTEMPT 1))
+    :STATE
+    (:STEPS 19 :WRITER :RESPOND-MAINTENANCE :READER :SEQ-FIRST :ROOT
+     (1 1 (1 2)) :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+      (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)))
+     :FROZEN-OLD
+     ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+     :RETIRED (0) :RECLAIMED (0) :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED
+     NIL :EPOCH NIL :TRIES 1 :FIRST-SEQ NIL :LAST-SEQ NIL :VERSION NIL
+     :LOCATION NIL :LIVE NIL :CANDIDATE :NONE :RESULT :NONE :ACCEPTANCE NIL
+     :BAD-ACCESS (:FRAGMENT 0 :FIELD :CONTROL :PROTECTION NIL :EPOCH NIL)
+     :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY
+     ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:RESPOND :WRITE :OK)
+      (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)
+      (:INVOKE :LOOKUP :LOOKUP :A NIL)))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :EPOCH :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :EARLY-RELEASE :ORACLE :PROTOCOL :VISITED 1137 :TERMINAL-STATES 0
+    :OBSERVED-HIT-STATES 24 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 0
+    :MAX-TRIES 2 :MAX-STEPS 19 :MAX-ORACLE-NODES 2 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :REBUILD :UPDATE :REF :SKIP-FIELDS :PROTOCOL NIL)
+    :STATES 1029 :EDGES 1557 :VIOLATION
+    (:KIND :INCOHERENT-RESULT :RESULT (:HIT 2 101)) :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A)
+     (:WRITER :VERSION :KEY :A) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:READER :PROBE :ATTEMPT 1) (:READER :SEQ-FIRST :ATTEMPT 1)
+     (:READER :READ-VERSION :ATTEMPT 1) (:READER :READ-LOCATION :ATTEMPT 1)
+     (:READER :READ-LIVE :ATTEMPT 1) (:READER :SEQ-LAST :ATTEMPT 1)
+     (:READER :VALIDATE-FIELDS :ATTEMPT 1) (:READER :BARRIER :ATTEMPT 1)
+     (:READER :VALIDATE-ROOT :ATTEMPT 1))
+    :STATE
+    (:STEPS 15 :WRITER :LOCATION :READER :RESPOND :ROOT (0 0 (0 0))
+     :PREPARED-ROOT NIL :FRAGMENTS
+     ((0 (:A :SEQ 1 :VERSION 2 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)))
+     :FROZEN-OLD NIL :RETIRED NIL :RECLAIMED NIL :SNAPSHOT (0 0 (0 0))
+     :FRAGMENT 0 :PROTECTED T :EPOCH NIL :TRIES 1 :FIRST-SEQ 1 :LAST-SEQ 1
+     :VERSION 2 :LOCATION 101 :LIVE T :CANDIDATE (:HIT 2 101) :RESULT
+     (:HIT 2 101) :ACCEPTANCE (:CAPTURED (0 0) :CURRENT (0 0) :CHECKED T)
+     :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 0 :HISTORY
+     ((:INVOKE :WRITE :WRITE :A (:HIT 2 202))
+      (:INVOKE :LOOKUP :LOOKUP :A NIL)))
+    :CONFIG
+    (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-FIELDS :ORACLE :PROTOCOL :VISITED 778 :TERMINAL-STATES 0
+    :OBSERVED-HIT-STATES 16 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES 0
+    :MAX-TRIES 1 :MAX-STEPS 15 :MAX-ORACLE-NODES 3 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF NIL :REACHABILITY :RETRY-HIT)
+    :STATES 3785 :EDGES 6763 :VIOLATION :RETRY-HIT-RETURNED :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A)
+     (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A)
+     (:WRITER :LIVE :KEY :A) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:READER :PROBE :ATTEMPT 1)
+     (:READER :SEQ-FIRST :ATTEMPT 1 :REJECT :SEQLOCK) (:WRITER :EVEN :KEY :A)
+     (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A)
+     (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A)
+     (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A)
+     (:READER :ENTER :ATTEMPT 1) (:READER :ACQUIRE :ATTEMPT 1)
+     (:WRITER :PUBLISH :KEY :A) (:WRITER :RESPOND-MAINTENANCE :KEY :A)
+     (:READER :PROBE :ATTEMPT 2) (:READER :SEQ-FIRST :ATTEMPT 2)
+     (:READER :READ-VERSION :ATTEMPT 2) (:READER :READ-LOCATION :ATTEMPT 2)
+     (:READER :READ-LIVE :ATTEMPT 2) (:READER :SEQ-LAST :ATTEMPT 2)
+     (:READER :VALIDATE-FIELDS :ATTEMPT 2) (:READER :BARRIER :ATTEMPT 2)
+     (:READER :VALIDATE-ROOT :ATTEMPT 2 :REJECT :ROOT :CANDIDATE (:HIT 2 202))
+     (:READER :FALLBACK :ATTEMPT 2))
+    :STATE
+    (:STEPS 31 :WRITER :DONE :READER :DONE :ROOT (1 1 (1 2)) :PREPARED-ROOT
+     (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+      (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)))
+     :FROZEN-OLD
+     ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+     :RETIRED (0) :RECLAIMED NIL :SNAPSHOT NIL :FRAGMENT NIL :PROTECTED NIL
+     :EPOCH NIL :TRIES 2 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202
+     :LIVE T :CANDIDATE :NONE :RESULT (:HIT 2 202) :ACCEPTANCE (:FALLBACK T)
+     :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 13 :HISTORY
+     ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :A NIL)
+      (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)
+      (:RESPOND :MAINTENANCE :OK) (:RESPOND :LOOKUP (:HIT 2 202))))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :REACHABILITY :VISITED 3706 :TERMINAL-STATES 49
+    :OBSERVED-HIT-STATES 463 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    21 :MAX-TRIES 2 :MAX-STEPS 31 :MAX-ORACLE-NODES 6 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :INSERT :REF NIL :REACHABILITY :RETRY-MISS)
+    :STATES 1479 :EDGES 2496 :VIOLATION :RETRY-MISS-RETURNED :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :B) (:WRITER :ODD :KEY :B)
+     (:WRITER :VERSION :KEY :B) (:WRITER :LOCATION :KEY :B)
+     (:WRITER :LIVE :KEY :B) (:WRITER :EVEN :KEY :B) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:READER :PROBE :ATTEMPT 1) (:WRITER :CONTROL :KEY :B)
+     (:WRITER :RESPOND-WRITE :KEY :B) (:WRITER :INVOKE-MAINTENANCE :KEY :B)
+     (:WRITER :BUILD-FIRST :KEY :B) (:WRITER :BUILD-SECOND :KEY :B)
+     (:WRITER :BUILD-ROOT :KEY :B) (:WRITER :PUBLISH :KEY :B)
+     (:READER :BARRIER :ATTEMPT 1)
+     (:READER :VALIDATE-ROOT :ATTEMPT 1 :REJECT :ROOT :CANDIDATE :MISS)
+     (:READER :ENTER :ATTEMPT 1) (:READER :ACQUIRE :ATTEMPT 1)
+     (:READER :PROBE :ATTEMPT 2) (:READER :SEQ-FIRST :ATTEMPT 2)
+     (:READER :READ-VERSION :ATTEMPT 2) (:READER :READ-LOCATION :ATTEMPT 2)
+     (:READER :READ-LIVE :ATTEMPT 2) (:READER :SEQ-LAST :ATTEMPT 2)
+     (:READER :VALIDATE-FIELDS :ATTEMPT 2) (:READER :BARRIER :ATTEMPT 2)
+     (:READER :VALIDATE-ROOT :ATTEMPT 2))
+    :STATE
+    (:STEPS 30 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 2))
+     :PREPARED-ROOT (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (1 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)))
+     :FROZEN-OLD
+     ((:A :SEQ 0 :VERSION 1 :LOCATION 101 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+     :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (1 1 (1 2)) :FRAGMENT 2 :PROTECTED T
+     :EPOCH NIL :TRIES 2 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202
+     :LIVE T :CANDIDATE (:HIT 2 202) :RESULT (:HIT 2 202) :ACCEPTANCE
+     (:CAPTURED (1 1) :CURRENT (1 1) :CHECKED T) :BAD-ACCESS NIL
+     :CAPTURED-BEFORE-WRITE NIL :FEATURES 2 :HISTORY
+     ((:INVOKE :WRITE :WRITE :B (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :B NIL)
+      (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :INSERT :PROTECTION :REF :KEY :B :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :REACHABILITY :VISITED 1456 :TERMINAL-STATES 47
+    :OBSERVED-HIT-STATES 235 :OBSERVED-MISS-STATES 210
+    :OBSERVED-FALLBACK-STATES 0 :MAX-TRIES 2 :MAX-STEPS 30 :MAX-ORACLE-NODES 6
+    :COUNT-UNIT :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL (:PUBLICATION :SPLIT :UPDATE :REF NIL :REACHABILITY :FALLBACK)
+    :STATES 2599 :EDGES 4522 :VIOLATION :BOUNDED-FALLBACK-RETURNED :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :A) (:WRITER :ODD :KEY :A)
+     (:WRITER :VERSION :KEY :A) (:WRITER :LOCATION :KEY :A)
+     (:WRITER :LIVE :KEY :A) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:READER :PROBE :ATTEMPT 1)
+     (:READER :SEQ-FIRST :ATTEMPT 1 :REJECT :SEQLOCK)
+     (:READER :ENTER :ATTEMPT 1) (:READER :ACQUIRE :ATTEMPT 1)
+     (:READER :PROBE :ATTEMPT 2)
+     (:READER :SEQ-FIRST :ATTEMPT 2 :REJECT :SEQLOCK) (:WRITER :EVEN :KEY :A)
+     (:WRITER :CONTROL :KEY :A) (:WRITER :RESPOND-WRITE :KEY :A)
+     (:WRITER :INVOKE-MAINTENANCE :KEY :A) (:WRITER :BUILD-FIRST :KEY :A)
+     (:WRITER :BUILD-SECOND :KEY :A) (:WRITER :BUILD-ROOT :KEY :A)
+     (:WRITER :PUBLISH :KEY :A) (:WRITER :RESPOND-MAINTENANCE :KEY :A)
+     (:READER :FALLBACK :ATTEMPT 2))
+    :STATE
+    (:STEPS 24 :WRITER :DONE :READER :DONE :ROOT (1 1 (1 2)) :PREPARED-ROOT
+     (1 1 (1 2)) :FRAGMENTS
+     ((2 (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+      (1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED))
+      (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)))
+     :FROZEN-OLD
+     ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+     :RETIRED (0) :RECLAIMED NIL :SNAPSHOT NIL :FRAGMENT NIL :PROTECTED NIL
+     :EPOCH NIL :TRIES 2 :FIRST-SEQ 1 :LAST-SEQ NIL :VERSION NIL :LOCATION NIL
+     :LIVE NIL :CANDIDATE :NONE :RESULT (:HIT 2 202) :ACCEPTANCE (:FALLBACK T)
+     :BAD-ACCESS NIL :CAPTURED-BEFORE-WRITE NIL :FEATURES 12 :HISTORY
+     ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :A NIL)
+      (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)
+      (:RESPOND :MAINTENANCE :OK) (:RESPOND :LOOKUP (:HIT 2 202))))
+    :CONFIG
+    (:KIND :SPLIT :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT NIL :ORACLE :REACHABILITY :VISITED 2386 :TERMINAL-STATES 0
+    :OBSERVED-HIT-STATES 160 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    1 :MAX-TRIES 2 :MAX-STEPS 24 :MAX-ORACLE-NODES 4 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES)
+   (:MODEL
+    (:PUBLICATION :REBUILD :UPDATE :REF :SKIP-ROOT :REACHABILITY
+     :OLD-ROOT-UPDATED)
+    :STATES 2830 :EDGES 4919 :VIOLATION
+    (:KIND :OLD-ROOT-UPDATED-AFTER-ACQUISITION :LINEARIZABLE T :LINEARIZATION
+     (:WRITE :LOOKUP) :ORACLE-NODES 3)
+    :WITNESS
+    ((:WRITER :INVOKE-WRITE :KEY :A) (:READER :IDLE :ATTEMPT 0)
+     (:READER :ENTER :ATTEMPT 0) (:READER :ACQUIRE :ATTEMPT 0)
+     (:WRITER :ODD :KEY :A) (:WRITER :VERSION :KEY :A)
+     (:WRITER :LOCATION :KEY :A) (:WRITER :LIVE :KEY :A)
+     (:WRITER :EVEN :KEY :A) (:WRITER :CONTROL :KEY :A)
+     (:WRITER :RESPOND-WRITE :KEY :A) (:WRITER :INVOKE-MAINTENANCE :KEY :A)
+     (:WRITER :BUILD-FIRST :KEY :A) (:WRITER :BUILD-SECOND :KEY :A)
+     (:WRITER :BUILD-ROOT :KEY :A) (:WRITER :PUBLISH :KEY :A)
+     (:READER :PROBE :ATTEMPT 1) (:READER :SEQ-FIRST :ATTEMPT 1)
+     (:READER :READ-VERSION :ATTEMPT 1) (:READER :READ-LOCATION :ATTEMPT 1)
+     (:READER :READ-LIVE :ATTEMPT 1) (:READER :SEQ-LAST :ATTEMPT 1)
+     (:READER :VALIDATE-FIELDS :ATTEMPT 1) (:READER :BARRIER :ATTEMPT 1)
+     (:READER :VALIDATE-ROOT :ATTEMPT 1))
+    :STATE
+    (:STEPS 25 :WRITER :RESPOND-MAINTENANCE :READER :RESPOND :ROOT (1 1 (1 1))
+     :PREPARED-ROOT (1 1 (1 1)) :FRAGMENTS
+     ((1 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+      (0 (:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+       (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY)))
+     :FROZEN-OLD
+     ((:A :SEQ 2 :VERSION 2 :LOCATION 202 :LIVE T :CTRL :OCCUPIED)
+      (:B :SEQ 0 :VERSION 0 :LOCATION 0 :LIVE NIL :CTRL :EMPTY))
+     :RETIRED (0) :RECLAIMED NIL :SNAPSHOT (0 0 (0 0)) :FRAGMENT 0 :PROTECTED T
+     :EPOCH NIL :TRIES 1 :FIRST-SEQ 2 :LAST-SEQ 2 :VERSION 2 :LOCATION 202
+     :LIVE T :CANDIDATE (:HIT 2 202) :RESULT (:HIT 2 202) :ACCEPTANCE
+     (:CAPTURED (0 0) :CURRENT (1 1) :CHECKED NIL) :BAD-ACCESS NIL
+     :CAPTURED-BEFORE-WRITE T :FEATURES 0 :HISTORY
+     ((:INVOKE :WRITE :WRITE :A (:HIT 2 202)) (:INVOKE :LOOKUP :LOOKUP :A NIL)
+      (:RESPOND :WRITE :OK) (:INVOKE :MAINTENANCE :MAINTENANCE NIL NIL)))
+    :CONFIG
+    (:KIND :REBUILD :CHANGE :UPDATE :PROTECTION :REF :KEY :A :NEW-VALUE
+     (:HIT 2 202))
+    :MUTANT :SKIP-ROOT :ORACLE :REACHABILITY :VISITED 2602 :TERMINAL-STATES 1
+    :OBSERVED-HIT-STATES 204 :OBSERVED-MISS-STATES 0 :OBSERVED-FALLBACK-STATES
+    3 :MAX-TRIES 2 :MAX-STEPS 25 :MAX-ORACLE-NODES 4 :COUNT-UNIT
+    :DISTINCT-STATES-NOT-TRACES))
+  :COUNTS (:EXPLORATIONS 1 :STATES 64316 :EDGES 110401 :MAX-EXECUTION-STEPS 39)
+  :LIMITS
+  (:STATES-PER-EXPLORATION 200000 :SUITE-STATES 200000 :EXECUTION-STEPS 64
+   :READER-ATTEMPTS 2 :HISTORY-OPERATIONS 3 :LINEARIZATION-NODES 128 :KEYS 2
+   :SOURCE-FRAGMENTS 1 :WRITES 1 :MAINTENANCE-OPERATIONS 1
+   :ON-BUDGET-EXHAUSTION :ERROR)
+  :ASSUMPTIONS
+  (:SEQUENTIAL-CONSISTENCY :ATOMIC-ROOT-AND-GENERATION :IMMUTABLE-DIRECTORY
+   :SINGLE-SERIAL-WRITER :SEQLOCK-DOES-NOT-WRAP :GENERATION-DOES-NOT-WRAP
+   :NO-ABA :STRONG-REFERENCE-ACQUISITION-ATOMIC :EPOCH-ANNOUNCED-BEFORE-ROOT
+   :RETIRED-FRAGMENTS-FROZEN :FALLBACK-ATOMIC-ON-OWNER-AFTER-FINITE-WRITER-WORK
+   :FAIR-SCHEDULING-FOR-EVENTUAL-SERVICE)
+  :CONFLICTS
+  ((:INV-I1-LITERAL-IMMUTABILITY :ADR0043-MUTABLE-SLOTS :INTERPRETATION
+    :IMMUTABLE-ROOTS-AND-RETIRED-FRAGMENTS)
+   (:ADR0043-INITIAL-REFERENCE-LINEARIZATION :CORRECTED-BY :ADR0050 :ORACLE
+    :FINITE-OPERATION-HISTORY))
+  :GENERATION-MUTANTS :GENERATION-ONLY-WITNESSES-WITH-LINEARIZABLE-HISTORIES
+  :OMITTED
+  (:WEAK-MEMORY :SNAPSHOT-EXPIRY :MACHINE-CODE :CRASHES :PERSISTENCE
+   :DIRECTORY-AND-KEY-COSTS :FULL-SWISS-PROBING :UNBOUNDED-HISTORIES :GC-TIMING
+   :PRODUCTION-FALLBACK :EXTERNAL-RESOURCE-IMPLEMENTATION)
+  :COVERAGE :BOUNDED-SC-PUBLICATION :GATE :OPEN)
+ :FAILURES NIL :OUTPUTS
+ (#A((108) BASE-CHAR
+     . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/out/pubblicazione-4000478744-91419-core.fasl")
+  #A((110) BASE-CHAR
+     . "/Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-07-protocols/out/pubblicazione-4000478744-91419-module.fasl"))
+ :OMITTED (:GIT-COMMIT :GIT-BLOB :PERFORMANCE-BENCHMARK))

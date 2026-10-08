@@ -15,12 +15,17 @@ chiusi con gli ADR 0036–0045. ADR-0028 e ADR-0030 sono stati confermati dall'a
 SPK-03, SPK-07, SPK-09, con `make spikes-check` e `make spikes-bench`. SPK-07 ha già
 trovato un controesempio nell'anello dell'orizzonte, corretto da
 [ADR-0046](adr/0046-orizzonte-con-registro-limitato.md).
+La suite SPK-07 comprende ora modelli finiti di pubblicazione dei frammenti,
+scadenza e protezione degli accessi già ammessi, compaction con writer ACTIVE
+e ordini di osservazione delle barriere. Metodo, risultati e lacune sono nel
+[README dello spike](../spikes/SPK-07-protocols/README.md).
 
 La [campagna locale 2026-10-08](valutazione/risultati-2026-10-08.md) conserva
 misure e dati grezzi dei cinque spike v1 e di SPK-10: codec, indice, CBOR e
 migrazione v2 su modello, con integrazione in memoria dei confini massimi.
 `make check` registra l'intera verifica in forma strutturata, inclusi fallimenti.
-Restano le parti complete del gate v2, i modelli mancanti e le misure sulla
+Restano le parti complete del gate v2, memoria debole completa e crash sui byte
+del motore, e le misure sulla
 piattaforma di riferimento; il gate non è chiuso.
 
 ## Fase 0 — Definizione architetturale e valutazione
