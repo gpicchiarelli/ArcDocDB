@@ -76,6 +76,12 @@ non dimostra che la syscall di copia sia attiva nello stesso istante. Nei dati,
 la fine di ogni operazione si ricostruisce sommando inizio e latenza, nell'ordine
 dei worker dichiarato da `:worker-operation-counts`.
 
+Una durata osservata pari a zero è dichiarata `:below-clock-resolution`,
+con rate `nil`, tick originali e risoluzione conservati, per letture e copia.
+Non si forza una durata positiva né si deduce overlap da un intervallo nullo.
+La fixture REQ-BEN-002 verifica zero, un tick positivo, intervalli negativi e
+conteggi errati; i due ultimi casi restano rifiutati.
+
 Attese e join hanno timeout di 10 s. Una syscall bloccata può superare il budget;
 un worker vivo impedisce close e rimozione della fixture fino all'uscita del
 processo. Directory e file esclusivi nascono sotto `out/data/`; si eliminano

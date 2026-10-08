@@ -192,15 +192,47 @@
    #A((36) BASE-CHAR . "processo-clock-integrato-SPK-09.lisp"))
   (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
    #A((36) BASE-CHAR . "processo-clock-integrato-SPK-10.lisp"))
-  (:KIND :CI-FAILURE :FORMATS #1=(1 2) :ARTIFACT
+  (:KIND :CI-FAILURE :FORMATS (1 2) :ARTIFACT
    #A((33) BASE-CHAR . "ci-prima-configurazione-dati.lisp"))
-  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+  (:KIND :CI-FAILURE :FORMATS (1 2) :ARTIFACT
    #A((27) BASE-CHAR . "ci-linux-clock-fallito.lisp"))
-  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+  (:KIND :CI-FAILURE :FORMATS (1 2) :ARTIFACT
    #A((33) BASE-CHAR . "ci-linux-spk05-clock-fallito.lisp"))
-  (:KIND :CHECK :FORMATS #1# :ARTIFACT
+  (:KIND :CHECK :FORMATS (1 2) :ARTIFACT
    #A((24) BASE-CHAR . "clock-check-isolato.lisp"))
+  (:KIND :CHECK :FORMATS (1 2) :ARTIFACT
+   #A((29) BASE-CHAR . "clock-verifica-integrata.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((40) BASE-CHAR . "processo-clock-copia-isolato-SPK-06.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-01.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-02.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-03.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-04.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-05.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-06.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-07.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-08.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-09.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((42) BASE-CHAR . "processo-clock-copia-integrato-SPK-10.lisp"))
+  (:KIND :CI-FAILURE :FORMATS #1=(1 2) :ARTIFACT
+   #A((24) BASE-CHAR . "ci-clock-copia-dati.lisp"))
+  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+   #A((33) BASE-CHAR . "ci-linux-clock-copia-fallito.lisp"))
+  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+   #A((33) BASE-CHAR . "ci-linux-spk06-clock-fallito.lisp"))
   (:KIND :CHECK :FORMATS #1# :ARTIFACT
-   #A((29) BASE-CHAR . "clock-verifica-integrata.lisp")))
+   #A((30) BASE-CHAR . "clock-copia-check-isolato.lisp"))
+  (:KIND :CHECK :FORMATS #1# :ARTIFACT
+   #A((35) BASE-CHAR . "clock-copia-verifica-integrata.lisp")))
  :LIMITS
  (:WAL-LOCAL-PRIMITIVES :NOT-INTEGRATED-DATABASE :NO-REQUIREMENT-PROMOTION))
