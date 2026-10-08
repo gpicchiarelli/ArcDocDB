@@ -19,6 +19,8 @@ Il pool e il motore delle transazioni restano moduli da integrare.
 | `durable-flush` | file: fdatasync Linux, F_FULLFSYNC macOS; directory: fsync; avanza frontiera dopo successo |
 | `chiudi` | invalida la capacità prima di una sola close; chiamate successive sono no-op |
 | `stato-file` | open, faulted o closed |
+| `mode-file` | modo immutabile input, append o directory; nessun descrittore esposto |
+| `verifica-capienza-append` | verifica totale del gruppo e massimo chunk prima della prima write |
 | `posizione-scritta`, `posizione-durevole` | frontiere del nuovo file, osservate dal proprietario |
 
 `file-io` è una capacità con descrittore privato. Il chiamante possiede il

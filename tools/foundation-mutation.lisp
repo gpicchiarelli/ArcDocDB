@@ -1,5 +1,5 @@
 ;;;; Mutazioni mirate in copie isolate; nessun sorgente del repository viene riscritto.
-;;;; Uso: --run directory-nuova/ [foundation|storage|recovery|io] oppure --self-test
+;;;; Uso: --run directory-nuova/ [foundation|storage|recovery|io|wal] oppure --self-test
 ;;;; REQ: REQ-FOR-003 REQ-FOR-004 REQ-AFF-002 REQ-LIM-001 REQ-LIM-003 REQ-VAL-001
 (require :asdf)
 (defpackage #:arcdocdb.foundation.mutation (:use #:cl))
@@ -78,6 +78,41 @@
     ("durable-frontier" "flush.lisp" "(setf (file-durable file) (file-written file))"
                                     "(setf (file-durable file) 0)")))
 
+(defparameter *wal-mutants*
+  '(("reserve-seal-space" "builder.lisp"
+      "(+ +header-bytes+ (length key) (length value) +seal-total+)"
+      "(+ +header-bytes+ (length key) (length value))")
+    ("preserve-prepared-txid" "builder.lisp" "(not (logbitp 0 flags))" "(not (logbitp 1 flags))")
+    ("cumulative-seal-crc" "builder.lisp"
+      "(crc32c buffer pos (+ pos +header-crc-bytes+) checksum)"
+      "(crc32c buffer pos (+ pos +header-crc-bytes+) 0)")
+    ("historical-durable-frontier" "builder.lisp"
+      "(scrivi-u64 seal +seal-durable-offset+ durable)"
+      "(scrivi-u64 seal +seal-durable-offset+ file-start)")
+    ("seal-record-count" "builder.lisp"
+      "(scrivi-u32 seal +seal-count-offset+ (lotto-count lotto))"
+      "(scrivi-u32 seal +seal-count-offset+ (1+ (lotto-count lotto)))")
+    ("group-exact-byte-budget" "group.lisp"
+      "(> (lotto-used lotto) (- (gruppo-max-bytes group) (gruppo-bytes group)))"
+      "(>= (lotto-used lotto) (- (gruppo-max-bytes group) (gruppo-bytes group)))")
+    ("group-format-identity" "group.lisp"
+      "(= (lotto-version lotto) (log-io-version log))"
+      "(<= (lotto-version lotto) (log-io-version log))")
+    ("group-awaits-durability" "group.lisp"
+      "(eq (lotto-state lotto) :durable)" "(member (lotto-state lotto) '(:written :durable))")
+    ("log-acquire-once" "executor.lisp"
+      "(sb-ext:compare-and-swap (log-io-active log) nil group)"
+      "(sb-ext:compare-and-swap (log-io-active log) nil nil)")
+    ("flush-claim-once" "executor.lisp"
+      "(sb-ext:compare-and-swap (gruppo-state group) :written :flushing)"
+      "(sb-ext:compare-and-swap (gruppo-state group) :written :written)")
+    ("write-byte-frontier" "executor.lisp"
+      "(= end (+ (lotto-start lotto) (lotto-used lotto)))"
+      "(= end (+ (lotto-start lotto) (1+ (lotto-used lotto))))")
+    ("log-faulted-after-error" "executor.lisp"
+      "(log-io-state (gruppo-log group)) :faulted"
+      "(log-io-state (gruppo-log group)) :open")))
+
 (defun read-text (path)
   (uiop:read-file-string path :external-format :utf-8))
 
@@ -95,7 +130,9 @@
                        (mapcar #'enough-namestring (directory "src/recovery/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/recovery/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/io/*.lisp"))
-                       (mapcar #'enough-namestring (directory "tests/io/*.lisp"))))
+                       (mapcar #'enough-namestring (directory "tests/io/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/wal/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/wal/*.lisp"))))
     (let ((target (merge-pathnames file directory)))
       (ensure-directories-exist target)
       (uiop:copy-file file target))))
@@ -133,7 +170,7 @@
          (format t "Mutazioni: self-test superato.~%"))
         ((and (<= 2 (length args) 3) (string= (first args) "--run")
               (or (= (length args) 2)
-                  (member (third args) '("foundation" "storage" "recovery" "io") :test #'string=)))
+                  (member (third args) '("foundation" "storage" "recovery" "io" "wal") :test #'string=)))
          (let ((directory (uiop:ensure-directory-pathname (second args)))
                (scope (or (third args) "foundation")))
            (when (probe-file directory)
@@ -142,9 +179,10 @@
            (write (loop for mutant in (cond ((string= scope "storage") *storage-mutants*)
                                            ((string= scope "recovery") *recovery-mutants*)
                                            ((string= scope "io") *io-mutants*)
+                                           ((string= scope "wal") *wal-mutants*)
                                            (t *mutants*))
                         for i from 0 collect (run-mutant mutant
                                                (merge-pathnames (format nil "~D/" i) directory) scope))
                   :pretty t)
            (terpri)))
-        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage|recovery|io]."))))
+        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage|recovery|io|wal]."))))
