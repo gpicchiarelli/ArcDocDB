@@ -40,7 +40,7 @@ in `spikes/out/`. Gli esiti non promuovono automaticamente i requisiti del motor
 | [SPK-03 WAL e group commit](SPK-03-group-commit/README.md) | append/flush reali e verifica locale; hardware di riferimento e power cut da eseguire |
 | [SPK-04 Writer logico su thread pool](SPK-04-writer-pool/README.md) | pool e modelli verificati localmente; 54 benchmark conservati, carico vivo e scheduler adattivo da verificare |
 | [SPK-05 Percorso di lettura dei segmenti](SPK-05-segment-read/README.md) | pread e mmap con file reali, controlli e confronto locale; dataset oltre RAM e piattaforma di riferimento da misurare |
-| SPK-06 Interferenza della compaction e controllore | da avviare |
+| [SPK-06 Interferenza della compaction e controllore](SPK-06-compaction-load/README.md) | modello finito del carico verificato e copie concorrenti a letture misurate localmente; compaction del motore, feedback reale e piattaforma di riferimento da verificare |
 | [SPK-07 Modelli dei protocolli](SPK-07-protocols/README.md) | prima suite finita, controesempio corretto da ADR-0046; lacune residue esplicite |
 | [SPK-08 SIMD e codice generato](SPK-08-generated-code/README.md) | scalar/SWAR e NEON verificati a safety 3; 70 campioni locali, x86-64 e indice concorrente da verificare |
 | [SPK-09 Costo dei controlli di affidabilità](SPK-09-integrity/README.md) | CRC/decoder verificati e benchmark locale; resolver del manifest e motore da implementare |

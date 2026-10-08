@@ -148,6 +148,14 @@ prodotto è una **misura con una raccomandazione**.
 - *Esito:* valori iniziali per le soglie (QA-11, QA-12); evidenza che il MERGE opportunistico
   non altera il P99.
 
+> **Proposta** — La [prima campagna locale](risultati-SPK-06-2026-10-08.md)
+> verifica un modello deterministico con EWMA esatta, soglie e timer di ADR-0023,
+> e misura copie buffered a banda limitata concorrenti a letture su file sintetici.
+> La sovrapposizione è osservata dai tempi dei worker e dei singoli campioni,
+> senza dedurla dalla sola porta di partenza. Il controllore non riceve i segnali
+> delle misure I/O: calibrazione delle soglie e prova della low-load policy sul
+> motore restano aperte.
+
 ### SPK-07
 
 **Modelli dei protocolli.**

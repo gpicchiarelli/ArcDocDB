@@ -1,5 +1,5 @@
 ;;;; Mutazioni mirate in copie isolate; nessun sorgente del repository viene riscritto.
-;;;; Uso: --run directory-nuova/ [foundation|storage] oppure --self-test
+;;;; Uso: --run directory-nuova/ [foundation|storage|recovery] oppure --self-test
 ;;;; REQ: REQ-FOR-003 REQ-FOR-004 REQ-AFF-002 REQ-LIM-001 REQ-LIM-003 REQ-VAL-001
 (require :asdf)
 (defpackage #:arcdocdb.foundation.mutation (:use #:cl))
@@ -37,6 +37,26 @@
     ("decision-exact-consumption" "control-payload.lisp" "(unless (= end (spazio-ripetuto parts-start"
                                                        "(unless (>= end (spazio-ripetuto parts-start")))
 
+(defparameter *recovery-mutants*
+  '(("durable-strict-boundary" "scan.lisp" "(> durable absolute-prefix)"
+                                         "(>= durable absolute-prefix)")
+    ("witness-file-identity" "scan.lisp"
+      "(u64-equal-p buffer (+ vs +seal-file-id-offset+) file-id)" "(= file-id file-id)")
+    ("skip-search-position" "scan.lisp" "loop for delta below limit"
+                                      "loop for delta below limit by 2")
+    ("tail-batch-start" "scan.lisp" "(values pos :tail batches records)"
+                                   "(values (min end (+ pos +header-bytes+)) :tail batches records)")
+    ("physical-eof" "scan.lisp" "(= file-size (+ file-offset end))"
+                               "(<= file-size (+ file-offset end))")
+    ("search-budget-boundary" "scan.lisp" "(when (< limit positions)"
+                                         "(when (<= limit positions)")
+    ("witness-future-position" "scan.lisp"
+      "(<= records-start batch-start (+ file-offset pos))" "(<= records-start batch-start)")
+    ("witness-durable-position" "scan.lisp" "(<= durable batch-start)"
+                                           "(<= 0 durable)")
+    ("log-byte-budget-boundary" "scan.lisp" "(> (- end start) max-bytes)"
+                                           "(>= (- end start) max-bytes)")))
+
 (defun read-text (path)
   (uiop:read-file-string path :external-format :utf-8))
 
@@ -50,7 +70,9 @@
                        (mapcar #'enough-namestring (directory "src/foundation/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/foundation/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/storage/*.lisp"))
-                       (mapcar #'enough-namestring (directory "tests/storage/*.lisp"))))
+                       (mapcar #'enough-namestring (directory "tests/storage/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/recovery/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/recovery/*.lisp"))))
     (let ((target (merge-pathnames file directory)))
       (ensure-directories-exist target)
       (uiop:copy-file file target))))
@@ -88,15 +110,17 @@
          (format t "Mutazioni: self-test superato.~%"))
         ((and (<= 2 (length args) 3) (string= (first args) "--run")
               (or (= (length args) 2)
-                  (member (third args) '("foundation" "storage") :test #'string=)))
+                  (member (third args) '("foundation" "storage" "recovery") :test #'string=)))
          (let ((directory (uiop:ensure-directory-pathname (second args)))
                (scope (or (third args) "foundation")))
            (when (probe-file directory)
              (error "foundation-mutation.lisp: destinazione già presente: ~A" directory))
            (ensure-directories-exist directory)
-           (write (loop for mutant in (if (string= scope "storage") *storage-mutants* *mutants*)
+           (write (loop for mutant in (cond ((string= scope "storage") *storage-mutants*)
+                                           ((string= scope "recovery") *recovery-mutants*)
+                                           (t *mutants*))
                         for i from 0 collect (run-mutant mutant
                                                (merge-pathnames (format nil "~D/" i) directory) scope))
                   :pretty t)
            (terpri)))
-        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage]."))))
+        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage|recovery]."))))

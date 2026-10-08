@@ -56,7 +56,8 @@ misurati e i protocolli critici verificati su modello.
    discussione le scelte di base.
 3. **SPK-07** (modello di 2PC + compaction/swap/reclaim con crash in ogni punto).
 4. **SPK-03** (flush concorrenti di molte Serie).
-5. Spike restanti (SPK-04, SPK-05, SPK-06, SPK-08), eseguibili anche durante la Fase 1.
+5. Completare le verifiche residue di SPK-04, SPK-05 e SPK-06, che hanno prime campagne
+   locali, e avviare SPK-08; gli spike restanti sono eseguibili anche durante la Fase 1.
 
 ### Criteri di uscita
 
@@ -118,3 +119,13 @@ Prima del motore: campagne dei limiti ADR-0048 (documenti, profondità, chiavi),
 > aggiunge letture posizionali e mapping di file reali, con controlli CRC,
 > chiave e stamp. La scelta pread di ADR-0017 resta confermata dal progetto;
 > dataset oltre RAM, granularità della cache e target NVMe restano da verificare.
+
+## Avanzamento SPK-06
+
+> **Proposta** — La [prima campagna locale](valutazione/risultati-SPK-06-2026-10-08.md)
+> verifica il modello del carico, ammissibilità del MERGE e quote su input finiti;
+> misura inoltre copie buffered concorrenti a letture posizionali. Le due prove
+> sono indipendenti: il modello non governa le copie tramite segnali reali.
+> Restano compaction del motore, calibrazione e feedback sul dispositivo,
+> piattaforma di riferimento e rispetto del P99 durante CLEAN/MERGE. I gate
+> della fase e i target di prestazione restano aperti.

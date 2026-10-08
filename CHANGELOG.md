@@ -7,6 +7,15 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Scansione recovery in memoria dei log v1/v2: prefisso verificato, coda e
+  corruzione testimoniata da SEAL successivo, EOF esplicito e budget distinti
+  dagli errori dei dati; 19 test, inclusi 20.256 casi di alterazione dei bit.
+
+- SPK-06: modello finito del controllore di carico, quote e timer; 24 confronti
+  locali tra letture e copie concorrenti, con verifica integrale, intervalli
+  di sovrapposizione e campioni grezzi conservati. Compaction del motore e
+  feedback reale restano da verificare.
+
 - SPK-05: letture pread e mmap di file immutabili, CRC/chiave/stamp verificati,
   errori I/O e worker espliciti; 36 confronti locali per variante e profilo
   senza allocazioni osservate nel ciclo finale. Varianti e fallimenti conservati.

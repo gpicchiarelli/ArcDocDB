@@ -21,7 +21,10 @@
                 :serial t
                 :components ((:file "package") (:file "formats") (:file "segment-header")
                              (:file "control-payload") (:file "payload-record")
-                             (:file "payload-write"))))
+                             (:file "payload-write")))
+               (:module "recovery"
+                :serial t
+                :components ((:file "package") (:file "scan"))))
   :in-order-to ((test-op (test-op "arcdocdb/tests"))))
 
 (defsystem "arcdocdb/tests"
@@ -39,8 +42,12 @@
                (:module "storage"
                 :serial t
                 :components ((:file "support") (:file "segment-header")
-                             (:file "control-payload"))))
+                             (:file "control-payload")))
+               (:module "recovery"
+                :serial t
+                :components ((:file "support") (:file "scan") (:file "corruption"))))
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
-             (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)))
+             (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.recovery.tests '#:run)))

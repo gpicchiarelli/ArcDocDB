@@ -9,7 +9,16 @@
 > verifica localmente FIFO, esclusività del writer, code limitate e modelli
 > di parcheggio/ripartenza. RSK-04 resta aperto sulle prestazioni: finestre
 > brevi, pool creato per caso e carico preaccodato non confermano i target.
-> Lo scheduler adattivo e i controllori di RSK-12 non sono esercitati.
+> In SPK-04 lo scheduler adattivo e i controllori di RSK-12 non sono esercitati.
+
+## Prima evidenza SPK-06 (2026-10-08)
+
+> **Proposta** — La [campagna SPK-06](risultati-SPK-06-2026-10-08.md)
+> verifica confini, timer continui e quote nel modello finito del carico;
+> misura separatamente interferenza locale di copie buffered con letture.
+> RSK-12 resta aperto sul feedback reale, sulla calibrazione e sull'AIMD del
+> pool. La starvation di RSK-08 resta accettata: nessuna soglia di emergenza
+> è introdotta. Le misure non verificano una compaction del motore.
 
 ## Quadro
 
@@ -186,6 +195,10 @@ rallenta tutte le multiserie. Inoltre è un file unico che cresce.
 - *Mitigazioni:* metrica e allarme sul numero di segmenti piccoli; strutture che tollerano
   migliaia di segmenti; decisione esplicita sull'eventuale soglia di emergenza (QA-12).
 
+> **Deciso (QA-12 → ADR-0023)** — La starvation del MERGE è accettata con
+> metrica e allarme; non è prevista una soglia di emergenza. SPK-06 verifica
+> la policy su tracce finite e non dimostra progresso sotto carico sostenuto.
+
 ### RSK-09
 
 **Snapshot longevi.** Trattengono versioni e segmenti; con molte scritture lo spazio occupato
@@ -218,12 +231,17 @@ flush, le primitive di I/O, il supporto SIMD in SBCL e il comportamento del GC.
 
 ### RSK-12
 
-**Controllori dinamici.** Thread pool e low-load policy usano molti segnali correlati; un
-controllore mal tarato oscilla o reagisce in ritardo, e i suoi difetti si vedono solo sotto
+**Controllori dinamici.** La low-load policy usa due segnali smussati secondo ADR-0023;
+il thread pool considera anche code, CPU e backlog secondo ADR-0011. Un controllore
+mal tarato oscilla o reagisce in ritardo, e i suoi difetti possono emergere sotto
 carico reale.
 
 - *Mitigazioni:* partire da pochi segnali e regole semplici con isteresi; simulare il
   controllore su tracce di carico; rendere osservabile ogni decisione dello scheduler.
+
+> **Proposta** — SPK-06 verifica soglie e transizioni nel modello finito.
+> Feedback sul dispositivo, EWMA da metriche reali e AIMD del pool restano
+> da verificare; la campagna I/O è indipendente dal modello del controllore.
 
 ### RSK-13
 

@@ -185,6 +185,11 @@ documento, non il livello di isolamento.
 dimensione sotto cui un segmento è «piccolo»; numero minimo di segmenti piccoli per un MERGE;
 dimensione massima dell'output di un MERGE. I valori si determinano con le misure.
 
+> **Proposta** — La [prima campagna SPK-06](valutazione/risultati-SPK-06-2026-10-08.md)
+> verifica condizioni di ammissibilità e policy nel modello finito. Le copie
+> locali non tarano le soglie CLEAN/MERGE del motore: i default di ADR-0023
+> restano da valutare con la compaction reale.
+
 ### QA-12
 
 **Basso carico, preemption, starvation.**
@@ -196,6 +201,15 @@ dimensione massima dell'output di un MERGE. I valori si determinano con le misur
 - *Da decidere:* se il carico non scende mai, il MERGE non parte mai. È accettato così (con
   metrica e allarme), oppure serve una soglia di emergenza? La seconda ipotesi emenda la
   specifica.
+
+> **Deciso (QA-12 → ADR-0023)** — La starvation è accettata con metrica e
+> allarme, senza soglia di emergenza. Le soglie e le permanenze sono definite
+> da ADR-0023.
+
+> **Proposta** — [SPK-06](valutazione/risultati-SPK-06-2026-10-08.md) verifica
+> soglie e timer continui su tracce finite. Il modello e le copie concorrenti
+> sono prove indipendenti; feedback reale e rispetto del P99 durante
+> CLEAN/MERGE del motore restano da verificare.
 
 ### QA-13
 

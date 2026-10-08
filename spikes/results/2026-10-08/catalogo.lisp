@@ -119,6 +119,18 @@
    :artifact "spk05-record-check.lisp")
   (:kind :command-verification :formats (1 2) :variant :storage-segment-read-complete-verification
    :artifact "sviluppo-verifica.lisp")
+  (:kind :failed-attempt :formats (2) :variant :compaction-copy-compilation
+   :artifact "spk06-io-compilation-failed.lisp")
+  (:kind :command-verification :formats (2) :variant :compaction-copy-compilation
+   :artifact "spk06-io-compilation.lisp")
+  (:kind :check :formats (2) :variant :compaction-controller-and-copy
+   :artifact "spk06-check.lisp")
+  (:kind :benchmark :formats (2) :variant :compaction-copy-interference
+   :artifact "spk06-bench.lisp")
+  (:kind :derived-comparison :formats (2) :variant :compaction-copy-interference
+   :artifact "spk06-comparison.lisp")
+  (:kind :command-verification :formats (1 2) :variant :compaction-and-recovery-full-verification
+   :artifact "spk06-full-check.lisp")
   (:kind :recorder-negative-control :formats nil :variant :command-exit1
    :artifact "record-command-expected-failure.lisp" :expected-exit-code 1))
  :limits (:local-campaign :partial-product-coverage :no-reference-platform-claim))

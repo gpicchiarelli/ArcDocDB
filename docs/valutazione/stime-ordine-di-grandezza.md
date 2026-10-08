@@ -27,6 +27,12 @@ Conseguenze:
    necessaria raddoppia: il limite si incontra già a metà della fascia.
 3. La stessa banda è contesa da CLEAN e MERGE, che scrivono segmenti nuovi.
 
+> **Proposta** — Il [confronto locale SPK-06](risultati-SPK-06-2026-10-08.md)
+> usa file piccoli e page cache non controllata. La banda di copia buffered
+> osservata non sostituisce una misura di banda sostenuta del dispositivo né
+> verifica CLEAN/MERGE del motore. Le stime fisiche restano da confermare
+> sull'hardware di riferimento.
+
 → La fascia alta è raggiungibile solo con documenti piccoli, una sola scrittura per record,
 compressione o più dispositivi. È l'argomento principale per decidere QA-02. Vale anche come
 conferma del principio di priorità INV-P4: sul dispositivo il WAL deve prevalere sulla
@@ -200,7 +206,7 @@ SPK-02 deve produrre.
 | Query indicizzata | non valutabile: dipende da QA-25 e dal Query Engine | QA-25 |
 | Scan sequenziale, CLEAN | plausibili: lavoro sequenziale limitato dal dispositivo | priorità di I/O |
 | Transazioni multiserie | plausibile se il group commit forma gruppi ampi | QA-06, QA-07 |
-| Bassa latenza P95/P99 | **non valutabile senza un obiettivo numerico** | QA-26, SPK-02 |
+| Bassa latenza P95/P99 | obiettivi definiti da ADR-0028; rispetto durante compaction ancora da misurare | SPK-02, SPK-06, motore |
 
 ## Revisione v2 (ADR-0048)
 
