@@ -32,7 +32,7 @@ make check
 ```
 
 Compila senza avvisi, esegue test e linter, controlla tracciabilità e collegamenti,
-e verifica la correttezza degli otto esperimenti disponibili. Le misure di prestazione
+e verifica la correttezza dei nove esperimenti disponibili. Le misure di prestazione
 si eseguono separatamente con `make spikes-bench`.
 
 ## Convenzioni

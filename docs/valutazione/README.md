@@ -22,6 +22,7 @@ che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
 | [Registro delle prove](registro-delle-prove.md) | Schema, metadata, conservazione di prove, diagnostiche, fallimenti e benchmark |
 | [SPK-04, prima campagna](risultati-SPK-04-2026-10-08.md) | Writer su pool, attese limitate, modelli di lettura e benchmark diagnostici |
 | [SPK-05, prima campagna](risultati-SPK-05-2026-10-08.md) | Letture reali pread/mmap, verifica dei record, allocazioni e confronto locale |
+| [SPK-06, prima campagna](risultati-SPK-06-2026-10-08.md) | Modello finito del carico, quote e interferenza locale di copie con letture |
 
 ## Criteri di valutazione
 
@@ -154,3 +155,9 @@ e record massimo di 16.842.775 byte. Le parti escluse sono dichiarate nel
 [risultato](risultati-2026-10-08.md#spk-10--limiti-v2-e-integrazione).
 Il [registro strutturato](registro-delle-prove.md) conserva anche fallimenti e
 varianti smentite; `make check` e la CI raccolgono output e metadata della verifica.
+
+> **Proposta** — [SPK-06](risultati-SPK-06-2026-10-08.md) verifica la policy
+> del carico su tracce finite e misura separatamente copie buffered concorrenti
+> a letture pread. Il modello usa segnali iniettati e non governa le copie della
+> campagna I/O. Restano calibrazione sul dispositivo, feedback reale e verifica
+> del P99 durante CLEAN/MERGE del motore sulla piattaforma di riferimento.
