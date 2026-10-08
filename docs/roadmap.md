@@ -57,7 +57,8 @@ misurati e i protocolli critici verificati su modello.
 3. **SPK-07** (modello di 2PC + compaction/swap/reclaim con crash in ogni punto).
 4. **SPK-03** (flush concorrenti di molte Serie).
 5. Completare le verifiche residue di SPK-04, SPK-05 e SPK-06, che hanno prime campagne
-   locali, e avviare SPK-08; gli spike restanti sono eseguibili anche durante la Fase 1.
+   locali, e completare SPK-08 sulla piattaforma di riferimento; gli spike restanti
+   sono eseguibili anche durante la Fase 1.
 
 ### Criteri di uscita
 

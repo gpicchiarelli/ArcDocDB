@@ -281,6 +281,13 @@ e SIMD. Tutto deve essere ottenuto con SBCL, i suoi contrib ed eventuali libreri
 > mmap e verifica CRC in Common Lisp/SBCL su macOS ARM64. Il ciclo isolato
 > finale non mostra allocazioni nel campione; Linux e le altre primitive
 > rimangono da verificare. La disponibilità locale non chiude RSK-16.
+
+> **Proposta** — L'[estensione bitmap SPK-08](risultati-SPK-08-bitmap-2026-10-08.md)
+> verifica due kernel Common Lisp e il loro codice generato su ARM64.
+> Il popcount scalare usa istruzioni NEON interne al compilatore, anche senza
+> un'API popcount del contrib. Packing, x86-64 e hot path del motore restano
+> da misurare; nessuna nuova dipendenza di prodotto viene introdotta.
+
 - *Lato positivo:* un solo linguaggio, un solo modello di memoria da capire, nessun confine
   foreign da attraversare sul hot path.
 

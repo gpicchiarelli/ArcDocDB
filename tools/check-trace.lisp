@@ -113,9 +113,26 @@
 
 ;;; --- riferimenti dal codice ------------------------------------------------
 
+;;; REQ: REQ-AFF-005 REQ-VAL-001
+(defun source-path-p (relative)
+  "I risultati persistiti e l'output degli esperimenti sono dati, non sorgenti."
+  (not (or (starts-with "spikes/out/" relative)
+           (starts-with "spikes/results/" relative))))
+
+(defun check-source-selection ()
+  "Autoverifica C4: esclusioni esatte, nessuna esclusione dei sorgenti omonimi."
+  (dolist (example '(("spikes/out/report.lisp" nil)
+                     ("spikes/results/2026-10-08/catalogo.lisp" nil)
+                     ("spikes/SPK-01/results/fixture.lisp" t)
+                     ("spikes/outlier/suite.lisp" t)
+                     ("src/results/parser.lisp" t)
+                     ("tests/io/native.lisp" t)))
+    (unless (eq (source-path-p (first example)) (second example))
+      (fail "selezione dei sorgenti errata per ~A" (first example)))))
+
 (defun lisp-files (dir)
   (loop for p in (directory (concatenate 'string dir "/**/*.lisp"))
-        collect p))
+        when (source-path-p (enough-namestring p (truename "./"))) collect p))
 
 (defun req-refs-in (text)
   "Tutti i REQ-xxx-nnn presenti nel TEXT."
@@ -210,6 +227,7 @@
          (invs (table-ids "docs/invarianti.md" "INV-"))
          (fis (table-ids "docs/14-fault-injection.md" "FI-"))
          (adrs (adr-table)))
+    (check-source-selection)
     (check-shape reqs)
     (check-references reqs invs adrs fis)
     (check-coverage reqs invs fis)

@@ -302,6 +302,11 @@ schema su dati append-only già scritti.
 terze parti, o solo SBCL e i suoi contrib? Quale framework di test? Meno dipendenze significa
 più controllo sul hot path e più codice da scrivere.
 
+> **Proposta** — L'[estensione bitmap SPK-08](valutazione/risultati-SPK-08-bitmap-2026-10-08.md)
+> usa soltanto Common Lisp e SBCL, con oracoli indipendenti e prove registrate.
+> La disponibilità del contrib NEON viene osservata separatamente; non cambia
+> la policy delle dipendenze di ADR-0017 né qualifica la piattaforma x86-64.
+
 ### QA-23
 
 **Fuori scope v1.** Replica, alta disponibilità, backup/restore, autenticazione e

@@ -39,6 +39,10 @@ make trace-write    # rigenera matrice.md dopo aver modificato requisiti.lisp
    se non è di classe C4, nei test.
 7. La matrice committata è esattamente quella generata.
 
+Il controllo del codice esclude `spikes/out/` e `spikes/results/`: contengono dati
+di esito e diagnostiche, verificati separatamente da `make evidence`. La selezione
+ha un'autoverifica dei confini; i sorgenti degli spike e le fixture restano inclusi.
+
 ## Stati di un requisito
 
 | Stato | Significato |

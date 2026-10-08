@@ -34,7 +34,7 @@
                (member mode '("--check" "--bench" "--simd-check" "--simd-bench") :test #'string=))
     (error "Uso: run.lisp --check|--bench|--simd-check|--simd-bench"))
   (ensure-directories-exist out)
-  (let ((scalar nil)
+  (let ((scalar nil) (bitmap nil)
         (native (list :status :unsupported :module :simd :reason :contrib-or-architecture)))
     (unless simd-only
       (compila-spk08 base out "impronte")
@@ -47,12 +47,20 @@
       (setf native (uiop:symbol-call :arcdocdb.spk08.simd (if benchmark :bench :check))))
     (unless (member (getf native :status) '(:ok :measured :unsupported))
       (error "Esito SIMD non valido: ~S" native))
+    (unless simd-only
+      (dolist (name '("bitmap" "core-bitmap")) (compila-spk08 base out name))
+      (let ((checked (uiop:symbol-call :arcdocdb.spk08.bitmap.campagna :check)))
+        (unless (eq (getf checked :status) :ok) (error "Esito bitmap non valido: ~S" checked))
+        (setf bitmap (if benchmark
+                         (list :check checked
+                               :benchmark (uiop:symbol-call :arcdocdb.spk08.bitmap.campagna :benchmark))
+                         checked))))
     (let ((*print-readably* t) (*print-pretty* t))
       (write (dati-portabili (if simd-only native
                  (list :spike :spk-08
                        :status (if (eq (getf native :status) :unsupported) :unsupported
                                    (if benchmark :measured :ok))
                        :variant :isolated-generated-code
-                       :results (list :scalar-and-swar scalar :native-simd native)
+                       :results (list :scalar-and-swar scalar :native-simd native :bitmap bitmap)
                        :limits '(:not-an-index-integration :no-production-promotion)))))
       (terpri))))

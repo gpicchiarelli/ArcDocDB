@@ -4,6 +4,7 @@
   (:use #:cl)
   (:export #:arcdocdb-error #:invalid-argument #:corruption-detected
            #:unsupported-format #:resource-exhausted #:invariant-violation
+           #:io-fault #:error-operation #:error-errno #:error-cleanup-errno #:error-transferred
            #:error-reason #:error-offset))
 
 (defpackage #:arcdocdb.binary
