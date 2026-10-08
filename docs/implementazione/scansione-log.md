@@ -96,6 +96,24 @@ Un ulteriore caso costruisce due SEAL integri sovrapposti: un candidato
 non conclusivo non deve far saltare quello successivo. Le prove recovery
 sono complessivamente 19.
 
+I [record delle verifiche](../../spikes/results/2026-10-08-recovery/catalogo.lisp)
+conservano comandi, ambiente, hash dei sorgenti, output e tentativi falliti.
+Le campagne mirate introducono nove difetti nei confini, nell'identità del
+testimone, nelle posizioni, nell'EOF e nei budget. La misura `sb-cover`
+conserva anche il denominatore grezzo e non equivale a copertura MC/DC.
+I controlli sono riproducibili da una copia stabile del repository:
+
+```sh
+make check
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-mutation.lisp --self-test
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-mutation.lisp --run spikes/out/recovery-mutants/ recovery
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-coverage.lisp --self-test spikes/out/recovery-coverage-self-test/
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-coverage.lisp --report spikes/out/recovery-coverage/ recovery
+```
+
+La directory dei mutanti deve essere nuova. Copertura e mutazioni vengono
+eseguite separatamente, senza modificare i sorgenti del prodotto.
+
 Requisiti: REQ-FOR-001/003, REQ-AFF-008/009/017. Invarianti interessati:
 INV-F1/F2/F3, INV-A4/A8/A9, INV-P6 e INV-X3. Nessun requisito del motore è
 promosso a verificato sulla sola evidenza di questa scansione.

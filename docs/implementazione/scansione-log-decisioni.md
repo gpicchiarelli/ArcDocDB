@@ -43,5 +43,18 @@ con i byte effettivamente consumati.
 Definizioni, proclamazioni e rami difensivi restano nel denominatore della
 copertura grezza. Qualsiasi eccezione richiede registrazione e revisione
 secondo il [piano di verifica](../affidabilita/piano-di-verifica.md).
+Il [catalogo delle evidenze](../../spikes/results/2026-10-08-recovery/catalogo.lisp)
+conserva il rapporto grezzo, la campagna di nove mutanti e le due letture
+indipendenti del modulo. La seconda lettura ha aggiunto al caso di
+configurazione invalida un budget di lotto oltre `most-positive-fixnum`;
+il controllo del tipo viene quindi esercitato separatamente dal minimo di
+56 byte. I rami difensivi elencati sopra non vengono sottratti dai totali.
+Il rapporto finale misura 416/480 espressioni (86,7%) e 52/66 rami (78,8%)
+in `scan.lisp`. I 14 rami non presi sono cinque postcondizioni/precondizioni
+di `checked-batch`, sei di `seal-witness`, il confine iniziale della ricerca
+e due controlli di `scan-prefix`; richiederebbero una violazione del contratto
+interno o un codec difettoso. Anche `package.lisp` resta nel rapporto con
+una definizione non eseguita e nessun ramo. Questi risultati non chiudono
+un gate di copertura o di qualifica del motore.
 I test di corruzione in memoria non simulano persistenza, flush o transizioni
 `FAULTED`; verificano il risultato della scansione sui byte forniti.

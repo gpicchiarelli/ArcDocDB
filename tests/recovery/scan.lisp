@@ -265,6 +265,10 @@
                       (:max-search-bytes -1)))
       (signals invalid-argument (apply #'fixture-scan buffer start end 31 options)
                :log-scan-arguments))
+    (signals invalid-argument
+             (fixture-scan buffer start end 31
+                           :max-batch-bytes (1+ most-positive-fixnum))
+             :log-scan-arguments)
     (signals invalid-argument (fixture-scan buffer -1 end 31) :buffer-range)
     (signals invalid-argument (fixture-scan buffer start (1+ end) 31) :buffer-range)))
 

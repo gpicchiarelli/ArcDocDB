@@ -51,7 +51,8 @@
     ("search-budget-boundary" "scan.lisp" "(when (< limit positions)"
                                          "(when (<= limit positions)")
     ("witness-future-position" "scan.lisp"
-      "(<= records-start batch-start (+ file-offset pos))" "(<= records-start batch-start)")
+      "(<= records-start batch-start (+ file-offset pos))"
+      "(and (typep (+ file-offset pos) 'u64) (<= records-start batch-start))")
     ("witness-durable-position" "scan.lisp" "(<= durable batch-start)"
                                            "(<= 0 durable)")
     ("log-byte-budget-boundary" "scan.lisp" "(> (- end start) max-bytes)"
