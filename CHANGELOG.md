@@ -7,6 +7,15 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- SPK-07: due reader/due slot in SC, 28 mutanti rilevati; crash sui byte
+  v1/v2, 49.120 casi e 303.432 interruzioni/ripartenze equivalenti. Frontiera
+  esterna e limiti del modello dichiarati; tutti i tentativi conservati.
+
+- SPK-08: maschere scalar/SWAR esatte e kernel NEON/SSE2 a safety 3;
+  70 campioni seriali su Apple M4, zero byte consed osservati nei cicli.
+  SSE2 e indice concorrente restano da verificare; report leggibili senza
+  caricare i package sperimentali, originali integralmente conservati.
+
 - Scansione recovery in memoria dei log v1/v2: prefisso verificato, coda e
   corruzione testimoniata da SEAL successivo, EOF esplicito e budget distinti
   dagli errori dei dati; 19 test, inclusi 20.256 casi di alterazione dei bit.

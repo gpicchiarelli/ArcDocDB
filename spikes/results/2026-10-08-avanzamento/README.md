@@ -27,6 +27,10 @@ Risultati e raccomandazione: [resoconto](../../../docs/valutazione/risultati-SPK
 - `spk08-summary.lisp` contiene soltanto statistiche derivate: hash del
   report originale e mediana come terzo valore di cinque tempi ordinati,
   oltre a estremi, conteggi e contatore di allocazione. Non è un nuovo BENCH.
+- `merged-verification.lisp` e `merged-spikes-check.lisp` verificano il
+  commit `70dfd93` in checkout pulito, dopo l'integrazione di recovery e
+  SPK-06. Il primo conserva `make check`; il secondo i risultati decodificati
+  di tutti i dieci spike, con hash dei rispettivi input stabili.
 
 I percorsi assoluti di esecuzione restano metadata storici. Le copie qui
 conservate comprendono i dati necessari anche quando le directory ignored

@@ -44,5 +44,9 @@
   (:ARTIFACT #A((26) BASE-CHAR . "evidence-read-success.lisp") :VARIANT
    #A((25) BASE-CHAR . "standalone-reader-success") :FORMATS NIL)
   (:ARTIFACT #A((16) BASE-CHAR . "trace-write.lisp") :VARIANT
-   #A((11) BASE-CHAR . "trace-write") :FORMATS NIL))
+   #A((11) BASE-CHAR . "trace-write") :FORMATS NIL)
+  (:ARTIFACT #A((24) BASE-CHAR . "merged-verification.lisp") :VARIANT
+   #A((12) BASE-CHAR . "merged-check") :FORMATS NIL)
+  (:ARTIFACT #A((24) BASE-CHAR . "merged-spikes-check.lisp") :VARIANT
+   #A((19) BASE-CHAR . "merged-spikes-check") :FORMATS NIL))
  :LIMITS (:LOCAL-CAMPAIGN :FINITE-DOMAIN :NO-PRODUCT-READINESS-CLAIM))
