@@ -63,7 +63,9 @@
               "src/foundation/record.lisp" "src/foundation/batch.lisp"))
           (when (string= (car entry) "SPK-08")
             '("spikes/SPK-08-generated-code/impronte.lisp"
-              "spikes/SPK-08-generated-code/simd.lisp"))
+              "spikes/SPK-08-generated-code/simd.lisp"
+              "spikes/SPK-08-generated-code/bitmap.lisp"
+              "spikes/SPK-08-generated-code/core-bitmap.lisp"))
           (when (string= (car entry) "SPK-10")
             '("spikes/SPK-10-v2-limits/codec.lisp" "spikes/SPK-10-v2-limits/indice.lisp"
               "spikes/SPK-10-v2-limits/cbor.lisp" "spikes/SPK-10-v2-limits/migrazione.lisp"

@@ -7,6 +7,10 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- SPK-08 bitmap: kernel scalari byte/u64 equivalenti, oracoli indipendenti,
+  90 campioni locali e disassemblati conservati. Packing escluso e nessuna
+  promozione a ottimizzazione del motore.
+
 - SPK-07: due reader/due slot in SC, 28 mutanti rilevati; crash sui byte
   v1/v2, 49.120 casi e 303.432 interruzioni/ripartenze equivalenti. Frontiera
   esterna e limiti del modello dichiarati; tutti i tentativi conservati.

@@ -75,3 +75,12 @@ di allocazione e la raccomandazione sono nel
 
 Raccomandazione: misurare tutte le varianti nello stesso layout dell'indice,
 con query variabili e accessi concorrenti, prima di scegliere un kernel.
+
+## Estensione sulle bitmap
+
+Il [metodo bitmap](metodo-bitmap.md) confronta il conteggio dei bit comuni
+in array byte e u64 equivalenti. [Risultati e limiti](../../docs/valutazione/risultati-SPK-08-bitmap-2026-10-08.md):
+24 fixture, 30 rifiuti e 90 campioni locali con sink e input immutati verificati.
+Il disassemblato distingue il popcount hardware del singolo elemento da
+un ciclo vettorizzato. L'harness integrato esegue anche questi controlli;
+`run-bitmap.lisp` consente la prova separata tramite il registro dei comandi.

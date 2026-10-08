@@ -14,6 +14,7 @@ che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
 
 | Documento | Contenuto |
 |---|---|
+| [SPK-08, bitmap](risultati-SPK-08-bitmap-2026-10-08.md) | Conteggio su array byte/u64, codice generato e confronto locale senza packing |
 | [Analisi critica](analisi-critica.md) | Punti di forza, tensioni interne alla specifica, lacune di progetto |
 | [Stime di ordine di grandezza](stime-ordine-di-grandezza.md) | Plausibilità dei target rispetto ai limiti dell'hardware |
 | [Registro dei rischi](registro-rischi.md) | Rischi `RSK-…` con esposizione, mitigazione e verifica |
