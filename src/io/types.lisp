@@ -40,6 +40,11 @@ Stato/posizioni cambiano soltanto nel compito proprietario."
   (durable 0 :type file-offset))
 
 ;;; REQ: REQ-AFF-001
+(declaim (ftype (function (file-io) (member :input :append :directory)) mode-file))
+(defun mode-file (file)
+  "Pre: capacità posseduta. Post: modo immutabile, senza FD o mutazione." (file-mode file))
+
+;;; REQ: REQ-AFF-001
 (declaim (ftype (function (file-io) (member :open :faulted :closed)) stato-file))
 (defun stato-file (file)
   "Pre: capacità posseduta. Post: stato locale osservato, senza modifica o attesa."

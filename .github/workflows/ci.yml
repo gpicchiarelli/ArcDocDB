@@ -18,14 +18,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
-      - name: Install SBCL (Linux)
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y sbcl
-      - name: Install SBCL (macOS)
-        if: runner.os == 'macOS'
-        run: brew install sbcl
-      - name: Versione
-        run: sbcl --version
+      - uses: ./.github/actions/setup-sbcl
       - name: Verifica completa registrata (senza benchmark)
         run: make check
       - name: Conserva prove e diagnostiche
@@ -41,8 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install SBCL
-        run: sudo apt-get update && sudo apt-get install -y sbcl
+      - uses: ./.github/actions/setup-sbcl
       - name: Tracciabilità e link registrati
         run: sbcl --noinform --no-userinit --no-sysinit --script tools/record-command.lisp -- make trace links
       - name: Conserva prove e diagnostiche

@@ -52,6 +52,18 @@ Non verifica CRC: il caller passa i byte al codec prima di rispondere al client.
     end))
 
 ;;; REQ: REQ-STO-003 REQ-AFF-001 REQ-AFF-008
+(declaim (ftype (function (file-io index index) null) verifica-capienza-append))
+(defun verifica-capienza-append (file total largest-transfer)
+  "Pre: file append posseduto, totale e massimo chunk del gruppo. Post: budget disponibili.
+INVALID-ARGUMENT/RESOURCE-EXHAUSTED/IO-FAULT prima di qualsiasi syscall, senza mutazione."
+  (esigi-aperto file :append)
+  (unless (<= largest-transfer total) (error 'invalid-argument :reason :io-group-size))
+  (when (or (> largest-transfer (file-max-transfer file))
+            (> total (- (file-max-file-bytes file) (file-written file))))
+    (error 'resource-exhausted :reason :io-group-budget))
+  nil)
+
+;;; REQ: REQ-STO-003 REQ-AFF-001 REQ-AFF-008
 (declaim (ftype (function (file-io octets index index) file-offset) append-esatto))
 (defun append-esatto (file buffer start end)
   "Pre: un compito possiede file e input stabile. Post: tutto il range scritto in append.

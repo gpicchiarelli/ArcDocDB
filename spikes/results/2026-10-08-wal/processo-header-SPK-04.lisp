@@ -1,0 +1,138 @@
+(:SCHEMA-VERSION 1 :ID "SPK-04" :COMMAND
+ (#A((48) BASE-CHAR . "/opt/homebrew/Cellar/sbcl/2.6.9/libexec/bin/sbcl")
+  "--dynamic-space-size" "4096" "--noinform" "--no-userinit" "--no-sysinit"
+  "--script" "spikes/SPK-04-writer-pool/run.lisp"
+  #A((7) BASE-CHAR . "--check"))
+ :EXIT-CODE 0 :STARTED-AT-UNIVERSAL-TIME 4000485402 :FINISHED-AT-UNIVERSAL-TIME
+ 4000485403 :WALL-SECONDS 0.876566d0 :STATUS :OK :SOURCE-BLOBS-BEFORE
+ ((:PATH "tools/run-spikes.lisp" :GIT-BLOB
+   "04e1cd5c1a3c63c9fc47e307f7dfdb2cc3316540")
+  (:PATH "spikes/SPK-04-writer-pool/run.lisp" :GIT-BLOB
+   "77056cc1f695574ed0f4d34795b99aaea736f378")
+  (:PATH #A((35) BASE-CHAR . "spikes/SPK-04-writer-pool/core.lisp") :GIT-BLOB
+   "557b32e6378290c46c7d9b128fc8e59a0e7e0a44")
+  (:PATH "spikes/SPK-04-writer-pool/pool.lisp" :GIT-BLOB
+   "cbec51aad2b64fb8c5be026891eff859ba371c18")
+  (:PATH "spikes/SPK-04-writer-pool/parcheggi.lisp" :GIT-BLOB
+   "c0fee7b738395fcaf3359f297282cd266ce6dfad"))
+ :SOURCE-BLOBS-AFTER
+ ((:PATH "tools/run-spikes.lisp" :GIT-BLOB
+   "04e1cd5c1a3c63c9fc47e307f7dfdb2cc3316540")
+  (:PATH "spikes/SPK-04-writer-pool/run.lisp" :GIT-BLOB
+   "77056cc1f695574ed0f4d34795b99aaea736f378")
+  (:PATH #A((35) BASE-CHAR . "spikes/SPK-04-writer-pool/core.lisp") :GIT-BLOB
+   "557b32e6378290c46c7d9b128fc8e59a0e7e0a44")
+  (:PATH "spikes/SPK-04-writer-pool/pool.lisp" :GIT-BLOB
+   "cbec51aad2b64fb8c5be026891eff859ba371c18")
+  (:PATH "spikes/SPK-04-writer-pool/parcheggi.lisp" :GIT-BLOB
+   "c0fee7b738395fcaf3359f297282cd266ce6dfad"))
+ :SOURCE-CONSISTENCY :STABLE :RESULT
+ (:STATUS :OK :SPIKE :SPK-04 :POOL
+  (:SPIKE :SPK-04 :MODULE :WRITER-POOL :STATUS :OK :RING
+   (:STATUS :OK :CAPACITY 2 :REJECTED 1 :WRAPPED T) :MPSC
+   (:STATUS :OK :SERIES 4 :PRODUCERS 8 :WORKERS 4 :OPERATIONS 256 :TRAITS 40
+    :READY-LIST-ACCESSES 44)
+   :WORKER-REPLACEMENT
+   (:STATUS :OK :WORKER-SEQUENCE (0 1 0 1) :OPERATIONS 4 :JOINED-THREAD-COUNT
+    4)
+   :BURST
+   (:STATUS :OK :HOT-OPERATIONS 64 :COLD-OPERATIONS (4 4 4) :FIRST-TRAITS
+    (0 1 2 3) :COLD-COMPLETE-BY-TRAIT 4 :BOUND :ROUND-ROBIN-TRAITS
+    :WALL-TIME-GUARANTEE NIL)
+   :WORKER-ERRORS (:STATUS :OK :PROPAGATED :INJECTED :JOINED-THREAD-COUNT 4))
+  :PARKING
+  (:STATUS :OK :CASES
+   ((:CASE "REQ-CON-004/eventi-fifo-idempotenti" :TIPO :CLIENTI-LOTTO :STATUS
+     :OK)
+    (:CASE "REQ-CON-004/scadenza-inclusiva-evento-tardivo" :TIPO :CLIENTI-LOTTO
+     :STATUS :OK)
+    (:CASE "REQ-CON-004/riuso-token-generazionale" :TIPO :CLIENTI-LOTTO :STATUS
+     :OK)
+    (:CASE "REQ-AFF-008/rifiuti-atomici-generazione-senza-wrap" :TIPO
+     :CLIENTI-LOTTO :STATUS :OK)
+    (:CASE "REQ-AFF-008/capacita-massima-crediti-coda" :TIPO :CLIENTI-LOTTO
+     :STATUS :OK)
+    (:CASE "REQ-CON-004/eventi-fifo-idempotenti" :TIPO :SNAPSHOT :STATUS :OK)
+    (:CASE "REQ-CON-004/scadenza-inclusiva-evento-tardivo" :TIPO :SNAPSHOT
+     :STATUS :OK)
+    (:CASE "REQ-CON-004/riuso-token-generazionale" :TIPO :SNAPSHOT :STATUS :OK)
+    (:CASE "REQ-AFF-008/rifiuti-atomici-generazione-senza-wrap" :TIPO :SNAPSHOT
+     :STATUS :OK)
+    (:CASE "REQ-AFF-008/capacita-massima-crediti-coda" :TIPO :SNAPSHOT :STATUS
+     :OK)
+    (:CASE "REQ-CON-004/eventi-fifo-idempotenti" :TIPO :COORDINATORI :STATUS
+     :OK)
+    (:CASE "REQ-CON-004/scadenza-inclusiva-evento-tardivo" :TIPO :COORDINATORI
+     :STATUS :OK)
+    (:CASE "REQ-CON-004/riuso-token-generazionale" :TIPO :COORDINATORI :STATUS
+     :OK)
+    (:CASE "REQ-AFF-008/rifiuti-atomici-generazione-senza-wrap" :TIPO
+     :COORDINATORI :STATUS :OK)
+    (:CASE "REQ-AFF-008/capacita-massima-crediti-coda" :TIPO :COORDINATORI
+     :STATUS :OK))
+   :LIMITS
+   (:CONTESTI-PER-LISTA 4 :GENERAZIONE-MASSIMA 16 :CLOCK-LOGICO-MASSIMO 255
+    :EVENTO-MASSIMO 31 :CODA-RIPRESE :CREDITO-RISERVATO-PER-CONTESTO :TIMEOUT
+    :CLOCK-LOGICO-INIETTATO :ORDINE-RIPRESE :FIFO-DI-PUBBLICAZIONE :MODELLO
+    :FLUSSO-UNICO-DETERMINISTICO :ESCLUSIONI
+    (:THREAD-REALI :ATTESE-CLOCK-REALE :CALLBACK-ESTERNE :ALLOCAZIONI-MISURATE
+     :DURABILITA :PRESTAZIONI)))
+  :READ-RESTART
+  (:STATUS :OK :CASES 9 :ASSERTIONS 54 :LIMITS
+   (:FINITE-MODEL :NO-REAL-IO :NO-MVCC-RESOLUTION :NO-EPOCH-RECLAMATION))
+  :PRODUCTION-GATE-COMPLETE NIL)
+ :STDOUT "(:STATUS :OK :SPIKE :SPK-04 :POOL
+ (:SPIKE :SPK-04 :MODULE :WRITER-POOL :STATUS :OK :RING
+  (:STATUS :OK :CAPACITY 2 :REJECTED 1 :WRAPPED T) :MPSC
+  (:STATUS :OK :SERIES 4 :PRODUCERS 8 :WORKERS 4 :OPERATIONS 256 :TRAITS 40
+   :READY-LIST-ACCESSES 44)
+  :WORKER-REPLACEMENT
+  (:STATUS :OK :WORKER-SEQUENCE (0 1 0 1) :OPERATIONS 4 :JOINED-THREAD-COUNT 4)
+  :BURST
+  (:STATUS :OK :HOT-OPERATIONS 64 :COLD-OPERATIONS (4 4 4) :FIRST-TRAITS
+   (0 1 2 3) :COLD-COMPLETE-BY-TRAIT 4 :BOUND :ROUND-ROBIN-TRAITS
+   :WALL-TIME-GUARANTEE NIL)
+  :WORKER-ERRORS (:STATUS :OK :PROPAGATED :INJECTED :JOINED-THREAD-COUNT 4))
+ :PARKING
+ (:STATUS :OK :CASES
+  ((:CASE \"REQ-CON-004/eventi-fifo-idempotenti\" :TIPO :CLIENTI-LOTTO :STATUS
+    :OK)
+   (:CASE \"REQ-CON-004/scadenza-inclusiva-evento-tardivo\" :TIPO :CLIENTI-LOTTO
+    :STATUS :OK)
+   (:CASE \"REQ-CON-004/riuso-token-generazionale\" :TIPO :CLIENTI-LOTTO :STATUS
+    :OK)
+   (:CASE \"REQ-AFF-008/rifiuti-atomici-generazione-senza-wrap\" :TIPO
+    :CLIENTI-LOTTO :STATUS :OK)
+   (:CASE \"REQ-AFF-008/capacita-massima-crediti-coda\" :TIPO :CLIENTI-LOTTO
+    :STATUS :OK)
+   (:CASE \"REQ-CON-004/eventi-fifo-idempotenti\" :TIPO :SNAPSHOT :STATUS :OK)
+   (:CASE \"REQ-CON-004/scadenza-inclusiva-evento-tardivo\" :TIPO :SNAPSHOT
+    :STATUS :OK)
+   (:CASE \"REQ-CON-004/riuso-token-generazionale\" :TIPO :SNAPSHOT :STATUS :OK)
+   (:CASE \"REQ-AFF-008/rifiuti-atomici-generazione-senza-wrap\" :TIPO :SNAPSHOT
+    :STATUS :OK)
+   (:CASE \"REQ-AFF-008/capacita-massima-crediti-coda\" :TIPO :SNAPSHOT :STATUS
+    :OK)
+   (:CASE \"REQ-CON-004/eventi-fifo-idempotenti\" :TIPO :COORDINATORI :STATUS
+    :OK)
+   (:CASE \"REQ-CON-004/scadenza-inclusiva-evento-tardivo\" :TIPO :COORDINATORI
+    :STATUS :OK)
+   (:CASE \"REQ-CON-004/riuso-token-generazionale\" :TIPO :COORDINATORI :STATUS
+    :OK)
+   (:CASE \"REQ-AFF-008/rifiuti-atomici-generazione-senza-wrap\" :TIPO
+    :COORDINATORI :STATUS :OK)
+   (:CASE \"REQ-AFF-008/capacita-massima-crediti-coda\" :TIPO :COORDINATORI
+    :STATUS :OK))
+  :LIMITS
+  (:CONTESTI-PER-LISTA 4 :GENERAZIONE-MASSIMA 16 :CLOCK-LOGICO-MASSIMO 255
+   :EVENTO-MASSIMO 31 :CODA-RIPRESE :CREDITO-RISERVATO-PER-CONTESTO :TIMEOUT
+   :CLOCK-LOGICO-INIETTATO :ORDINE-RIPRESE :FIFO-DI-PUBBLICAZIONE :MODELLO
+   :FLUSSO-UNICO-DETERMINISTICO :ESCLUSIONI
+   (:THREAD-REALI :ATTESE-CLOCK-REALE :CALLBACK-ESTERNE :ALLOCAZIONI-MISURATE
+    :DURABILITA :PRESTAZIONI)))
+ :READ-RESTART
+ (:STATUS :OK :CASES 9 :ASSERTIONS 54 :LIMITS
+  (:FINITE-MODEL :NO-REAL-IO :NO-MVCC-RESOLUTION :NO-EPOCH-RECLAMATION))
+ :PRODUCTION-GATE-COMPLETE NIL)
+"
+ :STDERR "")

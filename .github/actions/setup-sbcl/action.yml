@@ -1,0 +1,42 @@
+name: SBCL verificato
+description: Installa e controlla la toolchain candidata alle verifiche ArcDocDB.
+inputs:
+  version:
+    description: Versione da verificare su tutti i runner.
+    default: '2.6.9'
+  linux-sha256:
+    description: SHA256 della distribuzione ufficiale Linux x86-64.
+    default: '39fac28407405841003e4c2abfbe0d96abd93b7701e8b61cdd35e713943b46d6'
+runs:
+  using: composite
+  steps:
+    - name: Distribuzione ufficiale SBCL (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      env:
+        TASK_SBCL_VERSION: ${{ inputs.version }}
+        TASK_SBCL_SHA256: ${{ inputs.linux-sha256 }}
+      run: |
+        test "$(uname -m)" = x86_64
+        task_sbcl_archive="${RUNNER_TEMP}/arcdocdb-sbcl-${TASK_SBCL_VERSION}.tar.bz2"
+        task_sbcl_prefix="${RUNNER_TEMP}/arcdocdb-sbcl"
+        curl --fail --location --connect-timeout 20 --max-time 180 \
+          --output "${task_sbcl_archive}" \
+          "https://downloads.sourceforge.net/project/sbcl/sbcl/${TASK_SBCL_VERSION}/sbcl-${TASK_SBCL_VERSION}-x86-64-linux-binary.tar.bz2"
+        printf '%s  %s\n' "${TASK_SBCL_SHA256}" "${task_sbcl_archive}" | sha256sum --check
+        tar -xjf "${task_sbcl_archive}" -C "${RUNNER_TEMP}"
+        cd "${RUNNER_TEMP}/sbcl-${TASK_SBCL_VERSION}-x86-64-linux"
+        sh install.sh --prefix="${task_sbcl_prefix}"
+        printf '%s\n' "${task_sbcl_prefix}/bin" >> "${GITHUB_PATH}"
+        printf 'SBCL_HOME=%s/lib/sbcl\n' "${task_sbcl_prefix}" >> "${GITHUB_ENV}"
+    - name: SBCL (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: brew install sbcl
+    - name: Controllo versione
+      shell: bash
+      env:
+        TASK_SBCL_VERSION: ${{ inputs.version }}
+      run: |
+        sbcl --version
+        test "$(sbcl --version)" = "SBCL ${TASK_SBCL_VERSION}"

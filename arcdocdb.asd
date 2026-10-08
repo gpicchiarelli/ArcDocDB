@@ -27,6 +27,9 @@
                (:module "io" :serial t
                 :components ((:file "package") (:file "types") (:file "native")
                              (:file "lifecycle") (:file "transfer") (:file "flush")))
+               (:module "wal" :serial t
+                :components ((:file "package") (:file "types") (:file "builder")
+                             (:file "group") (:file "executor")))
                (:module "recovery"
                 :serial t
                 :components ((:file "package") (:file "scan"))))
@@ -52,10 +55,14 @@
                 :components ((:file "support") (:file "transfer") (:file "native")))
                (:module "recovery"
                 :serial t
-                :components ((:file "support") (:file "scan") (:file "corruption"))))
+                :components ((:file "support") (:file "scan") (:file "corruption")))
+               (:module "wal" :serial t
+                :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
+                             (:file "native"))))
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.io.tests '#:run)
-             (uiop:symbol-call '#:arcdocdb.recovery.tests '#:run)))
+             (uiop:symbol-call '#:arcdocdb.recovery.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.wal.tests '#:run)))
