@@ -1,4 +1,4 @@
-;;;; SPK-10: codec sperimentale v1/v2; il parent carica prima SPK-09.
+;;;; SPK-10: codec sperimentale v1/v2; il runner carica prima SPK-09.
 ;;; REQ: REQ-LIM-001 REQ-LIM-003 REQ-FOR-003 REQ-FOR-004
 ;;; REQ: REQ-AFF-002 REQ-AFF-008
 
@@ -275,7 +275,7 @@ Pre: intervallo esatto e entry attesa. Nessun prepared restituito. CODEC-ERROR."
 (defun verifica-hint-entry (versione buffer inizio fine lunghezza-chiavi lunghezza-segmento
                            &key (massimo-chiave +chiave-v2+)
                              (massimo-valore +documento-byte+) (massimo-record nil))
-  "Verifica una entry e i suoi limiti; CRC delle sezioni a carico del parent.
+  "Verifica una entry e i suoi limiti; CRC delle sezioni a carico del chiamante.
 Post: solo metadati, non documento committed. Segnala CODEC-ERROR."
   (let ((v (controlla-versione versione)))
     (controlla-ottetti buffer)

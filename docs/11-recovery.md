@@ -1,6 +1,6 @@
 # 11 — Recovery
 
-> **Fonte:** «Recovery» della [specifica](specifica/prompt-originale.md); riferimenti da
+> **Fonte:** «Recovery» della [specifica](specifica/specifica-originale.md); riferimenti da
 > «Transazioni multiserie», «Segment metadata», «Workflow Clean/Merge».
 > **Moduli:** M12 Recovery Manager.
 > **Decisioni:** la sequenza definitiva è in [architettura.md](architettura.md#recovery);

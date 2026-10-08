@@ -94,6 +94,11 @@ prodotto è una **misura con una raccomandazione**.
 
 **Writer logico su thread pool.**
 
+> **Proposta** — [esperimento eseguibile](../../spikes/SPK-04-writer-pool/README.md)
+> verificato nella [campagna locale](risultati-SPK-04-2026-10-08.md): code limitate,
+> tratti del writer, parcheggi e ripartenza delle letture. Prove reali e modelli
+> finiti restano distinti; nessun target del motore è confermato.
+
 - *Domanda:* qual è il tetto di throughput di un esecutore seriale per Serie su un pool
   condiviso, e come scala con il numero di Serie?
 - *Metodo:* code per Serie svuotate a lotti da worker del pool; lavoro seriale sintetico di
@@ -218,7 +223,7 @@ SPK-01: slot a 5 parole, chiavi fino a 65.535 byte, budget delle arene e split. 
 - *Metodo:* [quattro moduli](../../spikes/SPK-10-v2-limits/README.md) in parallelo:
   codec e hint con versioni esplicite, frammento con slot v2 e arene limitate,
   validatore CBOR iterativo e modello finito della conversione. Check indipendenti,
-  compilazione stretta e integrazione del parent; benchmark in serie.
+  compilazione stretta e integrazione nell'harness; benchmark in serie.
 - *Misure:* throughput e allocazioni di verifica e lookup per chiavi di diverse
   lunghezze, byte dell'arena e picco transitorio; stati e controesempi di migrazione.
 - *Esito:* fixture ai confini, rifiuti espliciti su overflow, troncamenti e budget;

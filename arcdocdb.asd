@@ -1,8 +1,6 @@
 ;;;; arcdocdb.asd — definizione di sistema ASDF.
 ;;;;
-;;;; Fase 0 (definizione architetturale): il sistema contiene solo il package radice.
-;;;; La suddivisione in package per modulo (M01…M18, vedi docs/16-moduli.md) si introduce
-;;;; con la prima milestone di implementazione.
+;;;; Fondazioni dello storage, autorizzate dall'autore il 2026-10-08.
 
 (in-package #:asdf-user)
 
@@ -13,7 +11,12 @@
   :version "0.0.0"
   :pathname "src/"
   :serial t
-  :components ((:file "package"))
+  :components ((:file "package")
+               (:module "foundation"
+                :serial t
+                :components ((:file "package") (:file "conditions")
+                             (:file "binary") (:file "crc32c")
+                             (:file "record") (:file "batch"))))
   :in-order-to ((test-op (test-op "arcdocdb/tests"))))
 
 (defsystem "arcdocdb/tests"
@@ -23,6 +26,11 @@
   :depends-on ("arcdocdb")
   :pathname "tests/"
   :serial t
-  :components ((:file "smoke"))
+  :components ((:file "smoke")
+               (:module "foundation"
+                :serial t
+                :components ((:file "support") (:file "binary")
+                             (:file "record") (:file "batch"))))
   :perform (test-op (o c)
-             (uiop:symbol-call '#:arcdocdb.tests '#:run)))
+             (uiop:symbol-call '#:arcdocdb.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)))

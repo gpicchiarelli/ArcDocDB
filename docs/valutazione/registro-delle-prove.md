@@ -18,6 +18,13 @@ comprende:
   sink, limiti e parti omesse restituiti dal singolo esperimento;
 - stdout/stderr originali, diagnostica del fallimento e percorsi dei record.
 
+Ogni processo registra i blob dei soli sorgenti che carica, prima e dopo
+l'esecuzione. Se cambiano, l'harness conserva il record con `:source-changed`
+e fallisce: quella misura non è attribuibile a una variante stabile. Il commit
+identifica la storia; i blob identificano anche le modifiche non committed.
+`:stable` confronta due snapshot; non sorveglia ogni apertura dei file.
+I sorgenti selezionati devono restare immutati durante la prova.
+
 La campagna scrive il proprio stato prima di partire e dopo ogni processo.
 Il record del processo è salvato **prima** di validarne l'output. Un errore di
 compilazione o di parsing resta una prova fallita, conservata; non scompare
@@ -35,6 +42,8 @@ separatamente le finestre effettivamente misurate. Le misure si eseguono in seri
 ```sh
 make spikes-check
 make spikes-bench
+make check
+sbcl --script tools/record-command.lisp -- make lint
 sbcl --script tools/run-spikes.lisp --check SPK-10
 sbcl --script tools/run-spikes.lisp --bench SPK-01 -- --documents 10000000 --seconds 60 --memory-mib 2048
 sbcl --script tools/run-spikes.lisp --profile SPK-01
@@ -45,12 +54,24 @@ figli. Le opzioni dopo `--` sono ammesse solo per un benchmark selezionato;
 sono argomenti del processo, mai codice shell. SPK-07 esegue il proprio modello
 anche in modalità benchmark, senza inventare throughput del motore.
 
+`make check` esegue `make check-core` tramite `tools/record-command.lisp`:
+un record schema 1 di tipo `:command-verification` conserva argv, ambiente,
+blob prima/dopo, exit code e stdout/stderr dell'intera verifica. Il testo
+dei controlli resta output grezzo, senza dedurne conteggi o promuovere requisiti.
+Il wrapper può registrare anche altri comandi con `-- argv...`, sempre senza
+shell. I singoli spike producono inoltre i propri risultati decodificati.
+La CI conserva `spikes/out/` come artefatto anche quando un controllo fallisce;
+la sua esecuzione su Linux/macOS resta distinta dalla verifica locale.
+
 ## Conservazione e interpretazione
 
 I run locali restano in `spikes/out/`. Ogni numero pubblicato nei documenti
 rimanda a dati conservati in `spikes/results/<data>/`: output originali e
 record strutturati, con provenance e versione del formato. Un record importato
 non inventa metadata assenti; i campi mancanti sono dichiarati.
+Il [catalogo delle evidenze](../../spikes/results/README.md) tiene distinti controlli,
+benchmark, profili, fallimenti e varianti; ambiente e comandi restano nei singoli
+record originali.
 
 I metodi si registrano prima dell'esecuzione. Si indicano campione, clock,
 allocazioni misurate e loro scope; la memoria degli array non è RSS. Non si

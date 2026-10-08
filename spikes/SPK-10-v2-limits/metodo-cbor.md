@@ -1,7 +1,7 @@
 # SPK-10 — metodo CBOR
 
 Registrato prima della compilazione e dell'esecuzione del modulo `cbor.lisp`.
-Ambito assegnato: esclusivamente questo metodo e il modulo sperimentale, fuori da
+Ambito: questo metodo e il modulo sperimentale, fuori da
 `src/`. Requisiti esercitati: REQ-LIM-002, REQ-AFF-008, REQ-SIM-002.
 
 ## Domanda e fonti
@@ -10,7 +10,7 @@ Il validatore può applicare i limiti di ADR-0048 senza ricorsione sullo stack
 nativo, senza allocazioni proporzionali a lunghezze dichiarate nell'input e
 attraversando sia le chiavi sia i valori delle mappe?
 
-Fonti del repository: `AGENTS.md`, ADR-0014, ADR-0027, ADR-0048,
+Fonti del repository: [CONTRIBUTING.md](../../CONTRIBUTING.md), ADR-0014, ADR-0027, ADR-0048,
 `docs/invarianti.md`, `docs/affidabilita/standard-di-codifica.md` e registro
 dei requisiti. ADR-0014 richiede CBOR deterministico ma non sceglie esplicitamente
 fra i due ordinamenti descritti da RFC 8949.
@@ -32,7 +32,7 @@ fra i due ordinamenti descritti da RFC 8949.
 
 ## Algoritmo e risorse
 
-Una macchina iterativa mantiene una pila preallocata di contenitori, con
+Una macchina iterativa mantiene una pila locale di contenitori, con
 conteggi residui, offset della codifica e della chiave precedente. La mappa
 conta due figli per coppia. Un array/mappa radice è livello 1; scalari livello 0.
 Si completano gli antenati iterativamente quando si esauriscono i figli.
@@ -43,7 +43,8 @@ Prima di creare la pila o leggere l'input si controllano tipo, configurazione,
 dimensione effettiva del buffer, limite documentale e budget dei byte. Lunghezze
 e conteggi sono controllati rispetto ai byte residui e al budget dei nodi;
 non determinano allocazioni. L'header legge al massimo otto byte di argomento.
-La pila è O(limite-profondita), al massimo 100 frame. Nessuno stato condiviso,
+La pila è O(limite-profondita), al massimo 100 frame. L'allocazione dei frame
+è pigra, come descritto nella revisione sotto. Nessuno stato condiviso,
 lock, I/O o scrittura durevole: la sola sequenza seriale è il percorso di un documento.
 Il chiamante deve mantenere immutabile il buffer durante la validazione.
 
@@ -93,7 +94,7 @@ posizione, nodi e profondità zero.
 Compilazione isolata con `safety 3`, warning e style-warning fatali, controllo
 dei tre valori di `compile-file`, caricamento del FASL e chiamata a `check`.
 FASL temporaneo fuori dal repository. Nessun benchmark lungo: le misure
-comparative dei moduli appartengono al runner parent, che li carica nell'ordine
+comparative dei moduli sono eseguite dal runner integrato, che li carica nell'ordine
 codec, index, cbor, migration dopo il CRC di SPK-09.
 
 Fixture con aspettative indipendenti dal parser:
@@ -114,7 +115,7 @@ Fixture con aspettative indipendenti dal parser:
 Obiettivi locali: `check` entro 5 secondi e array vivi inferiori a 128 MiB.
 Questi sono budget dell'esperimento, non garanzie temporali del motore.
 La verifica non prova accettazione sicura di qualsiasi input e non completa
-il gate v2. Nessuna modifica dei requisiti o dei documenti condivisi.
+il gate v2. I requisiti restano quelli citati nel perimetro dell'esperimento.
 
 ## Ambiente e risultato
 
@@ -141,7 +142,7 @@ esatto dell'esecuzione registrata e l'ambiente effettivo sono nell'artefatto.
 La prova strutturata è [v2-cbor-check.lisp](../results/2026-10-08/v2-cbor-check.lisp),
 copia invariata del report locale `out/cbor-check.lisp`. È una sola plist con schema 1,
 `:command` (argv e sorgente stdin), `:environment`, `:source-blobs`
-(blob Git dei due file assegnati), `:compile-status`, `:result`, `:limits`,
+(blob Git del modulo e del metodo), `:compile-status`, `:result`, `:limits`,
 `:time`, `:stdout`, `:stderr` e `:failures`. Si registra anche un fallimento
 al confine del runner. Il runner verifica la rilettura con `*read-eval* nil`.
 Il comando completo riproducibile è conservato nell'artefatto; il FASL è in
@@ -152,5 +153,80 @@ Limiti ancora aperti: floating point, semantica/canonicalizzazione dei tag,
 eventuali equivalenze delle chiavi definite dall'applicazione e integrazione
 prima del writer. Il profilo core scelto qui è una proposta locale: il
 progetto deve confermarlo per il codec completo. Il check locale non chiude
-il gate v2 né promuove i requisiti del motore a verificati. La pubblicazione
-dell'evidenza integrata versionata spetta al parent.
+il gate v2 né promuove i requisiti del motore a verificati. L'evidenza integrata
+è versionata separatamente dal report locale.
+
+## Revisione delle allocazioni — metodo registrato prima dei controlli
+
+La campagna iniziale `spikes/out/4000475258-bench-54418-0/report.lisp`
+registra 774.262.736 byte allocati per 100.000 validazioni del binario da
+1 KiB: circa 7742,63 byte/chiamata. È una misura della prima variante e del
+runtime registrato; il report rimane la fonte della misura storica.
+
+> **Proposta** — sostituire la creazione iniziale di 100 strutture con una
+> pila vuota nello stato locale. Il primo contenitore **non vuoto**, dopo i
+> controlli di profondità, byte residui e nodi, crea il vettore di riferimenti
+> dimensionato dal limite configurato (al massimo 100), inizializzato a `nil`.
+> Ogni frame si crea soltanto la prima volta che occorre la sua posizione;
+> i contenitori fratelli riutilizzano il frame e ne reinizializzano tutti i
+> campi. Scalare o contenitore vuoto non crea né vettore né frame. Il vettore
+> nasce al massimo una volta per validazione; i frame sono al massimo la
+> profondità simultanea dei contenitori non vuoti, comunque non oltre 100.
+
+La profondità documentale resta distinta dal numero di frame allocati: anche
+un contenitore vuoto conta un livello e viene rifiutato a livello 101. API,
+ragioni delle condizioni, precedenza dei controlli e budget configurati
+restano quelli descritti sopra; `:stack-frames` nei limiti indica il tetto,
+non il numero di strutture create. Nessuno stato globale o pool condiviso.
+Restano allocazioni dello stato, delle plist di risultato e di eventuali
+argomenti numerici: questa modifica non promette zero allocazioni.
+
+Controlli pianificati: preservare tutti i 614 casi dell'oracle precedente e
+aggiungere fixture deterministiche dello stato della pila per scalari,
+contenitori vuoti, profondità ridotte, fratelli con mappe/array, riutilizzo
+delle chiavi precedenti, profondità reale 100/101 e rifiuti prima della
+creazione dei frame. I controlli verificano oggetti e limiti, non sono
+misure di byte allocati o benchmark. Compilazione con `safety 3`, warning e
+style-warning fatali; `check` dopo il caricamento del FASL.
+
+Ogni tentativo di compilazione/check viene conservato in una singola plist
+schema 1 in `out/cbor-allocation-check.lisp`, nuovo artefatto esclusivo,
+con una lista cronologica `:attempts`. Ogni voce conserva comando/stdin,
+ambiente, blob dei sorgenti, stato della compilazione, risultato decodificato,
+limiti, tempi, stdout/stderr e fallimenti. Le voci precedenti, inclusi i
+fallimenti, non vengono sostituite. Lettura con `*read-eval* nil` e verifica
+della singola plist dopo la scrittura. Il benchmark della revisione viene
+eseguito dall'harness integrato; non si deduce una riduzione numerica dalla sola modifica.
+
+Risultato della revisione: il tentativo 1 ha compilato e caricato il modulo con
+`safety 3`, zero warning/style-warning e valori avvisi/fallimento `nil`.
+`check` restituisce `:status :ok` per **629 casi**: tutti i 614 precedenti e
+15 fixture aggiuntive della pila. Il tempo locale del check registrato è
+0,005228 s. Le nuove fixture verificano zero frame e capacità zero per
+scalari/contenitori vuoti, un frame per un contenitore non vuoto poco
+profondo e due frame riutilizzati fra mappa, array e mappa. La catena con
+100 contenitori non vuoti crea 100 frame; una catena terminata da un
+contenitore vuoto resta a profondità 100 con 99 frame. Il livello 101
+continua a produrre `:depth-limit` prima di creare un frame oltre il tetto.
+Troncamenti e budget nodi insufficienti al primo contenitore non creano pila.
+
+Il record schema 1 in `out/cbor-allocation-check.lisp` conserva il metodo
+registrato prima dell'esecuzione, il blob del modulo verificato e stdout/stderr;
+la rilettura della singola plist con `*read-eval* nil` è passata. Nessun
+fallimento di compilazione/check nel primo tentativo. Il conteggio strutturale
+dimostra l'eliminazione dei frame inutilizzati, non una misura dei byte
+allocati dalla nuova variante. Il nuovo benchmark e l'evidenza integrata
+restano da eseguire nell'harness; il gate v2 e l'ambito parziale CBOR restano quelli sopra.
+
+### Campagne successive del parent
+
+L'harness integrato ha eseguito in serie due campagne della pila su richiesta,
+compilando anche gli altri moduli e completando l'integrazione del documento
+massimo. I [risultati conservati](../../docs/valutazione/risultati-2026-10-08.md#cbor-con-pila-creata-su-richiesta)
+confrontano i dati iniziali e le due repliche, con sorgenti e output originali.
+Nel binario codificato 1 KiB, 100.000 chiamate: 774.262.736 byte allocati
+inizialmente, 52.852.304 in entrambe le repliche, circa 7.742,63 → 528,52 B/op.
+Su profondità 100 rimane il costo dei frame necessari. Le misure testuali
+oscillano, inclusa una replica più lenta; nessun aumento generale di throughput
+è dedotto con carico esterno non controllato. Nessuna scansione dei byte
+binari o verifica CRC viene misurata da questo validatore.

@@ -3,7 +3,7 @@
 [Documentazione](../README.md) · [Esperimenti](../../spikes/README.md) · [Roadmap](../roadmap.md)
 
 Questa sezione valuta l'architettura descritta dalla
-[specifica](../specifica/prompt-originale.md) **prima** dell'implementazione: che cosa regge,
+[specifica](../specifica/specifica-originale.md) **prima** dell'implementazione: che cosa regge,
 che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
 
 > **Natura di questi documenti.** È una valutazione *preliminare*, fatta a tavolino. Le stime
@@ -20,6 +20,7 @@ che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
 | [Piano degli spike](piano-spike.md) | Esperimenti `SPK-…` che misurano le ipotesi critiche |
 | [Risultati locali 2026-10-08](risultati-2026-10-08.md) | Campagna seriale, output grezzi, ottimizzazioni, limiti e lavoro restante |
 | [Registro delle prove](registro-delle-prove.md) | Schema, metadata, conservazione di prove, diagnostiche, fallimenti e benchmark |
+| [SPK-04, prima campagna](risultati-SPK-04-2026-10-08.md) | Writer su pool, attese limitate, modelli di lettura e benchmark diagnostici |
 
 ## Criteri di valutazione
 
@@ -144,3 +145,11 @@ La replica dell'indice v1 a **10 milioni di documenti** completa gli INSERT,
 misura 2,098 M GET/s e 82,21 B/doc di payload. L'inlining riduce le allocazioni
 GET a circa 48 B/op nel campione da 100.000; il massimo split alla scala maggiore
 è 98,827 ms. Restano profiling, scala superiore e v2: non si chiude il rischio.
+
+SPK-10 aggiunge controlli e misure **v2** separati: codec, indice a cinque parole,
+CBOR iterativo e migrazione su modello. L'integrazione attraversa fileheader,
+record, documento, hint e indice con chiavi fino a 65.535 byte, profondità 100
+e record massimo di 16.842.775 byte. Le parti escluse sono dichiarate nel
+[risultato](risultati-2026-10-08.md#spk-10--limiti-v2-e-integrazione).
+Il [registro strutturato](registro-delle-prove.md) conserva anche fallimenti e
+varianti smentite; `make check` e la CI raccolgono output e metadata della verifica.

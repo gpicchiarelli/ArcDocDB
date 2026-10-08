@@ -330,7 +330,7 @@
          (transitorio (+ (payload f) key-len (if crescita cap 0))))
     (preflight-byte i copie transitorio)
     (controlla-tempo i scadenza)
-    (let ((copia (make-array key-len :element-type '(unsigned-byte 8)))
+    (let ((copia (if presente chiave (make-array key-len :element-type '(unsigned-byte 8))))
           (arena (if crescita (make-array cap :element-type '(unsigned-byte 8)
                                             :initial-element 0) vecchia)))
       (copia-limitata i chiave 0 copia 0 key-len scadenza)
@@ -362,7 +362,7 @@
     (controlla-tempo i scadenza)
     (let* ((dest (nuovo-frammento (frammento-capacita fonte) cap))
            (nuova (%radice (1+ (radice-generazione root)) dest))
-           (copia (make-array key-len :element-type '(unsigned-byte 8)))
+           (copia (if presente chiave (make-array key-len :element-type '(unsigned-byte 8))))
            (copiati (copia-vivi i fonte dest -1 scadenza)))
       (copia-limitata i chiave 0 copia 0 key-len scadenza)
       (multiple-value-bind (slot trovato) (cerca-writer dest chiave h)
@@ -689,8 +689,20 @@ Gli hook sono del solo harness; :retry-limit richiede inoltro al writer dal chia
     (assert (eq :miss (nth-value 3 (leggi i a))))
     (assert (elimina i originale))
     (verifica-entry i b 2 #xffffffff00000002 57)
-    (list :status :ok :fingerprint-searches prove :prefix-bytes 30
-          :private-copy-tested t :full-comparison-tested t)))
+    (let* ((breve (chiave-fixture 255 19))
+           (lunga (make-array 256 :element-type '(unsigned-byte 8) :initial-element 0)))
+      (replace lunga breve)
+      (dotimes (n 256)
+        (setf (aref lunga 255) n)
+        (when (= (impronta (hash-chiave breve)) (impronta (hash-chiave lunga))) (return)))
+      (assert (= (impronta (hash-chiave breve)) (impronta (hash-chiave lunga))))
+      (assert (inserisci-fixture i breve 3)) (assert (inserisci-fixture i lunga 4))
+      (verifica-entry i breve 3 #xffffffff00000003 280)
+      (verifica-entry i lunga 4 #xffffffff00000004 281)
+      (assert (elimina i breve))
+      (verifica-entry i lunga 4 #xffffffff00000004 281))
+    (list :status :ok :fingerprint-searches prove :prefix-bytes '(30 255)
+          :private-copy-tested t :full-comparison-tested t :length-comparison-tested t)))
 
 ;;; REQ: REQ-LIM-003 REQ-IDX-005 REQ-IDX-007
 (declaim (ftype (function () list) test-req-lim-003-budget))
@@ -888,7 +900,7 @@ Gli hook sono del solo harness; :retry-limit richiede inoltro al writer dal chia
           :pending '(:split :extendible-directory :retained-versions :writer-fallback
                      :memory-model-arm64-x86-64 :production-commit :v2-gate))))
 
-;;;; Benchmark solo su richiesta del parent: limiti complessivi cooperativi.
+;;;; Benchmark opzionale: limiti complessivi cooperativi.
 (declaim (ftype (function (ottetti u64) null) cambia-id))
 (defun cambia-id (chiave id)
   "Riusa il buffer della fixture; ultimi otto byte little endian dal fondo."
@@ -905,10 +917,10 @@ Gli hook sono del solo harness; :retry-limit richiede inoltro al writer dal chia
       (assert (inserisci-fixture i chiave (1+ n)))
       (incf completati))))
 (declaim (ftype (function (indice ottetti fixnum integer)
-                         (values fixnum fixnum fixnum u32)) bench-letture-modifiche))
+                         (values fixnum fixnum fixnum fixnum u32)) bench-letture-modifiche))
 (defun bench-letture-modifiche (i chiave documenti scadenza)
   "Letture, aggiornamenti e churn bounded; durata e conteggi effettivi esterni."
-  (let ((letture 0) (aggiornamenti 0) (churn 0) (sink 0))
+  (let ((letture 0) (aggiornamenti 0) (eliminazioni 0) (reinserimenti 0) (sink 0))
     (declare (type u32 sink))
     (dotimes (n documenti)
       (when (>= (get-internal-real-time) scadenza) (return))
@@ -928,10 +940,11 @@ Gli hook sono del solo harness; :retry-limit richiede inoltro al writer dal chia
       (when (>= (get-internal-real-time) scadenza) (return))
       (cambia-id chiave n)
       (assert (elimina i chiave))
-      ;; Il reinserimento fa parte della stessa iterazione bounded di churn.
+      (incf eliminazioni)
+      (when (>= (get-internal-real-time) scadenza) (return))
       (assert (inserisci-fixture i chiave (+ 1 (* 2 documenti) n)))
-      (incf churn))
-    (values letture aggiornamenti churn sink)))
+      (incf reinserimenti))
+    (values letture aggiornamenti eliminazioni reinserimenti sink)))
 (declaim (ftype (function (fixnum fixnum fixnum integer) list) bench-caso))
 (defun bench-caso (len massimo capacita scadenza)
   "Un frammento dimensionato per il carico; niente split nascosti nel benchmark."
@@ -941,11 +954,13 @@ Gli hook sono del solo harness; :retry-limit richiede inoltro al writer dal chia
                          :transient-byte-budget +memoria-bench-max+))
          (chiave (chiave-fixture len 0))
          (inseriti (bench-inserimenti i chiave massimo scadenza)))
-    (multiple-value-bind (letture aggiornamenti churn sink)
+    (multiple-value-bind (letture aggiornamenti eliminazioni reinserimenti sink)
         (bench-letture-modifiche i chiave inseriti scadenza)
       (list :status :ok :key-bytes len :requested-documents massimo :inserted-documents inseriti
-            :read-operations letture :update-operations aggiornamenti :churn-cycles churn
-            :operations (+ inseriti letture aggiornamenti (* 2 churn)) :sink sink
+            :read-operations letture :update-operations aggiornamenti
+            :churn-delete-operations eliminazioni :churn-insert-operations reinserimenti
+            :churn-cycles reinserimenti
+            :operations (+ inseriti letture aggiornamenti eliminazioni reinserimenti) :sink sink
             :seconds (secondi (- (get-internal-real-time) inizio))
             :bytes-consed (- (sb-ext:get-bytes-consed) allocazioni)
             :statistics (statistiche i)))))

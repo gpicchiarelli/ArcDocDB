@@ -7,6 +7,19 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- SPK-04: writer sperimentale su pool, code limitate, modelli di parcheggio
+  e ripartenza delle letture; controlli e 54 benchmark diagnostici conservati,
+  con limiti e tentativi falliti espliciti.
+
+- SPK-10: quattro moduli sperimentali Common Lisp per codec v1/v2, indice a
+  cinque parole, CBOR iterativo e modello di migrazione; integrazione in memoria
+  dei limiti massimi. Nessun codice di produzione, gate v2 ancora aperto.
+- Registro strutturato di prove e benchmark, inclusi fallimenti e diagnostiche;
+  blob dei sorgenti prima/dopo, risultati decodificati e output originali.
+  `make check` registra l'intera verifica; la CI conserva gli artefatti.
+- Campagne locali conservate: indice v1 fino a 10 milioni di documenti,
+  profiling di allocazione e controlli/benchmark v2 separati.
+
 - ADR-0050: root dell'indice ricontrollata anche su miss, costi e budget della
   directory separati dagli slot; nessuna promessa di pausa indipendente dalla Serie.
 - ADR-0048: documenti da 16 MiB effettivi, profondità 100, chiavi fino a 65.535 byte e layout v2; tre requisiti progettati, gate di verifica e migrazione. ADR-0049 propone il percorso oltre RAM senza dichiararlo disponibile.
@@ -44,6 +57,9 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   A9…A12), 107 requisiti, 27 modi di guasto, rischio residuo RES-05.
 
 ### Cambiato
+
+- Guide del repository consolidate, note degli esperimenti uniformate al metodo
+  tecnico e specifica originale rinominata; requisiti ed evidenze conservati (ADR-0051).
 
 - ADR-0028 e ADR-0030 confermati dall'autore il 2026-10-08, incluse le revisioni su minimi
   di prestazione, backup, restore verificato, verificatore offline e scrubbing.

@@ -3,7 +3,7 @@
 > **Fonte:** «Clean», «Merge», «Condizioni obbligatorie per Merge», «Low-load merge policy»,
 > «Politica generale di compaction», «Compaction parallela», «Workflow Clean/Merge», «Readers
 > durante compaction», «Compaction scheduler dinamico» della
-> [specifica](specifica/prompt-originale.md).
+> [specifica](specifica/specifica-originale.md).
 > **Moduli:** M11 Compaction Manager (con M13 Scheduler).
 > **Decisioni:** [ADR-0018](adr/0018-control-log-manifest-swap.md) e
 > [ADR-0040](adr/0040-manifest-a-record-unico.md) (swap = un record EDIT, deciso prima della

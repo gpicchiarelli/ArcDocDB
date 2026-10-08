@@ -1,6 +1,6 @@
 # 12 — Osservabilità
 
-> **Fonte:** «Osservabilità» della [specifica](specifica/prompt-originale.md).
+> **Fonte:** «Osservabilità» della [specifica](specifica/specifica-originale.md).
 > **Moduli:** trasversale (modulo di supporto *metrics*, vedi [16 Moduli](16-moduli.md)).
 
 Le metriche non sono un accessorio: sono l'**ingresso dei controllori** del sistema. Lo

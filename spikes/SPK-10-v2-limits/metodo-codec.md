@@ -1,16 +1,16 @@
 # SPK-10 — Metodo del codec v1/v2
 
-> **Proposta** — Esperimento isolato, registrato prima dell'esecuzione. Il metodo verifica il codec assegnato; non certifica il gate v2 né il motore.
+> **Proposta** — Esperimento isolato, registrato prima dell'esecuzione. Il metodo verifica il codec; non certifica il gate v2 né il motore.
 
 ## Domanda e riferimenti
 
 La cornice di 24 byte e le entry hint di 24 byte conservano il layout distinto v1/v2, verificano i limiti ADR-0048 e rifiutano dati incoerenti prima di restituire un offset del valore?
 
-Riferimenti: AGENTS.md, ADR-0039, ADR-0047, ADR-0048, `docs/formati-su-disco.md`, standard di codifica. Tracciabilità: REQ-LIM-001/003, REQ-FOR-003/004, REQ-AFF-002/008. Le parti di tali requisiti relative a indice, CBOR, migrazione e durabilità appartengono agli altri moduli.
+Riferimenti: [CONTRIBUTING.md](../../CONTRIBUTING.md), ADR-0039, ADR-0047, ADR-0048, `docs/formati-su-disco.md`, standard di codifica. Tracciabilità: REQ-LIM-001/003, REQ-FOR-003/004, REQ-AFF-002/008. Le parti di tali requisiti relative a indice, CBOR, migrazione e durabilità appartengono agli altri moduli.
 
 ## Ambiente e perimetro
 
-Common Lisp, SBCL 2.6.9, `safety 3`, nessuna libreria esterna. Il parent carica prima `arcdocdb.spk09`, da cui questo modulo usa soltanto il kernel esportato `crc32c-slicing8-safety3`. Package indipendente `arcdocdb.spk10.codec`; codice in `codec.lisp`. Nessun I/O persistente, lock o stato mutabile condiviso. La serialità è esclusivamente quella del singolo controllo locale; il parent misura i moduli in serie.
+Common Lisp, SBCL 2.6.9, `safety 3`, nessuna libreria esterna. Il runner carica prima `arcdocdb.spk09`, da cui questo modulo usa soltanto il kernel esportato `crc32c-slicing8-safety3`. Package indipendente `arcdocdb.spk10.codec`; codice in `codec.lisp`. Nessun I/O persistente, lock o stato mutabile condiviso. La serialità è esclusivamente quella del singolo controllo locale; l'harness misura i moduli in serie.
 
 Il chiamante fornisce la versione dal fileheader già verificato: solo interi 1 e 2, nessuna deduzione dai byte. I documenti sono vettori semplici di ottetti; la validazione CBOR è responsabilità del modulo CBOR prima del writer. I prepared sono rifiutati come record con `:prepared-not-supported`, senza restituire un valore. Gli hint prepared possono essere rappresentati come metadati e non costituiscono prova OUTCOME.
 
@@ -64,9 +64,9 @@ Layout hint v1: offset 0, len 4, csn 8, key-off 16, key-len u8 a 20, tipo a 21, 
 
 I byte CRC dei golden fissi sono stati precalcolati con uno script Common Lisp bit a bit indipendente: record breve header `(151 17 18 68)`, corpo `(114 157 69 8)`; record v2 con chiave 256 header `(245 56 11 210)`, corpo `(245 240 17 235)`. Lo script non esegue il controllo del modulo né un benchmark.
 
-Pianificato un solo processo SBCL per lo strict check: compilazione rigorosa del supporto SPK-09 e di `codec.lisp`, caricamento FASL, una chiamata a `(check)`. Warning e style-warning sono fatali; tutti i valori di `compile-file` sono controllati. FASL e runner temporaneo fuori dal repository; il testo del runner è incluso nel registro per riprodurre il comando. Nessun benchmark durante questa esecuzione. Il risultato verrà annotato qui dopo il controllo; nessuna modifica alla documentazione condivisa.
+Pianificato un solo processo SBCL per lo strict check: compilazione rigorosa del supporto SPK-09 e di `codec.lisp`, caricamento FASL, una chiamata a `(check)`. Warning e style-warning sono fatali; tutti i valori di `compile-file` sono controllati. FASL e runner temporaneo fuori dal repository; il testo del runner è incluso nel registro per riprodurre il comando. Nessun benchmark durante questa esecuzione. Il risultato locale è riportato nella sezione seguente.
 
-Su istruzione dell'utente, prima dell'esecuzione si predispone la registrazione strutturata in `out/codec-check.lisp` (artefatto ignorato): plist con `:schema 1`, `:command`, `:environment`, `:source-blobs` (Git blob dei sorgenti, senza inserirli nell'object database), `:compile-status`, `:result`, `:limits`, `:time`, `:stdout`, `:stderr`, `:failures`. Il comando e il testo del runner sono conservati; avvisi, fallimenti o condizioni vengono registrati prima di uscire con codice non nullo. La plist viene riletta con `*read-eval* nil`. Il parent produrrà il registro integrato versionato.
+Prima dell'esecuzione si predispone la registrazione strutturata in `out/codec-check.lisp` (artefatto ignorato): plist con `:schema 1`, `:command`, `:environment`, `:source-blobs` (Git blob dei sorgenti, senza inserirli nell'object database), `:compile-status`, `:result`, `:limits`, `:time`, `:stdout`, `:stderr`, `:failures`. Il comando e il testo del runner sono conservati; avvisi, fallimenti o condizioni vengono registrati prima di uscire con codice non nullo. La plist viene riletta con `*read-eval* nil`. Il registro integrato è versionato separatamente dal report locale.
 
 ### Risultato locale del 2026-10-08
 
@@ -96,4 +96,4 @@ Registro conservato: [v2-codec-check.lisp](../results/2026-10-08/v2-codec-check.
 
 Il CRC rende rilevabili le alterazioni esercitate e non garantisce l'assenza di collisioni. Non si verifica durabilità, fileheader, SEAL, OUTCOME, semantica CBOR, concurrent writer o pubblicazione della migrazione. Le versioni sono selezionate esclusivamente dal chiamante; un record v1 con byte riservato zero può avere gli stessi byte di un v2 con chiave corta. La provenienza della versione è quindi indispensabile e non può essere ricavata dalla sola cornice.
 
-Per l'integrazione restano espliciti: prepared non supportato dal codec; CRC delle sezioni hint e fileheader a carico del parent; validazione CBOR al modulo assegnato; la lettura di TOMBSTONE usa `:tipo :tombstone`, quella ordinaria `:put`. Il benchmark opzionale ha default 0,25 s, massimo richiesto 3 s e tetto di 1.000.000 iterazioni; il tempo effettivo può includere l'ultima operazione e il runtime. Non esprime garanzie temporali o capacità del motore.
+Per l'integrazione restano espliciti: prepared non supportato dal codec; CRC delle sezioni hint e fileheader verificati dal chiamante; validazione CBOR nel modulo dedicato; la lettura di TOMBSTONE usa `:tipo :tombstone`, quella ordinaria `:put`. Il benchmark opzionale ha default 0,25 s, massimo richiesto 3 s e tetto di 1.000.000 iterazioni; il tempo effettivo può includere l'ultima operazione e il runtime. Non esprime garanzie temporali o capacità del motore.

@@ -1,0 +1,65 @@
+(:schema-version 1 :kind :evidence-catalog :date "2026-10-08"
+ :path-base "spikes/results/2026-10-08/"
+ :metadata-policy :read-from-artifact-without-inference
+ :entries
+ ((:kind :benchmark :formats (1) :variant :baseline
+   :artifact "baseline-structured.lisp" :original "baseline.lisp")
+  (:kind :benchmark :formats (1) :variant :crc-inline
+   :artifact "crc-inline-structured.lisp" :original "crc-inline.lisp")
+  (:kind :benchmark :formats (1) :variant :index-inline-100k
+   :artifact "index-inline-100k-structured.lisp" :original "index-inline-100k.lisp")
+  (:kind :benchmark :formats (1) :variant :index-inline-10m
+   :artifact "index-inline-10m-structured.lisp" :original "index-inline-10m.lisp")
+  (:kind :allocation-profile :formats (1) :variant :reader-speed2
+   :artifact "profile-speed2.lisp")
+  (:kind :allocation-profile :formats (1) :variant :reader-speed3-rejected
+   :artifact "profile-speed3.lisp")
+  (:kind :failed-attempt :formats (1) :variant :profile-compilation
+   :artifact "profile-compile-failed.lisp" :process-artifact "profile-compile-failed-process.lisp")
+  (:kind :check :formats (1) :variant :protocol-models
+   :artifact "protocols-check.lisp")
+  (:kind :module-check :formats (1 2) :variant :v2-codec
+   :artifact "v2-codec-check.lisp")
+  (:kind :module-check :formats (2) :variant :v2-index
+   :artifact "v2-indice-check.lisp" :includes-failed-attempts t)
+  (:kind :module-check :formats (2) :variant :v2-cbor-initial
+   :artifact "v2-cbor-check.lisp")
+  (:kind :module-check :formats (1 2) :variant :migration-model
+   :artifact "v2-migrazione-check.lisp")
+  (:kind :check :formats (1 2) :variant :v2-integration
+   :artifact "v2-integration-check.lisp")
+  (:kind :benchmark :formats (2) :variant :v2-initial-stack
+   :artifact "v2-bench-initial.lisp")
+  (:kind :module-check :formats (2) :variant :v2-cbor-lazy-stack
+   :artifact "v2-cbor-allocation-check.lisp")
+  (:kind :benchmark :formats (2) :variant :v2-lazy-stack
+   :artifact "v2-bench-lazy-stack.lisp")
+  (:kind :benchmark :formats (2) :variant :v2-lazy-stack-replica
+   :artifact "v2-bench-lazy-stack-replica.lisp")
+  (:kind :check :formats nil :variant :catalog-check
+   :artifact "evidence-check.lisp")
+  (:kind :derived-comparison :formats (2) :variant :cbor-allocations
+   :artifact "v2-cbor-allocations.lisp")
+  (:kind :command-verification :formats (1 2) :variant :full-verification
+   :artifact "full-verification.lisp")
+  (:kind :check :formats (1 2) :variant :full-spikes-check
+   :artifact "full-spikes-check.lisp")
+  (:kind :command-verification :formats nil :variant :publication-verification
+   :artifact "publication-verification.lisp")
+  (:kind :failed-attempt :formats nil :variant :catalog-schema-alias-detection
+   :artifact "evidence-check-failed.lisp")
+  (:kind :check :formats nil :variant :writer-pool-parking-read-restart
+   :artifact "spk04-check.lisp")
+  (:kind :benchmark :formats nil :variant :writer-pool-prequeued
+   :artifact "spk04-bench.lisp")
+  (:kind :command-verification :formats nil :variant :writer-pool-full-verification
+   :artifact "spk04-full-check.lisp")
+  (:kind :failed-attempt :formats nil :variant :writer-pool-macro-load
+   :artifact "spk04-check-initial-failed.lisp"
+   :process-artifact "spk04-check-initial-failed-process.lisp")
+  (:kind :failed-attempt :formats nil :variant :writer-pool-parking-compilation
+   :artifact "spk04-check-parking-failed.lisp"
+   :process-artifact "spk04-check-parking-failed-process.lisp")
+  (:kind :recorder-negative-control :formats nil :variant :command-exit1
+   :artifact "record-command-expected-failure.lisp" :expected-exit-code 1))
+ :limits (:local-campaign :partial-product-coverage :no-reference-platform-claim))

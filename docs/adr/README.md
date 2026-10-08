@@ -12,7 +12,7 @@ tenuta. Gli ADR sono la memoria del progetto: spiegano perché l'architettura è
   **Ritirata**.
 - Un ADR accettato non si riscrive: per cambiare decisione se ne scrive uno nuovo che
   sostituisce il precedente.
-- Un ADR che emenda la [specifica](../specifica/prompt-originale.md) lo dichiara nel campo
+- Un ADR che emenda la [specifica](../specifica/specifica-originale.md) lo dichiara nel campo
   «Rapporto con la specifica».
 - Ogni [questione aperta](../questioni-aperte.md) si chiude con un ADR.
 - Modello: [0000-modello.md](0000-modello.md).
@@ -113,3 +113,9 @@ risultato consolidato è in [architettura.md](../architettura.md) e
 |---|---|---|
 | [0048](0048-limiti-documentali-e-formato-v2.md) | 16 MiB effettivi, 100 livelli, chiavi estese, formato v2 | Accettata; evidenze da produrre |
 | [0049](0049-capacita-oltre-la-ram.md) | Indice persistente con cache per superare la RAM | Proposta |
+
+## Organizzazione della documentazione (2026-10-08)
+
+| ADR | Decisione | Stato |
+|---|---|---|
+| [0051](0051-presentazione-della-documentazione.md) | Presentazione della specifica, guida comune e conservazione delle prove originali | Accettata; requisiti invariati |

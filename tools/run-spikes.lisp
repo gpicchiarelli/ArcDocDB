@@ -16,6 +16,7 @@
   '(("SPK-01" . "spikes/SPK-01-primary-index/run.lisp")
     ("SPK-02" . "spikes/SPK-02-gc/run.lisp")
     ("SPK-03" . "spikes/SPK-03-group-commit/run.lisp")
+    ("SPK-04" . "spikes/SPK-04-writer-pool/run.lisp")
     ("SPK-07" . "spikes/SPK-07-protocols/run.lisp")
     ("SPK-09" . "spikes/SPK-09-integrity/run.lisp")
     ("SPK-10" . "spikes/SPK-10-v2-limits/run.lisp")))
@@ -36,6 +37,8 @@
   "Dichiara i sorgenti caricati dal singolo processo, incluse le dipendenze locali."
   (append (list "tools/run-spikes.lisp" (cdr entry)
                 (namestring (merge-pathnames "core.lisp" (cdr entry))))
+          (when (string= (car entry) "SPK-04")
+            '("spikes/SPK-04-writer-pool/pool.lisp" "spikes/SPK-04-writer-pool/parcheggi.lisp"))
           (when (string= (car entry) "SPK-10")
             '("spikes/SPK-10-v2-limits/codec.lisp" "spikes/SPK-10-v2-limits/indice.lisp"
               "spikes/SPK-10-v2-limits/cbor.lisp" "spikes/SPK-10-v2-limits/migrazione.lisp"
@@ -60,6 +63,8 @@
         :working-tree (command-output '("git" "status" "--porcelain"))
         :source-blobs
         (loop for path in (append '("tools/run-spikes.lisp"
+                                    "spikes/SPK-04-writer-pool/pool.lisp"
+                                    "spikes/SPK-04-writer-pool/parcheggi.lisp"
                                     "spikes/SPK-01-primary-index/profile.lisp"
                                     "spikes/SPK-10-v2-limits/codec.lisp"
                                     "spikes/SPK-10-v2-limits/indice.lisp"

@@ -2,7 +2,7 @@
 
 > **Proposta** — Esperimento di Fase 0, classe C4. Metodo sintetico per valutare
 > ADR-0024, ADR-0043 e ADR-0045; non costituisce codice di produzione o verifica
-> dei minimi di ADR-0028. L'autore ha confermato ADR-0028/0030 nel mandato di lavoro.
+> dei minimi di ADR-0028. L'autore ha confermato ADR-0028/0030.
 
 ## Domanda
 
@@ -106,14 +106,14 @@ nessuna conclusione è trasferita all'hardware Linux di riferimento.
 
 L'output registra versione SBCL, sistema operativo, macchina, feature del
 collector, risoluzione dell'orologio, spazio dinamico e nursery effettiva.
-Per riproducibilità il parent deve annotare anche hardware, RAM, carico esterno
-e comando; eseguire le misure in serie.
+Per riproducibilità si annotano anche hardware, RAM, carico esterno
+e comando; le misure si eseguono in serie.
 
 ```sh
 # Solo verifica deterministica, piccola e rapida.
 sbcl --noinform --no-userinit --no-sysinit --script spikes/SPK-02-gc/run.lisp --check
 
-# Campagna predefinita: include check; da eseguire in serie dal parent.
+# Campagna predefinita: include check; da eseguire in serie.
 sbcl --noinform --no-userinit --no-sysinit --dynamic-space-size 768 \
   --script spikes/SPK-02-gc/run.lisp --bench
 
@@ -151,8 +151,8 @@ Output locale: `out/diagnostic.sexp`. Questo risultato verifica il percorso
 del harness con input piccoli; non è una misura sull'hardware di riferimento.
 
 La campagna predefinita da 128 MiB, i profili con 16/64 worker e il profilo
-opzionale con 256 worker non sono stati misurati da questo agente. Il parent
-esegue le misure in serie. Durata e memoria effettive del default non sono
+opzionale con 256 worker non sono stati misurati in questa diagnostica.
+Le misure si eseguono in serie. Durata e memoria effettive del default non sono
 quindi verificate; il budget e i limiti descritti sopra sono parametri.
 
 Non è stato dimostrato un bug architetturale. Resta un limite della verifica
@@ -162,5 +162,5 @@ di ADR-0028. Occorrono ulteriori misure sull'ambiente previsto.
 
 Requisiti collegati: REQ-SIM-001, REQ-SIM-002, REQ-OBS-001, REQ-BEN-001,
 REQ-BEN-002, REQ-AFF-003, REQ-AFF-008 e REQ-AFF-016. Nessuna modifica di
-requisito o di documenti in `docs/`; aggiornamento di tracciabilità e valutazione
-affidato all'integrazione del parent.
+requisito o di documenti in `docs/`; l'aggiornamento di tracciabilità e valutazione
+rientra nella fase di integrazione.

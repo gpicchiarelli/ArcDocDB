@@ -1,7 +1,7 @@
 # 02 — Modello logico
 
 > **Fonte:** «Architettura logica», «Serie speciale Registri», «Catalogo», «Layout fisico» della
-> [specifica](specifica/prompt-originale.md).
+> [specifica](specifica/specifica-originale.md).
 
 ## Gerarchia
 

@@ -36,9 +36,30 @@ subset del CBOR, fixture, quantità e oracle. Nessun numero prestazionale
 
 ## Esecuzione
 
+### Metodo dell'integrazione, registrato prima dell'esecuzione
+
+`core.lisp` collega i moduli con fixture in memoria: fileheader verificato →
+parser selezionato per versione → record ordinario e due CRC → documento CBOR →
+hint → inserimento e lookup nell'indice. Sedici combinazioni positive:
+mappe da 4 byte/profondità 2 e da 102 byte/profondità 100, chiavi 1/255 byte
+per v1 e 1/255/256/65.535 per v2; mappa di **16 MiB codificati effettivi**
+con le quattro chiavi v2. Il massimo documentale non è rappresentabile nel
+record v1 u24, che comprende header e chiave. CSN u64 alto e offset non nullo.
+
+Oracle indipendenti confrontano versione, callback, intervalli, CSN, profondità,
+metadati hint e campi letti dallo slot. Una fixture negativa ha entrambi i CRC
+validi ma CBOR non minimo: il codec la verifica e il validatore deve rifiutarla.
+Il risultato espone casi, asserzioni e dimensione massima del record.
+
+Il validatore accetta un vettore intero: l'integrazione copia esplicitamente
+l'intervallo del valore nel solo harness. La fixture massima usa meno di 128 MiB
+di payload simultaneo degli array del singolo caso, senza contare garbage,
+header Lisp e runtime. Nessun throughput viene derivato da questi controlli.
+CRC delle sezioni hint, prepared, storage e commit durevole restano esclusi.
+
 `run.lisp` risolve tutti i file rispetto al proprio percorso, carica il
 kernel SPK-09 e compila i quattro moduli in `out/`. Controlli e misure
-rimangono separati. Il parent integra il runner nell'harness seriale:
+rimangono separati. Il runner è integrato nell'harness seriale:
 
 ```sh
 sbcl --dynamic-space-size 4096 --noinform --no-userinit --no-sysinit \
@@ -54,7 +75,14 @@ output grezzo e sorgenti identificati nell'harness.
 
 ## Risultato e limiti
 
-In sviluppo. I limiti v2 non sono ancora verificati dalla suite integrata.
+La prima [suite integrata e campagna locale](../../docs/valutazione/risultati-2026-10-08.md#spk-10--limiti-v2-e-integrazione)
+è completata: 416 casi del codec, 614 CBOR, otto gruppi dell'indice,
+208 crash e 4.160 interruzioni recovery sul modello, 16 combinazioni positive
+e una negativa tra moduli. Il record massimo di 16.842.775 byte è costruito,
+verificato e rappresentato nello slot. Report distinti per controlli e misure,
+con sorgenti identificati prima/dopo. Il gate completo resta aperto.
+La variante CBOR con pila creata su richiesta supera 629 casi (614 precedenti
+e 15 nuovi) e ha due benchmark separati, mantenendo anche la misura più lenta.
 Il percorso oltre RAM di ADR-0049 resta una proposta distinta: questo
 esperimento non lo implementa. Prima del motore occorrono anche memoria
 debole, modelli mancanti, I/O e conversione reale interrotta, decoder

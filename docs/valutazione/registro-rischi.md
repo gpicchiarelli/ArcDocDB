@@ -3,6 +3,14 @@
 > Valutazione preliminare. Vedi le [avvertenze](README.md). Probabilità e impatto sono giudizi
 > qualitativi (B bassa, M media, A alta) da rivedere dopo ogni spike.
 
+## Prima evidenza SPK-04 (2026-10-08)
+
+> **Proposta** — La [campagna SPK-04](risultati-SPK-04-2026-10-08.md)
+> verifica localmente FIFO, esclusività del writer, code limitate e modelli
+> di parcheggio/ripartenza. RSK-04 resta aperto sulle prestazioni: finestre
+> brevi, pool creato per caso e carico preaccodato non confermano i target.
+> Lo scheduler adattivo e i controllori di RSK-12 non sono esercitati.
+
 ## Quadro
 
 > **Deciso (prime prove SPK-07 → ADR-0046, 2026-10-08)** — RSK-05 è nuovamente aperto
@@ -85,15 +93,15 @@ acquisite; le decisioni 0036–0045 li chiudono sul progetto. Restano da verific
 ## Stato dopo la prima campagna locale (2026-10-08)
 
 Fonte: [misure e dati grezzi](risultati-2026-10-08.md). Nessun rischio è chiuso
-dai soli microbenchmark v1; il formato v2 richiede evidenze proprie.
+dai soli microbenchmark. Le evidenze v1 e v2 sono distinte e parziali.
 
 | Rischio | Evidenza | Azione restante |
 |---|---|---|
 | RSK-01 | 48 casi a 128 MiB; chiamate GC con 64 worker attivi possono durare decine di ms o più; non è tempo STW esatto | pool reale, worker parcheggiati/I/O, heap grandi e Linux |
-| RSK-02, RSK-07 | check differenziale e stress passano; 64,23 B/doc di payload a 100.000 documenti; costo O(2^G) della directory precisato da ADR-0050 | scala, churn lungo, layout v2, pubblicazione e memoria debole |
+| RSK-02, RSK-07 | v1 a 10 milioni: 82,21 B/doc e split massimo 98,827 ms; v2: 664 confronti con oracle e sette rifiuti senza modifica dello stato; costo O(2^G) della directory precisato da ADR-0050 | scala superiore, churn lungo, directory/split v2, memoria debole e RSS |
 | RSK-03, RSK-11 | F_FULLFSYNC circa 4 ms con un file; mediana circa 12 ms con quattro file | pipeline reale, numero di Serie, campagna Linux e fault injection |
 | RSK-05 | anello dell'orizzonte corretto; prova del CSN prepared aggiunta con ADR-0047 | resolver autorevole, interleaving mancanti e crash reali |
-| RSK-19 | slicing-by-8 circa 0,7 GB/s sui corpi; inline evita boxing osservato del CSN nel kernel verificato | I/O, v2, disassemblato x86-64 e misura del percorso completo |
+| RSK-19 | slicing-by-8 circa 0,7 GB/s sui corpi v1; inline evita boxing osservato del CSN; codec v2: 416 casi e record massimo verificato | I/O, prepared e percorso completo v2, disassemblato x86-64 |
 
 Le vecchie righe sul costo C della manutenzione e sull'assenza di picchi sono
 storiche: slot, chiavi, directory, oggetti trattenuti e collector hanno costi

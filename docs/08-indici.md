@@ -1,7 +1,7 @@
 # 08 — Indici
 
 > **Fonte:** «Index», «Secondary index», «Secondary index delta», «Index snapshot» della
-> [specifica](specifica/prompt-originale.md).
+> [specifica](specifica/specifica-originale.md).
 > **Moduli:** M05 Primary Index Manager, M06 Secondary Index Manager.
 > **Decisioni:** [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) e
 > [ADR-0043](adr/0043-primary-index-a-frammenti.md) (primary index Swiss SWMR a frammenti),

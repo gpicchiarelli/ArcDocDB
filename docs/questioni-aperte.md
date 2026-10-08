@@ -1,6 +1,6 @@
 # Questioni aperte
 
-Punti che la [specifica](specifica/prompt-originale.md) non decide. Chiuderli è il lavoro
+Punti che la [specifica](specifica/specifica-originale.md) non decide. Chiuderli è il lavoro
 principale della [Fase 0](roadmap.md). Ogni questione si chiude con un ADR; la voce resta qui,
 marcata «Risolta da ADR-nnnn».
 

@@ -1,7 +1,7 @@
 # 03 — Storage
 
 > **Fonte:** «Storage append-only», «Segmenti», «Segment metadata», «Versioni dei record» della
-> [specifica](specifica/prompt-originale.md).
+> [specifica](specifica/specifica-originale.md).
 > **Moduli:** M01 Storage Engine, M03 Segment Manager, M04 Segment Metadata Manager.
 > **Decisioni:** [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md) (il segmento
 > ACTIVE è il log dei dati), [ADR-0037](adr/0037-lotto-sigillato.md) (lotti sigillati),

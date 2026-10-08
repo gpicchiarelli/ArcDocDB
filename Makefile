@@ -1,6 +1,6 @@
 SBCL ?= sbcl
 
-.PHONY: build test lint lint-selftest links trace trace-write check spikes-check spikes-bench
+.PHONY: build test lint lint-selftest links trace trace-write evidence check check-core spikes-check spikes-bench
 build test:  ## compila senza avvisi (COD-01) ed esegue gli smoke test
 	$(SBCL) --noinform --no-userinit --non-interactive --load tools/build.lisp
 
@@ -19,10 +19,16 @@ trace:  ## verifica la tracciabilità: requisiti, invarianti, FI, ADR, riferimen
 trace-write:  ## rigenera docs/tracciabilita/matrice.md da requisiti.lisp
 	$(SBCL) --script tools/check-trace.lisp --write
 
+evidence:  ## verifica struttura e presenza degli artefatti conservati nel catalogo
+	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/check-evidence.lisp
+
 spikes-check:  ## correttezza degli esperimenti Fase 0, processi isolati, senza benchmark
 	$(SBCL) --noinform --no-userinit --script tools/run-spikes.lisp --check
 
 spikes-bench:  ## misure locali, in serie; dati grezzi e ambiente in spikes/out/
 	$(SBCL) --noinform --no-userinit --script tools/run-spikes.lisp --bench
 
-check: test lint lint-selftest trace links spikes-check  ## tutti i controlli
+check:  ## tutti i controlli, con record strutturato anche in caso di fallimento
+	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/record-command.lisp -- $(MAKE) check-core
+
+check-core: test lint lint-selftest trace links evidence spikes-check  ## controlli chiamati dal registro

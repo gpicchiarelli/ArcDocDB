@@ -94,38 +94,6 @@ si spiegano da sole. Nessuna emoji.
 - Aggiungere un badge per un numero.
 - Usare un'immagine con lo sfondo.
 
-## Alternativa fotografica
-
-I progetti [GPForum](https://github.com/gpicchiarelli/GPForum) e
-[AutomaGP](https://github.com/gpicchiarelli/AutomaGP) aprono il README con un render
-fotorealistico di una stanza. Per ArcDocDB l'illustrazione è vettoriale, per i principi 2 e 3.
-Se si volesse comunque un'immagine di quella serie, va generata con un generatore di immagini
-(quella di AutomaGP è stata prodotta con l'agente di Cursor) a partire da questa descrizione.
-
-<details>
-<summary>Descrizione per il generatore</summary>
-
-```
-Photorealistic cinematic interior photograph, 16:9, moody low-key lighting, warm golden light.
-A quiet study in a country villa. On the left, dark vertical slatted wood panelling with a
-server rack half hidden in shadow behind it, small green status LEDs glowing softly.
-
-The central wall is textured warm grey plaster. Mounted on it, a large backlit brass wall
-relief: a wide semicircular brass arch, and beneath it a tidy stack of long horizontal brass
-bars, like storage segments laid one above the other. All the bars are matte and softly
-rim-lit from behind; one single bar, the top one, glows with warm amber light.
-
-Below it, a long low sideboard in dark walnut with a brass desk lamp, two closed
-leather-bound ledgers and a small potted plant. On the right, a tall black-framed window
-onto lush green trees. Foreground: a dark walnut desk with an open laptop showing green
-monospaced code, a ceramic cup, a notebook with a fountain pen.
-
-Calm, serious, durable mood. Deep brown and olive shadows, warm amber highlights, shallow
-depth of field, subtle film grain. No people, no readable text, no logos, no watermark.
-```
-
-</details>
-
 ## Il repository come prodotto
 
 Il README presenta scopo, funzionamento e maturità. L'indice della documentazione orienta

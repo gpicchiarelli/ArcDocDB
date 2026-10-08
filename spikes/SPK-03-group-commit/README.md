@@ -64,8 +64,8 @@ percorsi ricorsivi né rimozione di file preesistenti.
 ## Ambiente e primitiva macOS
 
 Ambiente preparato: macOS 27.0.1 (26A434), ARM64, Mac16,3, 10 CPU logiche,
-16 GiB RAM, SBCL 2.6.9. Il risultato riporta le informazioni esposte da SBCL;
-il parent deve annotare supporto, filesystem e carico durante le misure.
+16 GiB RAM, SBCL 2.6.9. Il risultato riporta le informazioni esposte da SBCL.
+Durante le misure si annotano supporto, filesystem e carico.
 La piattaforma di riferimento resta Linux x86-64 (ADR-0017).
 
 `F_FULLFSYNC = 51` è stato verificato prima dell'esecuzione nel header Apple del SDK:
@@ -91,7 +91,7 @@ Il runner trova `core.lisp` relativamente a `*load-truename*`, compila in
 plist leggibile. Un errore produce uno stato esplicito e un exit code non nullo.
 Le opzioni numeriche vengono analizzate senza il reader Lisp.
 
-Misure da eseguire **dal parent, in serie con gli altri spike**:
+Misure da eseguire **in serie con gli altri spike**:
 
 ```sh
 sbcl --noinform --no-userinit --no-sysinit --script spikes/SPK-03-group-commit/run.lisp --bench
@@ -134,7 +134,7 @@ verificati per caso. Il risultato è conservato localmente in
 una sola plist leggibile, conteggi coerenti, campioni della lunghezza attesa e
 intervalli wall coerenti. `out/data/` è vuoto dopo il termine. Questi pochi
 campioni servono a verificare il meccanismo, non a valutare i target di prodotto.
-Le misure complete e i percentili rappresentativi restano da eseguire dal parent.
+Le misure complete e i percentili rappresentativi restano da eseguire.
 La selezione di `fdatasync` su Darwin è stata controllata con un solo caso:
 stato `:unsupported`, motivo `:platform`, exit 2. Un valore `--samples 0`
 produce `:error` ed exit 1 prima di eseguire I/O.

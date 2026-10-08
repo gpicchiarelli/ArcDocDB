@@ -7,7 +7,7 @@ Esperimenti della fase di valutazione. Il piano, con domande, metodi e criteri d
 
 La [campagna locale 2026-10-08](../docs/valutazione/risultati-2026-10-08.md)
 conserva misure e [dati grezzi](results/2026-10-08/baseline.lisp) nel repository.
-Gli esperimenti usano il formato v1; non verificano il formato v2.
+SPK-01 e SPK-09 usano il formato v1; i risultati v2 sono raccolti separatamente.
 
 I limiti aggiornati hanno un esperimento distinto:
 [SPK-10 — limiti, formati e migrazione v2](SPK-10-v2-limits/README.md).
@@ -38,9 +38,10 @@ in `spikes/out/`. Gli esiti non promuovono automaticamente i requisiti del motor
 | [SPK-01 Primary index compatto](SPK-01-primary-index/README.md) | prototipo e verifica locale; scala 10⁷–10⁸ e piattaforma di riferimento da eseguire |
 | [SPK-02 GC di SBCL sotto carico](SPK-02-gc/README.md) | campagna locale; heap da decine di GB e piattaforma di riferimento da eseguire |
 | [SPK-03 WAL e group commit](SPK-03-group-commit/README.md) | append/flush reali e verifica locale; hardware di riferimento e power cut da eseguire |
-| SPK-04 Writer logico su thread pool | da avviare |
+| [SPK-04 Writer logico su thread pool](SPK-04-writer-pool/README.md) | pool e modelli verificati localmente; 54 benchmark conservati, carico vivo e scheduler adattivo da verificare |
 | SPK-05 Percorso di lettura dei segmenti | da avviare |
 | SPK-06 Interferenza della compaction e controllore | da avviare |
 | [SPK-07 Modelli dei protocolli](SPK-07-protocols/README.md) | prima suite finita, controesempio corretto da ADR-0046; lacune residue esplicite |
 | SPK-08 SIMD e codice generato | da avviare |
 | [SPK-09 Costo dei controlli di affidabilità](SPK-09-integrity/README.md) | CRC/decoder verificati e benchmark locale; resolver del manifest e motore da implementare |
+| [SPK-10 Limiti v2](SPK-10-v2-limits/README.md) | quattro moduli e integrazione in memoria verificati; benchmark distinti, gate completo aperto |

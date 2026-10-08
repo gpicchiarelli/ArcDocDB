@@ -1,7 +1,7 @@
 # 10 — Concorrenza e scheduling
 
 > **Fonte:** «Concorrenza», «Thread pool dinamico», «Compaction scheduler dinamico»,
-> «Parallelismo» della [specifica](specifica/prompt-originale.md).
+> «Parallelismo» della [specifica](specifica/specifica-originale.md).
 > **Moduli:** M13 Scheduler, M14 Dynamic Thread Pool.
 > **Decisioni:** [ADR-0017](adr/0017-piattaforma-e-io.md) (pool di calcolo e pool di I/O),
 > [ADR-0045](adr/0045-modello-di-esecuzione.md) (compiti a completamento, attese come

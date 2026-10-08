@@ -17,8 +17,11 @@ trovato un controesempio nell'anello dell'orizzonte, corretto da
 [ADR-0046](adr/0046-orizzonte-con-registro-limitato.md).
 
 La [campagna locale 2026-10-08](valutazione/risultati-2026-10-08.md) conserva
-misure e dati grezzi dei cinque spike v1. Restano il formato v2, i modelli
-mancanti e le misure sulla piattaforma di riferimento; il gate non è chiuso.
+misure e dati grezzi dei cinque spike v1 e di SPK-10: codec, indice, CBOR e
+migrazione v2 su modello, con integrazione in memoria dei confini massimi.
+`make check` registra l'intera verifica in forma strutturata, inclusi fallimenti.
+Restano le parti complete del gate v2, i modelli mancanti e le misure sulla
+piattaforma di riferimento; il gate non è chiuso.
 
 ## Fase 0 — Definizione architetturale e valutazione
 
@@ -87,6 +90,13 @@ si definisce alla chiusura della Fase 0.
 | 8 | Indici secondari e Query Engine | M06, M15 | — |
 | 9 | Protocollo di rete e server | M16 | — |
 | 10 | Campagna di benchmark; ottimizzazioni sugli hot path misurati | M18 | [13 Benchmark](13-benchmark.md) |
+
+## Avanzamento SPK-04
+
+La [prima campagna SPK-04](valutazione/risultati-SPK-04-2026-10-08.md)
+aggiunge un pool eseguibile e modelli finiti di parcheggio e ripartenza
+delle letture. Restano carico vivo, messaggi, scheduler adattivo e misure
+significative sulla piattaforma di riferimento; la Fase 0 resta aperta.
 
 ## Gate del formato v2
 

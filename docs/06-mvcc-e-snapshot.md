@@ -1,7 +1,7 @@
 # 06 — MVCC e snapshot
 
 > **Fonte:** «Snapshot / MVCC», «Index/Snapshot/Reclaim», «Cache e snapshot» della
-> [specifica](specifica/prompt-originale.md).
+> [specifica](specifica/specifica-originale.md).
 > **Moduli:** M08 Snapshot/MVCC Manager.
 > **Decisioni:** [ADR-0020](adr/0020-csn-snapshot-isolamento.md) (snapshot = CSN, durata
 > massima), [ADR-0038](adr/0038-orizzonte-di-visibilita.md) (orizzonte di visibilità,

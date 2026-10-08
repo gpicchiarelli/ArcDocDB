@@ -26,12 +26,15 @@ jobs:
         run: brew install sbcl
       - name: Versione
         run: sbcl --version
-      - name: Build senza avvisi e test
-        run: make test
-      - name: Linter e auto-verifica del linter
-        run: make lint lint-selftest
-      - name: Esperimenti Fase 0 (correttezza, senza benchmark)
-        run: make spikes-check
+      - name: Verifica completa registrata (senza benchmark)
+        run: make check
+      - name: Conserva prove e diagnostiche
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prove-${{ matrix.os }}
+          path: spikes/out/
+          if-no-files-found: error
 
   docs:
     name: Tracciabilità e documentazione
@@ -40,7 +43,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install SBCL
         run: sudo apt-get update && sudo apt-get install -y sbcl
-      - name: Tracciabilità
-        run: make trace
-      - name: Link e ancore
-        run: make links
+      - name: Tracciabilità e link registrati
+        run: sbcl --noinform --no-userinit --no-sysinit --script tools/record-command.lisp -- make trace links
+      - name: Conserva prove e diagnostiche
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prove-documentazione
+          path: spikes/out/
+          if-no-files-found: error

@@ -36,7 +36,7 @@
                      (dettaglio-fixture condizione)))))
 
 (defstruct contenitore
-  "Frame preallocato: figli ancora da completare e span delle chiavi."
+  "Frame locale riutilizzabile: figli ancora da completare e span delle chiavi."
   (tipo 4 :type (integer 4 5))
   (residui 0 :type indice)
   (inizio 0 :type indice)
@@ -50,7 +50,7 @@
   (lunghezza 0 :type indice :read-only t)
   (budget-nodi 0 :type indice :read-only t)
   (limite-profondita 0 :type (integer 0 100) :read-only t)
-  (pila #() :type simple-vector :read-only t)
+  (pila #() :type simple-vector)
   (cima 0 :type (integer 0 100))
   (posizione 0 :type indice)
   (nodi 0 :type indice)
@@ -250,7 +250,14 @@
     (when (zerop figli)
       (completa-nodo stato inizio)
       (return-from apri-contenitore nil))
-    (let ((frame (aref (validazione-pila stato) (validazione-cima stato))))
+    ;; I controlli precedono le allocazioni; lo scalare o il vuoto non arriva qui.
+    (when (zerop (length (validazione-pila stato)))
+      (setf (validazione-pila stato)
+            (make-array (validazione-limite-profondita stato)
+                        :element-type t :initial-element nil)))
+    (let* ((pila (validazione-pila stato)) (cima (validazione-cima stato))
+           (frame (or (aref pila cima)
+                      (setf (aref pila cima) (make-contenitore)))))
       (declare (type contenitore frame))
       (setf (contenitore-tipo frame) tipo (contenitore-residui frame) figli
             (contenitore-inizio frame) inizio
@@ -295,25 +302,23 @@
   "Valida un solo item, safety 3, input immutabile. Segnala errore-cbor.
 Sottoinsieme deterministico parziale: tag e floating point non supportati."
   (controlla-parametri buffer limite-documento limite-profondita budget-nodi budget-byte)
-  (let ((pila (make-array limite-profondita :element-type t)))
-    (dotimes (i limite-profondita) (setf (aref pila i) (make-contenitore)))
-    (let ((stato (crea-validazione :buffer buffer :lunghezza (length buffer)
-                                  :budget-nodi budget-nodi :pila pila
-                                  :limite-profondita limite-profondita)))
-      ;; Ogni item occupa almeno un byte; il tetto include il rifiuto finale.
-      (loop repeat (1+ (min budget-nodi (length buffer))) do
-        (consuma-nodo stato)
-        (when (validazione-conclusa stato)
-          (unless (= (validazione-posizione stato) (length buffer))
-            (rifiuta :trailing-data stato))
-          (return-from valida-documento
-            (list :status :ok :bytes (length buffer)
-                  :nodes (validazione-nodi stato)
-                  :depth (validazione-profondita stato) :tags 0
-                  :scope :partial :profile :rfc8949-core-deterministic
-                  :limits (limiti limite-documento limite-profondita
-                                  budget-nodi budget-byte)))))
-      (rifiuta :internal-invariant stato))))
+  (let ((stato (crea-validazione :buffer buffer :lunghezza (length buffer)
+                                :budget-nodi budget-nodi
+                                :limite-profondita limite-profondita)))
+    ;; Ogni item occupa almeno un byte; il tetto include il rifiuto finale.
+    (loop repeat (1+ (min budget-nodi (length buffer))) do
+      (consuma-nodo stato)
+      (when (validazione-conclusa stato)
+        (unless (= (validazione-posizione stato) (length buffer))
+          (rifiuta :trailing-data stato))
+        (return-from valida-documento
+          (list :status :ok :bytes (length buffer)
+                :nodes (validazione-nodi stato)
+                :depth (validazione-profondita stato) :tags 0
+                :scope :partial :profile :rfc8949-core-deterministic
+                :limits (limiti limite-documento limite-profondita
+                                budget-nodi budget-byte)))))
+    (rifiuta :internal-invariant stato)))
 
 ;;; Fixture: non sono encoder/decoder di prodotto e non dipendono da altri moduli.
 ;;; REQ: REQ-LIM-002
@@ -567,6 +572,68 @@ Sottoinsieme deterministico parziale: tag e floating point non supportati."
     (list :seeds semi :cases (+ validi rifiutati) :valid validi :rejected rifiutati
           :oracle :known-transformations)))
 
+;;; REQ: REQ-AFF-008
+;;; REQ: REQ-LIM-002
+(defun verifica-pila-req-aff-008 (nome buffer atteso frame-attesi nodi-attesi
+                                profondita-attesa &optional opzioni)
+  "Controlla API e stato locale: conteggi di oggetti, nessuna misura di prestazione."
+  (verifica-attesa nome buffer atteso :nodes nodi-attesi :depth profondita-attesa
+                   :opzioni opzioni)
+  (let* ((limite (getf opzioni :limite-profondita +contenitori-max+))
+         (stato (crea-validazione :buffer buffer :lunghezza (length buffer)
+                                 :budget-nodi (getf opzioni :budget-nodi +documento-max+)
+                                 :limite-profondita limite))
+         (esito :ok))
+    (handler-case
+        (progn
+          (loop repeat (1+ (length buffer))
+                until (validazione-conclusa stato) do (consuma-nodo stato))
+          (esigi (validazione-conclusa stato) nome))
+      (errore-cbor (condizione) (setf esito (ragione condizione))))
+    (let* ((pila (validazione-pila stato))
+           (creati (count-if #'contenitore-p pila)))
+      (esigi (eq esito atteso) nome)
+      (esigi (= creati frame-attesi) nome)
+      (esigi (= (length pila) (if (plusp frame-attesi) limite 0)) nome)
+      (esigi (= (validazione-nodi stato) nodi-attesi) nome)
+      (esigi (= (validazione-profondita stato) profondita-attesa) nome)
+      (esigi (<= creati limite) nome)
+      (list :case nome :outcome esito :frames-created creati
+            :stack-capacity (length pila) :stack-limit limite
+            :nodes nodi-attesi :depth profondita-attesa))))
+
+(defun check-req-aff-008-pila-pigra ()
+  "Oracle aggiuntivo per creazione su richiesta, riuso e tetto reale 100/101."
+  (let ((risultati '()))
+    (dolist (caso '((:scalare (#xf6) :ok 0 1 0)
+                   (:binario (#x43 0 255 128) :ok 0 1 0)
+                   (:array-vuoto (#x80) :ok 0 1 1)
+                   (:mappa-vuota (#xa0) :ok 0 1 1)
+                   (:poco-profondo (#x83 0 #xf6 #xf5) :ok 1 4 1)
+                   (:figlio-vuoto (#x81 #x80) :ok 1 2 2)
+                   (:riuso-mappa-array-mappa (#x83 #xa1 1 0 #x81 0 #xa1 0 0) :ok 2 9 2)
+                   (:scalare-limite-zero (0) :ok 0 1 0 (:limite-profondita 0))
+                   (:vuoto-limite-zero (#x80) :depth-limit 0 1 0 (:limite-profondita 0))
+                   (:troncato-prima-pila (#x82 0) :truncated 0 1 1)
+                   (:budget-prima-pila (#x82 0 1) :node-budget 0 1 1 (:budget-nodi 2))
+                   (:profondita-ridotta (#x81 #x81 0) :depth-limit 1 2 1
+                    (:limite-profondita 1))))
+      (destructuring-bind (nome bytes atteso frames nodes depth &optional opzioni) caso
+        (push (verifica-pila-req-aff-008 (list :req-aff-008 nome)
+                                        (ottetti-fixture bytes) atteso frames nodes depth
+                                        opzioni) risultati)))
+    (push (verifica-pila-req-aff-008 :req-lim-002-pila-100-vuoto
+                                    (fixture-profondita 100) :ok 99 100 100) risultati)
+    (let ((buffer (make-array 101 :element-type '(unsigned-byte 8) :initial-element #x81)))
+      (setf (aref buffer 100) 0)
+      (push (verifica-pila-req-aff-008 :req-lim-002-pila-100-nonvuoto
+                                      buffer :ok 100 101 100) risultati))
+    (push (verifica-pila-req-aff-008 :req-lim-002-pila-101
+                                    (fixture-profondita 101) :depth-limit 100 101 100)
+          risultati)
+    (list :cases (length risultati) :verification :object-counts
+          :results (nreverse risultati))))
+
 (defun check ()
   "Controlli locali bounded: nessun benchmark, nessuna affermazione sul gate v2."
   (let* ((inizio (get-internal-real-time))
@@ -574,18 +641,19 @@ Sottoinsieme deterministico parziale: tag e floating point non supportati."
          (profondita (check-req-lim-002-profondita))
          (budget (check-req-aff-008-budget))
          (dimensione (check-req-lim-002-dimensione))
-         (mutazioni (check-req-aff-008-mutazioni)))
+         (mutazioni (check-req-aff-008-mutazioni))
+         (pila (check-req-aff-008-pila-pigra)))
     (list :spike :spk-10 :module :cbor :status :ok :scope :partial :safety 3
           :cases (+ (getf fixture :valid) (getf fixture :rejected) profondita budget
-                    (getf dimensione :cases) (getf mutazioni :cases))
+                    (getf dimensione :cases) (getf mutazioni :cases) (getf pila :cases))
           :fixtures fixture :depth-cases profondita :budget-cases budget
-          :size dimensione :mutations mutazioni
+          :size dimensione :mutations mutazioni :stack-allocation-checks pila
           :limits (limiti +documento-max+ +contenitori-max+ +documento-max+ +documento-max+)
           :unsupported '(:tags :floating-point :other-simple-values)
           :elapsed-seconds (/ (- (get-internal-real-time) inizio)
                               (coerce internal-time-units-per-second 'double-float)))))
 
-;;; Misure opzionali: il parent le esegue in serie con gli altri moduli.
+;;; Misure opzionali, eseguite in serie con gli altri moduli.
 ;;; REQ: REQ-LIM-002
 ;;; REQ: REQ-AFF-008
 ;;; REQ: REQ-SIM-002

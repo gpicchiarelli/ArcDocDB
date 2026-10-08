@@ -1,7 +1,7 @@
 # 13 — Benchmark
 
 > **Fonte:** «Benchmark», «Target preliminari», «Confronto con Oracle, MySQL e MongoDB» della
-> [specifica](specifica/prompt-originale.md).
+> [specifica](specifica/specifica-originale.md).
 
 ## Principio
 

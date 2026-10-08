@@ -4,13 +4,16 @@ ArcDocDB è in **Fase 0** (definizione architetturale e valutazione): oggi si co
 specifica, ADR, valutazione e spike. Il codice di produzione inizia con la Fase 1
 ([roadmap](docs/roadmap.md)).
 
+La [guida al repository](docs/guida-al-repository.md) raccoglie le regole di lavoro,
+le fonti di verità e i criteri di affidabilità.
+
 ## Principi
 
 - Si scrive **una volta sola, con la soluzione migliore nota**: vedi
   [principi di ingegneria](docs/principi-di-ingegneria.md). Niente codice provvisorio.
 - **Solo Common Lisp** ([ADR-0001](docs/adr/0001-common-lisp-sbcl.md)), nessuna dipendenza
   esterna ([ADR-0027](docs/adr/0027-dipendenze-e-test.md)).
-- La [specifica](docs/specifica/prompt-originale.md) è la fonte di verità; la cambia solo un
+- La [specifica](docs/specifica/specifica-originale.md) è la fonte di verità; la cambia solo un
   ADR che dichiara l'emendamento.
 
 ## Flusso
@@ -29,7 +32,7 @@ make check
 ```
 
 Compila senza avvisi, esegue test e linter, controlla tracciabilità e collegamenti,
-e verifica la correttezza dei cinque esperimenti disponibili. Le misure di prestazione
+e verifica la correttezza dei sette esperimenti disponibili. Le misure di prestazione
 si eseguono separatamente con `make spikes-bench`.
 
 ## Convenzioni

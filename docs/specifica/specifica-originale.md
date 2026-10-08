@@ -1,15 +1,16 @@
 # Specifica originale (v1)
 
-> Questo file è la **fonte di verità** del progetto: contiene il testo integrale del prompt di
-> progettazione, con la sola formattazione Markdown ripristinata (titoli, elenchi, blocchi di
-> codice, alberi). Il contenuto non è stato modificato.
+> Questo file è la **fonte di verità** del progetto: contiene la specifica iniziale,
+> con la formattazione Markdown ripristinata (titoli, elenchi, blocchi di codice, alberi).
+> Il corpo della specifica è conservato integralmente.
 >
 > Note di trascrizione:
-> - sono state omesse le due frasi di cornice della chat (apertura e chiusura), che non fanno
->   parte della specifica; la loro informazione utile è: *la regola «50 secondi di stabilità +
->   basso carico» si applica solo al MERGE, non al CLEAN*;
-> - nella «Priorità concettuale» i separatori `>` erano andati persi nell'incolla e sono stati
->   ripristinati.
+> - la regola «50 secondi di stabilità + basso carico» si applica solo al MERGE,
+>   non al CLEAN;
+> - nella «Priorità concettuale» sono stati ripristinati i separatori `>`.
+>
+> **Deciso (2026-10-08 → ADR-0051)** — nome del documento e nota introduttiva
+> uniformati alla documentazione tecnica; requisiti invariati.
 >
 > Ogni modifica a questo file è un cambio di specifica: va accompagnata da un ADR in
 > [`../adr/`](../adr/README.md) e dall'aggiornamento dei documenti derivati.

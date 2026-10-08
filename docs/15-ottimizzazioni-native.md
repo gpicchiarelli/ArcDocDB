@@ -1,6 +1,6 @@
 # 15 — Ottimizzazioni native e SIMD
 
-> **Fonte:** «SIMD e ottimizzazioni native» della [specifica](specifica/prompt-originale.md),
+> **Fonte:** «SIMD e ottimizzazioni native» della [specifica](specifica/specifica-originale.md),
 > emendata da [ADR-0001](adr/0001-common-lisp-sbcl.md).
 > **Moduli:** M18 SIMD/Hot Path Optimization Layer.
 

@@ -1,6 +1,6 @@
 # 09 — Cache
 
-> **Fonte:** «Cache», «Cache e snapshot» della [specifica](specifica/prompt-originale.md).
+> **Fonte:** «Cache», «Cache e snapshot» della [specifica](specifica/specifica-originale.md).
 > **Moduli:** M07 Cache Manager.
 > **Decisioni:** [ADR-0025](adr/0025-cache-per-location.md) (chiave per location, CLOCK per
 > partizione), [ADR-0044](adr/0044-cache-acceleratore-puro.md) (acceleratore puro: insiemi

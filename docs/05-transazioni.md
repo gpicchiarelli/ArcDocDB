@@ -1,7 +1,7 @@
 # 05 — Transazioni
 
 > **Fonte:** «Transazioni single-series», «Transazioni multiserie» della
-> [specifica](specifica/prompt-originale.md).
+> [specifica](specifica/specifica-originale.md).
 > **Moduli:** M09 Transaction Manager, M10 Multiseries Transaction Log Manager.
 > **Decisioni:** [ADR-0020](adr/0020-csn-snapshot-isolamento.md) (CSN, isolamento),
 > [ADR-0038](adr/0038-orizzonte-di-visibilita.md) (la versione è il CSN; orizzonte),

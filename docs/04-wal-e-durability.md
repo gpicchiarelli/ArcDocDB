@@ -1,6 +1,6 @@
 # 04 — WAL e durability
 
-> **Fonte:** «WAL» della [specifica](specifica/prompt-originale.md); riferimenti da «Transazioni
+> **Fonte:** «WAL» della [specifica](specifica/specifica-originale.md); riferimenti da «Transazioni
 > multiserie» e «Recovery».
 > **Moduli:** M02 WAL Manager.
 > **Decisioni:** [ADR-0013](adr/0013-log-structured-segmento-active-come-log.md) **emenda

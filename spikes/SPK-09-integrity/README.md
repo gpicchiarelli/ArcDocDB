@@ -2,8 +2,8 @@
 
 > **Proposta** — esperimento di Fase 0, confinato a questa directory. Il codice
 > non è un codec di produzione. L'autore ha autorizzato lo sviluppo degli spike
-> e confermato ADR-0028/0030 nella consegna; i documenti del repository sono
-> aggiornati dal parent, che eseguirà le misure in serie.
+> e confermato ADR-0028/0030; i documenti del repository sono aggiornati
+> in fase di integrazione. Le misure estese sono previste in serie.
 
 Questo codec sperimentale usa **formato v1**. Non verifica il formato v2 e i
 limiti estesi di [ADR-0048](../../docs/adr/0048-limiti-documentali-e-formato-v2.md).
@@ -129,8 +129,8 @@ troppo brevi e l'ordine fisso dei casi possono distorcere i rapporti.
 
 > **Proposta** — usare SBCL senza inizializzazione utente. Il risultato
 > registra versione Lisp, sistema, macchina, tick del clock, caratteristiche
-> del runtime, taglie e budget. Il parent aggiungerà il modello hardware
-> preciso e le condizioni di carico alle misure pubblicate.
+> del runtime, taglie e budget. Alle misure pubblicate si aggiungono il modello
+> hardware preciso e le condizioni di carico.
 
 Dal repository:
 
@@ -145,7 +145,7 @@ sempre in `out/core.fasl` e trasforma warning e style-warning in errori.
 Standard output contiene una sola s-expression plist leggibile; gli errori
 terminano l'esecuzione. Senza argomento viene eseguito `--bench`.
 
-Per una diagnostica breve o per un budget personalizzato, il parent può
+Per una diagnostica breve o per un budget personalizzato, si può
 caricare il core compilato e invocare l'API:
 
 ```lisp
@@ -165,8 +165,8 @@ caricare il core compilato e invocare l'API:
 
 ## Limiti e risultato
 
-Il parent ha eseguito le misure estese in serie e il confronto con verificatore
-e accumulatore inline. [Risultati e dati grezzi](../../docs/valutazione/risultati-2026-10-08.md):
+Le misure estese sono state eseguite in serie, insieme al confronto con
+verificatore e accumulatore inline. [Risultati e dati grezzi](../../docs/valutazione/risultati-2026-10-08.md):
 il kernel verificato a `safety 3` con corpo da 2.048 byte e CSN massimo passa da
 circa 5.103 a 4.947 ns/op e da 31,864 B/op a zero byte osservati nella finestra.
 I controlli restano identici. Questo non dimostra zero allocazioni per il parser
@@ -195,7 +195,7 @@ con `*read-eval* nil`, verificando una sola s-expression e EOF. Sono state
 osservate allocazioni non nulle nelle letture con CSN a 64 bit; le finestre
 brevi non permettono di classificare prestazioni o assenza di allocazioni.
 Output locali in `out/check.sexp` e `out/diagnostic.sexp`, ignorati da git.
-Le misure estese in serie e la valutazione dei minimi spettano al parent.
+Le misure estese in serie e la valutazione dei minimi rientrano nella campagna completa.
 
 CRC32C rileva le alterazioni verificate da questa suite; non esclude collisioni
 e non autentica dati ostili. Una corruzione con CRC ricalcolati è rifiutata

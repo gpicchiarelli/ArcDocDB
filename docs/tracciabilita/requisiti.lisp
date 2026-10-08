@@ -302,7 +302,7 @@
 
  ;; ---- Formati ---------------------------------------------------------------
  (:id "REQ-VAL-001" :src "Piano degli spike" :cls "C4" :stato :implementato
-  :txt "La suite della Fase 0 compila gli esperimenti senza avvisi in processi isolati, esegue controlli deterministici e benchmark separati e conserva comandi, ambiente e output grezzo; nessun esito degli spike promuove automaticamente un requisito del motore a verificato."
+  :txt "La suite della Fase 0 compila gli esperimenti senza avvisi in processi isolati, esegue controlli deterministici e benchmark separati e registra in forma strutturata ogni prova e benchmark: parametri, comandi, ambiente, revisione, hash dei sorgenti, risultati, limiti, output grezzo e fallimenti. Nessun esito degli spike promuove automaticamente un requisito del motore a verificato."
   :inv ("INV-X2" "INV-X3") :adr ("ADR-0035") :ver (:test :analisi) :fi ())
  (:id "REQ-FOR-001" :src "ADR-0013" :cls "C1" :stato :progettato
   :txt "Ogni record e ogni file persistente porta lunghezza e CRC32C; ciò che non si verifica è trattato come inesistente (coda), rigenerato (dato derivato) o dichiarato corrotto (dato confermato)."

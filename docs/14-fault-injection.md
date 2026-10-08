@@ -1,6 +1,6 @@
 # 14 — Fault injection
 
-> **Fonte:** «Fault injection» della [specifica](specifica/prompt-originale.md).
+> **Fonte:** «Fault injection» della [specifica](specifica/specifica-originale.md).
 
 ## Scenari
 

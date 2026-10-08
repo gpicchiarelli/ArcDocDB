@@ -1,7 +1,7 @@
 # Architettura di ArcDocDB
 
 > Documento consolidato del progetto, risultato della Fase 0. Riunisce le decisioni della
-> [specifica](specifica/prompt-originale.md) e degli [ADR](adr/README.md) in un'unica
+> [specifica](specifica/specifica-originale.md) e degli [ADR](adr/README.md) in un'unica
 > descrizione coerente, dopo l'[analisi progettuale](analisi-progettuale.md) del 2026-10-03
 > (ADR 0036–0045). In caso di dubbio prevalgono specifica e ADR; questo documento li cita. I
 > formati persistenti sono in [formati-su-disco.md](formati-su-disco.md).

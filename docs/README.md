@@ -7,7 +7,7 @@
 
 # Documentazione di ArcDocDB
 
-Questa cartella trasforma la [specifica originale](specifica/prompt-originale.md) in documenti
+Questa cartella trasforma la [specifica originale](specifica/specifica-originale.md) in documenti
 tematici navigabili, con tracciabilità verso il testo di partenza, e la sottopone a una
 [valutazione architetturale](valutazione/README.md).
 
@@ -27,7 +27,7 @@ le campagne degli [spike](valutazione/piano-spike.md), con gli
 | Capire le scelte | [Analisi progettuale](analisi-progettuale.md) e [decisioni architetturali](adr/README.md) |
 | Valutare le garanzie | [Affidabilità](affidabilita/README.md), [invarianti](invarianti.md) e [tracciabilità](tracciabilita/README.md) |
 | Vedere le evidenze disponibili | [Esperimenti](../spikes/README.md) e [valutazione](valutazione/README.md) |
-| Contribuire | [Guida ai contributi](../CONTRIBUTING.md) e [roadmap](roadmap.md) |
+| Contribuire | [Guida ai contributi](../CONTRIBUTING.md), [regole del repository](guida-al-repository.md) e [roadmap](roadmap.md) |
 
 Il [glossario](glossario.md) accompagna la lettura. Le [questioni della specifica](questioni-aperte.md)
 conservano anche quelle già risolte, con il riferimento alla decisione.
@@ -88,7 +88,7 @@ Valutazione architetturale ([valutazione/](valutazione/README.md)):
 
 **Livelli di autorità.** In caso di conflitto prevale, nell'ordine:
 
-1. la [specifica originale](specifica/prompt-originale.md);
+1. la [specifica originale](specifica/specifica-originale.md);
 2. gli [ADR](adr/README.md) accettati (che possono emendare la specifica, dichiarandolo);
 3. gli [invarianti](invarianti.md);
 4. i documenti tematici.

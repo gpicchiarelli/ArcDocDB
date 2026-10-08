@@ -1,6 +1,6 @@
 # 01 — Visione e obiettivi
 
-> **Fonte:** introduzione e «Obiettivo finale» della [specifica](specifica/prompt-originale.md).
+> **Fonte:** introduzione e «Obiettivo finale» della [specifica](specifica/specifica-originale.md).
 
 ## Che cos'è
 

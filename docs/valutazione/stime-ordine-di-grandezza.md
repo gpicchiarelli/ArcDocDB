@@ -126,6 +126,12 @@ secondari (QA-25) vanno valutati rispetto a questo budget.
 
 ## Letture puntuali
 
+> **Proposta** — La [prima campagna SPK-04](risultati-SPK-04-2026-10-08.md)
+> misura soltanto il drain di code sintetiche con start/join e strumentazione.
+> I dati conservati non confermano il budget seriale del writer: sono esclusi
+> record, CRC, indice, commit durevole e produttori concorrenti durante il drain.
+
+
 **Da cache/indice.** 1–4 M ops/s aggregati su 16–32 core equivalgono a 4–16 µs per operazione
 per core: ampio per una ricerca in memoria. Il costo dominante sarà protocollo e rete, più
 l'eventuale allocazione per richiesta.

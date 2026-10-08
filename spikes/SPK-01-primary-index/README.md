@@ -20,8 +20,8 @@ dall'autore restano da valutare su hardware di riferimento. La verifica locale
 richiede confronti differenziali e nessuna incoerenza negli scenari eseguiti.
 
 Riferimenti: ADR-0001, 0028, 0030, 0031, 0032, 0036, 0043, 0050; REQ-IDX-001,
-REQ-IDX-003, REQ-IDX-005, REQ-IDX-007, REQ-BEN-001. Nessuna modifica di requisiti o documenti
-condivisi rientra nel write set di questo agente.
+REQ-IDX-003, REQ-IDX-005, REQ-IDX-007, REQ-BEN-001. Lo spike non modifica
+i requisiti o i documenti condivisi.
 
 ## Metodo
 
@@ -85,8 +85,8 @@ valeva 1. Questo witness falsifica quel punto di linearizzazione; non dimostra
 un errore generale di linearizzabilità, poiché 2 è esistito durante l'operazione.
 L'output rende esplicito `:general-linearizability-counterexample nil`.
 Una seconda sequenza verifica che anche un miss su F ritirato venga scartato
-dopo swap e inserimento nel frammento corrente. Il parent ha qualificato il
-punto di linearizzazione e il costo O(2^G) in
+dopo swap e inserimento nel frammento corrente. Il punto di linearizzazione
+e il costo O(2^G) sono qualificati in
 [ADR-0050](../../docs/adr/0050-pubblicazione-e-costi-della-directory.md),
 REQ-IDX-007; resta da modellare swap/reader in SPK-07. La sola coerenza del
 frammento congelato non fissa il punto prima dichiarato da ADR-0043.
@@ -109,7 +109,7 @@ budget di 12 secondi per le fasi misurate: obiettivo circa 15 secondi complessiv
 non garanzia temporale. Il tempo viene controllato a blocchi; quantità effettive,
 fase incompleta e durata reale sono sempre riportate. Budget strutturale di
 512 MiB (default); il limite di heap del runtime si imposta separatamente.
-Per la campagna seriale del parent:
+Per la campagna seriale:
 
 ```sh
 sbcl --dynamic-space-size 1024 --script /Users/gpicchiarelli/Documents/ArcDocDB/spikes/SPK-01-primary-index/run.lisp --bench --documents 1000000 --seconds 12
@@ -117,8 +117,8 @@ sbcl --dynamic-space-size 1024 --script /Users/gpicchiarelli/Documents/ArcDocDB/
 
 La scala 10^7 è opzionale, richiede budget e heap espliciti più grandi e tempo
 sufficiente: `--documents 10000000 --seconds 120 --memory-mib 2048`, con
-`--dynamic-space-size 4096` prima di `--script`. Non viene eseguita durante il
-lavoro parallelo. Il controllo della memoria riguarda strutture correnti e
+`--dynamic-space-size 4096` prima di `--script`. La campagna si esegue in serie.
+Il controllo della memoria riguarda strutture correnti e
 allocazioni transitorie previste, non RSS, garbage non ancora raccolto o oggetti
 trattenuti da reader sospesi. Non si afferma un limite assoluto di RSS.
 
@@ -171,9 +171,9 @@ operazioni, cioè 147,444 byte/operazione del carico misurato. Il risultato
 esclude qualunque dichiarazione di allocazione zero; l'attribuzione a bignum,
 boxing e altre fonti richiede profiling. Questi dati diagnostici non chiudono
 i target o il gate 10^7–10^8: i throughput del report non sono una campagna
-rappresentativa. Nessun benchmark lungo eseguito; le misure complete spettano
-al parent in serie. La crescita della directory e l'assenza di merge richiedono
-misure di churn più lunghe; il limite esplicito di memoria non implica un costo
+rappresentativa. Nessun benchmark lungo eseguito in questa diagnostica;
+le misure complete si eseguono in serie. La crescita della directory e l'assenza
+di merge richiedono misure di churn più lunghe; il limite esplicito di memoria non implica un costo
 di manutenzione indipendente dalla dimensione della Serie.
 
 ### Esperimento successivo: kernel hash senza boxing evitabile
@@ -185,7 +185,7 @@ di manutenzione indipendente dalla dimensione della Serie.
 > hash, senza VOP interni o cambio di algoritmo. Nessuna promessa di allocazione
 > zero: payload u64 restituiti dall'API possono ancora richiedere boxing.
 
-Il parent ha misurato il baseline locale a 100.000 documenti (report in
+Il baseline locale è stato misurato a 100.000 documenti (report in
 `spikes/out/4000472823-bench/`): GET 2,915 M/s e 151,95 byte/op;
 INSERT 1,657 M/s e 551,75 byte/op. Confronto diagnostico singolo dopo warmup,
 stessa scala e parametri predefiniti salvo budget breve `--seconds 1`:
@@ -204,7 +204,7 @@ u64 superiori a `most-positive-fixnum`.
 **Esito diagnostico misurato** — singola esecuzione, 100.000 insert e 800.000
 get completati, `out/inline-hash-100k.sexp`; nessun warning/style-warning.
 
-| Misura | Baseline parent | INLINE, diagnostica singola |
+| Misura | Baseline locale | INLINE, diagnostica singola |
 |---|---:|---:|
 | GET byte allocati/op | 151,94986 | 71,94406 |
 | INSERT byte allocati/op | 551,74592 | 219,95536 |
@@ -214,7 +214,7 @@ get completati, `out/inline-hash-100k.sexp`; nessun warning/style-warning.
 
 L'allocazione osservata diminuisce; i throughput sono indicativi di questo
 campione. La durata massima dello split è aumentata nel campione: la causa
-non è profilata, e resta evidenza da conservare nelle repliche del parent.
+non è profilata, e resta evidenza da conservare nelle repliche.
 Il baseline è stato lanciato con heap 4.096 MiB, mentre la diagnostica usa il
 default del runtime e un budget temporale diverso; questo limita il confronto
 di GC e latenze. Non si conclude un miglioramento del costo massimo.
@@ -248,7 +248,7 @@ Wrapper riproducibili, da compilare dopo aver caricato `out/core.fasl`:
   nil)
 ```
 
-Il parent esegue confronto e repliche in serie. Restano aperti il gate
+Confronto e repliche si eseguono in serie. Restano aperti il gate
 10^7–10^8, il costo O(2^G) della pubblicazione e il profiling dell'allocazione
 residua nell'API; nessun cambiamento a trie o al formato dell'indice.
 
@@ -261,8 +261,8 @@ residua nell'API; nessun cambiamento a trie o al formato dell'indice.
 > e della chiave. API `leggi` autonoma, stesso layout v1 e `safety 3`.
 
 Verifica prevista: `--check` e disassemblato ARM64; nessun ulteriore benchmark
-dell'agente. I numeri di `inline-hash-100k.sexp` descrivono il kernel hash
-precedente a questo microfix. Il parent esegue le repliche con heap 4 GiB
+in questa diagnostica. I numeri di `inline-hash-100k.sexp` descrivono il kernel
+hash precedente a questo microfix. Le repliche si eseguono con heap 4 GiB
 a 100.000 e 10^7 documenti, riportando allocazione residua effettiva.
 
 **Esito della verifica** — `--check` passato con compilazione senza warning
@@ -274,17 +274,17 @@ Aritmetica e accessi u64 sono visibili; restano tre rami di boxing da 32 byte
 per CSN/location/CSN finale quando non rappresentabili come fixnum, al confine
 dei valori restituiti. Le barriere ARM64 e i controlli degli array restano nel
 codice. Nessuna misura di allocazione dopo questo microfix è stata eseguita
-dall'agente.
+in questa diagnostica.
 
 Il disassemblato precedente di `scrivi-chiave`, conservato in
 `out/key-before-microfix-disassembly.txt`, già mostrava XOR e scrittura byte
 senza allocazione sul percorso valido; non si attribuisce quindi un risparmio
 di 32 byte/op alla sola dichiarazione di `alto`. L'effetto degli INLINE sulle
-allocazioni del reader va misurato nelle repliche del parent.
+allocazioni del reader va misurato nelle repliche.
 
 ## Ambito del formato
 
-### Repliche del parent con heap 4 GiB
+### Repliche con heap 4 GiB
 
 > **Proposta (profilazione successiva)** — isolare generazione della chiave,
 > hash con risultato in array u64 e API `leggi` su chiave fissa. Dopo warmup,

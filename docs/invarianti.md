@@ -3,7 +3,7 @@
 Regole che nessuna implementazione, ottimizzazione o decisione successiva può violare senza un
 cambio esplicito di specifica (ADR). Derivano dai «Principi architetturali fondamentali», dagli
 invarianti della sezione «Fault injection» e dalle regole normative delle singole sezioni della
-[specifica](specifica/prompt-originale.md).
+[specifica](specifica/specifica-originale.md).
 
 Ogni invariante ha un identificativo stabile. La colonna **Verifica** indica come se ne
 controlla il rispetto: scenari di [fault injection](14-fault-injection.md) (`FI-…`), test,

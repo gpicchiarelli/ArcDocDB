@@ -1,6 +1,6 @@
 # 16 — Moduli software
 
-> **Fonte:** «Moduli software» della [specifica](specifica/prompt-originale.md).
+> **Fonte:** «Moduli software» della [specifica](specifica/specifica-originale.md).
 
 La specifica chiede di organizzare il sistema **almeno** nei 18 moduli seguenti. Gli
 identificativi `M01…M18` seguono l'ordine della specifica.
