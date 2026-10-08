@@ -107,4 +107,11 @@
   (:ARTIFACT "proof-159b0ea8d3ce5ca22699afc8922e8332b23e187c.lisp" :VARIANT
    "spikes/out/4000484438-command-5975-0/report.lisp" :FORMATS (:ADR-0043-V1))
   (:ARTIFACT "proof-bc659958ea24d4da8b70a9b155064074b76fe138.lisp" :VARIANT
-   "spikes/out/4000484551-command-6397-0/report.lisp" :FORMATS (:ADR-0043-V1))))
+   "spikes/out/4000484551-command-6397-0/report.lisp" :FORMATS (:ADR-0043-V1))
+  (:ARTIFACT #A((20) BASE-CHAR . "spikes-verifica.lisp") :VARIANT
+   #A((54) BASE-CHAR
+      . "tutti i dieci spike, processi e output autosufficienti")
+   :FORMATS NIL)
+  (:ARTIFACT #A((26) BASE-CHAR . "verifica-integrazione.lisp") :VARIANT
+   #A((48) BASE-CHAR . "make check su commit integrato e checkout pulito")
+   :FORMATS NIL)))

@@ -150,3 +150,15 @@ P99, latenza I/O, WAL, snapshot, MVCC, compaction, scala oltre cache/RAM,
 writer concorrente, Linux o x86-64. La campagna non chiude ADR-0028, il gate
 v2 o RSK-02. Non sono introdotte dipendenze foreign, stato globale nel reader
 o abbassamenti della priorità dell'integrità dei dati.
+
+## Verifica dell'integrazione
+
+Il [record completo](../../spikes/results/2026-10-08-lettura/verifica-integrazione.lisp)
+verifica `362f3f3` in checkout pulito, con sorgenti stabili: compilazione
+senza warning/style-warning, 26 test delle fondazioni, 18 storage, 18 I/O,
+19 recovery, lint e relativo self-test, tracciabilità, link e cataloghi.
+La [campagna dei dieci spike](../../spikes/results/2026-10-08-lettura/spikes-verifica.lisp)
+include output originali e risultati di ogni processo, conservando anche
+le dipendenze del lavoro già integrato su I/O e bitmap. Le note informative
+del compilatore SBCL rimangono negli stream originali. La verifica non
+promuove requisiti del motore sulla base delle sole prove sperimentali.
