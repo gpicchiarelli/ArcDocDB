@@ -1,6 +1,9 @@
 # ADR-0043 — Primary index a frammenti: directory estendibile, slot a quattro parole, chiavi locali
 
-- **Stato:** Accettata (capacità del frammento tarabile da SPK-01)
+> **Revisione:** [ADR-0048](0048-limiti-documentali-e-formato-v2.md) sostituisce i limiti documentali e il layout v2 pertinenti. Il testo seguente conserva la decisione storica v1.
+
+- **Stato:** Accettata (capacità del frammento tarabile da SPK-01;
+  pubblicazione e costi della directory precisati da [ADR-0050](0050-pubblicazione-e-costi-della-directory.md))
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** nessuna emenda; realizza «Index» (Swiss Table, strutture
   compatte, nessun oggetto per entry). **Sostituisce in parte**

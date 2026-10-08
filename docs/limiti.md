@@ -9,9 +9,9 @@ limiti pratici sono **stime** (INV-X2), da sostituire con le misure degli spike.
 
 | Grandezza | Limite | Origine |
 |---|---|---|
-| Lunghezza di `_id` | 1–255 byte | `key-len u8` nel record e nell'hint |
-| Dimensione di un record (intestazione + chiave + documento) | 16 MiB − 1 | lunghezza a 24 bit nello slot |
-| Dimensione di un documento | 16 MiB − 25 B − `key-len` hard; **default per Serie 4 MiB**, configurabile fino al limite hard | come sopra; catalogo |
+| Lunghezza di `_id` | 1–65.535 byte | `key-len u16` v2 nel record e nell'hint |
+| Dimensione di un record (intestazione + chiave + documento) | 16.842.775 byte per PUT | documento + chiave + header; lunghezza u32 nello slot v2 |
+| Dimensione di un documento | **16 MiB esatti**, default e massimo; limite inferiore configurabile | documento CBOR non compresso, esclusi header e chiave; ADR-0048 |
 | Dimensione di un segmento | 4 GiB − 1 | `offset` a 32 bit nello slot e nell'hint |
 | Segmenti per Serie (id distinti nella vita della Serie, mai riusati) | 2³² | `segment-id` a 32 bit nello slot (`u64` su disco); all'esaurimento la Serie rifiuta le scritture |
 | Record per segmento | 2³² | righe `u32` negli indici di segmento e nell'hint |
@@ -21,16 +21,15 @@ limiti pratici sono **stime** (INV-X2), da sostituire con le misure degli spike.
 | Serie partecipanti a una transazione multiserie | 65 535 | `n-part u16` in `multiserie.log` |
 | Indici secondari per Serie | nessun limite di formato (un file per indice e segmento) | — |
 | Valori distinti in un indice `category` o `bitmap` di un segmento | 2³² | dizionario `u32` |
+| Profondità documentale | 100 livelli di mappe/array, radice inclusa | ADR-0048; controllo nel decoder |
 
-Limiti interni delle strutture in memoria, non dei formati: area chiavi di un frammento
-dell'indice 16 MiB (`key-off` a 24 bit, sempre sufficiente: 8.192 slot × 255 byte ≈ 2 MiB);
-profondità massima della directory dichiarata nella configurazione.
+Il formato v2 usa slot a 5 parole (41 B più chiavi), offset delle chiavi a 32 bit e budget espliciti per le arene. Il formato v1 e gli esperimenti esistenti non sono evidenze del nuovo layout.
 
 ## Limiti pratici (dall'hardware)
 
 | Grandezza | Ordine di grandezza | Che cosa lo determina |
 |---|---|---|
-| Documenti per server | **~650 milioni per 64 GB di RAM**, ~1,3 miliardi per 128 GB (stima) | primary index interamente in memoria: 33 B per slot più la chiave; il riempimento dei frammenti oscilla tra 7/16 e 7/8, quindi da ~55 a ~110 B per documento con `_id` da 16 B, **~75–80 B in media**; ~15 % della RAM a cache e runtime ([stime](valutazione/stime-ordine-di-grandezza.md#memoria-del-primary-index)) |
+| Documenti per server | nessun massimo universale; capacità residente da rimisurare per v2 | indice primario in RAM; slot 41 B più chiavi e risorse; percorso oltre RAM in ADR-0049, ancora proposto |
 | Dati per server | limitati dal disco, non dall'indice | a 2 KB per documento ≈ 2 TB per miliardo; documenti più grandi ⇒ più TB a parità di RAM |
 | Serie per Archivio | migliaia senza accorgimenti | ogni Serie ha almeno un frammento di indice (~0,3 MB), i buffer dei lotti, una partizione di cache, descrittori di file (≥ 1 per segmento aperto) |
 | Archivi per server | nessun limite di formato | ogni Archivio aggiunge CSN, orizzonte, coordinatore, `multiserie.log` |
@@ -45,8 +44,7 @@ profondità massima della directory dichiarata nella configurazione.
 
 ## Che cosa non è limitato
 
-- Numero di campi di un documento e profondità dell'annidamento: solo dalla dimensione del
-  documento.
+- Numero di campi: entro dimensione e budget del decoder; annidamento massimo 100 livelli.
 - Numero di documenti per Serie: solo dalla RAM del server (vedi sopra). I documenti
   **eliminati** non occupano memoria.
 - Dimensione dei file di indice: proporzionali al segmento.
@@ -55,9 +53,13 @@ profondità massima della directory dichiarata nella configurazione.
 
 Un limite hard si estende con un nuovo numero di versione del formato e una migrazione
 ([principi](principi-di-ingegneria.md)). I più probabili candidati sono la dimensione del
-record (24 bit) e dei segmenti (32 bit): entrambi vivono nello slot dell'indice e un loro
+record (32 bit in v2) e dei segmenti (32 bit): entrambi vivono nello slot dell'indice e un loro
 ampliamento costa 8 byte per slot.
 
 Limiti che il sistema applica **anche** come requisito di affidabilità (INV-A8): ogni coda,
 buffer, richiesta, connessione, snapshot, lista di parcheggio e tentativo ha un valore massimo
 configurato; il superamento produce un rifiuto esplicito.
+
+## Capacità oltre la RAM
+
+[ADR-0049](adr/0049-capacita-oltre-la-ram.md) propone un indice persistente con cache limitata per Serie. Richiede un esperimento e una decisione sul formato prima dell’adozione; non è una funzione disponibile.

@@ -8,6 +8,10 @@
 > (ADR 0013–0021), mai implementata. Dal primo codice in poi un formato non cambia: una
 > modifica è un nuovo numero di versione con migrazione ([principi](principi-di-ingegneria.md)).
 
+## Versioni del formato
+
+[ADR-0048](adr/0048-limiti-documentali-e-formato-v2.md) definisce v2 per documenti da 16 MiB effettivi e chiavi fino a 65.535 byte. Gli spike esistenti esercitano v1; le evidenze v2 sono da produrre. Decoder e migrazione sono selezionati dalla versione del file.
+
 ## Convenzioni comuni
 
 - Interi **little-endian**, allineamento naturale non richiesto.
@@ -30,8 +34,7 @@ Intestazione fissa di 24 byte, poi chiave e valore.
 | 4 | `u32` | `body-crc`: CRC32C dei byte di chiave e valore |
 | 8 | `u8` | tipo |
 | 9 | `u8` | flag: bit0 prepared · bit1 compresso (riservato) · bit2 contratto-versionato · bit3 completo (solo EDIT) |
-| 10 | `u8` | `key-len` (1–255 per PUT e TOMBSTONE; 0 per gli altri tipi) |
-| 11 | `u8` | riservato, zero |
+| 10 | `u16` | `key-len` v2 (1–65.535 per PUT e TOMBSTONE; 0 per gli altri tipi); in v1 u8 più riservato zero |
 | 12 | `u32` | `value-len` |
 | 16 | `u64` | `stamp` |
 | 24 | `byte[key-len]` | chiave |
@@ -138,7 +141,7 @@ chiusura; rigenerabile dal segmento e dal manifest.
 | Sezione | Contenuto |
 |---|---|
 | intestazione (128 B) | magic `ARCDHNT1`, versione, id Serie, segment-id, `n` entry, `csn-min`, `csn-max`, tabella `(offset, len)` delle sezioni, CRC |
-| entry (24 B × n) | `u32 offset` · `u32 len` · `u64 csn` · `u32 key-off` · `u8 key-len` · `u8 tipo` · `u8 flag` · `u8 riservato` |
+| entry (24 B × n) | `u32 offset` · `u32 len` · `u64 csn` · `u32 key-off` · `u16 key-len` · `u8 tipo` · `u8 flag` (v2; v1 usa key-len u8 e un riservato finale) |
 | chiavi | chiavi concatenate, indirizzate da `key-off` |
 | bloom | filtro di esistenza sulle chiavi delle entry: `u32 m` bit, `u32 k` funzioni, poi `u64[ceil(m/64)]`; `k` funzioni dall'hash a 64 bit (double hashing), ~1 % di falsi positivi |
 | piè di pagina | `u32` CRC32C di tutte le sezioni |

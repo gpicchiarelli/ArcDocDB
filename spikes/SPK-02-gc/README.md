@@ -29,7 +29,9 @@ tasso di allocazione e numero di worker attivi oppure in attesa di semaforo?
   Non si dichiara zero allocazione per i worker: si riporta l'allocazione
   misurata del processo nella finestra, inclusa quella dello strumento. Il tasso
   zero richiesto riguarda l'iniezione di payload; i rimpiazzi sono separati.
-- Campagna sequenziale con 1, 16 e 64 worker; 256 è opzionale. Per ogni layout:
+- Campagna sequenziale con 1, 16 e 64 worker; 256 è opzionale. Il report include
+  anche il numero di thread del processo al completamento della barriera ready.
+  Per ogni layout:
   tre tassi con worker attivi e tasso zero con worker in attesa. Le configurazioni
   escluse sono dichiarate: non è una matrice fattoriale completa.
 - Avvio con stato protetto da mutex, semafori ready/start e conferma running;
@@ -88,9 +90,11 @@ finestre osservate, senza inventare il numero di collection.
 Il payload configurabile è limitato a 512 MiB. Campioni, anello transitorio e
 numero di rimpiazzi sono limitati. Questo è un limite dei dati dello spike,
 non una misura di RSS: runtime, stack, pagine del collector e allocator foreign
-richiedono memoria aggiuntiva. Il controller serializza soltanto l'iniezione
-del carico e la misura; questo protocollo non introduce lock fra Serie nel
-prodotto (INV-P6).
+richiedono memoria aggiuntiva. Il controller serializza l'iniezione del carico
+e la misura. Il mutex del gruppo serializza le transizioni di stato, la lettura
+degli errori e il polling stop dei worker fra batch: può influenzare i ritardi
+di scheduling e non è incluso interamente nella baseline del solo controller.
+Questo protocollo del harness non introduce lock fra Serie nel prodotto (INV-P6).
 
 Le dimensioni ridotte non rappresentano gli heap da decine di GB previsti dal
 piano originale. Attendere un semaforo non riproduce ogni chiamata di I/O.
@@ -129,7 +133,34 @@ Gli artefatti locali in `out/` sono ignorati da Git.
 
 ## Risultato
 
-README scritto prima dell'esecuzione. Verifica e diagnostica ancora da eseguire;
-nessun numero di prestazione disponibile. Requisiti collegati: REQ-SIM-001,
-REQ-SIM-002, REQ-OBS-001, REQ-BEN-001, REQ-BEN-002, REQ-AFF-003,
-REQ-AFF-008 e REQ-AFF-016. Nessuna modifica di requisito o di documenti in `docs/`.
+README scritto prima dell'esecuzione. Il 2026-10-08, su SBCL 2.6.9,
+Darwin/ARM64, `--check` è passato con compilazione priva di warning e
+style-warning. Le fixture verificano quantili/overflow, contenuto e rimpiazzo
+degli array, conservazione attraverso GC, rilascio foreign su errore, barriere,
+arresto/join, propagazione degli errori worker e distinzione dei contatori.
+Il runner è stato eseguito anche da `/tmp` con percorso assoluto.
+
+La sola diagnostica breve è stata eseguita con `--bench --live-mib=2
+--threads=1 --budget-ms=1000 --case-ms=10 --forced-samples=1`:
+16 casi completati sui quattro layout, tutti i worker joined, una sola plist
+leggibile su stdout. Il contatore interno `:actual-wall-ms` della campagna ha
+misurato **265.231 ms**; questa durata comprende preparazione e misura della
+campagna, esclude compilazione, check e stampa finale. Sono state osservate
+quattro finestre con GC automatico: non si deduce il numero esatto di collection.
+Output locale: `out/diagnostic.sexp`. Questo risultato verifica il percorso
+del harness con input piccoli; non è una misura sull'hardware di riferimento.
+
+La campagna predefinita da 128 MiB, i profili con 16/64 worker e il profilo
+opzionale con 256 worker non sono stati misurati da questo agente. Il parent
+esegue le misure in serie. Durata e memoria effettive del default non sono
+quindi verificate; il budget e i limiti descritti sopra sono parametri.
+
+Non è stato dimostrato un bug architetturale. Resta un limite della verifica
+di ADR-0024/0045: i delta del contatore di collection e la durata di `:forced-gc`
+non bastano a certificare la pausa completa stop/resume né il criterio P99.9
+di ADR-0028. Occorrono ulteriori misure sull'ambiente previsto.
+
+Requisiti collegati: REQ-SIM-001, REQ-SIM-002, REQ-OBS-001, REQ-BEN-001,
+REQ-BEN-002, REQ-AFF-003, REQ-AFF-008 e REQ-AFF-016. Nessuna modifica di
+requisito o di documenti in `docs/`; aggiornamento di tracciabilità e valutazione
+affidato all'integrazione del parent.

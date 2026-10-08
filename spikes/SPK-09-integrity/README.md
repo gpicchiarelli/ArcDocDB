@@ -5,6 +5,9 @@
 > e confermato ADR-0028/0030 nella consegna; i documenti del repository sono
 > aggiornati dal parent, che eseguirà le misure in serie.
 
+Questo codec sperimentale usa **formato v1**. Non verifica il formato v2 e i
+limiti estesi di [ADR-0048](../../docs/adr/0048-limiti-documentali-e-formato-v2.md).
+
 ## Domanda
 
 Quanto costano CRC32C e verifica di un record in Common Lisp/SBCL, con
@@ -26,6 +29,12 @@ Requisiti esistenti: REQ-FOR-001, REQ-FOR-003, REQ-FOR-004, REQ-AFF-002, REQ-AFF
 REQ-BEN-001, REQ-BEN-002, REQ-SIM-002. Nessun requisito viene modificato.
 
 ## Metodo
+
+> **Proposta (esperimento di ottimizzazione, 2026-10-08)** — dopo la campagna
+> seriale iniziale si confronta lo stesso benchmark con verificatore e
+> accumulatore inline. Lo scopo è evitare il boxing del CSN nel passaggio tra
+> funzioni, mantenendo i tipi, `safety 2/3` e ogni controllo. Gli stessi check
+> devono passare; il risultato con CSN massimo resta misurato separatamente.
 
 > **Proposta** — package `arcdocdb.spk09`, senza dipendenze. Riferimento CRC
 > bit a bit (Castagnoli riflesso `#x82f63b78`, iniziale e XOR finale
@@ -188,3 +197,7 @@ non prova l'assenza di tutti i difetti, né l'affidabilità di SBCL. Non vengono
 misurati I/O, recovery, scrubbing completo, concorrenza o throughput di un
 database. Non si deduce il raggiungimento dei minimi ADR-0028 da questo
 microbenchmark e non si rivendica allocazione nulla senza misura.
+
+## Ambito del formato
+
+Questo esperimento esercita la cornice v1. Chiavi u16, documenti da 16 MiB e profondità 100 del formato v2 (ADR-0048) sono progettati, ancora da verificare.

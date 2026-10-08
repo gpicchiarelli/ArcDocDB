@@ -203,3 +203,7 @@ prodotto è una **misura con una raccomandazione**.
 - *Esito:* i minimi di throughput sono raggiungibili con **tutti** i controlli attivi e
   `safety` ≥ 2. Se non lo sono: si cambia algoritmo (ad esempio slicing-by-8, verifica a
   blocchi) e si registra in un ADR; **non** si rimuove un controllo (ADR-0031 §5).
+
+## Estensione v2 da eseguire
+
+SPK-01: slot a 5 parole, chiavi fino a 65.535 byte, budget delle arene e split. SPK-09: lunghezze v2, documento 16 MiB/16 MiB+1, chiavi ai confini, profondità 100/101, fuzzing e conversione interrotta. Le misure v1 rimangono valide solo per v1. ADR-0049 richiede inoltre un esperimento oltre RAM con indice maggiore della cache.

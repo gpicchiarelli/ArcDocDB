@@ -135,6 +135,9 @@ una sola plist leggibile, conteggi coerenti, campioni della lunghezza attesa e
 intervalli wall coerenti. `out/data/` è vuoto dopo il termine. Questi pochi
 campioni servono a verificare il meccanismo, non a valutare i target di prodotto.
 Le misure complete e i percentili rappresentativi restano da eseguire dal parent.
+La selezione di `fdatasync` su Darwin è stata controllata con un solo caso:
+stato `:unsupported`, motivo `:platform`, exit 2. Un valore `--samples 0`
+produce `:error` ed exit 1 prima di eseguire I/O.
 
 La rilettura passa per filesystem/page cache; non prova la persistenza dopo
 perdita di alimentazione. Non sono modellati powercut, crash del sistema,

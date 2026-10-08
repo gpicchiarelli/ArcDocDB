@@ -1,5 +1,7 @@
 # ADR-0039 — Cornice unica dei record: due CRC, quattro tipi nei segmenti, hint risolto
 
+> **Revisione:** [ADR-0048](0048-limiti-documentali-e-formato-v2.md) sostituisce i limiti documentali e il layout v2 pertinenti. Il testo seguente conserva la decisione storica v1.
+
 - **Stato:** Accettata; verifica dei prepared precisata da [ADR-0047](0047-verifica-csn-dei-record-prepared.md): il CSN effettivo è verificato attraverso OUTCOME o esito del manifest, non dal solo flag.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** nessuna emenda. **Sostituisce in parte**

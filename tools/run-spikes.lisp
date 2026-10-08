@@ -33,13 +33,38 @@
                       #-darwin :not-collected
         :commit (command-output '("git" "rev-parse" "HEAD"))
         :working-tree (command-output '("git" "status" "--porcelain"))
+        :source-blobs
+        (loop for path in (cons "tools/run-spikes.lisp"
+                            (loop for entry in *spike-runners*
+                                  append (list (cdr entry)
+                                               (namestring (merge-pathnames "core.lisp"
+                                                                            (cdr entry))))))
+              collect (list :path path :git-blob
+                            (command-output (list "git" "hash-object" path))))
         :dynamic-space-mib 4096 :date-universal-time (get-universal-time)))
+
+(defun validate-output (stdout id mode)
+  "Accetta una sola plist di esito, letta senza read-eval; non accetta testo extra."
+  (let ((*read-eval* nil) (eof (gensym "EOF")))
+    (with-input-from-string (stream stdout)
+      (let* ((result (read stream nil eof))
+             (payload (and (listp result)
+                           (or (getf result :benchmark) result)))
+             (status (and (listp payload) (getf payload :status))))
+        (unless (and (listp result) (not (eq result eof))
+                     (eq (read stream nil eof) eof)
+                     (member status '(:ok :pass :measured :unsupported :budget-exhausted)))
+          (fail-harness "~A ~A: output strutturato non valido o esito fallito." id mode))
+        (when (member status '(:unsupported :budget-exhausted))
+          (format *error-output* "~&~A: campagna limitata, esito ~S.~%" id status))
+        status))))
 
 (defun run-spike (entry mode out)
   "Esegue un processo isolato e conserva anche stdout/stderr quando il processo fallisce."
   (let* ((id (car entry))
          (command (list (namestring sb-ext:*runtime-pathname*)
                         "--dynamic-space-size" "4096" "--noinform" "--no-userinit"
+                        "--no-sysinit"
                         "--script" (cdr entry) mode)))
     (format *error-output* "~&~A ~A~%" id mode)
     (multiple-value-bind (stdout stderr status)
@@ -52,32 +77,33 @@
           (write report :stream stream :pretty t) (terpri stream))
         (unless (zerop status)
           (fail-harness "~A fallito (exit ~D):~%~A~%~A" id status stdout stderr))
+        (validate-output stdout id mode)
         report))))
 
 (defun main ()
   "Valida la selezione e lancia la campagna in serie, senza sovrapporre gli esperimenti."
   (let* ((args (uiop:command-line-arguments))
          (mode (or (first args) "--check"))
-         (selected (rest args))
-         (out (merge-pathnames (format nil "spikes/out/~D-~A/"
-                                      (get-universal-time) (subseq mode 2))
-                               (truename "./"))))
+         (selected (rest args)))
     (unless (member mode '("--check" "--bench") :test #'string=)
       (fail-harness "Uso: --check|--bench [SPK-01 SPK-02 SPK-03 SPK-07 SPK-09]"))
     (dolist (id selected)
       (unless (assoc id *spike-runners* :test #'string=)
         (fail-harness "Spike sconosciuto: ~A" id)))
-    (ensure-directories-exist (merge-pathnames "report.lisp" out))
-    (let ((report (list :environment (environment-report)
-                        :mode mode
-                        :runs (loop for entry in *spike-runners*
-                                    when (or (null selected)
-                                             (member (car entry) selected :test #'string=))
-                                    collect (run-spike entry mode out)))))
-      (with-open-file (stream (merge-pathnames "report.lisp" out)
-                              :direction :output :if-exists :supersede)
-        (write report :stream stream :pretty t) (terpri stream))
-      (format t "~&~D spike completati; risultati: ~A~%" (length (getf report :runs)) out))))
+    (let ((out (merge-pathnames (format nil "spikes/out/~D-~A/"
+                                       (get-universal-time) (subseq mode 2))
+                                (truename "./"))))
+      (ensure-directories-exist (merge-pathnames "report.lisp" out))
+      (let ((report (list :environment (environment-report)
+                          :mode mode
+                          :runs (loop for entry in *spike-runners*
+                                      when (or (null selected)
+                                               (member (car entry) selected :test #'string=))
+                                      collect (run-spike entry mode out)))))
+        (with-open-file (stream (merge-pathnames "report.lisp" out)
+                                :direction :output :if-exists :supersede)
+          (write report :stream stream :pretty t) (terpri stream))
+        (format t "~&~D spike completati; risultati: ~A~%" (length (getf report :runs)) out)))))
 
 (uiop:with-current-directory
     ((merge-pathnames "../" (uiop:pathname-directory-pathname *load-truename*)))

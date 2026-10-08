@@ -259,3 +259,7 @@ background: tutti consumano CPU e banda.
 - *Mitigazioni:* strumenti che non dipendono dall'autore (linter, tracciabilità, simulatore,
   modelli, fuzzing, mutation testing); lista di controllo di revisione; rilettura da un secondo
   revisore su dati verificabili ([piano di verifica](../affidabilita/piano-di-verifica.md)).
+
+## Impatto dei limiti v2
+
+ADR-0048 amplia chiavi e slot: aumenta RSK-07 (memoria) e il costo di split, hashing e verifica. Le evidenze SPK-01/SPK-09 v1 non chiudono questi rischi per v2. Richieste massime e profondità richiedono budget di decoder e protocollo. ADR-0049 resta una proposta: lookup freddi, write amplification e crash del nuovo indice richiedono evidenze prima dell’adozione.

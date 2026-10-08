@@ -1,5 +1,7 @@
 # ADR-0014 — Formato di record, documento e `_id`
 
+> **Revisione:** [ADR-0048](0048-limiti-documentali-e-formato-v2.md) sostituisce i limiti documentali e il layout v2 pertinenti. Il testo seguente conserva la decisione storica v1.
+
 - **Stato:** Accettata; **sostituita in parte da [ADR-0039](0039-cornice-unica-dei-record.md)**: intestazione a 24 byte con due CRC, tipi PUT, TOMBSTONE, SEAL, OUTCOME (punto 3). Documento, `_id` e hash restano.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-01

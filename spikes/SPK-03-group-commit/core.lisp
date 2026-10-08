@@ -568,10 +568,11 @@
 (defun check-req-wal-002-rilettura ()
   "Piccolo file reale: write frammentata dopo EINTR simulato, poi fsync."
   (let* ((directory (nuova-directory))
-         (lavoro (first (nuovi-lavori directory 1 3 1 2048)))
+         (lavoro nil)
          (chiamate 0))
     (unwind-protect
          (progn
+           (setf lavoro (first (nuovi-lavori directory 1 3 1 2048)))
            (con-descrittore
             (sb-posix:open (lavoro-percorso lavoro)
                            (logior sb-posix:o-wronly sb-posix:o-creat
@@ -593,7 +594,7 @@
                  :open-check (check-req-aff-001-open lavoro)
                  :corruption-check
                  (check-req-wal-002-corruzione (lavoro-percorso lavoro))))
-      (pulire (list lavoro) directory))))
+      (pulire (when lavoro (list lavoro)) directory))))
 
 (defun ambiente ()
   (list :implementation (lisp-implementation-type)

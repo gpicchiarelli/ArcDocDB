@@ -1,4 +1,4 @@
-;;;; SPK-01: esperimento C4, non componente di produzione.
+;;;; SPK-01: esperimento C4, layout v1 ADR-0043; non verifica v2 ADR-0048.
 (defpackage #:arcdocdb.spk01
   (:use #:cl)
   (:export #:check #:benchmark #:make-indice #:inserisci #:elimina #:leggi
@@ -20,7 +20,7 @@
 
 ;;; OWNER: un writer per indice; root letta dai reader, pubblicata solo con CAS.
 ;;; SHARED: nessuno stato tra Serie; i contatori sono locali al writer.
-;;; REQ: REQ-IDX-001 REQ-IDX-003 REQ-IDX-005
+;;; REQ: REQ-IDX-001 REQ-IDX-003 REQ-IDX-005 REQ-IDX-007
 (defstruct (frammento (:constructor %frammento))
   (profondita 0 :type fixnum :read-only t)
   (capacita 8 :type fixnum :read-only t)
@@ -48,6 +48,7 @@
   (directory-riferimenti-max 0 :type fixnum)
   (directory-ticks 0 :type integer) (directory-max-ticks 0 :type integer)
   (frammento-copia-ticks 0 :type integer) (frammento-copia-max-ticks 0 :type integer)
+  (chiavi-byte-copiati 0 :type integer)
   (picco-payload 0 :type integer) (picco-transitorio 0 :type integer))
 
 (declaim (ftype (function (t integer integer) integer) intero-limitato))
@@ -99,22 +100,31 @@
              :picco-transitorio payload)))
 
 ;;; REQ: REQ-IDX-001
+(declaim (inline mix64 parola-chiave hash-chiave))
 (declaim (ftype (function (u64) u64) mix64))
 (defun mix64 (x)
-  "SplitMix64 deterministico; intermedi mascherati, possibili bignum."
+  "SplitMix64 deterministico, intermedi u64 mascherati; kernel inline."
+  (declare (type u64 x))
   (let* ((z (logand +mask64+ (+ x #x9e3779b97f4a7c15)))
          (a (logand +mask64+ (* (logxor z (ash z -30)) #xbf58476d1ce4e5b9)))
          (b (logand +mask64+ (* (logxor a (ash a -27)) #x94d049bb133111eb))))
+    (declare (type u64 z a b))
     (logxor b (ash b -31))))
 (declaim (ftype (function (ottetti fixnum) u64) parola-chiave))
 (defun parola-chiave (chiave off)
+  (declare (type ottetti chiave) (type fixnum off))
   (let ((parola 0))
     (declare (type u64 parola))
     (dotimes (n 8 parola)
+      (declare (type fixnum n))
       (setf parola (logior parola (ash (aref chiave (+ off n)) (* 8 n)))))))
 (declaim (ftype (function (ottetti fixnum) u64) hash-chiave))
 (defun hash-chiave (chiave off)
-  (mix64 (logxor (parola-chiave chiave off) (mix64 (parola-chiave chiave (+ off 8))))))
+  (declare (type ottetti chiave) (type fixnum off))
+  (let* ((basso (parola-chiave chiave off))
+         (alto (parola-chiave chiave (+ off 8))) (misto (mix64 alto)))
+    (declare (type u64 basso alto misto))
+    (mix64 (logxor basso misto))))
 (declaim (ftype (function (ottetti u64) ottetti) scrivi-chiave))
 (defun scrivi-chiave (buffer id)
   "Riutilizza BUFFER di 16 byte, chiave univoca deterministica per ID u64."
@@ -220,6 +230,7 @@
               (if (eq f old)
                   (if (and split-p (logbitp (- g (frammento-profondita a)) n)) b a)
                   f))))))
+;;; REQ: REQ-IDX-005 REQ-IDX-007
 (declaim (ftype (function (indice frammento boolean) null) manutenzione))
 (defun manutenzione (i f split-p)
   (let* ((start (get-internal-real-time)) (old (indice-root i))
@@ -242,6 +253,7 @@
            (dir-stop (get-internal-real-time))
            (new (%radice (1+ gen) g dir)))
       (incf (indice-frammento-copia-ticks i) (- copy-stop copy-start))
+      (incf (indice-chiavi-byte-copiati i) (* 16 copiati))
       (setf (indice-frammento-copia-max-ticks i)
             (max (indice-frammento-copia-max-ticks i) (- copy-stop copy-start)))
       (incf (indice-directory-ticks i) (- dir-stop copy-stop))
@@ -329,7 +341,7 @@
                   (return-from elimina t)))))))
     (error 'limite-indice :motivo :tentativi-delete)))
 
-;;; REQ: REQ-IDX-003 REQ-IDX-005
+;;; REQ: REQ-IDX-003 REQ-IDX-005 REQ-IDX-007
 (declaim (ftype (function (frammento fixnum ottetti u64 (or null function))
                          (values u64 u64 (unsigned-byte 24) u64 keyword)) leggi-slot))
 (defun leggi-slot (f s chiave h after-fields)
@@ -411,6 +423,7 @@
           :key-used-bytes key-used :live-key-bytes live-keys :dead-key-bytes (- key-used live-keys)
           :dead-slots dead :splits (indice-split i) :rebuilds (indice-rebuild i)
           :max-source-slots-copied (indice-slot-copiati-max i)
+          :key-bytes-copied (indice-chiavi-byte-copiati i)
           :source-slots-scanned (* (indice-capacita i) (+ (indice-split i) (indice-rebuild i)))
           :max-source-slots-scanned (if (plusp (+ (indice-split i) (indice-rebuild i)))
                                        (indice-capacita i) 0)
@@ -502,6 +515,11 @@
   (assert (= (mix64 1) #x910a2dec89025cc1))
   (let ((i (make-indice :capacity 8 :words 5))
         (key (make-array 16 :element-type '(unsigned-byte 8))))
+    (dolist (golden '((0 #x98bc9b3a9f64da94) (1 #xd76c10e8150d7703)
+                      (424242 #xf7e167c9047e05bd)
+                      (18446744073709551615 #x1fe490e95cf73e62)))
+      (scrivi-chiave key (first golden))
+      (assert (= (hash-chiave key 0) (second golden))))
     (scrivi-chiave key 1)
     (assert (= (parola-chiave key 0) 1))
     (assert (= (parola-chiave key 8) #xd1b54a32d192ed02))
@@ -509,7 +527,12 @@
     (assert (equal (multiple-value-list (leggi i key))
                    '(9 30064771083 123 10 :hit 0)))
     (assert (elimina i key))
-    (assert (equal (multiple-value-list (leggi i key)) '(0 0 0 0 :miss 0))))
+    (assert (equal (multiple-value-list (leggi i key)) '(0 0 0 0 :miss 0)))
+    ;; Word u64 intere: CSN e location sopra MOST-POSITIVE-FIXNUM, flag/len ai limiti.
+    (assert (inserisci i key +mask64+ #xffffffff #xffffffff #xffffff
+                       :end-csn +mask64+))
+    (assert (equal (multiple-value-list (leggi i key))
+                   (list +mask64+ +mask64+ #xffffff +mask64+ :hit 0))))
   :ok)
 (defun test-req-idx-001-differenziale (words)
   (let ((i (make-indice :capacity 32 :words words)) (reference (make-hash-table))
@@ -571,6 +594,7 @@
         (assert (zerop (frammento-chiavi-usate after)))
         (assert (zerop (frammento-morti after))))))
   :ok)
+;;; REQ: REQ-IDX-003 REQ-IDX-007
 (defun test-req-idx-003-root-ritirata ()
   (let ((i (make-indice :capacity 8)) (once nil) (retired nil)
         (key (make-array 16 :element-type '(unsigned-byte 8))))
@@ -579,12 +603,14 @@
         (leggi i key :after-fragment
                (lambda (f)
                  (unless once
-                   (setf once t retired f) (manutenzione i f t)
-                   (inserisci-pattern i key 2))))
-      (assert (eq status :hit)) (assert (= csn 2)) (assert (= retries 1))
+                   (setf once t retired f)
+                   (inserisci-pattern i key 2) ; root acquisita quando era ancora 1
+                   (manutenzione i f t) ; congela 2 nel frammento ritirato
+                   (inserisci-pattern i key 3))))
+      (assert (eq status :hit)) (assert (= csn 3)) (assert (= retries 1))
       (assert (pattern-valido-p csn loc len fine 4)))
     (multiple-value-bind (csn loc len fine status) (sonda-reader retired key (hash-chiave key 0) nil)
-      (assert (eq status :hit)) (assert (= csn 1))
+      (assert (eq status :hit)) (assert (= csn 2))
       (assert (pattern-valido-p csn loc len fine 4)))
     ;; Anche il MISS da un frammento ritirato deve essere scartato.
     (scrivi-chiave key 99) (setf once nil)
@@ -595,7 +621,10 @@
                          (inserisci-pattern i key 3))))
       (assert (eq status :hit)) (assert (= csn 3)) (assert (= retries 1))
       (assert (pattern-valido-p csn loc len fine 4))))
-  :ok)
+  (list :status :ok :root-acquired-csn 1 :unvalidated-retired-hit-csn 2
+        :revalidated-hit-csn 3 :discarded-attempts 1 :retired-miss-revalidated t
+        :falsified-claim :linearization-at-root-acquisition
+        :general-linearizability-counterexample nil))
 (defun test-req-idx-003-seqlock ()
   (let ((i (make-indice :capacity 8 :words 5)) (once nil)
         (key (make-array 16 :element-type '(unsigned-byte 8))))
@@ -680,7 +709,7 @@
 (declaim (ftype (function () list) check))
 (defun check ()
   "Verifica rapida: fixture deterministiche più stress limitato dello scheduler."
-  (list :spike :spk-01 :status :ok :seed 424242
+  (list :spike :spk-01 :status :ok :layout :adr-0043-v1 :verifies-format-v2 nil :seed 424242
         :golden (test-req-idx-001-golden)
         :differential (list (test-req-idx-001-differenziale 4)
                             (test-req-idx-001-differenziale 5))
@@ -825,7 +854,7 @@
              (concurrent (bench-concorrente i readers
                           (min deadline (+ (get-internal-real-time)
                                            (* 5 internal-time-units-per-second))))))
-        (list :spike :spk-01 :status :measured
+        (list :spike :spk-01 :status :measured :layout :adr-0043-v1 :verifies-format-v2 nil
               :environment (list :implementation (lisp-implementation-type)
                                  :version (lisp-implementation-version) :machine (machine-type)
                                  :cpu (machine-version) :os (software-type) :os-version (software-version)

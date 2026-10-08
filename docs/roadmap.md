@@ -83,3 +83,7 @@ si definisce alla chiusura della Fase 0.
 | 8 | Indici secondari e Query Engine | M06, M15 | — |
 | 9 | Protocollo di rete e server | M16 | — |
 | 10 | Campagna di benchmark; ottimizzazioni sugli hot path misurati | M18 | [13 Benchmark](13-benchmark.md) |
+
+## Gate del formato v2
+
+Prima del motore: campagne dei limiti ADR-0048 (documenti, profondità, chiavi), decoder v1/v2, migrazione interrotta e budget del nuovo slot. Aggiornare SPK-01 e SPK-09 con risultati distinti. La ricerca oltre RAM (ADR-0049) richiede confronto e ADR prima di cambiare lo scope v1.

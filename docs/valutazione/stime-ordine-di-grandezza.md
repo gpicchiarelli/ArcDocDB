@@ -178,3 +178,7 @@ SPK-02 deve produrre.
 | Scan sequenziale, CLEAN | plausibili: lavoro sequenziale limitato dal dispositivo | priorità di I/O |
 | Transazioni multiserie | plausibile se il group commit forma gruppi ampi | QA-06, QA-07 |
 | Bassa latenza P95/P99 | **non valutabile senza un obiettivo numerico** | QA-26, SPK-02 |
+
+## Revisione v2 (ADR-0048)
+
+Le tabelle precedenti stimano il layout v1. V2 costa 41 B/slot invece di 33: +8/occupazione B per documento (circa +9,1 a carico 7/8, +18,3 a 7/16), oltre alle chiavi. Con 16 B di chiave e le precedenti ipotesi medie, circa 88 B/documento; 64 GB decimali con 15 % riservato darebbero circa 618 milioni, **stima illustrativa**. Chiavi grandi riducono molto la capacità. Rimisurare in SPK-01; nessuna capacità del modo oltre RAM è dimostrata.

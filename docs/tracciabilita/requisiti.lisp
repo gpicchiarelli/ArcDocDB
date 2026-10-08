@@ -196,6 +196,10 @@
   :txt "Gli indici secondari seguono il modello base più delta immutabili e la nuova base è costruita senza bloccare i reader."
   :inv () :adr ("ADR-0026") :ver (:test :diff) :fi ())
 
+ (:id "REQ-IDX-007" :src "ADR-0050" :cls "C1" :stato :progettato
+  :txt "Il reader ricontrolla root e generazione dopo il sondaggio anche su miss, con tentativi limitati; la manutenzione dichiara e controlla separatamente slot, byte delle chiavi, riferimenti della directory e memoria transitoria."
+  :inv ("INV-I3" "INV-A8") :adr ("ADR-0043" "ADR-0050") :ver (:test :model :bench :rev) :fi ())
+
  ;; ---- Cache -------------------------------------------------------------------
  (:id "REQ-CCH-001" :src "Cache" :cls "C3" :stato :progettato
   :txt "La cache usa CLOCK, può essere partizionata per Serie e misura la scan pollution per decidere un'eventuale evoluzione a 2Q."
@@ -371,4 +375,13 @@
  (:id "REQ-AFF-019" :src "ADR-0036" :cls "C1" :stato :progettato
   :txt "Ogni operazione che cambia lo stato durevole ha un solo punto di atomicità (SEAL, EDIT, DECISION, documento di catalogo); ciò che lo precede è scartabile e ciò che lo segue è un completamento idempotente che il recovery ripete."
   :inv ("INV-A11" "INV-A7") :adr ("ADR-0036" "ADR-0040") :ver (:model :fi :rev) :fi ("FI-06" "FI-07" "FI-08" "FI-13"))
+ (:id "REQ-LIM-001" :src "ADR-0048" :cls "C1" :stato :progettato
+  :txt "Il documento CBOR non compresso ammette 16 MiB effettivi esclusi header e chiave; v2 usa key-len u16, lunghezza record u32 e slot a 5 parole, senza interpretare v1 come v2."
+  :inv ("INV-F1" "INV-A8") :adr ("ADR-0048") :ver (:test :fuzz :corr :fi) :fi ("FI-01"))
+ (:id "REQ-LIM-002" :src "ADR-0048" :cls "C2" :stato :progettato
+  :txt "Il decoder limita a 100 livelli i contenitori CBOR con radice a livello 1 e applica budget espliciti prima del writer."
+  :inv ("INV-A8") :adr ("ADR-0048") :ver (:test :fuzz :rev) :fi ())
+ (:id "REQ-LIM-003" :src "ADR-0048" :cls "C1" :stato :progettato
+  :txt "Le chiavi binarie ammettono 1..65535 byte; arene, copie e migrazioni hanno budget e non confermano operazioni incomplete; la migrazione preserva sorgenti e atomicità."
+  :inv ("INV-A8" "INV-A11") :adr ("ADR-0048") :ver (:test :fi :bench :rev) :fi ("FI-06"))
 )

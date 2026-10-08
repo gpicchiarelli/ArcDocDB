@@ -2,7 +2,7 @@
 
 > **Generata** da [requisiti.lisp](requisiti.lisp) con `make trace-write`. Non modificare a mano: `make trace` fallisce se non coincide.
 
-**Sommario.** 110 requisiti. Per classe: C1 86, C2 5, C3 12, C4 7. Per stato: specificato 0, progettato 107, implementato 2, verificato 1. Invarianti coperti: 65/65. Scenari FI coperti: 13/13.
+**Sommario.** 114 requisiti. Per classe: C1 89, C2 6, C3 12, C4 7. Per stato: specificato 0, progettato 111, implementato 2, verificato 1. Invarianti coperti: 65/65. Scenari FI coperti: 13/13.
 
 ## Requisiti
 
@@ -64,6 +64,7 @@
 | REQ-IDX-006 | Il primary index contiene solo documenti vivi; la sua ricostruzione sceglie per ogni chiave il record committed con il CSN massimo e dà lo stesso risultato per qualsiasi ordine di lettura dei segmenti. | ADR-0042 | C1 | progettato | INV-C11, INV-S6 | [0042](../adr/0042-tombstone-e-indice-dei-vivi.md), [0039](../adr/0039-cornice-unica-dei-record.md) | test, prop, fi | FI-10 |
 | REQ-SEC-001 | Gli indici secondari usano strutture per tipo di query (stringhe e prefix, intervalli, categorie, bitmap); il Bloom filter sui valori, sezione del file indice, dice solo assente o forse presente. | Secondary index | C2 | progettato | INV-I2 | [0026](../adr/0026-indici-secondari-segmentati.md), [0039](../adr/0039-cornice-unica-dei-record.md) | test, diff |  |
 | REQ-SEC-002 | Gli indici secondari seguono il modello base più delta immutabili e la nuova base è costruita senza bloccare i reader. | Secondary index delta | C2 | progettato |  | [0026](../adr/0026-indici-secondari-segmentati.md) | test, diff |  |
+| REQ-IDX-007 | Il reader ricontrolla root e generazione dopo il sondaggio anche su miss, con tentativi limitati; la manutenzione dichiara e controlla separatamente slot, byte delle chiavi, riferimenti della directory e memoria transitoria. | ADR-0050 | C1 | progettato | INV-I3, INV-A8 | [0043](../adr/0043-primary-index-a-frammenti.md), [0050](../adr/0050-pubblicazione-e-costi-della-directory.md) | test, model, bench, rev |  |
 | REQ-CCH-001 | La cache usa CLOCK, può essere partizionata per Serie e misura la scan pollution per decidere un'eventuale evoluzione a 2Q. | Cache | C3 | progettato |  | [0010](../adr/0010-cache-clock.md), [0025](../adr/0025-cache-per-location.md) | test, bench |  |
 | REQ-CCH-002 | La cache è consapevole della versione: un reader non ottiene mai una versione incompatibile con il proprio snapshot. | Cache e snapshot | C1 | progettato | INV-M3 | [0025](../adr/0025-cache-per-location.md), [0044](../adr/0044-cache-acceleratore-puro.md) | test, prop |  |
 | REQ-CCH-003 | Il percorso di lettura è richiesta, Serie, snapshot e indice, cache, segmento. | Cache | C2 | progettato |  | [0025](../adr/0025-cache-per-location.md) | test |  |
@@ -118,6 +119,9 @@
 | REQ-AFF-017 | Il recovery non modifica e non tronca alcun segmento esistente: chiude l'ACTIVE trovato alla sua lunghezza valida con un record del manifest e ne apre uno nuovo; il suo punto di atomicità per Serie è la rinomina del control log compattato. | ADR-0036 | C1 | progettato | INV-A9, INV-A7 | [0036](../adr/0036-leggi-di-progetto.md), [0037](../adr/0037-lotto-sigillato.md), [0040](../adr/0040-manifest-a-record-unico.md) | test, model, fi, soak | FI-01, FI-02, FI-10 |
 | REQ-AFF-018 | Un file o una directory è eliminato solo se ha suffisso tmp e nessuna fonte di verità lo nomina, oppure se una fonte di verità ne registra la rimozione; un oggetto con nome definitivo sconosciuto non è toccato ed è segnalato; un segment-id nominato dal manifest non è mai riusato. | ADR-0036 | C1 | progettato | INV-A10 | [0036](../adr/0036-leggi-di-progetto.md), [0040](../adr/0040-manifest-a-record-unico.md) | test, fi, corr | FI-09, FI-13 |
 | REQ-AFF-019 | Ogni operazione che cambia lo stato durevole ha un solo punto di atomicità (SEAL, EDIT, DECISION, documento di catalogo); ciò che lo precede è scartabile e ciò che lo segue è un completamento idempotente che il recovery ripete. | ADR-0036 | C1 | progettato | INV-A11, INV-A7 | [0036](../adr/0036-leggi-di-progetto.md), [0040](../adr/0040-manifest-a-record-unico.md) | model, fi, rev | FI-06, FI-07, FI-08, FI-13 |
+| REQ-LIM-001 | Il documento CBOR non compresso ammette 16 MiB effettivi esclusi header e chiave; v2 usa key-len u16, lunghezza record u32 e slot a 5 parole, senza interpretare v1 come v2. | ADR-0048 | C1 | progettato | INV-F1, INV-A8 | [0048](../adr/0048-limiti-documentali-e-formato-v2.md) | test, fuzz, corr, fi | FI-01 |
+| REQ-LIM-002 | Il decoder limita a 100 livelli i contenitori CBOR con radice a livello 1 e applica budget espliciti prima del writer. | ADR-0048 | C2 | progettato | INV-A8 | [0048](../adr/0048-limiti-documentali-e-formato-v2.md) | test, fuzz, rev |  |
+| REQ-LIM-003 | Le chiavi binarie ammettono 1..65535 byte; arene, copie e migrazioni hanno budget e non confermano operazioni incomplete; la migrazione preserva sorgenti e atomicità. | ADR-0048 | C1 | progettato | INV-A8, INV-A11 | [0048](../adr/0048-limiti-documentali-e-formato-v2.md) | test, fi, bench, rev | FI-06 |
 
 ## Copertura degli invarianti
 
@@ -160,7 +164,7 @@
 | INV-X1 | REQ-SIM-001 |
 | INV-X2 | REQ-BEN-001, REQ-BEN-002, REQ-VAL-001 |
 | INV-X3 | REQ-SIM-002, REQ-VAL-001, REQ-AFF-016 |
-| INV-F1 | REQ-WAL-001, REQ-REC-001, REQ-FOR-001, REQ-FOR-002, REQ-FOR-003, REQ-AFF-009, REQ-AFF-010, REQ-AFF-014 |
+| INV-F1 | REQ-WAL-001, REQ-REC-001, REQ-FOR-001, REQ-FOR-002, REQ-FOR-003, REQ-AFF-009, REQ-AFF-010, REQ-AFF-014, REQ-LIM-001 |
 | INV-V1 | REQ-WAL-003, REQ-WAL-006 |
 | INV-V2 | REQ-TXM-004, REQ-MVC-002 |
 | INV-V3 | REQ-IDX-004 |
@@ -172,7 +176,7 @@
 | INV-A5 | REQ-AFF-005 |
 | INV-A6 | REQ-AFF-006 |
 | INV-A7 | REQ-REG-002, REQ-CMP-004, REQ-TXM-005, REQ-REC-002, REQ-AFF-007, REQ-AFF-017, REQ-AFF-019 |
-| INV-A8 | REQ-IDX-003, REQ-IDX-005, REQ-CON-004, REQ-MVC-004, REQ-MVC-008, REQ-AFF-008 |
+| INV-A8 | REQ-IDX-003, REQ-IDX-005, REQ-IDX-007, REQ-CON-004, REQ-MVC-004, REQ-MVC-008, REQ-AFF-008, REQ-LIM-001, REQ-LIM-002, REQ-LIM-003 |
 | INV-F2 | REQ-WAL-005, REQ-FOR-003 |
 | INV-F3 | REQ-AFF-009 |
 | INV-V5 | REQ-WAL-006, REQ-TXM-008 |
@@ -181,24 +185,24 @@
 | INV-M6 | REQ-MVC-008 |
 | INV-S7 | REQ-CMP-009, REQ-TXM-007, REQ-FOR-004 |
 | INV-C11 | REQ-CMP-008, REQ-IDX-006 |
-| INV-I3 | REQ-IDX-005 |
+| INV-I3 | REQ-IDX-005, REQ-IDX-007 |
 | INV-P6 | REQ-CON-005 |
 | INV-P5 | REQ-CON-004 |
 | INV-A9 | REQ-AFF-017 |
 | INV-A10 | REQ-AFF-018 |
-| INV-A11 | REQ-REG-002, REQ-AFF-019 |
+| INV-A11 | REQ-REG-002, REQ-AFF-019, REQ-LIM-003 |
 | INV-A12 | REQ-CCH-004 |
 
 ## Copertura degli scenari di fault injection
 
 | Scenario | Requisiti |
 |---|---|
-| FI-01 | REQ-WAL-003, REQ-WAL-005, REQ-WAL-006, REQ-REC-001, REQ-REC-003, REQ-FLT-001, REQ-FOR-001, REQ-AFF-007, REQ-AFF-009, REQ-AFF-017 |
+| FI-01 | REQ-WAL-003, REQ-WAL-005, REQ-WAL-006, REQ-REC-001, REQ-REC-003, REQ-FLT-001, REQ-FOR-001, REQ-AFF-007, REQ-AFF-009, REQ-AFF-017, REQ-LIM-001 |
 | FI-02 | REQ-WAL-003, REQ-WAL-005, REQ-WAL-006, REQ-REC-003, REQ-FLT-001, REQ-AFF-001, REQ-AFF-009, REQ-AFF-017 |
 | FI-03 | REQ-TXM-002, REQ-TXM-004, REQ-TXM-005, REQ-TXM-007, REQ-FLT-001 |
 | FI-04 | REQ-TXM-003, REQ-TXM-004, REQ-TXM-005, REQ-FLT-001 |
 | FI-05 | REQ-WAL-003, REQ-TXM-003, REQ-TXM-004, REQ-TXM-005, REQ-TXM-007, REQ-TXM-008, REQ-REC-003, REQ-FLT-001 |
-| FI-06 | REQ-CMP-002, REQ-CMP-003, REQ-IDX-002, REQ-IDX-004, REQ-REC-001, REQ-REC-003, REQ-REC-004, REQ-FLT-001, REQ-AFF-007, REQ-AFF-019 |
+| FI-06 | REQ-CMP-002, REQ-CMP-003, REQ-IDX-002, REQ-IDX-004, REQ-REC-001, REQ-REC-003, REQ-REC-004, REQ-FLT-001, REQ-AFF-007, REQ-AFF-019, REQ-LIM-003 |
 | FI-07 | REQ-CLN-002, REQ-CMP-003, REQ-CMP-004, REQ-REC-002, REQ-FLT-001, REQ-AFF-007, REQ-AFF-019 |
 | FI-08 | REQ-MRG-001, REQ-CMP-003, REQ-CMP-004, REQ-REC-002, REQ-FLT-001, REQ-AFF-007, REQ-AFF-019 |
 | FI-09 | REQ-CMP-007, REQ-REC-003, REQ-FLT-001, REQ-AFF-018 |
@@ -253,8 +257,11 @@
 | [0040](../adr/0040-manifest-a-record-unico.md) | REQ-REG-002, REQ-STO-006, REQ-MET-001, REQ-CLN-002, REQ-CMP-002, REQ-CMP-003, REQ-CMP-004, REQ-TXM-007, REQ-REC-002, REQ-REC-004, REQ-AFF-017, REQ-AFF-018, REQ-AFF-019 |
 | [0041](../adr/0041-multiserie-segmenti-autosufficienti.md) | REQ-CMP-009, REQ-WAL-004, REQ-TXM-001, REQ-TXM-002, REQ-TXM-003, REQ-TXM-004, REQ-TXM-005, REQ-TXM-007, REQ-TXM-008, REQ-REC-002 |
 | [0042](../adr/0042-tombstone-e-indice-dei-vivi.md) | REQ-CMP-008, REQ-CMP-009, REQ-IDX-006 |
-| [0043](../adr/0043-primary-index-a-frammenti.md) | REQ-IDX-001, REQ-IDX-003, REQ-IDX-005 |
+| [0043](../adr/0043-primary-index-a-frammenti.md) | REQ-IDX-001, REQ-IDX-003, REQ-IDX-005, REQ-IDX-007 |
 | [0044](../adr/0044-cache-acceleratore-puro.md) | REQ-CCH-002, REQ-CCH-004 |
 | [0045](../adr/0045-modello-di-esecuzione.md) | REQ-CON-005, REQ-CON-004 |
 | [0046](../adr/0046-orizzonte-con-registro-limitato.md) | REQ-MVC-008 |
 | [0047](../adr/0047-verifica-csn-dei-record-prepared.md) | REQ-FOR-004 |
+| [0048](../adr/0048-limiti-documentali-e-formato-v2.md) | REQ-LIM-001, REQ-LIM-002, REQ-LIM-003 |
+| [0049](../adr/0049-capacita-oltre-la-ram.md) | —  (decisione senza requisito diretto) |
+| [0050](../adr/0050-pubblicazione-e-costi-della-directory.md) | REQ-IDX-007 |

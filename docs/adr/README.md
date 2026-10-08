@@ -105,3 +105,11 @@ risultato consolidato è in [architettura.md](../architettura.md) e
 |---|---|---|---|
 | [0046](0046-orizzonte-con-registro-limitato.md) | Registro limitato dei CSN in volo; assegnazione e registrazione indivisibili; H ricavato dal minimo pendente | controesempio riproducibile in SPK-07 | Accettata |
 | [0047](0047-verifica-csn-dei-record-prepared.md) | CSN dei prepared verificato attraverso OUTCOME o esito autorevole nel manifest; il flag da solo è insufficiente | verifica dei record in SPK-09 | Accettata |
+| [0050](0050-pubblicazione-e-costi-della-directory.md) | Root ricontrollata anche su miss; costo della directory e memoria transitoria distinti dai C slot | pubblicazione e contatori SPK-01 | Accettata; verifica di scala e memoria aperta |
+
+## Limiti e capacità (2026-10-08)
+
+| ADR | Decisione | Stato |
+|---|---|---|
+| [0048](0048-limiti-documentali-e-formato-v2.md) | 16 MiB effettivi, 100 livelli, chiavi estese, formato v2 | Accettata; evidenze da produrre |
+| [0049](0049-capacita-oltre-la-ram.md) | Indice persistente con cache per superare la RAM | Proposta |

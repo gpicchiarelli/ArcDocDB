@@ -133,7 +133,7 @@ allocano ([ADR-0024](adr/0024-memoria-e-gc.md)). L'indice cresce un frammento al
 
 | Struttura | Per | Contenuto | Crescita |
 |---|---|---|---|
-| Primary index | Serie | directory + frammenti (byte di controllo, 4 parole/slot, chiavi locali) | divisione di un frammento |
+| Primary index | Serie | directory + frammenti (byte di controllo, 5 parole/slot v2, chiavi locali) | divisione di un frammento |
 | Versioni trattenute | Serie | stessa tabella, slot a 5 parole: versioni ancora visibili a uno snapshot | solo con snapshot attivi |
 | Versioni in sospeso | Serie | stessa tabella, solo del writer: lotti non pubblicati e intenti | limitata |
 | Delta indici secondari | Serie | entry dell'`ACTIVE` per ogni indice, array in aggiunta | svuotato alla chiusura |
@@ -231,14 +231,21 @@ capacità fissa con le proprie chiavi; un writer, reader senza lock con seqlock 
 ([ADR-0043](adr/0043-primary-index-a-frammenti.md), [ADR-0032](adr/0032-seqlock-a-64-bit.md)).
 Contiene **solo documenti vivi** ([ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md)).
 
-Slot (4 parole + 1 byte di controllo = 33 B):
+Il reader ricontrolla root e generazione anche su miss, con tentativi limitati.
+La manutenzione copia al massimo C slot sorgenti, ma la directory immutabile
+costa O(2^G) riferimenti e le chiavi hanno un budget distinto: non si garantisce
+una pausa indipendente dalla dimensione della Serie
+([ADR-0050](adr/0050-pubblicazione-e-costi-della-directory.md)).
+
+Slot v2 (5 parole + 1 byte di controllo = 41 B), [ADR-0048](adr/0048-limiti-documentali-e-formato-v2.md):
 
 | Parola | Contenuto |
 |---|---|
 | 0 | CSN = versione |
 | 1 | segment-id (32) · offset (32) |
-| 2 | key-off (24) · key-len (8) · lunghezza del record (24) · flag (8) |
+| 2 | key-off (32) · key-len (16) · flag (8) · riservato (8) |
 | 3 | contatore seqlock (64) |
+| 4 | lunghezza record (32) · riservato (32) |
 
 Persistenza: l'indice è un dato derivato; si ricostruisce dagli hint dei segmenti chiusi, in
 qualsiasi ordine, scegliendo per ogni chiave il CSN massimo. I limiti che discendono dal
@@ -443,3 +450,7 @@ della Fase 1 ([valutazione](valutazione/README.md#rivalutazione-2026-10-03)):
 4. costo dei controlli di affidabilità, CRC in lettura e `safety` ≥ 2 (SPK-09);
 5. modello dei protocolli — lotto e frontiera, orizzonte, 2PC, swap, recovery — senza
    violazioni (SPK-07).
+
+## Limiti documentali e capacità
+
+Il contratto v2 accetta documenti CBOR da 16 MiB, profondità fino a 100 e chiavi fino a 65.535 byte (ADR-0048). Verifiche e migrazione sono da produrre. Il modo oltre RAM è una proposta distinta ([ADR-0049](adr/0049-capacita-oltre-la-ram.md)), con lookup freddi e latenza da misurare.

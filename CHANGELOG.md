@@ -7,6 +7,10 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- ADR-0050: root dell'indice ricontrollata anche su miss, costi e budget della
+  directory separati dagli slot; nessuna promessa di pausa indipendente dalla Serie.
+- ADR-0048: documenti da 16 MiB effettivi, profondità 100, chiavi fino a 65.535 byte e layout v2; tre requisiti progettati, gate di verifica e migrazione. ADR-0049 propone il percorso oltre RAM senza dichiararlo disponibile.
+
 - Suite eseguibile della Fase 0 per SPK-01, SPK-02, SPK-03, SPK-07 e SPK-09; harness
   `tools/run-spikes.lisp`, compilazione senza avvisi, processi isolati, comandi e output
   grezzo; `make spikes-check` in CI e `make spikes-bench` per misure locali in serie.

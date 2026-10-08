@@ -102,7 +102,7 @@ Each decision records its context, constraints and verification method.
 | Integrity | Fail-stop on any write error. Verification on every read. Recovery never truncates. | [0033](docs/adr/0033-fail-stop-e-integrita-end-to-end.md) · [0039](docs/adr/0039-cornice-unica-dei-record.md) |
 | Code | Checks always on. No warnings. No dependencies. | [0034](docs/adr/0034-policy-di-compilazione-e-standard-di-codifica.md) · [0027](docs/adr/0027-dipendenze-e-test.md) |
 
-All forty-seven are in the [decision log](docs/adr/README.md); the reasoning that ties them
+All fifty are in the [decision log](docs/adr/README.md); the reasoning that ties them
 together is the [design analysis](docs/analisi-progettuale.md).
 
 ## Reliability
@@ -126,10 +126,10 @@ detectable where they can be: see the [assurance case](docs/affidabilita/README.
 
 | Dimension | Limit |
 |---|---|
-| `_id` | 1 to 255 bytes |
-| Document | up to 16 MiB |
+| `_id` | 1 to 65,535 bytes (v2 design) |
+| Document | 16 MiB of encoded document (v2 design) |
 | Segment | up to 4 GiB · 256 MiB by default |
-| Documents per server | about 650 million per 64 GB of memory (estimate) |
+| Documents per server | resident capacity depends on memory and key size; v2 measurements pending |
 
 Every limit and where it comes from: [limiti.md](docs/limiti.md).
 
@@ -141,7 +141,7 @@ Every limit and where it comes from: [limiti.md](docs/limiti.md).
 
 | | |
 |---|---|
-| Done | Specification · architecture · design analysis · on-disk formats · 47 decisions · 65 invariants · 110 traced requirements |
+| Done | Specification · architecture · design analysis · on-disk formats · 50 decisions · 65 invariants · 114 traced requirements |
 | Now | Five executable [experiments](spikes/README.md): index, GC, flush, protocols and integrity; local results, explicit remaining limits |
 | Next | Complete the reference-scale campaigns and protocol models in the [spike plan](docs/valutazione/piano-spike.md) |
 | Then | Ten implementation phases, each closed by a verification gate: the [roadmap](docs/roadmap.md) |

@@ -231,6 +231,7 @@
            (unless (or prepared (= stamp csn)) (rifiuta-record :csn-mismatch))
            (values (+ corpo key-len) termine stamp)))))))
 
+(declaim (inline verifier-record-safety2 verifier-record-safety3))
 (declaim (ftype (function (octets integer integer octets u64 integer
                           &optional boolean integer)
                          (values indice indice u64 &optional))
@@ -320,6 +321,7 @@ La provenienza e la visibilità della prova restano responsabilità del resolver
            (setf somma (logand +maschera-crc+ (+ somma (aref buffer i)))))
          somma)))))
 
+(declaim (inline accumula-valore-safety2 accumula-valore-safety3))
 (definisci-accumulatore accumula-valore-safety2 2)
 (definisci-accumulatore accumula-valore-safety3 3)
 

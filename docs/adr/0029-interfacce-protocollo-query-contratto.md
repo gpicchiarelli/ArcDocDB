@@ -45,3 +45,7 @@ query come AST dati (MongoDB, Datalog); evoluzione additiva degli schemi (Protoc
 
 - Un solo codec e un solo formato dati da un capo all'altro.
 - Il motore è indipendente dalla sintassi: linguaggi testuali e driver sono livelli sopra.
+
+## Contratto documentale v2
+
+[ADR-0048](0048-limiti-documentali-e-formato-v2.md) definisce documenti CBOR fino a 16 MiB e 100 livelli. Il budget di frame è distinto dal documento: deve ammettere un documento massimo più chiave e envelope della richiesta, con un limite esplicito e verifica della lunghezza prima di allocare. I batch hanno budget separati e non sono ammessi senza limite.
