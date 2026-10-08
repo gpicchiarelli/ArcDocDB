@@ -35,9 +35,9 @@ Carattere di sistema, in quest'ordine: `-apple-system`, `BlinkMacSystemFont`, `S
 
 | Ruolo | Corpo | Peso | Spaziatura |
 |---|---|---|---|
-| Nodo del diagramma | 17 | 500 | normale |
-| Descrizione | 15 | 400 | normale |
-| Etichetta (maiuscolo) | 11–12,5 | 600 | +1,5 – +1,8 |
+| Nodo del diagramma | 14 | 500 | normale |
+| Descrizione | 13 | 400 | normale |
+| Etichetta (maiuscolo) | 9,5–10 | 600 | +1,2 – +1,5 |
 
 Il nome del progetto è testo vero nel README, non un'immagine. Le etichette in maiuscolo
 spaziato sono riservate ai nomi di stato e alle proprietà (`ACTIVE`, `IMMUTABLE`).
@@ -125,3 +125,15 @@ depth of field, subtle film grain. No people, no readable text, no logos, no wat
 ```
 
 </details>
+
+## Il repository come prodotto
+
+Il README presenta scopo, funzionamento e maturità. L'indice della documentazione orienta
+per domanda; gli indici di sezione offrono collegamenti ai percorsi vicini. La guida ai
+contributi descrive il lavoro possibile oggi e i controlli effettivamente disponibili.
+
+- Conservare marchio, palette, geometrie e varianti chiara e scura.
+- Usare titoli descrittivi e intestazioni esplicite nelle tabelle di confronto.
+- Distinguere una garanzia progettata da un risultato verificato; lo stato deve essere leggibile.
+- Collegare i documenti con etichette comprensibili, senza ripetere il marchio in ogni pagina.
+- Tenere i dettagli tecnici nei documenti dedicati; il README deve fornire accesso a quei dettagli.

@@ -2,11 +2,11 @@
 
 ## Fase corrente
 
-**Fase 0: definizione architetturale e valutazione.** La definizione è completa (47 ADR,
+**Fase 0: definizione architetturale e valutazione.** La definizione è completa (45 ADR,
 [architettura](docs/architettura.md), [formati](docs/formati-su-disco.md)) ed è passata da
 un'[analisi progettuale](docs/analisi-progettuale.md) (ADR 0036–0045); non si scrive
-codice di produzione. ADR-0028 e ADR-0030 sono confermati dall'autore (2026-10-08). Restano
-le campagne degli [spike](docs/valutazione/piano-spike.md) (SPK-01, 02, 03, 07, 09 per primi),
+codice di produzione. Restano: conferma di ADR-0028 e ADR-0030 da parte dell'autore ed
+esecuzione degli [spike](docs/valutazione/piano-spike.md) (SPK-01, 02, 03, 07, 09 per primi),
 aggiornando la [valutazione](docs/valutazione/README.md). Vedi la [roadmap](docs/roadmap.md).
 
 Principio operativo: si scrive una volta sola, con la soluzione migliore nota
@@ -72,7 +72,3 @@ Caricare e verificare il sistema:
 ```bash
 make check
 ```
-
-La suite eseguibile degli esperimenti è separata dai benchmark: `make spikes-check`
-verifica la correttezza, `make spikes-bench` conserva misure e ambiente in `spikes/out/`.
-L'anello dell'orizzonte è sostituito dal registro limitato di ADR-0046.

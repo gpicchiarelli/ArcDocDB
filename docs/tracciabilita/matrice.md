@@ -2,7 +2,7 @@
 
 > **Generata** da [requisiti.lisp](requisiti.lisp) con `make trace-write`. Non modificare a mano: `make trace` fallisce se non coincide.
 
-**Sommario.** 107 requisiti. Per classe: C1 84, C2 5, C3 12, C4 6. Per stato: specificato 0, progettato 105, implementato 1, verificato 1. Invarianti coperti: 64/64. Scenari FI coperti: 13/13.
+**Sommario.** 110 requisiti. Per classe: C1 86, C2 5, C3 12, C4 7. Per stato: specificato 0, progettato 107, implementato 2, verificato 1. Invarianti coperti: 65/65. Scenari FI coperti: 13/13.
 
 ## Requisiti
 
@@ -81,6 +81,7 @@
 | REQ-MVC-005 | Uno snapshot con CSN s esegue la prima lettura solo quando l'orizzonte di visibilità è almeno s; due letture dello stesso documento nello stesso snapshot danno lo stesso risultato; uno snapshot creato dopo la conferma di un commit lo vede. | ADR-0038 | C1 | progettato | INV-M4, INV-M1 | [0038](../adr/0038-orizzonte-di-visibilita.md) | test, prop, model, fi | FI-11, FI-12 |
 | REQ-MVC-006 | La versione di un documento è il CSN del commit che l'ha prodotta: expected-version è un CSN, non si ripete e non riparte dopo un'eliminazione; per ogni documento l'ordine dei CSN è l'ordine delle versioni. | ADR-0038 | C1 | progettato | INV-M5, INV-T2 | [0038](../adr/0038-orizzonte-di-visibilita.md) | test, diff, model |  |
 | REQ-MVC-007 | Il writer trattiene la versione sostituita quando la soglia del registro degli snapshot è inferiore al CSN nuovo; la registrazione di uno snapshot pubblica la soglia prima di leggere il proprio CSN, con barriera di memoria completa. | ADR-0038 | C1 | progettato | INV-M2 | [0038](../adr/0038-orizzonte-di-visibilita.md) | test, model, soak |  |
+| REQ-MVC-008 | Il registro dei CSN in volo ha capacità fissa; assegnazione del CSN e registrazione sono indivisibili rispetto all'avanzamento dell'orizzonte; uno slot non viene riusato finché il suo CSN non è pubblicato o annullato; quando non ci sono pendenti H raggiunge l'ultimo CSN, anche se un commit lento è stato superato da molti commit conclusi. | ADR-0046 | C1 | progettato | INV-M4, INV-M6, INV-A8 | [0046](../adr/0046-orizzonte-con-registro-limitato.md) | test, model, bench |  |
 | REQ-REC-001 | Il Recovery Manager verifica log, segment metadata, index metadata, atomic swap, stato dei segmenti, stato delle transazioni e multiserie.log. | Recovery | C1 | progettato | INV-F1 | [0018](../adr/0018-control-log-manifest-swap.md), [0033](../adr/0033-fail-stop-e-integrita-end-to-end.md), [0037](../adr/0037-lotto-sigillato.md) | test, fi | FI-01, FI-06 |
 | REQ-REC-002 | Dopo un crash il sistema recupera i log delle Serie, ricostruisce o verifica gli indici, identifica i segmenti, completa o annulla le compaction incomplete, processa multiserie.log e completa le multiserie preparate. | Recovery | C1 | progettato | INV-A7 | [0018](../adr/0018-control-log-manifest-swap.md), [0021](../adr/0021-2pc-intenti-outcome.md), [0040](../adr/0040-manifest-a-record-unico.md), [0041](../adr/0041-multiserie-segmenti-autosufficienti.md) | test, fi, soak | FI-07, FI-08, FI-10 |
 | REQ-REC-003 | Nessun dato committed è perso. | Fault injection | C1 | progettato | INV-D1 | [0013](../adr/0013-log-structured-segmento-active-come-log.md), [0019](../adr/0019-durability-e-group-commit-pipelined.md), [0037](../adr/0037-lotto-sigillato.md) | fi, diff, soak | FI-01, FI-02, FI-05, FI-06, FI-09, FI-10 |
@@ -93,9 +94,11 @@
 | REQ-SIM-001 | Il sistema usa strutture compatte e array tipizzati; il SIMD si introduce solo sugli hot path dimostrati dai benchmark. | SIMD e ottimizzazioni native | C3 | progettato | INV-X1 | [0012](../adr/0012-simd-guidato-dai-benchmark.md), [0024](../adr/0024-memoria-e-gc.md) | rev, bench |  |
 | REQ-SIM-002 | Il codice del progetto è solo Common Lisp. | ADR-0001 | C4 | progettato | INV-X3 | [0001](../adr/0001-common-lisp-sbcl.md), [0027](../adr/0027-dipendenze-e-test.md) | analisi, rev |  |
 | REQ-MOD-001 | Il sistema è organizzato almeno nei diciotto moduli della specifica. | Moduli software | C2 | progettato |  | [0031](../adr/0031-software-critico-criteri-e-priorita.md) | rev |  |
+| REQ-VAL-001 | La suite della Fase 0 compila gli esperimenti senza avvisi in processi isolati, esegue controlli deterministici e benchmark separati e conserva comandi, ambiente e output grezzo; nessun esito degli spike promuove automaticamente un requisito del motore a verificato. | Piano degli spike | C4 | implementato | INV-X2, INV-X3 | [0035](../adr/0035-strategia-di-verifica-e-tracciabilita.md) | test, analisi |  |
 | REQ-FOR-001 | Ogni record e ogni file persistente porta lunghezza e CRC32C; ciò che non si verifica è trattato come inesistente (coda), rigenerato (dato derivato) o dichiarato corrotto (dato confermato). | ADR-0013 | C1 | progettato | INV-F1 | [0013](../adr/0013-log-structured-segmento-active-come-log.md), [0014](../adr/0014-formato-record-documento-id.md), [0039](../adr/0039-cornice-unica-dei-record.md) | test, fuzz, corr, fi | FI-01, FI-10 |
 | REQ-FOR-002 | Ogni file persistente ha magic e versione di formato; un formato non cambia, si crea una nuova versione con migrazione. | ADR-0014 | C1 | progettato | INV-F1 | [0014](../adr/0014-formato-record-documento-id.md) | test, rev |  |
 | REQ-FOR-003 | Tutti i record di tutti i log hanno la stessa cornice di 24 byte con CRC dell'intestazione e CRC del corpo; l'intestazione è verificata prima di usare le lunghezze; il CRC del corpo è calcolato fuori dal writer. | ADR-0039 | C1 | progettato | INV-F1, INV-F2 | [0039](../adr/0039-cornice-unica-dei-record.md) | test, fuzz, corr, bench |  |
+| REQ-FOR-004 | La lettura di un record prepared verifica una prova autorevole del segmento (OUTCOME o esito nel manifest): il TXID della prova coincide con lo stamp del record e il suo CSN coincide con quello della entry; una prova mancante, corrotta o riferita a un'altra versione produce errore di integrità. | ADR-0047 | C1 | progettato | INV-A2, INV-S7 | [0039](../adr/0039-cornice-unica-dei-record.md), [0047](../adr/0047-verifica-csn-dei-record-prepared.md) | test, corr, fuzz, diff |  |
 | REQ-AFF-001 | Un errore di scrittura, flush, rinomina o sincronizzazione di directory porta la Serie o l'Archivio in FAULTED senza retry e senza conferma del lotto. | ADR-0033 | C1 | progettato | INV-A1 | [0033](../adr/0033-fail-stop-e-integrita-end-to-end.md) | test, fi | FI-02 |
 | REQ-AFF-002 | Ogni record letto da disco o da cache è verificato con i CRC32C di intestazione e corpo e con il confronto di chiave e CSN (la versione) prima di essere restituito; un dato non verificato non è mai restituito. | ADR-0033 | C1 | progettato | INV-A2 | [0033](../adr/0033-fail-stop-e-integrita-end-to-end.md), [0039](../adr/0039-cornice-unica-dei-record.md) | test, corr, fuzz |  |
 | REQ-AFF-003 | Nessun codice di prodotto è compilato con safety inferiore a 2; la compilazione è priva di avvisi; i costrutti vietati sono rilevati dal linter. | ADR-0034 | C4 | implementato | INV-A3 | [0034](../adr/0034-policy-di-compilazione-e-standard-di-codifica.md) | analisi |  |
@@ -155,27 +158,28 @@
 | INV-P3 | REQ-ARC-002, REQ-TXM-006, REQ-CON-003, REQ-CON-005 |
 | INV-P4 | REQ-MRG-004, REQ-CMP-006 |
 | INV-X1 | REQ-SIM-001 |
-| INV-X2 | REQ-BEN-001, REQ-BEN-002 |
-| INV-X3 | REQ-SIM-002, REQ-AFF-016 |
+| INV-X2 | REQ-BEN-001, REQ-BEN-002, REQ-VAL-001 |
+| INV-X3 | REQ-SIM-002, REQ-VAL-001, REQ-AFF-016 |
 | INV-F1 | REQ-WAL-001, REQ-REC-001, REQ-FOR-001, REQ-FOR-002, REQ-FOR-003, REQ-AFF-009, REQ-AFF-010, REQ-AFF-014 |
 | INV-V1 | REQ-WAL-003, REQ-WAL-006 |
 | INV-V2 | REQ-TXM-004, REQ-MVC-002 |
 | INV-V3 | REQ-IDX-004 |
 | INV-V4 | REQ-CON-002 |
 | INV-A1 | REQ-AFF-001, REQ-AFF-009, REQ-AFF-015 |
-| INV-A2 | REQ-AFF-002 |
+| INV-A2 | REQ-FOR-004, REQ-AFF-002 |
 | INV-A3 | REQ-AFF-003 |
 | INV-A4 | REQ-AFF-004 |
 | INV-A5 | REQ-AFF-005 |
 | INV-A6 | REQ-AFF-006 |
 | INV-A7 | REQ-REG-002, REQ-CMP-004, REQ-TXM-005, REQ-REC-002, REQ-AFF-007, REQ-AFF-017, REQ-AFF-019 |
-| INV-A8 | REQ-IDX-003, REQ-IDX-005, REQ-CON-004, REQ-MVC-004, REQ-AFF-008 |
+| INV-A8 | REQ-IDX-003, REQ-IDX-005, REQ-CON-004, REQ-MVC-004, REQ-MVC-008, REQ-AFF-008 |
 | INV-F2 | REQ-WAL-005, REQ-FOR-003 |
 | INV-F3 | REQ-AFF-009 |
 | INV-V5 | REQ-WAL-006, REQ-TXM-008 |
-| INV-M4 | REQ-MVC-005 |
+| INV-M4 | REQ-MVC-005, REQ-MVC-008 |
 | INV-M5 | REQ-WAL-005, REQ-MVC-006 |
-| INV-S7 | REQ-CMP-009, REQ-TXM-007 |
+| INV-M6 | REQ-MVC-008 |
+| INV-S7 | REQ-CMP-009, REQ-TXM-007, REQ-FOR-004 |
 | INV-C11 | REQ-CMP-008, REQ-IDX-006 |
 | INV-I3 | REQ-IDX-005 |
 | INV-P6 | REQ-CON-005 |
@@ -241,14 +245,16 @@
 | [0032](../adr/0032-seqlock-a-64-bit.md) | REQ-IDX-003 |
 | [0033](../adr/0033-fail-stop-e-integrita-end-to-end.md) | REQ-REC-001, REQ-AFF-001, REQ-AFF-002, REQ-AFF-004, REQ-AFF-006, REQ-AFF-007, REQ-AFF-008, REQ-AFF-009, REQ-AFF-010, REQ-AFF-011, REQ-AFF-015 |
 | [0034](../adr/0034-policy-di-compilazione-e-standard-di-codifica.md) | REQ-AFF-003, REQ-AFF-004, REQ-AFF-008 |
-| [0035](../adr/0035-strategia-di-verifica-e-tracciabilita.md) | REQ-FLT-001, REQ-AFF-005, REQ-AFF-013 |
+| [0035](../adr/0035-strategia-di-verifica-e-tracciabilita.md) | REQ-FLT-001, REQ-VAL-001, REQ-AFF-005, REQ-AFF-013 |
 | [0036](../adr/0036-leggi-di-progetto.md) | REQ-CON-005, REQ-AFF-007, REQ-AFF-017, REQ-AFF-018, REQ-AFF-019 |
 | [0037](../adr/0037-lotto-sigillato.md) | REQ-WAL-002, REQ-WAL-003, REQ-WAL-005, REQ-WAL-006, REQ-REC-001, REQ-REC-003, REQ-AFF-009, REQ-AFF-017 |
 | [0038](../adr/0038-orizzonte-di-visibilita.md) | REQ-VER-001, REQ-TXM-004, REQ-MVC-002, REQ-MVC-005, REQ-MVC-006, REQ-MVC-007 |
-| [0039](../adr/0039-cornice-unica-dei-record.md) | REQ-WAL-005, REQ-IDX-006, REQ-SEC-001, REQ-FOR-001, REQ-FOR-003, REQ-AFF-002 |
+| [0039](../adr/0039-cornice-unica-dei-record.md) | REQ-WAL-005, REQ-IDX-006, REQ-SEC-001, REQ-FOR-001, REQ-FOR-003, REQ-FOR-004, REQ-AFF-002 |
 | [0040](../adr/0040-manifest-a-record-unico.md) | REQ-REG-002, REQ-STO-006, REQ-MET-001, REQ-CLN-002, REQ-CMP-002, REQ-CMP-003, REQ-CMP-004, REQ-TXM-007, REQ-REC-002, REQ-REC-004, REQ-AFF-017, REQ-AFF-018, REQ-AFF-019 |
 | [0041](../adr/0041-multiserie-segmenti-autosufficienti.md) | REQ-CMP-009, REQ-WAL-004, REQ-TXM-001, REQ-TXM-002, REQ-TXM-003, REQ-TXM-004, REQ-TXM-005, REQ-TXM-007, REQ-TXM-008, REQ-REC-002 |
 | [0042](../adr/0042-tombstone-e-indice-dei-vivi.md) | REQ-CMP-008, REQ-CMP-009, REQ-IDX-006 |
 | [0043](../adr/0043-primary-index-a-frammenti.md) | REQ-IDX-001, REQ-IDX-003, REQ-IDX-005 |
 | [0044](../adr/0044-cache-acceleratore-puro.md) | REQ-CCH-002, REQ-CCH-004 |
 | [0045](../adr/0045-modello-di-esecuzione.md) | REQ-CON-005, REQ-CON-004 |
+| [0046](../adr/0046-orizzonte-con-registro-limitato.md) | REQ-MVC-008 |
+| [0047](../adr/0047-verifica-csn-dei-record-prepared.md) | REQ-FOR-004 |

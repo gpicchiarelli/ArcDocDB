@@ -1,6 +1,6 @@
 # ADR-0030 — Scope della v1
 
-- **Stato:** Proposta (richiede conferma dell'autore). Rivista il 2026-10-03 in applicazione di [ADR-0031](0031-software-critico-criteri-e-priorita.md).
+- **Stato:** Accettata dall'autore il 2026-10-08, inclusi backup, restore verificato, verificatore offline e scrubbing della revisione 2026-10-03.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-23
 - **Riferimenti:** RSK-14

@@ -1,5 +1,7 @@
 # Valutazione architetturale
 
+[Documentazione](../README.md) · [Esperimenti](../../spikes/README.md) · [Roadmap](../roadmap.md)
+
 Questa sezione valuta l'architettura descritta dalla
 [specifica](../specifica/prompt-originale.md) **prima** dell'implementazione: che cosa regge,
 che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
@@ -106,8 +108,16 @@ tabella concorrente. Il giudizio sull'impianto non cambia; cambia la fiducia nei
 che ora poggia su controesempi cercati e non trovati più, e che il modello SPK-07 deve
 confermare.
 
-**Decisioni che spettano all'autore.** [ADR-0028](../adr/0028-target-e-obiettivi-di-latenza.md)
-(target e latenze) e [ADR-0030](../adr/0030-scope-v1.md) (scope) sono in stato *Proposta*.
+**Decisioni dell'autore (2026-10-08).** [ADR-0028](../adr/0028-target-e-obiettivi-di-latenza.md)
+(target e latenze) e [ADR-0030](../adr/0030-scope-v1.md) (scope) sono confermati, incluse le
+revisioni su minimi, backup e verificatore.
+
+**Prime evidenze eseguibili (2026-10-08).** SPK-07 trova un blocco dell'orizzonte con anello
+di quattro parole e due commit pendenti: la distanza dei CSN può crescere senza violare i
+crediti. [ADR-0046](../adr/0046-orizzonte-con-registro-limitato.md) lo sostituisce con il
+registro limitato dei soli pendenti. Il modello corretto supera la configurazione finita;
+il controllo negativo conserva il controesempio. I risultati degli spike restano distinti
+dalla verifica dei requisiti del motore, che conservano lo stato `progettato`.
 
 **Verdetto.** Il progetto è completo sul piano dei meccanismi: ogni modulo ha un pattern
 assegnato, un formato persistente e un criterio di verifica. La Fase 0 si chiude con

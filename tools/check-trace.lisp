@@ -11,7 +11,7 @@
 ;;;;   3. ogni INV-, ADR-, FI- citato esiste nella documentazione
 ;;;;   4. ogni invariante e ogni scenario FI è coperto da almeno un requisito
 ;;;;   5. ogni requisito ha almeno un metodo di verifica
-;;;;   6. i riferimenti REQ- nel codice (src, tests, tools) indicano requisiti esistenti
+;;;;   6. i riferimenti REQ- nel codice (src, tests, tools, spikes) indicano requisiti esistenti
 ;;;;   7. un requisito :implementato o :verificato è citato nel codice (src o tools)
 ;;;;
 ;;;; REQ: REQ-AFF-005
@@ -128,8 +128,8 @@
     acc))
 
 (defun code-refs ()
-  "Alist (dir . lista di REQ citati) per src, tests, tools. Il file dei requisiti è escluso."
-  (loop for dir in '("src" "tests" "tools")
+  "Alist (dir . lista di REQ citati); anche gli esperimenti devono citare requisiti esistenti."
+  (loop for dir in '("src" "tests" "tools" "spikes")
         collect (cons dir
                       (loop for p in (lisp-files dir)
                             append (req-refs-in (read-text p))))))

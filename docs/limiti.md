@@ -38,7 +38,7 @@ profondità massima della directory dichiarata nella configurazione.
 | Throughput per Serie | tetto del writer logico ([budget](valutazione/stime-ordine-di-grandezza.md#budget-del-writer-logico)) | si scala distribuendo su più Serie |
 | **Query su un indice secondario** | costo proporzionale al **numero di segmenti** della Serie | gli indici sono per segmento ([ADR-0026](adr/0026-indici-secondari-segmentati.md)): una query di uguaglianza consulta un filtro per segmento, una di intervallo l'indice di ogni segmento non escluso da min/max. Con ~4.000 segmenti per TB è il primo limite che una Serie grande incontra: da misurare, con l'indice riassuntivo per Serie come rimedio previsto |
 | Snapshot attivi | numero massimo configurato; memoria delle versioni trattenute cresce con scritture × durata | durata massima configurabile ([ADR-0020](adr/0020-csn-snapshot-isolamento.md)) |
-| Commit in volo per Archivio | massimo configurato (metà dell'anello dell'orizzonte) | oltre, i writer non chiudono nuovi lotti ([ADR-0038](adr/0038-orizzonte-di-visibilita.md)) |
+| Commit in volo per Archivio | capacità configurata del registro (default proposto 256) | oltre, i writer non chiudono nuovi lotti; si parcheggia entro limiti di byte e tempo ([ADR-0046](adr/0046-orizzonte-con-registro-limitato.md)) |
 | Tombstone su disco | al più quanti sono i record morti non ancora recuperati, più i falsi positivi dei filtri (~1 %) | [ADR-0042](adr/0042-tombstone-e-indice-dei-vivi.md) |
 | Worker di I/O | tetto configurato | concorrenza sul dispositivo e pausa del GC (SPK-02) |
 | Connessioni | limite del sistema operativo | — |

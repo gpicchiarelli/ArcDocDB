@@ -168,6 +168,11 @@ prodotto è una **misura con una raccomandazione**.
 - *Esito:* nessuna violazione; in caso contrario il controesempio guida la decisione su QA-04,
   QA-06, QA-07, QA-24. I modelli restano come riferimento per i test di fault injection.
 
+> **Deciso (SPK-07 → ADR-0046)** — La prima suite finita è eseguibile in
+> [SPK-07-protocols](../../spikes/SPK-07-protocols/README.md). Ha trovato il blocco
+> dell'anello dell'orizzonte e verifica il registro limitato che lo sostituisce. Le lacune
+> residue sono dichiarate nell'output; SPK-07 non è ancora completo ai fini del gate.
+
 ### SPK-08
 
 **SIMD e codice generato.**
@@ -198,4 +203,3 @@ prodotto è una **misura con una raccomandazione**.
 - *Esito:* i minimi di throughput sono raggiungibili con **tutti** i controlli attivi e
   `safety` ≥ 2. Se non lo sono: si cambia algoritmo (ad esempio slicing-by-8, verifica a
   blocchi) e si registra in un ADR; **non** si rimuove un controllo (ADR-0031 §5).
-

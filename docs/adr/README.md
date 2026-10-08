@@ -1,5 +1,7 @@
 # Registro delle decisioni architetturali (ADR)
 
+[Documentazione](../README.md) · [Architettura](../architettura.md) · [Invarianti](../invarianti.md)
+
 Un ADR registra **una** decisione: contesto, scelta, conseguenze, e come se ne valuta la
 tenuta. Gli ADR sono la memoria del progetto: spiegano perché l'architettura è fatta così.
 
@@ -60,7 +62,7 @@ sostituiti in parte restano validi per tutto il resto e portano una nota nello s
 |---|---|---|---|
 | [0036](0036-leggi-di-progetto.md) | Leggi di progetto: il parallelismo è fondante; un punto di atomicità per operazione; prepara, decidi, completa; nulla si distrugge per assenza | AP-13, AP-14 | Accettata |
 | [0037](0037-lotto-sigillato.md) | Lotto sigillato: un percorso di scrittura, un flush alla volta, frontiera durevole, recovery che non tronca | AP-02, AP-03, AP-08 | Accettata |
-| [0038](0038-orizzonte-di-visibilita.md) | Orizzonte di visibilità; registro degli snapshot; la versione è il CSN | AP-01, AP-02, AP-07, AP-15 | Accettata (emenda la specifica) |
+| [0038](0038-orizzonte-di-visibilita.md) | Orizzonte di visibilità; registro degli snapshot; la versione è il CSN | AP-01, AP-02, AP-07, AP-15 | Accettata (emenda la specifica; registro dei pendenti: 0046) |
 | [0039](0039-cornice-unica-dei-record.md) | Cornice unica dei record: due CRC, quattro tipi nei segmenti, hint risolto con filtro di esistenza | AP-08, AP-11, AP-13 | Accettata |
 | [0040](0040-manifest-a-record-unico.md) | Manifest a record unico (EDIT); il catalogo decide, le directory seguono | AP-14 | Accettata |
 | [0041](0041-multiserie-segmenti-autosufficienti.md) | Multiserie: segmenti autosufficienti, abort senza traccia, conferma dopo la pubblicazione | AP-05, AP-06, AP-08 | Accettata |
@@ -93,6 +95,13 @@ risultato consolidato è in [architettura.md](../architettura.md) e
 | [0025](0025-cache-per-location.md) | Cache per location, arena a slot, CLOCK per partizione | QA-17 | Accettata (struttura, nessuna ri-etichettatura: 0044) |
 | [0026](0026-indici-secondari-segmentati.md) | Indici secondari per segmento, formato fisso, delta in memoria | QA-25 | Accettata (Bloom: 0039, 0042) |
 | [0027](0027-dipendenze-e-test.md) | Nessuna dipendenza esterna; harness proprio | QA-22 | Accettata |
-| [0028](0028-target-e-obiettivi-di-latenza.md) | Target aggregati; obiettivi numerici di latenza e di pausa GC | QA-26 | **Proposta** |
+| [0028](0028-target-e-obiettivi-di-latenza.md) | Target aggregati; obiettivi numerici di latenza e di pausa GC | QA-26 | Accettata dall'autore il 2026-10-08 |
 | [0029](0029-interfacce-protocollo-query-contratto.md) | Protocollo a frame CBOR; query come dati; contratto additivo | QA-20, QA-21 | Accettata |
-| [0030](0030-scope-v1.md) | Scope della v1 | QA-23 | **Proposta** |
+| [0030](0030-scope-v1.md) | Scope della v1 | QA-23 | Accettata dall'autore il 2026-10-08 |
+
+## Valutazione sperimentale (2026-10-08)
+
+| ADR | Decisione | Evidenza | Stato |
+|---|---|---|---|
+| [0046](0046-orizzonte-con-registro-limitato.md) | Registro limitato dei CSN in volo; assegnazione e registrazione indivisibili; H ricavato dal minimo pendente | controesempio riproducibile in SPK-07 | Accettata |
+| [0047](0047-verifica-csn-dei-record-prepared.md) | CSN dei prepared verificato attraverso OUTCOME o esito autorevole nel manifest; il flag da solo è insufficiente | verifica dei record in SPK-09 | Accettata |

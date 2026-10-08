@@ -1,5 +1,7 @@
 # Tracciabilità
 
+[Documentazione](../README.md) · [Affidabilità](../affidabilita/README.md) · [Decisioni](../adr/README.md)
+
 La tracciabilità è **bidirezionale e controllata da uno strumento**
 ([ADR-0035](../adr/0035-strategia-di-verifica-e-tracciabilita.md), INV-A5).
 
@@ -32,7 +34,7 @@ make trace-write    # rigenera matrice.md dopo aver modificato requisiti.lisp
 3. **Ogni invariante** di [invarianti.md](../invarianti.md) è coperto da almeno un requisito.
 4. **Ogni scenario** di [fault injection](../14-fault-injection.md) è coperto da almeno un
    requisito; un requisito verificato con `:fi` indica gli scenari.
-5. Ogni riferimento `REQ-…` in `src/`, `tests/`, `tools/` indica un requisito esistente.
+5. Ogni riferimento `REQ-…` in `src/`, `tests/`, `tools/` e `spikes/` indica un requisito esistente.
 6. Un requisito `:implementato` o `:verificato` è citato nel codice (`src/` o `tools/`) e,
    se non è di classe C4, nei test.
 7. La matrice committata è esattamente quella generata.
@@ -59,5 +61,6 @@ make trace-write    # rigenera matrice.md dopo aver modificato requisiti.lisp
 - Lo strumento controlla l'**esistenza** e la **completezza** dei collegamenti, non la loro
   **correttezza semantica**: che un requisito sia davvero realizzato da quell'ADR lo stabilisce
   la revisione ([lista di controllo](../affidabilita/standard-di-codifica.md#lista-di-controllo-di-revisione-c1)).
-- Fino alla Fase 1 non c'è codice di prodotto: i controlli 5 e 6 sono attivi ma si applicano
-  solo agli strumenti.
+- Fino alla Fase 1 non c'è codice di prodotto: gli esperimenti citano i requisiti che
+  studiano, ma non li promuovono a `implementato` o `verificato`. Solo il requisito C4
+  dell'harness ha codice di strumento; le prove finite non sono prove del futuro motore.

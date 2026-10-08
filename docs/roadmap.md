@@ -10,8 +10,11 @@ Al 2026-10-03 la parte di **definizione è completa**: le 26 questioni aperte so
 ADR 0013–0030, il progetto è consolidato in [architettura.md](architettura.md) e i formati in
 [formati-su-disco.md](formati-su-disco.md). L'[analisi progettuale](analisi-progettuale.md)
 dello stesso giorno ha riletto l'insieme, trovato cinque difetti di correttezza e li ha
-chiusi con gli ADR 0036–0045. Restano: la conferma dell'autore su ADR-0028 e ADR-0030, e la
-parte di **valutazione sperimentale** (spike SPK-01, SPK-02, SPK-03 e modello SPK-07).
+chiusi con gli ADR 0036–0045. ADR-0028 e ADR-0030 sono stati confermati dall'autore il
+2026-10-08. È in corso la **valutazione sperimentale**: suite degli spike SPK-01, SPK-02,
+SPK-03, SPK-07, SPK-09, con `make spikes-check` e `make spikes-bench`. SPK-07 ha già
+trovato un controesempio nell'anello dell'orizzonte, corretto da
+[ADR-0046](adr/0046-orizzonte-con-registro-limitato.md).
 
 ## Fase 0 — Definizione architetturale e valutazione
 
@@ -48,7 +51,7 @@ misurati e i protocolli critici verificati su modello.
 - [x] Analisi progettuale eseguita; rilievi AP-01…AP-16 chiusi dagli ADR 0036–0045
       ([analisi](analisi-progettuale.md)).
 - [x] Criteri di software critico adottati ([ADR-0031](adr/0031-software-critico-criteri-e-priorita.md)): analisi dei guasti, standard di codifica, piano di verifica, requisiti tracciati, `make check` con linter e tracciabilità.
-- [ ] ADR-0028 (con i minimi di prestazione) e ADR-0030 (con backup e verificatore nella v1) confermati dall'autore.
+- [x] ADR-0028 (con i minimi di prestazione) e ADR-0030 (con backup e verificatore nella v1) confermati dall'autore il 2026-10-08.
 - [ ] SPK-01, SPK-02, SPK-03 e **SPK-09** eseguiti, con risultati riproducibili nel repository.
 - [ ] Il modello SPK-07 (2PC, compaction/swap/reclaim, seqlock, idempotenza del recovery, lotto e frontiera durevole, orizzonte di visibilità, segmenti autosufficienti, tombstone, punti di atomicità) non viola gli invarianti in nessuno degli scenari FI-01…FI-13.
 - [ ] I target di [13 Benchmark](13-benchmark.md) sono confermati o rivisti alla luce di stime

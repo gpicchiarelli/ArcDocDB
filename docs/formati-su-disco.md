@@ -124,6 +124,12 @@ non è prepared, `stamp` uguale al CSN della entry e entry senza flag prepared; 
 prepared, entry con flag prepared. La regola è la stessa per un record letto dal segmento e
 per uno ottenuto dalla cache.
 
+> **Deciso (verifica prepared → ADR-0047)** — Per un record prepared il flag della entry
+> non basta: il reader verifica anche l'OUTCOME del segmento o l'esito dell'EDIT di chiusura.
+> Il TXID della prova deve coincidere con `stamp` del record e il CSN risolto deve coincidere
+> con il CSN della entry. Nessuna prova verificabile significa errore di integrità;
+> [ADR-0047](adr/0047-verifica-csn-dei-record-prepared.md) non cambia il formato.
+
 ## File hint
 
 File `segments/<segment-id>.hint`: indice del segmento. Dato derivato, scritto dopo la

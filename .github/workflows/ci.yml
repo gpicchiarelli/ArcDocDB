@@ -30,6 +30,8 @@ jobs:
         run: make test
       - name: Linter e auto-verifica del linter
         run: make lint lint-selftest
+      - name: Esperimenti Fase 0 (correttezza, senza benchmark)
+        run: make spikes-check
 
   docs:
     name: Tracciabilità e documentazione

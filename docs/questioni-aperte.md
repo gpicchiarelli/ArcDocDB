@@ -7,8 +7,8 @@ marcata «Risolta da ADR-nnnn».
 **Stato al 2026-10-03: tutte le questioni sono chiuse da un ADR** (vedi colonna *Stato*).
 L'[analisi progettuale](analisi-progettuale.md) ha poi rivisto alcune risposte con gli ADR
 0036–0045: la colonna *Stato* indica la decisione originaria e quella che la rivede.
-Due ADR (0028, 0030) sono in stato *Proposta* perché fissano obiettivi di prodotto che
-spettano all'autore. Le sezioni di dettaglio sotto conservano le opzioni valutate e la
+ADR-0028 e ADR-0030 sono stati confermati dall'autore il 2026-10-08. La valutazione
+sperimentale ha corretto il registro dell'orizzonte con ADR-0046. Le sezioni di dettaglio sotto conservano le opzioni valutate e la
 motivazione della scelta è nell'ADR.
 
 **Priorità**
@@ -43,10 +43,10 @@ motivazione della scelta è nell'ADR.
 | [QA-20](#qa-20) | Protocollo di rete e linguaggio di query | C | Risolta da [ADR-0029](adr/0029-interfacce-protocollo-query-contratto.md) | — | — |
 | [QA-21](#qa-21) | Schema/contratto della Serie | C | Risolta da [ADR-0029](adr/0029-interfacce-protocollo-query-contratto.md) | — | — |
 | [QA-22](#qa-22) | Dipendenze e framework di test | B | Risolta da [ADR-0027](adr/0027-dipendenze-e-test.md) | — | — |
-| [QA-23](#qa-23) | Funzioni fuori dallo scope v1 | C | Proposta: [ADR-0030](adr/0030-scope-v1.md) | — | RSK-14 |
+| [QA-23](#qa-23) | Funzioni fuori dallo scope v1 | C | Risolta da [ADR-0030](adr/0030-scope-v1.md), confermata il 2026-10-08 | — | RSK-14 |
 | [QA-24](#qa-24) | Primary index: MVCC, concorrenza, rilocazione | A | Risolta da [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md); struttura rivista da [ADR-0043](adr/0043-primary-index-a-frammenti.md) | SPK-01, SPK-07 | RSK-02 |
 | [QA-25](#qa-25) | Indici secondari: sincronia, snapshot, persistenza | B | Risolta da [ADR-0026](adr/0026-indici-secondari-segmentati.md) | — | RSK-13 |
-| [QA-26](#qa-26) | Target: per Serie o aggregati; obiettivi numerici di latenza | A | Proposta: [ADR-0028](adr/0028-target-e-obiettivi-di-latenza.md) | — | RSK-04 |
+| [QA-26](#qa-26) | Target: per Serie o aggregati; obiettivi numerici di latenza | A | Risolta da [ADR-0028](adr/0028-target-e-obiettivi-di-latenza.md), confermata il 2026-10-08 | — | RSK-04 |
 
 ---
 

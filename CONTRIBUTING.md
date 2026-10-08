@@ -19,7 +19,7 @@ specifica, ADR, valutazione e spike. Il codice di produzione inizia con la Fase 
    (modello: [0000](docs/adr/0000-modello.md)); un ADR accettato non si riscrive, si
    sostituisce.
 2. Si propaga nello **stesso commit** a invarianti e documenti tematici.
-3. Gli identificativi (`INV-`, `QA-`, `FI-`, `RSK-`, `SPK-`, `ADR-`) sono stabili.
+3. Gli identificativi (`INV-`, `QA-`, `FI-`, `RSK-`, `SPK-`, `ADR-`, `REQ-`, `AP-`) sono stabili.
 4. Gli spike vivono in [`spikes/`](spikes/README.md) e sono usa-e-getta.
 
 ## Prima di aprire una pull request
@@ -28,12 +28,19 @@ specifica, ADR, valutazione e spike. Il codice di produzione inizia con la Fase 
 make check
 ```
 
-Esegue gli smoke test (SBCL) e la verifica di link e ancore della documentazione.
+Compila senza avvisi, esegue test e linter, controlla tracciabilità e collegamenti,
+e verifica la correttezza dei cinque esperimenti disponibili. Le misure di prestazione
+si eseguono separatamente con `make spikes-bench`.
 
 ## Convenzioni
 
 - Documentazione in italiano; termini di dominio in italiano anche nel codice
   ([glossario](docs/glossario.md)).
-- Ciò che non viene dalla specifica è marcato `Proposta` o `Aperto (QA-nn)`.
+- Ciò che non viene dalla specifica è marcato `Proposta`, `Deciso (… → ADR-nnnn)` o `Aperto (QA-nn)`.
 - Numeri di prestazione solo se misurati in modo riproducibile
   ([benchmark](docs/13-benchmark.md#riproducibilità)).
+
+## Orientarsi
+
+[Documentazione](docs/README.md) · [Decisioni](docs/adr/README.md) ·
+[Esperimenti](spikes/README.md) · [Sicurezza](SECURITY.md)

@@ -62,6 +62,12 @@ risposta definita e verifica è un difetto di progetto.
 
 ## Rischi residui accettati
 
+> **Deciso (verifica prepared → ADR-0047)** — In FM-11, per un record prepared il confronto
+> di flag e chiave non basta: TXID e CSN si verificano contro l'OUTCOME del segmento o
+> l'esito dell'EDIT di chiusura. La prova è a sua volta verificata; una location sbagliata
+> verso un prepared della stessa chiave deve essere rifiutata
+> ([ADR-0047](../adr/0047-verifica-csn-dei-record-prepared.md)).
+
 | ID | Rischio | Perché accettato | Mitigazione |
 |---|---|---|---|
 | RES-01 | FM-03: flush non durevole | fuori dal controllo del software | primitive di flush corrette; documentare i requisiti dell'hardware; backup |

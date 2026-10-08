@@ -8,6 +8,11 @@
 > registro degli snapshot), [ADR-0015](adr/0015-primary-index-swiss-table-swmr.md) (versioni
 > trattenute), [ADR-0016](adr/0016-epoch-based-reclamation.md) (reclaim).
 
+> **Deciso (controesempio SPK-07 → ADR-0046)** — Il punto 2 di ADR-0038 è sostituito dal
+> [registro limitato dei CSN in volo](adr/0046-orizzonte-con-registro-limitato.md).
+> Assegnazione e registrazione sono indivisibili rispetto all'avanzamento di H; non si usa
+> più un anello indicizzato dal CSN, che poteva perdere completamenti con un commit lento.
+
 ## Che cos'è uno snapshot
 
 Uno snapshot è una **vista logica consistente** a un determinato punto/versione. Non è una

@@ -141,7 +141,7 @@ allocano ([ADR-0024](adr/0024-memoria-e-gc.md)). L'indice cresce un frammento al
 | Buffer dei lotti | Serie | lotto aperto + lotti chiusi non ancora durevoli | limitato in byte |
 | Metriche | worker/Serie | contatori padded + istogrammi log-lineari | fisso |
 | Epoche | worker | una parola per worker, padded | fisso |
-| Orizzonte, registro snapshot | Archivio | anello di parole, array di CSN attivi | fisso |
+| Orizzonte, registro snapshot | Archivio | registro dei CSN in volo, array di CSN snapshot attivi | fisso |
 
 ## Concorrenza
 
@@ -262,7 +262,12 @@ il lettore vede ([ADR-0026](adr/0026-indici-secondari-segmentati.md)).
 - `snapshot-too-old` oltre la durata massima; livelli: read committed per GET, snapshot
   isolation per le transazioni, `:serializable` opzionale con validazione del read-set.
 
-([ADR-0038](adr/0038-orizzonte-di-visibilita.md), [ADR-0020](adr/0020-csn-snapshot-isolamento.md))
+Il registro dei CSN in volo ha capacità fissa; assegnazione del CSN e registrazione sono
+indivisibili. Alla pubblicazione si libera lo slot e si ricava H dal minimo ancora in volo,
+oppure dall'ultimo CSN se il registro è vuoto. Non si usa un anello indicizzato dal CSN:
+SPK-07 ne ha trovato un controesempio con un commit lento (INV-M6).
+
+([ADR-0038](adr/0038-orizzonte-di-visibilita.md), [ADR-0046](adr/0046-orizzonte-con-registro-limitato.md), [ADR-0020](adr/0020-csn-snapshot-isolamento.md))
 
 ## Transazioni
 
@@ -319,8 +324,8 @@ pagata per singola operazione con una scrittura condivisa, e aggiungerne una ric
 
 | Elemento condiviso | Quando si paga | Costo |
 |---|---|---|
-| CSN | per lotto (single-Series) o per decisione (multiserie) | un incremento atomico |
-| Orizzonte | per lotto pubblicato | un passaggio sotto mutex; nessun costo per i reader |
+| CSN | per lotto (single-Series) o per decisione (multiserie) | assegnazione e registrazione indivisibili sotto il mutex dell'orizzonte ([ADR-0046](adr/0046-orizzonte-con-registro-limitato.md)) |
+| Orizzonte | per lotto pubblicato | un passaggio sotto mutex e scansione del registro limitato dei pendenti; nessun costo per i reader |
 | Nascita di uno snapshot | per snapshot | attesa che l'orizzonte raggiunga lo snapshot: al più i flush in corso nell'Archivio, con tempo massimo. È l'unico punto in cui una Serie può ritardarne un'altra, a tutela di INV-M1 |
 | Registro snapshot | per snapshot; per lotto pubblicato | creazione/chiusura sotto mutex; una lettura di `soglia` per lotto |
 | Epoca | per compito di lettura | una lettura condivisa e una scrittura **locale** al worker |
@@ -363,7 +368,7 @@ prestazioni sono subordinate. Ciò che questo significa nell'architettura:
 |---|---|---|
 | Stati di salute | Serie `HEALTHY`/`DEGRADED`/`FAULTED`; Archivio `HEALTHY`/`MULTI-DISABLED`/`FAULTED` | [ADR-0033](adr/0033-fail-stop-e-integrita-end-to-end.md) |
 | Errori di I/O | fail-stop, mai retry; riserva di spazio contro `ENOSPC` | ADR-0033 §2 |
-| Verifica | due CRC32C e confronto con l'indice a ogni lettura, da disco e da cache | ADR-0033 §3, [ADR-0039](adr/0039-cornice-unica-dei-record.md) §4 |
+| Verifica | due CRC32C e confronto con l'indice a ogni lettura; per i prepared, anche TXID e CSN della prova autorevole OUTCOME/manifest | ADR-0033 §3, [ADR-0039](adr/0039-cornice-unica-dei-record.md) §4, [ADR-0047](adr/0047-verifica-csn-dei-record-prepared.md) |
 | Coda o corruzione | frontiera durevole nei SEAL: decidibile dal contenuto | [ADR-0037](adr/0037-lotto-sigillato.md) §3 |
 | Recovery | non distruttivo, idempotente, un punto di atomicità | [ADR-0036](adr/0036-leggi-di-progetto.md) |
 | Distruzione | solo `.tmp` o rimozioni registrate; mai per assenza | ADR-0036 §3 |

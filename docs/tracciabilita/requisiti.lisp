@@ -252,6 +252,9 @@
  (:id "REQ-MVC-007" :src "ADR-0038" :cls "C1" :stato :progettato
   :txt "Il writer trattiene la versione sostituita quando la soglia del registro degli snapshot è inferiore al CSN nuovo; la registrazione di uno snapshot pubblica la soglia prima di leggere il proprio CSN, con barriera di memoria completa."
   :inv ("INV-M2") :adr ("ADR-0038") :ver (:test :model :soak) :fi ())
+ (:id "REQ-MVC-008" :src "ADR-0046" :cls "C1" :stato :progettato
+  :txt "Il registro dei CSN in volo ha capacità fissa; assegnazione del CSN e registrazione sono indivisibili rispetto all'avanzamento dell'orizzonte; uno slot non viene riusato finché il suo CSN non è pubblicato o annullato; quando non ci sono pendenti H raggiunge l'ultimo CSN, anche se un commit lento è stato superato da molti commit conclusi."
+  :inv ("INV-M4" "INV-M6" "INV-A8") :adr ("ADR-0046") :ver (:test :model :bench) :fi ())
 
  ;; ---- Recovery --------------------------------------------------------------
  (:id "REQ-REC-001" :src "Recovery" :cls "C1" :stato :progettato
@@ -294,6 +297,9 @@
   :inv () :adr ("ADR-0031") :ver (:rev) :fi ())
 
  ;; ---- Formati ---------------------------------------------------------------
+ (:id "REQ-VAL-001" :src "Piano degli spike" :cls "C4" :stato :implementato
+  :txt "La suite della Fase 0 compila gli esperimenti senza avvisi in processi isolati, esegue controlli deterministici e benchmark separati e conserva comandi, ambiente e output grezzo; nessun esito degli spike promuove automaticamente un requisito del motore a verificato."
+  :inv ("INV-X2" "INV-X3") :adr ("ADR-0035") :ver (:test :analisi) :fi ())
  (:id "REQ-FOR-001" :src "ADR-0013" :cls "C1" :stato :progettato
   :txt "Ogni record e ogni file persistente porta lunghezza e CRC32C; ciò che non si verifica è trattato come inesistente (coda), rigenerato (dato derivato) o dichiarato corrotto (dato confermato)."
   :inv ("INV-F1") :adr ("ADR-0013" "ADR-0014" "ADR-0039") :ver (:test :fuzz :corr :fi) :fi ("FI-01" "FI-10"))
@@ -303,6 +309,9 @@
  (:id "REQ-FOR-003" :src "ADR-0039" :cls "C1" :stato :progettato
   :txt "Tutti i record di tutti i log hanno la stessa cornice di 24 byte con CRC dell'intestazione e CRC del corpo; l'intestazione è verificata prima di usare le lunghezze; il CRC del corpo è calcolato fuori dal writer."
   :inv ("INV-F1" "INV-F2") :adr ("ADR-0039") :ver (:test :fuzz :corr :bench) :fi ())
+ (:id "REQ-FOR-004" :src "ADR-0047" :cls "C1" :stato :progettato
+  :txt "La lettura di un record prepared verifica una prova autorevole del segmento (OUTCOME o esito nel manifest): il TXID della prova coincide con lo stamp del record e il suo CSN coincide con quello della entry; una prova mancante, corrotta o riferita a un'altra versione produce errore di integrità."
+  :inv ("INV-A2" "INV-S7") :adr ("ADR-0039" "ADR-0047") :ver (:test :corr :fuzz :diff) :fi ())
 
  ;; ---- Affidabilità (software critico) --------------------------------------
  (:id "REQ-AFF-001" :src "ADR-0033" :cls "C1" :stato :progettato

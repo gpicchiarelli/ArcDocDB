@@ -7,6 +7,14 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Suite eseguibile della Fase 0 per SPK-01, SPK-02, SPK-03, SPK-07 e SPK-09; harness
+  `tools/run-spikes.lisp`, compilazione senza avvisi, processi isolati, comandi e output
+  grezzo; `make spikes-check` in CI e `make spikes-bench` per misure locali in serie.
+- ADR-0046 e INV-M6: SPK-07 trova un controesempio nell'anello dell'orizzonte; il registro
+  preallocato dei veri CSN pendenti lo sostituisce. I requisiti del motore restano progettati.
+- ADR-0047: lettura dei prepared con prova autorevole del CSN (OUTCOME o manifest), oltre a
+  CRC, chiave e flag. Una location verso un'altra versione della stessa chiave è rifiutata.
+
 - Specifica originale, documentazione tematica (16 documenti), invarianti (`INV-…`),
   glossario.
 - Valutazione architetturale: analisi critica, stime, registro dei rischi, piano degli spike.
@@ -32,6 +40,9 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   A9…A12), 107 requisiti, 27 modi di guasto, rischio residuo RES-05.
 
 ### Cambiato
+
+- ADR-0028 e ADR-0030 confermati dall'autore il 2026-10-08, incluse le revisioni su minimi
+  di prestazione, backup, restore verificato, verificatore offline e scrubbing.
 
 - **Correzioni di progetto dall'analisi (nessun codice toccato, formati mai implementati):**
   - uno snapshot nasce quando l'orizzonte di visibilità lo ha raggiunto: prima poteva vedere

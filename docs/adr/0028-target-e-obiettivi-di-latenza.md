@@ -1,6 +1,6 @@
 # ADR-0028 — Target per Serie e aggregati; obiettivi numerici di latenza
 
-- **Stato:** Proposta (richiede conferma dell'autore: fissa obiettivi di prodotto). Rivista il 2026-10-03 in applicazione di [ADR-0031](0031-software-critico-criteri-e-priorita.md).
+- **Stato:** Accettata dall'autore il 2026-10-08, inclusi i minimi della revisione 2026-10-03.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** chiude QA-26; precisa «Target preliminari»
 - **Riferimenti:** [13 Benchmark](../13-benchmark.md), [stime](../valutazione/stime-ordine-di-grandezza.md)
@@ -58,5 +58,5 @@ Un minimo non raggiunto è un difetto; un obiettivo non raggiunto è un'informaz
 | P99 delle operazioni | tabella sopra | **3 × i valori della tabella sopra** |
 | Pausa massima del GC (P99.9) | 5 ms | **20 ms** |
 
-I minimi sono proposte: l'autore le conferma o le modifica. Il costo dei controlli è misurato
+I minimi sono stati confermati dall'autore il 2026-10-08. Il costo dei controlli è misurato
 da SPK-09; i minimi si verificano con benchmark riproducibili (REQ-AFF-012).

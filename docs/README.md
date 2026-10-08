@@ -15,21 +15,22 @@ tematici navigabili, con tracciabilità verso il testo di partenza, e la sottopo
 definizione è completa ed è passata da un'[analisi progettuale](analisi-progettuale.md): il
 progetto consolidato è in [architettura.md](architettura.md), i formati persistenti in
 [formati-su-disco.md](formati-su-disco.md), le decisioni negli [ADR](adr/README.md). Restano
-gli [spike](valutazione/piano-spike.md) di verifica.
+le campagne degli [spike](valutazione/piano-spike.md), con gli
+[esperimenti già eseguibili](../spikes/README.md).
 
-## Come leggere
+## Da dove iniziare
 
-Ordine consigliato per chi arriva per la prima volta:
+| Se vuoi… | Parti da qui |
+|---|---|
+| Capire il prodotto | [Visione](01-visione-e-obiettivi.md) e [modello logico](02-modello-logico.md) |
+| Leggere il progetto attuale | [Architettura](architettura.md) e [formati su disco](formati-su-disco.md) |
+| Capire le scelte | [Analisi progettuale](analisi-progettuale.md) e [decisioni architetturali](adr/README.md) |
+| Valutare le garanzie | [Affidabilità](affidabilita/README.md), [invarianti](invarianti.md) e [tracciabilità](tracciabilita/README.md) |
+| Vedere le evidenze disponibili | [Esperimenti](../spikes/README.md) e [valutazione](valutazione/README.md) |
+| Contribuire | [Guida ai contributi](../CONTRIBUTING.md) e [roadmap](roadmap.md) |
 
-1. [Visione e obiettivi](01-visione-e-obiettivi.md) — che cosa si costruisce e perché.
-2. [Modello logico](02-modello-logico.md) — Server, Archivio, Serie, Documento, Registri.
-3. [Invarianti](invarianti.md) — le regole che nessuna implementazione può violare.
-4. I documenti di sottosistema (tabella sotto), nell'ordine che serve.
-   Per l'approccio da software critico: [affidabilità](affidabilita/README.md).
-5. [Valutazione architetturale](valutazione/README.md) — che cosa regge, che cosa è
-   rischioso, come lo si verifica.
-6. [Questioni aperte](questioni-aperte.md) — ciò che la specifica non decide ancora.
-7. [Roadmap](roadmap.md) — fase corrente e fasi successive.
+Il [glossario](glossario.md) accompagna la lettura. Le [questioni della specifica](questioni-aperte.md)
+conservano anche quelle già risolte, con il riferimento alla decisione.
 
 ## Mappa dei documenti
 

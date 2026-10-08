@@ -5,6 +5,13 @@
 
 ## Quadro
 
+> **Deciso (prime prove SPK-07 → ADR-0046, 2026-10-08)** — RSK-05 è nuovamente aperto
+> sulla verifica: l'anello dell'orizzonte perde un completamento con un commit lento anche
+> rispettando i crediti. Il registro limitato dei pendenti corregge il controesempio nel
+> piccolo modello. Restano memoria debole, scadenza snapshot, interleaving di compaction e
+> writer e fault injection sul futuro motore. Le mitigazioni di progetto non sono prove di
+> correttezza dell'implementazione.
+
 | ID | Rischio | Prob. | Impatto | Verifica | Questioni |
 |---|---|---|---|---|---|
 | [RSK-01](#rsk-01) | Pause del GC di SBCL incompatibili con il P99 | M | A | SPK-02 | QA-18 |

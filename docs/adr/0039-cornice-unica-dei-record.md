@@ -1,6 +1,6 @@
 # ADR-0039 — Cornice unica dei record: due CRC, quattro tipi nei segmenti, hint risolto
 
-- **Stato:** Accettata
+- **Stato:** Accettata; verifica dei prepared precisata da [ADR-0047](0047-verifica-csn-dei-record-prepared.md): il CSN effettivo è verificato attraverso OUTCOME o esito del manifest, non dal solo flag.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** nessuna emenda. **Sostituisce in parte**
   [ADR-0014](0014-formato-record-documento-id.md) punto 3 (intestazione e tipi del record) e

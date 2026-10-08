@@ -1,5 +1,7 @@
 # Affidabilità
 
+[Documentazione](../README.md) · [Tracciabilità](../tracciabilita/README.md) · [Valutazione](../valutazione/README.md)
+
 ArcDocDB è progettato come **software critico**
 ([ADR-0031](../adr/0031-software-critico-criteri-e-priorita.md)): il fine ultimo è
 l'affidabilità, le prestazioni sono ragionevoli e subordinate.

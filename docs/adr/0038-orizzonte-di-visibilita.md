@@ -1,6 +1,6 @@
 # ADR-0038 — Orizzonte di visibilità: nascita degli snapshot, registro degli snapshot, la versione è il CSN
 
-- **Stato:** Accettata (emenda la specifica nella sola numerazione delle versioni)
+- **Stato:** Accettata (emenda la specifica nella sola numerazione delle versioni); punto 2 sostituito da [ADR-0046](0046-orizzonte-con-registro-limitato.md): registro limitato dei CSN in volo, dopo il controesempio trovato da SPK-07.
 - **Data:** 2026-10-03
 - **Rapporto con la specifica:** realizza «Snapshot/MVCC». **Emenda** l'esempio di
   «Transazioni single-series» (`v18 → v19`): i numeri di versione sono crescenti ma non

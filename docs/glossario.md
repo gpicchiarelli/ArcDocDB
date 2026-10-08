@@ -117,6 +117,7 @@
 | **Versioni in sospeso** | Versioni scritte ma non ancora pubblicate (lotti in attesa del flush, intenti delle multiserie); le vede solo il writer. ADR-0037. |
 | **Orizzonte di visibilità** | Il più grande CSN sotto il quale ogni commit è pubblicato; uno snapshot nasce quando l'orizzonte lo ha raggiunto. ADR-0038. |
 | **CSN in volo** | CSN già preso il cui commit non è ancora pubblicato. ADR-0038. |
+| **Registro dei CSN in volo** | Vettore a capacità fissa; assegnazione e registrazione sono indivisibili, H è il minimo pendente meno uno o l'ultimo CSN quando è vuoto. Sostituisce l'anello di ADR-0038. ADR-0046. |
 | **Soglia** | Minimo CSN tra gli snapshot attivi, pubblicato dal registro degli snapshot; il writer trattiene una versione se la soglia è inferiore al CSN nuovo. ADR-0038. |
 | **Cornice** | Intestazione di 24 byte comune a tutti i record di tutti i log, con CRC dell'intestazione e CRC del corpo. ADR-0039. |
 | **EDIT** | L'unico tipo di record del control log: apre, chiude, rimuove segmenti. ADR-0040. |
