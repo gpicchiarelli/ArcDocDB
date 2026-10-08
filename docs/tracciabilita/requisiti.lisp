@@ -306,10 +306,10 @@
   :inv ("INV-X2" "INV-X3") :adr ("ADR-0035") :ver (:test :analisi) :fi ())
  (:id "REQ-FOR-001" :src "ADR-0013" :cls "C1" :stato :progettato
   :txt "Ogni record e ogni file persistente porta lunghezza e CRC32C; ciò che non si verifica è trattato come inesistente (coda), rigenerato (dato derivato) o dichiarato corrotto (dato confermato)."
-  :inv ("INV-F1") :adr ("ADR-0013" "ADR-0014" "ADR-0039") :ver (:test :fuzz :corr :fi) :fi ("FI-01" "FI-10"))
+  :inv ("INV-F1") :adr ("ADR-0013" "ADR-0014" "ADR-0039" "ADR-0052") :ver (:test :fuzz :corr :fi) :fi ("FI-01" "FI-10"))
  (:id "REQ-FOR-002" :src "ADR-0014" :cls "C1" :stato :progettato
   :txt "Ogni file persistente ha magic e versione di formato; un formato non cambia, si crea una nuova versione con migrazione."
-  :inv ("INV-F1") :adr ("ADR-0014") :ver (:test :rev) :fi ())
+  :inv ("INV-F1") :adr ("ADR-0014" "ADR-0052") :ver (:test :rev) :fi ())
  (:id "REQ-FOR-003" :src "ADR-0039" :cls "C1" :stato :progettato
   :txt "Tutti i record di tutti i log hanno la stessa cornice di 24 byte con CRC dell'intestazione e CRC del corpo; l'intestazione è verificata prima di usare le lunghezze; il CRC del corpo è calcolato fuori dal writer."
   :inv ("INV-F1" "INV-F2") :adr ("ADR-0039") :ver (:test :fuzz :corr :bench) :fi ())

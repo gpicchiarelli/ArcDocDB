@@ -24,6 +24,26 @@
 - Identificatori: `segment-id` `u64` crescente per Serie, **mai riusato**; `txid` `u64`
   crescente per Archivio (solo transazioni multiserie); `csn` `u64`; id di Serie 16 byte.
 
+### Intestazione dei log di controllo (64 byte)
+
+[ADR-0052](adr/0052-header-dei-log-di-controllo.md) completa il layout di
+`control.log` e `multiserie.log`, prima del loro primo codec. Valido per v1/v2:
+
+| Offset | Tipo | Campo |
+|---|---|---|
+| 0 | `char[8]` | magic `ARCDCTL1` (control) oppure `ARCDMSL1` (multiserie) |
+| 8 | `u16` | versione dei record, 1 oppure 2 |
+| 10 | `byte[6]` | riservati zero |
+| 16 | `byte[16]` | id della Serie (control) oppure dell'Archivio (multiserie) |
+| 32 | `byte[24]` | riservati zero |
+| 56 | `u32` | CRC32C dei byte 0–55 |
+| 60 | `byte[4]` | riservati zero, verificati anche se fuori dal CRC |
+
+L'identità dell'Archivio è di 16 byte opachi. Tipo e identità si confrontano con
+la fonte autorevole prima della scansione dei record. Un header non valido è
+errore di integrità; la regola della coda riguarda i lotti dopo l'header.
+Il magic resta quello sopra anche per v2; la versione seleziona il decoder.
+
 ## Cornice del record
 
 Intestazione fissa di 24 byte, poi chiave e valore.

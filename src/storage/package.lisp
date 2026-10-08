@@ -10,6 +10,7 @@
   (:import-from #:arcdocdb.conditions #:invalid-argument #:corruption-detected
                 #:unsupported-format #:resource-exhausted #:invariant-violation)
   (:export #:+segment-header-bytes+ #:scrivi-header-segmento #:verifica-header-segmento
+           #:+log-header-bytes+ #:scrivi-header-log #:verifica-header-log
            #:valida-valore-edit #:valida-valore-decision
            #:verifica-record-edit #:verifica-record-decision
            #:scrivi-valore-edit #:scrivi-valore-decision))

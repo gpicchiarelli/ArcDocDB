@@ -119,3 +119,9 @@ risultato consolidato è in [architettura.md](../architettura.md) e
 | ADR | Decisione | Stato |
 |---|---|---|
 | [0051](0051-presentazione-della-documentazione.md) | Presentazione della specifica, guida comune e conservazione delle prove originali | Accettata; requisiti invariati |
+
+## Completamento dei formati (2026-10-08)
+
+| ADR | Decisione | Stato |
+|---|---|---|
+| [0052](0052-header-dei-log-di-controllo.md) | Offset, identità e CRC degli header control e multiserie | Accettata; primo codec |

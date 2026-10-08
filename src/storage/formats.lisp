@@ -22,6 +22,21 @@
 (defconstant +writer-origin+ 1)
 (defconstant +compaction-origin+ 2)
 
+;;; REQ: REQ-FOR-001 REQ-FOR-002
+(defconstant +log-header-bytes+ 64)
+(defconstant +log-magic-low+ #x44435241) ; ARCD, little-endian
+(defconstant +control-magic-high+ #x314c5443) ; CTL1, anche per versione 2
+(defconstant +multiserie-magic-high+ #x314c534d) ; MSL1, anche per versione 2
+(defconstant +log-magic-high-offset+ 4)
+(defconstant +log-version-offset+ 8)
+(defconstant +log-reserved-a-start+ 10)
+(defconstant +log-reserved-a-end+ 16)
+(defconstant +log-identity-offset+ 16)
+(defconstant +log-identity-bytes+ 16)
+(defconstant +log-reserved-b-start+ 32)
+(defconstant +log-crc-offset+ 56)
+(defconstant +log-reserved-c-start+ 60)
+
 ;;; REQ: REQ-FOR-003 REQ-AFF-008
 (defconstant +edit-next-id-offset+ 0)
 (defconstant +edit-open-offset+ 8)

@@ -21,6 +21,7 @@
                (:module "storage"
                 :serial t
                 :components ((:file "package") (:file "formats") (:file "segment-header")
+                             (:file "log-header")
                              (:file "control-payload") (:file "payload-record")
                              (:file "payload-write")))
                (:module "io" :serial t
@@ -45,7 +46,7 @@
                              (:file "record") (:file "batch")))
                (:module "storage"
                 :serial t
-                :components ((:file "support") (:file "segment-header")
+                :components ((:file "support") (:file "segment-header") (:file "log-header")
                              (:file "control-payload")))
                (:module "io" :serial t
                 :components ((:file "support") (:file "transfer") (:file "native")))
