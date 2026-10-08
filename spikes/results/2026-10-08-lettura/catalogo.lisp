@@ -119,4 +119,25 @@
    :VARIANT
    #A((74) BASE-CHAR
       . "verifica fallita: artefatto composito mancante, errore del packaging :pass")
+   :FORMATS NIL)
+  (:ARTIFACT #A((20) BASE-CHAR . "verifica-finale.lisp") :VARIANT
+   #A((53) BASE-CHAR . "make check finale, checkout pulito e sorgenti stabili")
+   :FORMATS NIL)
+  (:ARTIFACT #A((27) BASE-CHAR . "spikes-verifica-finale.lisp") :VARIANT
+   #A((61) BASE-CHAR
+      . "dieci spike della verifica finale, tutti gli output originali")
+   :FORMATS NIL)
+  (:ARTIFACT #A((22) BASE-CHAR . "verifica-registri.lisp") :VARIANT
+   "evidenze, link e tracciabilità finali" :FORMATS NIL)
+  (:ARTIFACT
+   #A((51) BASE-CHAR . "proof-1a64328162310f90de800fa723ab30feb5ebc56f.lisp")
+   :VARIANT #A((35) BASE-CHAR . "trace-write dopo la fusione di main") :FORMATS
+   NIL)
+  (:ARTIFACT
+   #A((51) BASE-CHAR . "proof-73c848ceacf62274c93f05d5129bfbc3615f02c6.lisp")
+   :VARIANT #A((36) BASE-CHAR . "SPK-01 nella prima verifica completa")
+   :FORMATS NIL)
+  (:ARTIFACT
+   #A((51) BASE-CHAR . "proof-817b0cd63208eaf6603edc9ef264c5cb5defcf33.lisp")
+   :VARIANT #A((37) BASE-CHAR . "make check, record originale completo")
    :FORMATS NIL)))

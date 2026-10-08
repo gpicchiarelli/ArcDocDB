@@ -166,3 +166,7 @@ promuove requisiti del motore sulla base delle sole prove sperimentali.
 il packager iniziale non accettava il risultato legacy `:pass` e il catalogo
 riferiva un artefatto composito ancora mancante. Il packaging corretto conserva
 gli esiti originali `:ok`/`:pass`; la verifica viene ripetuta prima del push.
+La [ripetizione finale](../../spikes/results/2026-10-08-lettura/verifica-finale.lisp)
+riesce su `0c43f45`, checkout pulito e sorgenti stabili; i
+[dieci processi finali](../../spikes/results/2026-10-08-lettura/spikes-verifica-finale.lisp)
+sono conservati integralmente. Il codice del reader resta quello della matrice finale.
