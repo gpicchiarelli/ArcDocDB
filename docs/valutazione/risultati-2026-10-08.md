@@ -217,7 +217,7 @@ rilevati. La suite è ora estesa con modelli di pubblicazione, scadenza snapshot
 compaction con writer ACTIVE e ordini osservati delle barriere. Il
 [metodo e risultato dei moduli](../../spikes/SPK-07-protocols/README.md#estensione-dei-modelli--2026-10-08)
 conserva i confini di ciascuna enumerazione; il
-[record integrato](../../spikes/results/2026-10-08/spk07-integrated-check.lisp)
+[record integrato finale](../../spikes/results/2026-10-08/spk07-final-spikes-check.lisp)
 contiene risultati decodificati, hash dei sorgenti e output originale.
 
 Pubblicazione: 25 esplorazioni, 64.316 stati complessivi, 12 modelli corretti e
@@ -232,6 +232,12 @@ restano linearizzabili nelle storie esplorate. Restano memoria debole completa
 con più slot/reader e crash sui byte reali. Non è copertura FI-01…FI-13 su un
 motore esistente; non è un benchmark di prestazioni. Tutti i tentativi, anche
 falliti o con contatori corretti in seguito, sono nel catalogo delle prove.
+
+La [verifica finale del commit 8e4f98f](../../spikes/results/2026-10-08/spk07-final-verification.lisp)
+è eseguita in un checkout pulito: 26 test delle fondazioni, compilazione senza
+avvisi, lint e relativo self-test, tracciabilità e collegamenti locali,
+catalogo delle prove e 7 spike superati. La rigenerazione della tracciabilità
+non cambia i documenti conservati. Questo esito non chiude i gate di prodotto.
 
 ## SPK-09 — integrità e ottimizzazione
 

@@ -105,3 +105,12 @@ Le tensioni normative INV-I1/ADR-0043, ritardo di reclaim con reader bloccato in
 ADR-0016 e ammissione MERGE con snapshot sono dichiarate nei metodi. Questi
 spike non cambiano decisioni o requisiti del motore. Prove, tentativi falliti e
 limiti sono conservati nel [catalogo](../results/2026-10-08/catalogo.lisp).
+
+La [campagna integrata finale](../results/2026-10-08/spk07-final-spikes-check.lisp)
+verifica il codice del commit `8e4f98f` in un checkout pulito e conserva i
+risultati decodificati di tutti i sette spike allora registrati.
+`make check` supera anche 26 test delle fondazioni, compilazione senza avvisi,
+lint, tracciabilità, collegamenti e catalogo; il
+[record del comando](../results/2026-10-08/spk07-final-verification.lisp)
+conserva l'output originale. Nessun requisito del motore è promosso a verificato
+sulla base dei soli modelli.
