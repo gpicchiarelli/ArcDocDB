@@ -17,7 +17,8 @@ trovato un controesempio nell'anello dell'orizzonte, corretto da
 [ADR-0046](adr/0046-orizzonte-con-registro-limitato.md).
 La suite SPK-07 comprende ora modelli finiti di pubblicazione dei frammenti,
 scadenza e protezione degli accessi già ammessi, compaction con writer ACTIVE
-e ordini di osservazione delle barriere. Metodo, risultati e lacune sono nel
+e ordini di osservazione delle barriere, due reader/due slot in SC e crash
+sui byte con frontiera confermata esplicita. Metodo, risultati e lacune sono nel
 [README dello spike](../spikes/SPK-07-protocols/README.md).
 
 La [campagna locale 2026-10-08](valutazione/risultati-2026-10-08.md) conserva
@@ -27,6 +28,10 @@ migrazione v2 su modello, con integrazione in memoria dei confini massimi.
 Restano le parti complete del gate v2, memoria debole completa e crash sui byte
 del motore, e le misure sulla
 piattaforma di riferimento; il gate non è chiuso.
+
+SPK-08 aggiunge [maschere esatte e kernel NEON/SWAR](valutazione/risultati-SPK-07-08-2026-10-08.md):
+correttezza, disassemblato e 70 campioni seriali locali. Restano x86-64,
+integrazione dell'indice, bitmap/checksum e piattaforma di riferimento.
 
 ## Fase 0 — Definizione architetturale e valutazione
 

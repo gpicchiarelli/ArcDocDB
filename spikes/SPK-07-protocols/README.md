@@ -15,10 +15,12 @@ registrazione di snapshot, seqlock, lotti e frontiera durevole,
 tombstone e ricostruzione indipendente dall'ordine. Le varianti difettose servono come
 controlli negativi: la suite deve trovare un controesempio, altrimenti fallisce.
 
-La suite integra anche quattro moduli con metodo preregistrato:
+La suite integra anche sei moduli con metodo preregistrato:
 [pubblicazione](metodo-pubblicazione.md), [scadenza](metodo-scadenza.md),
 [compaction con writer ACTIVE](metodo-compaction.md) e
-[ordini di osservazione delle barriere](metodo-memoria.md).
+[ordini di osservazione delle barriere](metodo-memoria.md),
+[due reader e due slot in SC](metodo-seqlock-readers.md) e
+[crash sui byte con verifier dei lotti](metodo-byte-crash.md).
 
 ## Esecuzione
 
@@ -38,15 +40,17 @@ ignorata da Git. Una prova individuale usa `run-module.lisp nome-modello` tramit
 
 - Le transizioni atomiche e la memoria sequenzialmente consistente sono assunzioni del
   modello; non è una prova delle barriere ARM64 o del codice macchina di SBCL.
-- I lotti sono entità logiche con validità già determinata: la verifica byte per byte del
-  decoder appartiene a SPK-09 e al futuro motore.
+- Nei modelli di base i lotti sono entità logiche con validità già determinata.
+  L'estensione sui byte usa il verifier reale su fixture indipendenti; la frontiera
+  confermata è un fatto esterno esplicito, non un algoritmo di scoperta dopo il danno.
 - Due partecipanti, un trasferimento, due versioni per snapshot e un numero finito di CSN;
   il risultato non prova configurazioni arbitrarie.
 - Gli scenari corrispondono a FI-01…FI-13 a livello astratto; non sostituiscono fault
   injection su un motore né crash reali su file system.
 - Il gate della Fase 0 resta aperto: manca un modello architetturale completo della
-  memoria debole, con più reader/slot, e restano crash byte per byte e fault injection
-  sul motore. Pubblicazione, scadenza e writer ACTIVE sono coperti soltanto nei
+  memoria debole, con più reader/slot, e restano crash sui file reali, copertura
+  completa dei formati e fault injection sul motore. Pubblicazione, scadenza,
+  writer ACTIVE, byte e lettori SC sono coperti soltanto nei
   domini finiti dichiarati dai rispettivi metodi.
 - Il modello tombstone di base assume un filtro esatto senza falsi negativi e non
   mantiene snapshot attivi; l'estensione compaction aggiunge uno snapshot e un
@@ -89,6 +93,8 @@ snapshot. I risultati positivi dipendono dalle assunzioni dichiarate sopra.
 | Scadenza | 2 grafi corretti, 67.558 stati, 256.971 transizioni; 14 witness positivi | 5 |
 | Compaction con writer ACTIVE | 98 grafi corretti, 7.994 stati, 16.952 transizioni; 11.592 proiezioni di crash | 8 |
 | Ordini osservati delle barriere | 280 ordini corretti; 840 ordini per ciascuno dei quattro mutanti | 4 |
+| Due reader / due slot, SC | 8 grafi corretti, 28.434 stati, 65.096 archi; 192 witness positivi | 28 |
+| Crash sui byte v1/v2 | 49.120 casi, 655.997 recovery, 303.432 interruzioni e ripartenze; input immutati | 3 |
 
 Pubblicazione conserva anche tre esplorazioni delle storie dei mutanti di
 generazione e quattro witness di raggiungibilità. Omettere il ricontrollo root
@@ -114,3 +120,10 @@ lint, tracciabilità, collegamenti e catalogo; il
 [record del comando](../results/2026-10-08/spk07-final-verification.lisp)
 conserva l'output originale. Nessun requisito del motore è promosso a verificato
 sulla base dei soli modelli.
+
+La [nuova verifica integrata](../results/2026-10-08-avanzamento/integrated-check.lisp)
+comprende i sei moduli e SPK-08. La campagna sui byte conserva anche cinque
+controlli semantici del SEAL con CRC riparati e il witness sull'ultimo flush
+non testimoniato: bytes uguali possono rappresentare coda o danno confermato
+secondo la prova esterna della frontiera. Tutti i tentativi e i limiti sono nel
+[catalogo dell'avanzamento](../results/2026-10-08-avanzamento/catalogo.lisp).

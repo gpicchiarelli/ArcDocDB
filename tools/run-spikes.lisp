@@ -19,6 +19,7 @@
     ("SPK-04" . "spikes/SPK-04-writer-pool/run.lisp")
     ("SPK-05" . "spikes/SPK-05-segment-read/run.lisp")
     ("SPK-07" . "spikes/SPK-07-protocols/run.lisp")
+    ("SPK-08" . "spikes/SPK-08-generated-code/run.lisp")
     ("SPK-09" . "spikes/SPK-09-integrity/run.lisp")
     ("SPK-10" . "spikes/SPK-10-v2-limits/run.lisp")))
 
@@ -36,8 +37,9 @@
 
 (defun spike-sources (entry mode)
   "Dichiara i sorgenti caricati dal singolo processo, incluse le dipendenze locali."
-  (append (list "tools/run-spikes.lisp" (cdr entry)
-                (namestring (merge-pathnames "core.lisp" (cdr entry))))
+  (append (list "tools/run-spikes.lisp" (cdr entry))
+          (unless (string= (car entry) "SPK-08")
+            (list (namestring (merge-pathnames "core.lisp" (cdr entry)))))
           (when (string= (car entry) "SPK-04")
             '("spikes/SPK-04-writer-pool/pool.lisp" "spikes/SPK-04-writer-pool/parcheggi.lisp"))
           (when (string= (car entry) "SPK-05")
@@ -47,7 +49,16 @@
               "spikes/SPK-07-protocols/scadenza.lisp"
               "spikes/SPK-07-protocols/compaction.lisp"
               "spikes/SPK-07-protocols/memoria.lisp"
-              "spikes/SPK-07-protocols/suite.lisp"))
+              "spikes/SPK-07-protocols/suite.lisp"
+              "spikes/SPK-07-protocols/seqlock-readers.lisp"
+              "spikes/SPK-07-protocols/byte-crash.lisp"
+              "src/package.lisp"
+              "src/foundation/package.lisp" "src/foundation/conditions.lisp"
+              "src/foundation/binary.lisp" "src/foundation/crc32c.lisp"
+              "src/foundation/record.lisp" "src/foundation/batch.lisp"))
+          (when (string= (car entry) "SPK-08")
+            '("spikes/SPK-08-generated-code/impronte.lisp"
+              "spikes/SPK-08-generated-code/simd.lisp"))
           (when (string= (car entry) "SPK-10")
             '("spikes/SPK-10-v2-limits/codec.lisp" "spikes/SPK-10-v2-limits/indice.lisp"
               "spikes/SPK-10-v2-limits/cbor.lisp" "spikes/SPK-10-v2-limits/migrazione.lisp"
@@ -71,29 +82,11 @@
         :commit (command-output '("git" "rev-parse" "HEAD"))
         :working-tree (command-output '("git" "status" "--porcelain"))
         :source-blobs
-        (loop for path in (append '("tools/run-spikes.lisp"
-                                    "spikes/SPK-04-writer-pool/pool.lisp"
-                                    "spikes/SPK-04-writer-pool/parcheggi.lisp"
-                                    "spikes/SPK-05-segment-read/io.lisp"
-                                    "spikes/SPK-05-segment-read/record.lisp"
-                                    "spikes/SPK-07-protocols/pubblicazione.lisp"
-                                    "spikes/SPK-07-protocols/scadenza.lisp"
-                                    "spikes/SPK-07-protocols/compaction.lisp"
-                                    "spikes/SPK-07-protocols/memoria.lisp"
-                                    "spikes/SPK-07-protocols/suite.lisp"
-                                    "spikes/SPK-01-primary-index/profile.lisp"
-                                    "spikes/SPK-10-v2-limits/codec.lisp"
-                                    "spikes/SPK-10-v2-limits/indice.lisp"
-                                    "spikes/SPK-10-v2-limits/cbor.lisp"
-                                    "spikes/SPK-10-v2-limits/migrazione.lisp")
-                            (loop for entry in *spike-runners*
-                                  append (list (cdr entry)
-                                               (namestring (merge-pathnames "core.lisp"
-                                                                            (cdr entry))))))
-              collect (list :path path :git-blob
-                            (if (probe-file path)
-                                (command-output (list "git" "hash-object" path))
-                                :absent)))
+        (source-blobs
+         (remove-duplicates
+          (append '("spikes/SPK-01-primary-index/profile.lisp")
+                  (loop for entry in *spike-runners* append (spike-sources entry "--check")))
+          :test #'string=))
         :dynamic-space-mib 4096 :date-universal-time (get-universal-time)))
 
 (defun new-report-directory (mode)

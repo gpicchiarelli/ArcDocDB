@@ -189,7 +189,10 @@ prodotto è una **misura con una raccomandazione**.
 > di pubblicazione, scadenza, compaction con writer ACTIVE e osservazione delle
 > barriere. I [metodi preregistrati e risultati](../../spikes/SPK-07-protocols/README.md)
 > distinguono domini, assunzioni e controlli negativi. Memoria architetturale
-> completa con più reader/slot e crash byte per byte restano nel gate.
+> completa con più reader/slot e crash sui file reali restano nel gate.
+> L'[avanzamento successivo](risultati-SPK-07-08-2026-10-08.md) aggiunge
+> due lettori/due slot in SC e 49.120 casi sui byte; la frontiera confermata
+> è un fatto esterno e la copertura completa del recovery resta aperta.
 
 ### SPK-08
 
@@ -202,6 +205,12 @@ prodotto è una **misura con una raccomandazione**.
   supporto SIMD esplicito su x86-64 e ARM64.
 - *Esito:* elenco dei cicli dove il codice tipizzato basta e di quelli dove servirebbe un
   intervento; nessuna ottimizzazione viene introdotta in questa fase (INV-X1).
+
+> **Proposta** — [SPK-08](../../spikes/SPK-08-generated-code/README.md) è ora
+> eseguibile: maschere scalar/SWAR esatte, kernel NEON/SSE2 con controlli
+> safety 3, disassemblato e 70 campioni seriali locali su ARM64. L'esecuzione
+> x86-64, bitmap, checksum e indice reale restano da valutare. Le misure non
+> promuovono un'ottimizzazione nel motore.
 
 ### SPK-09
 

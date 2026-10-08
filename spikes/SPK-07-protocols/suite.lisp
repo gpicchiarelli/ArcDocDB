@@ -11,14 +11,17 @@
           (list (arcdocdb.spk07.pubblicazione:check)
                 (arcdocdb.spk07.scadenza:check)
                 (arcdocdb.spk07.compaction:check)
-                (arcdocdb.spk07.memoria:check))))
+                (arcdocdb.spk07.memoria:check)
+                (arcdocdb.spk07.seqlock-readers:check)
+                (arcdocdb.spk07.byte-crash:check))))
     (unless (and (eq :pass (getf base :status))
                  (every (lambda (r) (eq :ok (getf r :status))) estensioni))
       (error "Un modello SPK-07 non ha completato la verifica."))
     (setf (getf base :extensions) estensioni
           (getf base :pending)
           '(:full-weak-memory-model :multiple-slots-and-readers-under-weak-memory
-            :byte-level-crash :full-engine-fault-injection :unbounded-configurations)
-          (getf base :coverage) :bounded-abstract-models-and-single-observer-orders
+            :full-byte-level-recovery-coverage :filesystem-crashes-and-io-failures
+            :full-engine-fault-injection :unbounded-configurations)
+          (getf base :coverage) :bounded-models-byte-crashes-and-observer-orders
           (getf base :gate) :open)
     base))

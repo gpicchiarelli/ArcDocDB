@@ -107,6 +107,13 @@ Le vecchie righe sul costo C della manutenzione e sull'assenza di picchi sono
 storiche: slot, chiavi, directory, oggetti trattenuti e collector hanno costi
 distinti. La correzione non aggiunge coordinamento fra Serie.
 
+> **Proposta** — L'[avanzamento SPK-07/08](risultati-SPK-07-08-2026-10-08.md)
+> aggiunge evidenze per RSK-02 (due reader/due slot in SC), RSK-05/RSK-19
+> (49.120 casi sui byte e ultimo flush non testimoniato) e RSK-11/RSK-16
+> (NEON e SWAR in Common Lisp a safety 3). I rischi restano aperti: memoria
+> debole completa, prova esterna della frontiera, filesystem reale,
+> integrazione dell'indice e piattaforma x86-64 non sono qualificati.
+
 ---
 
 ### RSK-01
