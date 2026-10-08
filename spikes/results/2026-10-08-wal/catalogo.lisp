@@ -162,13 +162,45 @@
    #A((30) BASE-CHAR . "processo-integrata-SPK-10.lisp"))
   (:KIND :FAILED-ATTEMPT :FORMATS (1 2) :ARTIFACT
    #A((28) BASE-CHAR . "packaging-heap-esaurito.lisp"))
-  (:KIND :CHECK :FORMATS #1=(1 2) :ARTIFACT
+  (:KIND :CHECK :FORMATS (1 2) :ARTIFACT
    #A((32) BASE-CHAR . "verifica-packaging-separato.lisp"))
-  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+  (:KIND :CI-FAILURE :FORMATS (1 2) :ARTIFACT
    #A((24) BASE-CHAR . "ci-linux-precedente.lisp"))
-  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+  (:KIND :CI-FAILURE :FORMATS (1 2) :ARTIFACT
    #A((30) BASE-CHAR . "ci-linux-spk02-precedente.lisp"))
   (:KIND :CHECK :FORMATS (1 2) :ARTIFACT
-   #A((34) BASE-CHAR . "verifica-finale-evidenze-e-ci.lisp")))
+   #A((34) BASE-CHAR . "verifica-finale-evidenze-e-ci.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((34) BASE-CHAR . "processo-clock-isolato-SPK-05.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-01.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-02.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-03.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-04.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-05.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-06.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-07.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-08.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-09.lisp"))
+  (:KIND :SPIKE-PROCESS :FORMATS NIL :ARTIFACT
+   #A((36) BASE-CHAR . "processo-clock-integrato-SPK-10.lisp"))
+  (:KIND :CI-FAILURE :FORMATS #1=(1 2) :ARTIFACT
+   #A((33) BASE-CHAR . "ci-prima-configurazione-dati.lisp"))
+  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+   #A((27) BASE-CHAR . "ci-linux-clock-fallito.lisp"))
+  (:KIND :CI-FAILURE :FORMATS #1# :ARTIFACT
+   #A((33) BASE-CHAR . "ci-linux-spk05-clock-fallito.lisp"))
+  (:KIND :CHECK :FORMATS #1# :ARTIFACT
+   #A((24) BASE-CHAR . "clock-check-isolato.lisp"))
+  (:KIND :CHECK :FORMATS #1# :ARTIFACT
+   #A((29) BASE-CHAR . "clock-verifica-integrata.lisp")))
  :LIMITS
  (:WAL-LOCAL-PRIMITIVES :NOT-INTEGRATED-DATABASE :NO-REQUIREMENT-PROMOTION))

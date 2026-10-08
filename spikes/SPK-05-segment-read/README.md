@@ -43,6 +43,11 @@ il SAP, senza copia del record. Entrambi eseguono lo stesso verificatore SAP;
 solo dopo i controlli viene usato il range del valore. Le misure includono
 verifica e campionamento del tempo; preparazione, warmup, aggregazione e pulizia
 sono separate. I percentili usano il rango superiore sui campioni grezzi.
+Se l'intervallo osservato è zero, il report dichiara `:below-clock-resolution`:
+throughput e GiB/s sono `nil`, con risoluzione del clock e tick originali
+conservati. Non si forza una durata positiva. La fixture deterministica
+REQ-BEN-002 verifica durata zero, un tick positivo, intervallo negativo e
+conteggi errati; questi ultimi due casi restano rifiutati.
 Il dataset è piccolo e appena scritto: le letture sono influenzate dalla page
 cache, senza controllo dell'evizione. Non è una prova su NVMe a cache fredda.
 

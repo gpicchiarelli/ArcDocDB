@@ -212,12 +212,16 @@ Su worker vivo conserva le risorse; gli errori di pulizia restano espliciti."
          (samples (apply #'concatenate 'campioni (mapcar #'lavoro-campioni lavori))))
     (unless (and (= (* operazioni +record-bytes+) bytes)
                  (= (reduce #'+ lavori :key #'lavoro-valori-verificati) (* operazioni +value-bytes+))
-                 (plusp wall))
+                 (<= inizio fine)
+                 (every (lambda (lavoro) (<= (lavoro-inizio lavoro) (lavoro-fine lavoro))) lavori))
       (error "SPK-05: conteggi o intervallo incoerenti."))
     (list :status :ok :method metodo :access accesso :workers (length lavori) :replica replica
           :operations operazioni :verified-record-bytes bytes
-          :io-and-verification-wall-seconds wall :records-per-second (/ operazioni wall)
-          :verified-gib-per-second (/ bytes wall (expt 2 30))
+          :io-and-verification-wall-seconds wall
+          :clock-tick-seconds (secondi 1)
+          :rate-measurement-status (if (plusp wall) :measured :below-clock-resolution)
+          :records-per-second (when (plusp wall) (/ operazioni wall))
+          :verified-gib-per-second (when (plusp wall) (/ bytes wall (expt 2 30)))
           :latency-seconds (percentili samples) :raw-latency-ticks samples
           :worker-start-ticks (mapcar #'lavoro-inizio lavori)
           :worker-end-ticks (mapcar #'lavoro-fine lavori)
@@ -326,8 +330,36 @@ Su worker vivo conserva le risorse; gli errori di pulizia restano espliciti."
       (unless rilevato (error "SPK-05: errore worker non propagato per ~S." metodo))))
   (list :status :ok :worker-errors 2 :propagation :after-join :cleanup :complete))
 
+;;; REQ: REQ-BEN-002 REQ-VAL-001
+(defun check-req-ben-002-risoluzione-clock ()
+  "Durata zero non inventa un rate; intervalli negativi e conteggi errati restano errori."
+  (let* ((lavoro (make-lavoro :inizio 100 :fine 100 :completati 1
+                            :valori-verificati +value-bytes+
+                            :campioni (make-array 1 :element-type '(unsigned-byte 64) :initial-element 0)))
+         (lavori (list lavoro))
+         (r (risultato-caso lavori +record-bytes+ :pread :sequential 0 0 0d0)))
+    (assert (eq :below-clock-resolution (getf r :rate-measurement-status)))
+    (assert (zerop (getf r :io-and-verification-wall-seconds)))
+    (assert (null (getf r :records-per-second)))
+    (assert (null (getf r :verified-gib-per-second)))
+    (setf (lavoro-fine lavoro) 101)
+    (let ((r (risultato-caso lavori +record-bytes+ :pread :sequential 0 0 0d0)))
+      (assert (eq :measured (getf r :rate-measurement-status)))
+      (assert (= internal-time-units-per-second (getf r :records-per-second))))
+    (flet ((rifiuta ()
+             (let ((rilevato nil))
+               (handler-case (risultato-caso lavori +record-bytes+ :pread :sequential 0 0 0d0)
+                 (error (c)
+                   (assert (search "conteggi o intervallo incoerenti" (princ-to-string c)))
+                   (setf rilevato t)))
+               (assert rilevato))))
+      (setf (lavoro-fine lavoro) 99) (rifiuta)
+      (setf (lavoro-fine lavoro) 101 (lavoro-completati lavoro) 0) (rifiuta)))
+  t)
+
 (defun check (base)
   "Fixture reali, iniezioni e corruzioni limitate; nessuna qualifica del motore."
+  (check-req-ben-002-risoluzione-clock)
   (let ((io (arcdocdb.spk05.io:check)) (record (arcdocdb.spk05.record:check)))
     (unless (and (eq (getf io :status) :ok) (eq (getf record :status) :ok))
       (error "SPK-05: esito moduli non valido."))
@@ -342,7 +374,7 @@ Su worker vivo conserva le risorse; gli errori di pulizia restano espliciti."
                                                       collect (misura-caso path numero 2 metodo accesso 0)))))))))
       (list :status :ok :spike :spk-05 :io io :record record :real-file real
             :file-records 12 :file-bytes (* 12 +record-bytes+) :fixture-cleanup :complete
-            :scope :synthetic-immutable-record-read))))
+            :clock-resolution-check :ok :scope :synthetic-immutable-record-read))))
 
 (defun benchmark (base)
   "36 casi in serie, stesso file piccolo, tre repliche; nessuna cache fredda o oltre RAM."

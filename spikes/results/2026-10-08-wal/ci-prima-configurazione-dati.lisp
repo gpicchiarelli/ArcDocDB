@@ -1,0 +1,63 @@
+(:SCHEMA-VERSION 1 :KIND :CI-RAW-LOG :COMMIT
+ "651cb61ad6d6f03eb76ed2051047493551c28c21" :URL
+ "https://github.com/gpicchiarelli/ArcDocDB/actions/runs/37851616894" :JOBS
+ "{\"conclusion\":\"failure\",\"headSha\":\"651cb61ad6d6f03eb76ed2051047493551c28c21\",\"jobs\":[{\"completedAt\":\"2026-10-08T22:09:29Z\",\"conclusion\":\"failure\",\"databaseId\":113565623370,\"name\":\"Build e test (macos-latest)\",\"startedAt\":\"2026-10-08T22:09:11Z\",\"status\":\"completed\",\"steps\":[{\"completedAt\":\"2026-10-08T22:09:13Z\",\"conclusion\":\"success\",\"name\":\"Set up job\",\"number\":1,\"startedAt\":\"2026-10-08T22:09:12Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:22Z\",\"conclusion\":\"success\",\"name\":\"Run actions/checkout@v4\",\"number\":2,\"startedAt\":\"2026-10-08T22:09:13Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:26Z\",\"conclusion\":\"failure\",\"name\":\"Run ./.github/actions/setup-sbcl\",\"number\":3,\"startedAt\":\"2026-10-08T22:09:22Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:26Z\",\"conclusion\":\"skipped\",\"name\":\"Verifica completa registrata (senza benchmark)\",\"number\":4,\"startedAt\":\"2026-10-08T22:09:26Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:26Z\",\"conclusion\":\"failure\",\"name\":\"Conserva prove e diagnostiche\",\"number\":5,\"startedAt\":\"2026-10-08T22:09:26Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:26Z\",\"conclusion\":\"success\",\"name\":\"Post Run actions/checkout@v4\",\"number\":10,\"startedAt\":\"2026-10-08T22:09:26Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:27Z\",\"conclusion\":\"success\",\"name\":\"Complete job\",\"number\":11,\"startedAt\":\"2026-10-08T22:09:26Z\",\"status\":\"completed\"}],\"url\":\"https://github.com/gpicchiarelli/ArcDocDB/actions/runs/37851616894/job/113565623370\"},{\"completedAt\":\"2026-10-08T22:09:23Z\",\"conclusion\":\"success\",\"databaseId\":113565623590,\"name\":\"Tracciabilità e documentazione\",\"startedAt\":\"2026-10-08T22:09:07Z\",\"status\":\"completed\",\"steps\":[{\"completedAt\":\"2026-10-08T22:09:10Z\",\"conclusion\":\"success\",\"name\":\"Set up job\",\"number\":1,\"startedAt\":\"2026-10-08T22:09:08Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:16Z\",\"conclusion\":\"success\",\"name\":\"Run actions/checkout@v4\",\"number\":2,\"startedAt\":\"2026-10-08T22:09:10Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:18Z\",\"conclusion\":\"success\",\"name\":\"Run ./.github/actions/setup-sbcl\",\"number\":3,\"startedAt\":\"2026-10-08T22:09:16Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:19Z\",\"conclusion\":\"success\",\"name\":\"Tracciabilità e link registrati\",\"number\":4,\"startedAt\":\"2026-10-08T22:09:18Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:20Z\",\"conclusion\":\"success\",\"name\":\"Conserva prove e diagnostiche\",\"number\":5,\"startedAt\":\"2026-10-08T22:09:19Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:21Z\",\"conclusion\":\"success\",\"name\":\"Post Run actions/checkout@v4\",\"number\":10,\"startedAt\":\"2026-10-08T22:09:20Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:21Z\",\"conclusion\":\"success\",\"name\":\"Complete job\",\"number\":11,\"startedAt\":\"2026-10-08T22:09:21Z\",\"status\":\"completed\"}],\"url\":\"https://github.com/gpicchiarelli/ArcDocDB/actions/runs/37851616894/job/113565623590\"},{\"completedAt\":\"2026-10-08T22:09:29Z\",\"conclusion\":\"failure\",\"databaseId\":113565623670,\"name\":\"Build e test (ubuntu-latest)\",\"startedAt\":\"2026-10-08T22:09:07Z\",\"status\":\"completed\",\"steps\":[{\"completedAt\":\"2026-10-08T22:09:08Z\",\"conclusion\":\"success\",\"name\":\"Set up job\",\"number\":1,\"startedAt\":\"2026-10-08T22:09:07Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:13Z\",\"conclusion\":\"success\",\"name\":\"Run actions/checkout@v4\",\"number\":2,\"startedAt\":\"2026-10-08T22:09:08Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:15Z\",\"conclusion\":\"success\",\"name\":\"Run ./.github/actions/setup-sbcl\",\"number\":3,\"startedAt\":\"2026-10-08T22:09:13Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:23Z\",\"conclusion\":\"failure\",\"name\":\"Verifica completa registrata (senza benchmark)\",\"number\":4,\"startedAt\":\"2026-10-08T22:09:15Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:24Z\",\"conclusion\":\"success\",\"name\":\"Conserva prove e diagnostiche\",\"number\":5,\"startedAt\":\"2026-10-08T22:09:23Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:24Z\",\"conclusion\":\"success\",\"name\":\"Post Run actions/checkout@v4\",\"number\":10,\"startedAt\":\"2026-10-08T22:09:24Z\",\"status\":\"completed\"},{\"completedAt\":\"2026-10-08T22:09:24Z\",\"conclusion\":\"success\",\"name\":\"Complete job\",\"number\":11,\"startedAt\":\"2026-10-08T22:09:24Z\",\"status\":\"completed\"}],\"url\":\"https://github.com/gpicchiarelli/ArcDocDB/actions/runs/37851616894/job/113565623670\"}]}
+"
+ :LOG
+ "Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	﻿2026-10-08T22:09:22.2528800Z Prepare all required actions
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2593070Z ##[group]Run ./.github/actions/setup-sbcl
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2600730Z with:
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2600960Z   version: 2.6.9
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2601470Z   linux-sha256: 39fac28407405841003e4c2abfbe0d96abd93b7701e8b61cdd35e713943b46d6
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2602060Z ##[endgroup]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2694860Z ##[start-action display=Distribuzione ufficiale SBCL (Linux);id=__self.__run]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2726270Z ##[end-action id=__self.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2734250Z ##[start-action display=SBCL (macOS);id=__self.__run_2]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2833090Z ##[group]Run brew install sbcl
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2833560Z ^[[36;1mbrew install sbcl^[[0m
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2901080Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:22.2901550Z ##[endgroup]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:24.6615640Z ^[[32m==>^[[0m ^[[1mDownloading bottle manifests^[[0m
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:24.6818410Z ✔︎ Bottle Manifest sbcl (2.6.8)
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:24.6819440Z ^[[34m==>^[[0m ^[[1mWould install 1 formula:^[[0m
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:24.6921520Z sbcl
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:24.7484430Z ^[[32m==>^[[0m ^[[1mFetching downloads for: ^[[32msbcl^[[39m^[[0m
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:25.8011820Z ✔︎ Bottle sbcl (2.6.8)
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:25.8118170Z ^[[34m==>^[[0m ^[[1mPouring sbcl--2.6.8.arm64_tahoe.bottle.tar.gz^[[0m
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1502200Z 🍺  /opt/homebrew/Cellar/sbcl/2.6.8: 1,526 files, 74MB
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1601280Z ##[end-action id=__self.__run_2;outcome=success;conclusion=success;duration_ms=3886]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1610790Z ##[start-action display=Controllo versione;id=__self.__run_3]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1645400Z ##[group]Run sbcl --version
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1645760Z ^[[36;1msbcl --version^[[0m
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1646160Z ^[[36;1mtest \"$(sbcl --version)\" = \"SBCL ${TASK_SBCL_VERSION}\"^[[0m
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1699190Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1699510Z env:
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1699690Z   TASK_SBCL_VERSION: 2.6.9
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.1699890Z ##[endgroup]
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.2086110Z SBCL 2.6.8
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.2148990Z ##[error]Process completed with exit code 1.
+Build e test (macos-latest)	Run ./.github/actions/setup-sbcl	2026-10-08T22:09:26.2155450Z ##[end-action id=__self.__run_3;outcome=failure;conclusion=failure;duration_ms=54]
+Build e test (macos-latest)	Conserva prove e diagnostiche	﻿2026-10-08T22:09:26.2237780Z ##[group]Run actions/upload-artifact@v4
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2238110Z with:
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2238270Z   name: prove-macos-latest
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2238540Z   path: spikes/out/
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2238790Z   if-no-files-found: error
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2239040Z   compression-level: 6
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2239200Z   overwrite: false
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2239410Z   include-hidden-files: false
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.2239590Z ##[endgroup]
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.3994410Z (node:1346) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.3995310Z (Use `node --trace-deprecation ...` to show where the warning was created)
+Build e test (macos-latest)	Conserva prove e diagnostiche	2026-10-08T22:09:26.4012950Z ##[error]No files were found with the provided path: spikes/out/. No artifacts will be uploaded.
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	﻿2026-10-08T22:09:15.9434347Z ##[group]Run make check
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:15.9434727Z ^[[36;1mmake check^[[0m
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:15.9489432Z shell: /usr/bin/bash -e {0}
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:15.9489612Z env:
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:15.9489795Z   SBCL_HOME: /home/runner/work/_temp/arcdocdb-sbcl/lib/sbcl
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:15.9489982Z ##[endgroup]
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:16.1059480Z sbcl --noinform --no-userinit --no-sysinit --script tools/record-command.lisp -- make check-core
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:23.0976972Z :FAILED: make check-core; record: /home/runner/work/ArcDocDB/ArcDocDB/spikes/out/4000486156-command-2165-0/report.lisp
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:23.0988151Z make: *** [Makefile:32: check] Error 1
+Build e test (ubuntu-latest)	Verifica completa registrata (senza benchmark)	2026-10-08T22:09:23.1002305Z ##[error]Process completed with exit code 2.
+"
+ :LIMITS (:RAW :INCLUDES-TOOLCHAIN-AND-SPIKE-FAILURES))

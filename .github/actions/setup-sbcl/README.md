@@ -7,7 +7,8 @@
 La [CI](../../workflows/ci.yml) usa questa [azione locale](action.yml) per tutti
 i job. Linux x86-64 installa il binario della [distribuzione ufficiale
 SBCL](https://www.sbcl.org/platform-table.html), controllando il digest SHA256
-fissato nell'azione prima dell'estrazione. macOS installa tramite Homebrew e
+fissato nell'azione prima dell'estrazione. macOS aggiorna l'indice Homebrew,
+installa il pacchetto e
 rifiuta una versione differente: un aggiornamento della formula richiede
 aggiornare deliberatamente questa configurazione e ripetere le prove.
 

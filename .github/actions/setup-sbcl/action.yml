@@ -32,7 +32,9 @@ runs:
     - name: SBCL (macOS)
       if: runner.os == 'macOS'
       shell: bash
-      run: brew install sbcl
+      run: |
+        brew update
+        brew install sbcl
     - name: Controllo versione
       shell: bash
       env:
