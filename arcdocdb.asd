@@ -11,6 +11,7 @@
   :version "0.0.0"
   :pathname "src/"
   :serial t
+  :depends-on ("sb-posix")
   :components ((:file "package")
                (:module "foundation"
                 :serial t
@@ -22,6 +23,9 @@
                 :components ((:file "package") (:file "formats") (:file "segment-header")
                              (:file "control-payload") (:file "payload-record")
                              (:file "payload-write")))
+               (:module "io" :serial t
+                :components ((:file "package") (:file "types") (:file "native")
+                             (:file "lifecycle") (:file "transfer") (:file "flush")))
                (:module "recovery"
                 :serial t
                 :components ((:file "package") (:file "scan"))))
@@ -43,6 +47,8 @@
                 :serial t
                 :components ((:file "support") (:file "segment-header")
                              (:file "control-payload")))
+               (:module "io" :serial t
+                :components ((:file "support") (:file "transfer") (:file "native")))
                (:module "recovery"
                 :serial t
                 :components ((:file "support") (:file "scan") (:file "corruption"))))
@@ -50,4 +56,5 @@
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.io.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.recovery.tests '#:run)))

@@ -1,5 +1,5 @@
 ;;;; Mutazioni mirate in copie isolate; nessun sorgente del repository viene riscritto.
-;;;; Uso: --run directory-nuova/ [foundation|storage|recovery] oppure --self-test
+;;;; Uso: --run directory-nuova/ [foundation|storage|recovery|io] oppure --self-test
 ;;;; REQ: REQ-FOR-003 REQ-FOR-004 REQ-AFF-002 REQ-LIM-001 REQ-LIM-003 REQ-VAL-001
 (require :asdf)
 (defpackage #:arcdocdb.foundation.mutation (:use #:cl))
@@ -58,6 +58,26 @@
     ("log-byte-budget-boundary" "scan.lisp" "(> (- end start) max-bytes)"
                                            "(>= (- end start) max-bytes)")))
 
+(defparameter *io-mutants*
+  '(("input-mutates-health" "types.lisp" "(unless (eq operation :read)" "(when (eq operation :read)")
+    ("write-does-not-fault" "types.lisp" "(setf (file-state file) :faulted)"
+                                       "(setf (file-state file) :open)")
+    ("transfer-byte-budget" "transfer.lisp" "(> count (file-max-transfer file))"
+                                          "(>= count (file-max-transfer file))")
+    ("progress-and-or" "transfer.lisp" "(and (integerp result) (<= 1 result remaining))"
+                                      "(or (integerp result) (<= 1 result remaining))")
+    ("read-offset-advance" "transfer.lisp" "remaining (+ offset done))"
+                                         "remaining offset)")
+    ("write-position-advance" "transfer.lisp" "(incf (file-written file) progress)"
+                                            "(incf (file-written file) 1)")
+    ("file-byte-budget" "transfer.lisp" "(> count (- (file-max-file-bytes file) (file-written file)))"
+                                       "(>= count (- (file-max-file-bytes file) (file-written file)))")
+    ("close-state-after-error" "lifecycle.lisp" "(setf (file-state file) :closed)"
+                                              "(setf (file-state file) :open)")
+    ("flush-success-zero" "flush.lisp" "(unless (eql result 0)" "(when (eql result 0)")
+    ("durable-frontier" "flush.lisp" "(setf (file-durable file) (file-written file))"
+                                    "(setf (file-durable file) 0)")))
+
 (defun read-text (path)
   (uiop:read-file-string path :external-format :utf-8))
 
@@ -73,7 +93,9 @@
                        (mapcar #'enough-namestring (directory "src/storage/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/storage/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/recovery/*.lisp"))
-                       (mapcar #'enough-namestring (directory "tests/recovery/*.lisp"))))
+                       (mapcar #'enough-namestring (directory "tests/recovery/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/io/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/io/*.lisp"))))
     (let ((target (merge-pathnames file directory)))
       (ensure-directories-exist target)
       (uiop:copy-file file target))))
@@ -111,7 +133,7 @@
          (format t "Mutazioni: self-test superato.~%"))
         ((and (<= 2 (length args) 3) (string= (first args) "--run")
               (or (= (length args) 2)
-                  (member (third args) '("foundation" "storage" "recovery") :test #'string=)))
+                  (member (third args) '("foundation" "storage" "recovery" "io") :test #'string=)))
          (let ((directory (uiop:ensure-directory-pathname (second args)))
                (scope (or (third args) "foundation")))
            (when (probe-file directory)
@@ -119,9 +141,10 @@
            (ensure-directories-exist directory)
            (write (loop for mutant in (cond ((string= scope "storage") *storage-mutants*)
                                            ((string= scope "recovery") *recovery-mutants*)
+                                           ((string= scope "io") *io-mutants*)
                                            (t *mutants*))
                         for i from 0 collect (run-mutant mutant
                                                (merge-pathnames (format nil "~D/" i) directory) scope))
                   :pretty t)
            (terpri)))
-        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage|recovery]."))))
+        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage|recovery|io]."))))

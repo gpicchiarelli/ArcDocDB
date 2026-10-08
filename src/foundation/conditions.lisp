@@ -27,3 +27,13 @@
 ;;; REQ: REQ-AFF-004
 (define-condition invariant-violation (arcdocdb-error) ()
   (:documentation "Invariante interna violata; il proprietario applica fail-stop."))
+
+;;; REQ: REQ-AFF-001 REQ-AFF-004
+(define-condition io-fault (arcdocdb-error)
+  ((operation :initarg :operation :reader error-operation :type keyword)
+   (errno :initarg :errno :initform nil :reader error-errno :type (or null fixnum))
+   (cleanup-errno :initarg :cleanup-errno :initform nil :reader error-cleanup-errno
+                  :type (or null fixnum))
+   (transferred :initarg :transferred :initform 0 :reader error-transferred
+                :type (integer 0 *)))
+  (:documentation "Guasto I/O dichiarato, con errno e progresso noto; nessun retry."))
