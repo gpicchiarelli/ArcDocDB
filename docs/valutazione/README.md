@@ -24,6 +24,7 @@ che cosa è ancora indefinito, che cosa è rischioso e come lo si verifica.
 | [SPK-05, prima campagna](risultati-SPK-05-2026-10-08.md) | Letture reali pread/mmap, verifica dei record, allocazioni e confronto locale |
 | [SPK-06, prima campagna](risultati-SPK-06-2026-10-08.md) | Modello finito del carico, quote e interferenza locale di copie con letture |
 | [SPK-07 e SPK-08, avanzamento](risultati-SPK-07-08-2026-10-08.md) | Crash sui byte, due lettori SC, maschere esatte e benchmark NEON/SWAR |
+| [SPK-01, lettura in buffer](risultati-SPK-01-lettura-2026-10-08.md) | Oracolo indipendente, validazione statica, u64 alti e 80 campioni a coppie |
 
 ## Criteri di valutazione
 

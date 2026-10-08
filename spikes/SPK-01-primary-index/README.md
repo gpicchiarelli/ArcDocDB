@@ -23,6 +23,40 @@ Riferimenti: ADR-0001, 0028, 0030, 0031, 0032, 0036, 0043, 0050; REQ-IDX-001,
 REQ-IDX-003, REQ-IDX-005, REQ-IDX-007, REQ-BEN-001. Lo spike non modifica
 i requisiti o i documenti condivisi.
 
+## Lettura nel buffer del chiamante
+
+> **Proposta** — Variante sperimentale v1. Il
+> [metodo di integrazione](metodo-integrazione-lettura-buffer.md) registra
+> ordine, criteri e limiti prima delle misure.
+
+`arcdocdb.spk01.lettura-buffer:leggi` usa un simple-array u64 privato di quattro
+parole, `[CSN, location, length, end-CSN]`, e restituisce soltanto stato e numero
+di tentativi scartati. Scrive dopo il seqlock e il ricontrollo della root;
+miss, retry-limit e gli errori sincroni conservano l'output. Il percorso diretto
+e quello con callback derivano dalla stessa macro locale, con `safety 3`.
+La destinazione non è una pubblicazione atomica a lettori concorrenti.
+
+Il CHECK del launcher comprende la
+[storia indipendente](metodo-check-lettura-buffer.md), i confronti con il core,
+i confini u64, le collisioni, split/rebuild, i witness root/seqlock e i
+mutanti. La [matrice a coppie](metodo-bench-lettura-buffer.md) si esegue
+esplicitamente; il benchmark originale resta disponibile come `baseline`:
+
+```sh
+sbcl --noinform --no-userinit --no-sysinit --script tools/run-spikes.lisp --check SPK-01
+sbcl --noinform --no-userinit --no-sysinit --script tools/run-spikes.lisp --bench SPK-01 -- --variant buffer
+```
+
+Entrambe le larghezze restano ADR-0043 v1; cinque parole aggiungono il CSN
+finale e non verificano v2. Non sono modificati il core o i requisiti del
+motore. Tutte le prove sono conservate nel
+[catalogo della lettura](../results/2026-10-08-lettura/catalogo.lisp).
+La [campagna finale](../../docs/valutazione/risultati-SPK-01-lettura-2026-10-08.md)
+completa 80 campioni e osserva zero byte consed nei 40 del buffer, includendo
+u64 massimi. Il residuo del validatore generico è misurato separatamente e
+rimosso nel buffer con il tipo letterale `(integer 1 8)`, conservando i rifiuti.
+Misure locali v1, senza qualificazione dei target del motore.
+
 ## Metodo
 
 - Package `arcdocdb.spk01`; API `(check)` e `(benchmark &key ...)`, entrambe

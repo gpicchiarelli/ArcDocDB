@@ -68,6 +68,11 @@
             '("spikes/SPK-10-v2-limits/codec.lisp" "spikes/SPK-10-v2-limits/indice.lisp"
               "spikes/SPK-10-v2-limits/cbor.lisp" "spikes/SPK-10-v2-limits/migrazione.lisp"
               "spikes/SPK-09-integrity/core.lisp"))
+          (when (string= (car entry) "SPK-01")
+            '("spikes/SPK-01-primary-index/lettura-buffer.lisp"
+              "spikes/SPK-01-primary-index/check-lettura-buffer.lisp"))
+          (when (and (string= (car entry) "SPK-01") (string= mode "--bench"))
+            '("spikes/SPK-01-primary-index/bench-lettura-buffer.lisp"))
           (when (and (string= (car entry) "SPK-01") (string= mode "--profile"))
             '("spikes/SPK-01-primary-index/profile.lisp"))))
 

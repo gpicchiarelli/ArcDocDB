@@ -1,0 +1,43 @@
+(:SCHEMA-VERSION 1 :ID "SPK-01" :COMMAND
+ (#A((48) BASE-CHAR . "/opt/homebrew/Cellar/sbcl/2.6.9/libexec/bin/sbcl")
+  "--dynamic-space-size" "4096" "--noinform" "--no-userinit" "--no-sysinit"
+  "--script" "spikes/SPK-01-primary-index/run.lisp"
+  #A((7) BASE-CHAR . "--bench") #A((9) BASE-CHAR . "--variant")
+  #A((6) BASE-CHAR . "buffer") #A((7) BASE-CHAR . "--words")
+  #A((1) BASE-CHAR . "5"))
+ :EXIT-CODE 1 :STARTED-AT-UNIVERSAL-TIME 4000483650 :FINISHED-AT-UNIVERSAL-TIME
+ 4000483651 :WALL-SECONDS 0.47962d0 :STATUS :FAILED :SOURCE-BLOBS-BEFORE
+ ((:PATH "tools/run-spikes.lisp" :GIT-BLOB
+   "ae44fcad821c929fc970d70c7990460011d96e0c")
+  (:PATH "spikes/SPK-01-primary-index/run.lisp" :GIT-BLOB
+   "b6e680b0c2d1a96c1d7fc3b0e133c80b6564a01e")
+  (:PATH #A((37) BASE-CHAR . "spikes/SPK-01-primary-index/core.lisp") :GIT-BLOB
+   "c019f6ad53e173a0d336a4dbfaf903e274a66f08")
+  (:PATH "spikes/SPK-01-primary-index/lettura-buffer.lisp" :GIT-BLOB
+   "899021815a7b1415d225ce5ba712564593504402")
+  (:PATH "spikes/SPK-01-primary-index/check-lettura-buffer.lisp" :GIT-BLOB
+   "5284c12b8057577901e3592bbe98156f76a362b2")
+  (:PATH "spikes/SPK-01-primary-index/bench-lettura-buffer.lisp" :GIT-BLOB
+   :ABSENT))
+ :SOURCE-BLOBS-AFTER
+ ((:PATH "tools/run-spikes.lisp" :GIT-BLOB
+   "ae44fcad821c929fc970d70c7990460011d96e0c")
+  (:PATH "spikes/SPK-01-primary-index/run.lisp" :GIT-BLOB
+   "b6e680b0c2d1a96c1d7fc3b0e133c80b6564a01e")
+  (:PATH #A((37) BASE-CHAR . "spikes/SPK-01-primary-index/core.lisp") :GIT-BLOB
+   "c019f6ad53e173a0d336a4dbfaf903e274a66f08")
+  (:PATH "spikes/SPK-01-primary-index/lettura-buffer.lisp" :GIT-BLOB
+   "899021815a7b1415d225ce5ba712564593504402")
+  (:PATH "spikes/SPK-01-primary-index/check-lettura-buffer.lisp" :GIT-BLOB
+   "5284c12b8057577901e3592bbe98156f76a362b2")
+  (:PATH "spikes/SPK-01-primary-index/bench-lettura-buffer.lisp" :GIT-BLOB
+   :ABSENT))
+ :SOURCE-CONSISTENCY :STABLE :RESULT
+ (:SPIKE :SPK-01 :STATUS :ERROR :CONDITION
+  #A((52) BASE-CHAR
+     . "Opzione SPK-01 non valida per :BUFFER: \"--words\" \"5\""))
+ :STDOUT "(:SPIKE :SPK-01 :STATUS :ERROR :CONDITION
+ #A((52) BASE-CHAR
+    . \"Opzione SPK-01 non valida per :BUFFER: \\\"--words\\\" \\\"5\\\"\"))
+"
+ :STDERR "")
