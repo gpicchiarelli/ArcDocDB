@@ -4,6 +4,17 @@
 (in-package #:arcdocdb.wal)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 
+;;; REQ: REQ-WAL-005 REQ-AFF-001 REQ-AFF-004
+(declaim (ftype (function (log-io) null) verifica-log-segmento))
+(defun verifica-log-segmento (log)
+  "Pre: capacità esclusiva del log della Serie. Post: segmento sano, senza syscall.
+INVALID-ARGUMENT per control/multiserie; IO-FAULT per log terminale."
+  (unless (eq (log-io-kind log) :segment)
+    (error 'invalid-argument :reason :log-segment-kind))
+  (unless (eq (log-io-state log) :open)
+    (error 'io-fault :reason :log-faulted :operation :wal))
+  nil)
+
 ;;; REQ: REQ-WAL-005 REQ-AFF-008 REQ-AFF-001
 (declaim (ftype (function (lotto log-io file-offset file-offset) null) verifica-file-csn))
 (defun verifica-file-csn (lotto log file-start durable)
@@ -73,6 +84,29 @@ INVALID-ARGUMENT per libero/già risolto; INVARIANT-VIOLATION per associazione i
   (unless (and (lotto-csn-registry lotto) (lotto-csn-log lotto)
                (or (plusp (lotto-csn-high lotto)) (plusp (lotto-csn-low lotto))))
     (error 'invariant-violation :reason :lotto-csn-token))
+  nil)
+
+;;; REQ: REQ-MVC-008 REQ-AFF-004 REQ-WAL-005
+(declaim (ftype (function (lotto registro-csn log-io index u32 u32) null) verifica-token-lotto))
+(defun verifica-token-lotto (lotto registry log slot high low)
+  "Pre: token catturato e log della Serie, dopo handoff. Post: associazione esatta.
+INVALID-ARGUMENT per evento vecchio/log diverso; invarianti per token incompleto.
+Nessuna mutazione, risoluzione o lettura del registro condiviso."
+  (esigi-identita-csn-lotto lotto registry slot high low)
+  (unless (eq (lotto-csn-log lotto) log)
+    (error 'invalid-argument :reason :lotto-csn-log))
+  nil)
+
+;;; REQ: REQ-MVC-008 REQ-AFF-001 REQ-WAL-006
+(declaim (ftype (function (lotto registro-csn log-io index u32 u32
+                          (member :async :group :strong)) null) verifica-pubblicazione-lotto))
+(defun verifica-pubblicazione-lotto (lotto registry log slot high low level)
+  "Pre: writer possiede il token catturato, esito I/O osservato dopo handoff.
+Post: identità, salute e copertura verificate PRIMA della pubblicazione esterna.
+INVALID-ARGUMENT per token/copertura; IO-FAULT per salute; nessuna mutazione."
+  (verifica-token-lotto lotto registry log slot high low)
+  (verifica-log-segmento log)
+  (unless (coperto-p lotto level) (error 'invalid-argument :reason :lotto-not-covered))
   nil)
 
 ;;; REQ: REQ-MVC-008 REQ-AFF-004

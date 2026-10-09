@@ -42,6 +42,10 @@
                (:module "wal" :serial t
                 :components ((:file "package") (:file "types") (:file "builder")
                              (:file "group") (:file "executor") (:file "csn")))
+               (:module "series" :serial t
+                :components ((:file "package") (:file "types") (:file "ownership")
+                             (:file "events") (:file "io-events") (:file "publication")
+                             (:file "query") (:file "retirement")))
                (:module "recovery"
                 :serial t
                 :components ((:file "package") (:file "scan")
@@ -90,7 +94,9 @@
                              (:file "manifest") (:file "manifest-audit")))
                (:module "wal" :serial t
                 :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
-                             (:file "native") (:file "csn") (:file "csn-threads"))))
+                             (:file "native") (:file "csn") (:file "csn-threads")))
+               (:module "series" :serial t
+                :components ((:file "support") (:file "controller") (:file "threads"))))
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
@@ -102,4 +108,5 @@
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.io.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.recovery.tests '#:run)
-             (uiop:symbol-call '#:arcdocdb.wal.tests '#:run)))
+             (uiop:symbol-call '#:arcdocdb.wal.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.series.tests '#:run)))
