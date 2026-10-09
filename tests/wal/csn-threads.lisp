@@ -1,5 +1,33 @@
 (in-package #:arcdocdb.wal.tests)
 
+;;; REQ: REQ-AFF-004 REQ-MVC-008
+(deftest test-REQ-AFF-004-wal-csn-incomplete-association-before-resolution
+  (call-with-wal-csn-fixture
+   (lambda (registry log file)
+     (declare (ignore file))
+     (let ((lot (wal-csn-open)))
+       (arcdocdb.wal:sigilla-lotto-con-csn lot registry log 0 0)
+       (multiple-value-bind (slot high low) (arcdocdb.wal:leggi-csn-lotto lot)
+         (dolist (case '(:registry :log :zero-pair))
+           (let ((before (arcdocdb.csn.tests::csn-private-image registry)))
+             (ecase case
+               (:registry (setf (arcdocdb.wal::lotto-csn-registry lot) nil))
+               (:log (setf (arcdocdb.wal::lotto-csn-log lot) nil))
+               (:zero-pair (setf (arcdocdb.wal::lotto-csn-high lot) 0
+                                 (arcdocdb.wal::lotto-csn-low lot) 0)))
+             (signals invariant-violation
+                      (arcdocdb.wal:risolvi-lotto-pubblicato lot registry slot high low :group)
+                      :lotto-csn-token)
+             (is (arcdocdb.wal::lotto-csn-pending lot))
+             (is (equalp before (arcdocdb.csn.tests::csn-private-image registry)))
+             ;; Solo l'harness ripristina l'iniezione nota; il prodotto richiede fail-stop.
+             (setf (arcdocdb.wal::lotto-csn-registry lot) registry
+                   (arcdocdb.wal::lotto-csn-log lot) log
+                   (arcdocdb.wal::lotto-csn-high lot) high (arcdocdb.wal::lotto-csn-low lot) low)))
+         (setf (arcdocdb.wal::log-io-state log) :faulted)
+         (arcdocdb.wal:annulla-csn-lotto lot registry slot high low)
+         (wal-csn-frontiers registry 1 1))))))
+
 ;;; REQ: REQ-AFF-008 REQ-AFF-001 REQ-WAL-005
 (deftest test-REQ-AFF-008-wal-csn-file-budget-and-availability-before-assignment
   (dolist (case '(:closed :faulted :transfer-budget :file-budget :written-offset :planned-budget))
