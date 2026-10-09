@@ -143,3 +143,16 @@ difensivo) sono inventariate nel documento. Il nuovo helper di accettazione
 non ha esiti strumentati scoperti. Le lacune legacy restano: 42 espressioni
 e dieci esiti in queue, 28 e otto in writer, una forma del package.
 Nessuna esclusione approvata, MC/DC completa o chiusura del gate C1 implicita.
+
+
+## Lista dei writer pronti — 2026-10-09
+
+La [campagna ready](../implementazione/writer-ready-decisioni.md) conserva
+848/974 espressioni e 126/146 esiti sui sei file execution. I due nuovi file
+osservano 343/381 espressioni e 50/52 esiti: 17 forme di definizione/default
+non marcate in ready-types; 21 forme in ready (nove definizioni, otto nelle
+due condizioni CAS difensive e quattro nell’otherwise). I due esiti mancanti
+sono la postcondizione della proprietà acquisita e il vecchio valore del
+CAS di rilascio; non vengono provocati violando la proprietà con thread
+attivi. Le lacune dei quattro file precedenti rimangono nel denominatore.
+Nessuna esclusione approvata, MC/DC completa o chiusura del gate C1 implicita.
