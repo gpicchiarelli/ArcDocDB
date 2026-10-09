@@ -10,6 +10,6 @@
  :linux-ci (:run-id 37956507620 :command "ci-linux-command.lisp" :status :failed
             :exit-code 2 :failure :heap-exhausted :product-tests 436 :smoke :passed)
  :native-preservation "native-copy-audit.lisp" :native-files-before-final-check 18
- :final-recorded-verification (:artifact "verifica-finale.lisp" :status :ok :exit-code 0 :source-consistency :stable :source-blobs-before-after :equal :checker-heap-mib 2048) :exact-head-ci (:status :pending-at-publication :required-before-merge t :pull-request "https://github.com/gpicchiarelli/ArcDocDB/pull/4")
+ :final-recorded-verification (:artifact "verifica-finale.lisp" :status :ok :exit-code 0 :source-consistency :stable :source-blobs-before-after :equal :checker-heap-mib 2048) :exact-head-ci (:status :pending-at-publication :required-before-merge t :pull-request "https://github.com/gpicchiarelli/ArcDocDB/pull/5")
  :limits (:original-runtime-statuses-preserved :no-new-cbor-campaign
           :not-c1-or-mcdc-or-engine-qualification))
