@@ -1,0 +1,101 @@
+(:SCHEMA-VERSION 1 :KIND :EVIDENCE-CATALOG :DATE "2026-10-09" :PATH-BASE
+ "spikes/results/2026-10-09-manifest/" :ENTRIES
+ ((:KIND :COMMAND-VERIFICATION :ARTIFACT "build-finale.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "build-fixture-fallito.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "catalogo-verifica-finale.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "catalogo-verifica-intermedia.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "catalogo-verifica-prima-spike.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "check-finale.lisp")
+  (:KIND :RAW-COVERAGE :ARTIFACT "copertura-dati.lisp" :PROCESS-ARTIFACT
+   "copertura.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "copertura.lisp")
+  (:KIND :DEVELOPMENT-DIAGNOSTIC :ARTIFACT
+   "diagnostica-fixture-preliminare.lisp")
+  (:KIND :C1-REVIEW :ARTIFACT "letture-c1.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT "mutazioni-decisions-dati.lisp"
+   :PROCESS-ARTIFACT "mutazioni-decisions-regressione.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "mutazioni-decisions-regressione.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT "mutazioni-manifest-dati.lisp"
+   :PROCESS-ARTIFACT "mutazioni-manifest.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "mutazioni-manifest.lisp")
+  (:KIND :DEVELOPMENT-DIAGNOSTIC :ARTIFACT
+   "mutazioni-self-test-preliminare.lisp")
+  (:KIND :PARALLEL-SELF-TEST-OUTPUT :ARTIFACT "self-test-finale-dati.lisp"
+   :PROCESS-ARTIFACT "self-test-finale.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "self-test-finale.lisp")
+  (:KIND :PARALLEL-SELF-TEST-OUTPUT :ARTIFACT
+   "self-test-prima-review-tool-dati.lisp" :PROCESS-ARTIFACT
+   "self-test-prima-review-tool.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "self-test-prima-review-tool.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-01.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-02.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-03.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-04.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-05.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-06.lisp")
+  (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT "spike-SPK-07.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-08.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-09.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-10.lisp")
+  (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT "spike-report.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "statici-iniziali.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "integrazione-check.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT
+   "integrazione-mutazioni-decisions-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-mutazioni-decisions.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-mutazioni-decisions.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT "integrazione-mutazioni-manifest-dati.lisp"
+   :PROCESS-ARTIFACT "integrazione-mutazioni-manifest.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-mutazioni-manifest.lisp")
+  (:KIND :COPIER-SELF-TEST-OUTPUT :ARTIFACT
+   "integrazione-self-test-copier-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-self-test-foundation.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-self-test-foundation.lisp")
+  (:KIND :PARALLEL-SELF-TEST-OUTPUT :ARTIFACT
+   "integrazione-self-test-parallelo-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-self-test-foundation.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-self-test-radix-finale.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-self-test-radix-preliminare.lisp")
+  (:KIND :PROCESS-SIGNAL-SELF-TEST-OUTPUT :ARTIFACT
+   "integrazione-self-test-segnale-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-self-test-radix-finale.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-01.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-02.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-03.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-04.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-05.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-06.lisp")
+  (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT
+   "integrazione-spike-SPK-07.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-08.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-09.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-10.lisp")
+  (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT
+   "integrazione-spike-report.lisp")
+  (:KIND :C1-REVIEW :ARTIFACT "integrazione-letture-c1.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-01.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-02.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-03.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-04.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-05.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-06.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-07.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-08.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-09.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-10.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "integrazione-main-check.lisp")
+  (:KIND :EVIDENCE-FINALIZATION :ARTIFACT
+   "integrazione-main-conservazione.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-report.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT "integrazione-mutazioni-radix-dati.lisp"
+   :PROCESS-ARTIFACT "integrazione-mutazioni-radix.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "integrazione-mutazioni-radix.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-catalogo-verifica.lisp"))
+ :LIMITS (:STRUCTURE-AND-PRESENCE-ONLY :NO-AUTOMATIC-GATE-PROMOTION))

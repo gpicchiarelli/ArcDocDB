@@ -1,7 +1,9 @@
 # Contribuire
 
 ArcDocDB è in **Fase 0** (definizione architetturale e valutazione): oggi si contribuisce a
-specifica, ADR, valutazione e spike. Il codice di produzione inizia con la Fase 1
+specifica, ADR, valutazione e spike. L'autore ha inoltre autorizzato le
+[fondazioni implementative](docs/implementazione/README.md) dal 2026-10-08;
+restano aperti i criteri di uscita della Fase 0
 ([roadmap](docs/roadmap.md)).
 
 La [guida al repository](docs/guida-al-repository.md) raccoglie le regole di lavoro,

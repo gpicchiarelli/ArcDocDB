@@ -1,7 +1,9 @@
 ;;;; Mutazioni mirate in copie isolate; nessun sorgente del repository viene riscritto.
-;;;; Uso: --run directory-nuova/ [foundation|storage|recovery|decisions|io|wal] oppure --self-test
+;;;; Uso: --run directory-nuova/ [foundation|storage|recovery|decisions|manifest|io|wal] [--jobs 1..4]
+;;;; oppure --self-test; baseline seriale, copie e processi dei mutanti indipendenti.
 ;;;; REQ: REQ-FOR-003 REQ-FOR-004 REQ-AFF-002 REQ-LIM-001 REQ-LIM-003 REQ-VAL-001
 (require :asdf)
+(require :sb-posix)
 (defpackage #:arcdocdb.foundation.mutation (:use #:cl))
 (in-package #:arcdocdb.foundation.mutation)
 
@@ -78,6 +80,30 @@
     ("decision-set-conflict" "decisions-build.lisp"
       "(loop for i below (length a) always" "(loop for i below (min 1 (length a)) always")))
 
+;;; REQ: REQ-REC-001 REQ-STO-006 REQ-TXM-007 REQ-AFF-008 REQ-AFF-018 REQ-VAL-001
+(defparameter *manifest-mutants*
+  '(("manifest-first-complete" "manifest-fold.lisp"
+      "(unless (= (%edit-flags edit) +edit-complete+)"
+      "(when (= (%edit-flags edit) +edit-complete+)")
+    ("manifest-count-boundary" "manifest-build.lisp"
+      "(when (> (1+ count) (%limits-edits limits))"
+      "(when (>= (1+ count) (%limits-edits limits))")
+    ("manifest-cumulative-outcomes" "manifest-build.lisp"
+      "(when (> (%edit-outcomes edit) (- (%limits-outcomes limits) outcomes))"
+      "(when (> (%edit-outcomes edit) (%limits-outcomes limits))")
+    ("manifest-active-transition" "manifest-fold.lisp"
+      "(unless (eq changed closing)" "(unless (or changed closing)")
+    ("manifest-last-removal" "manifest-decode.lisp"
+      "(dotimes (i (%edit-removed-count edit))"
+      "(dotimes (i (max 0 (1- (%edit-removed-count edit))))")
+    ("manifest-next-increment" "manifest-fold.lisp"
+      "(max previous-next (1+ maximum))" "(max previous-next maximum)")
+    ("manifest-csn-zero-presence" "manifest-query.lisp"
+      "(if present (values t csn) (values nil 0))"
+      "(if (and present (not (zerop csn))) (values t csn) (values nil 0))")
+    ("manifest-csn-high-word" "manifest-decode.lisp"
+      "(csn (leggi-u64 buffer" "(csn (leggi-u32 buffer")))
+
 (defparameter *io-mutants*
   '(("input-mutates-health" "types.lisp" "(unless (eq operation :read)" "(when (eq operation :read)")
     ("write-does-not-fault" "types.lisp" "(setf (file-state file) :faulted)"
@@ -145,6 +171,10 @@
   (dolist (file (append '("arcdocdb.asd" "src/package.lisp" "tests/smoke.lisp" "tools/build.lisp")
                        (mapcar #'enough-namestring (directory "src/foundation/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/foundation/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/codec/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/codec/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/execution/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/execution/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/storage/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/storage/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/recovery/*.lisp"))
@@ -167,35 +197,78 @@
         thereis (and (<= (length marker) (length line))
                      (string= marker line :end2 (length marker)))))
 
-(defun decision-result (text exit)
-  "Compilazione e guasti prima dei test DECISION non rilevano il mutante."
-  (cond ((or (search "compilation aborted" text :test #'char-equal)
-             (search "COMPILE-FILE-ERROR" text :test #'char-equal)
-             (search "COMPILE-FILE-WARNED" text :test #'char-equal)
-             (search "non ammesso (COD-01)" text))
-         :compilation-failure)
-        ((or (not (integerp exit))
-             (not (decision-event-p text "decision-test-start "))) :before-tests)
-        ((not (zerop exit)) :detected)
-        ((decision-event-p text "decision-tests-complete ") :survived)
-        (t :before-tests)))
+(defun dedicated-scope-p (scope)
+  "DECISION e manifest richiedono i propri marker, oltre alla compilazione rigorosa."
+  (member scope '("decisions" "manifest") :test #'string=))
+
+(defun scope-token (scope)
+  "Token stabile dei marker dei test dedicati."
+  (if (string= scope "decisions") "decision" scope))
+
+(defun scope-markers (scope)
+  "Marker a inizio riga; lo smoke è conservato solo negli ambiti preesistenti."
+  (if (dedicated-scope-p scope)
+      (values (format nil "~A-test-start " (scope-token scope))
+              (format nil "~A-tests-complete " (scope-token scope)))
+      (values "ok    ARCDOCDB:*VERSION* è una stringa"
+              "build e test: nessun avviso, tutti i controlli superati")))
+
+(defun decision-result (text exit &optional (scope "decisions"))
+  "Compilazione e guasti prima dei test dell'ambito non rilevano il mutante."
+  (multiple-value-bind (started completed) (scope-markers scope)
+    (cond ((or (search "compilation aborted" text :test #'char-equal)
+               (search "COMPILE-FILE-ERROR" text :test #'char-equal)
+               (search "COMPILE-FILE-WARNED" text :test #'char-equal)
+               (search "non ammesso (COD-01)" text))
+           :compilation-failure)
+          ((and (integerp exit) (not (zerop exit)) (decision-event-p text completed))
+           :worker-error)
+          ((or (not (integerp exit))
+               (not (decision-event-p text started))) :before-tests)
+          ((not (zerop exit)) :detected)
+          ((decision-event-p text completed) :survived)
+          (t :before-tests))))
 
 (defun decision-source-directory () "src/recovery/")
 
-(defun validate-decision-mutants ()
-  "Ogni bersaglio DECISION esiste una volta e la sostituzione ne cambia il testo."
-  (dolist (mutant *decision-mutants*)
+(defun validate-decision-mutants (&optional (mutants *decision-mutants*))
+  "Ogni bersaglio dedicato esiste una volta e la sostituzione ne cambia il testo."
+  (unless mutants (error "foundation-mutation.lisp: COD-60, nessun mutante selezionato."))
+  (dolist (mutant mutants)
     (destructuring-bind (name file before after) mutant
       (let* ((source (read-text (merge-pathnames file (decision-source-directory))))
              (position (search before source)))
         (unless (and position (not (search before source :start2 (1+ position)))
                      (not (string= before after)))
-          (error "foundation-mutation.lisp: COD-60, bersaglio DECISION assente/ambiguo: ~A" name)))))
+          (error "foundation-mutation.lisp: COD-60, bersaglio assente/ambiguo: ~A" name)))))
   nil)
 
-(defun write-decision-runner (directory)
-  "Runner rigoroso con cache privata; seleziona i test dai due file DECISION caricati."
-  (let ((runner (merge-pathnames "tools/decisions-isolated-build.lisp" directory)))
+(defun dedicated-test-form (scope)
+  "Seleziona DEFTEST caricati: tre file DECISION, due manifest; lettura priva di eval."
+  `(let* ((*package* (or (find-package "ARCDOCDB.RECOVERY.TESTS")
+                        (error "Harness recovery non caricato.")))
+          (*read-eval* nil) (deftest (find-symbol "DEFTEST" *package*)) (tests nil))
+     (dolist (file ',(if (string= scope "decisions")
+                        '("tests/recovery/decisions.lisp" "tests/recovery/decisions-audit.lisp"
+                          "tests/recovery/decisions-radix.lisp")
+                        '("tests/recovery/manifest.lisp" "tests/recovery/manifest-audit.lisp")))
+       (let ((selected 0))
+         (with-open-file (input file :external-format :utf-8)
+           (loop for form = (read input nil :eof) until (eq form :eof)
+                 when (and (consp form) (eq (first form) deftest))
+                   do (push (second form) tests) (incf selected)))
+         (unless (plusp selected) (error "File senza test dedicati: ~A" file))))
+     (unless (and tests (every #'fboundp tests))
+       (error "Test dedicati non caricati dal sistema ASDF."))
+     (setf tests (nreverse tests))
+     (dolist (test tests)
+       (format t ,(format nil "~~&~A-test-start ~~A~~%" (scope-token scope)) test)
+       (finish-output) (funcall test) (format t "ok    ~A~%" test))
+     (format t ,(format nil "~~&~A-tests-complete ~~D~~%" (scope-token scope)) (length tests))))
+
+(defun write-decision-runner (directory &optional (scope "decisions"))
+  "Cache privata e build rigorosa; test dedicati per manifest e DECISION."
+  (let ((runner (merge-pathnames "tools/mutation-isolated-build.lisp" directory)))
     (with-open-file (stream runner :direction :output :if-exists :error)
       (dolist (form
                `((require :asdf)
@@ -203,7 +276,8 @@
                   '(:output-translations (,(namestring directory)
                                          ,(namestring (merge-pathnames "fasl/" directory)))
                                          :ignore-inherited-configuration))
-                 (setf asdf:*compile-file-failure-behaviour* :error
+                 ,@(if (not (dedicated-scope-p scope)) '((load "tools/build.lisp"))
+                       `((setf asdf:*compile-file-failure-behaviour* :error
                        asdf:*compile-file-warnings-behaviour* :error)
                  (handler-bind
                      ((warning (lambda (condition)
@@ -213,153 +287,348 @@
                    (asdf:load-asd (merge-pathnames "arcdocdb.asd" (truename "./")))
                    (asdf:load-system "arcdocdb" :force t)
                    (asdf:load-system "arcdocdb/tests" :force t))
-                 (let* ((*package* (or (find-package "ARCDOCDB.RECOVERY.TESTS")
-                                      (error "Harness recovery non caricato.")))
-                        (*read-eval* nil)
-                        (deftest (find-symbol "DEFTEST" *package*))
-                        (tests nil))
-                   (dolist (file '("tests/recovery/decisions.lisp"
-                                   "tests/recovery/decisions-audit.lisp"))
-                     (let ((selected 0))
-                       (with-open-file (input file :external-format :utf-8)
-                         (loop for form = (read input nil :eof) until (eq form :eof)
-                               when (and (consp form) (eq (first form) deftest))
-                                 do (push (second form) tests) (incf selected)))
-                       (unless (plusp selected) (error "File senza test DECISION: ~A" file))))
-                   (unless (and tests (every #'fboundp tests))
-                     (error "Test DECISION non caricati dal sistema ASDF."))
-                   (setf tests (nreverse tests))
-                   (dolist (test tests)
-                     (format t "~&decision-test-start ~A~%" test)
-                     (finish-output)
-                     (funcall test)
-                     (format t "ok    ~A~%" test))
-                   (format t "~&decision-tests-complete ~D~%" (length tests)))))
+                         ,(dedicated-test-form scope)))))
         (write form :stream stream :pretty t) (terpri stream)))
     runner))
 
-(defun execute-decisions (directory)
+(defun launch-copy (directory scope)
+  "Avvia SBCL senza init con directory/log/cache privati; nessuna shell."
+  (write-decision-runner directory scope)
+  (uiop:launch-program '("sbcl" "--noinform" "--no-userinit" "--no-sysinit" "--script"
+                         "tools/mutation-isolated-build.lisp")
+                       :directory directory :output (merge-pathnames "test.log" directory)
+                       :error-output :output))
+
+(defun execute-decisions (directory &optional (scope "decisions"))
   "Compila tutti i componenti e invoca solo i test dedicati; conserva il log."
   (let ((log (merge-pathnames "test.log" directory)))
-    (write-decision-runner directory)
-    (multiple-value-bind (out err exit)
-        (uiop:run-program '("sbcl" "--noinform" "--no-userinit" "--no-sysinit" "--script"
-                            "tools/decisions-isolated-build.lisp")
-                          :directory directory :output log :error-output :output
-                          :ignore-error-status t)
-      (declare (ignore out err))
-      (values (decision-result (read-text log) exit) exit log))))
+    (let ((exit (uiop:wait-process (launch-copy directory scope))))
+      (values (decision-result (read-text log) exit scope) exit log))))
 
-(defun run-decision-mutant (mutant directory)
-  "Ogni esito viene conservato; i mutanti non compilabili restano separati."
-  (destructuring-bind (name file before after) mutant
-    (copy-test-system directory)
-    (let ((source (merge-pathnames file
-                   (merge-pathnames (decision-source-directory) directory))))
-      (let ((modified (substitute-first (read-text source) before after)))
+(defun new-directory (name)
+  "Directory esclusiva: prepara solo i genitori e rifiuta ogni destinazione esistente."
+  (let* ((directory (merge-pathnames (uiop:ensure-directory-pathname name) (truename "./")))
+         (parent (make-pathname :defaults directory
+                               :directory (butlast (pathname-directory directory))
+                               :name "segnaposto" :type nil)))
+    (ensure-directories-exist parent)
+    (sb-posix:mkdir directory #o700)
+    directory))
+
+(defun check-jobs (text)
+  "Accetta solo la rappresentazione decimale di un numero di worker tra 1 e 4."
+  (unless (and (stringp text) (plusp (length text))
+               (every (lambda (char) (find char "0123456789")) text))
+    (error "foundation-mutation.lisp: COD-61, --jobs richiede un intero 1..4."))
+  (let ((jobs (parse-integer text)))
+    (unless (<= 1 jobs 4)
+      (error "foundation-mutation.lisp: COD-61, --jobs fuori intervallo 1..4: ~A" text))
+    jobs))
+
+(defun parse-options (args)
+  "CLI storica più --jobs N; nessuna opzione duplicata, incompleta o sconosciuta."
+  (let ((positional nil) (jobs 1) (seen-jobs nil))
+    (loop while args do
+      (let ((arg (pop args)))
+        (if (string= arg "--jobs")
+            (progn
+              (when seen-jobs (error "foundation-mutation.lisp: COD-61, --jobs duplicato."))
+              (setf seen-jobs t jobs (check-jobs (pop args))))
+            (push arg positional))))
+    (setf positional (nreverse positional))
+    (cond ((equal positional '("--self-test")) (values :self-test nil "foundation" jobs))
+          ((and (<= 2 (length positional) 3) (string= (first positional) "--run")
+                (or (= (length positional) 2)
+                    (member (third positional)
+                            '("foundation" "storage" "recovery" "decisions" "manifest" "io" "wal")
+                            :test #'string=)))
+           (values :run (second positional) (or (third positional) "foundation") jobs))
+          (t (error "foundation-mutation.lisp: COD-61, usare --self-test oppure --run directory-nuova/ [foundation|storage|recovery|decisions|manifest|io|wal] [--jobs 1..4].")))))
+
+(defun worker-failure (task condition &optional exit)
+  "I guasti di preparazione, avvio e raccolta non interrompono gli altri worker."
+  (list :name (getf task :name) :result :worker-error :exit-code exit
+        :diagnostic (princ-to-string condition)
+        :log (namestring (merge-pathnames "test.log" (getf task :directory)))))
+
+(defun parallel-results (tasks jobs launch collect)
+  "Avvia al più JOBS processi per gruppo; attende tutti, risultati nell'ordine dei task."
+  (unless (and (integerp jobs) (<= 1 jobs 4))
+    (error "foundation-mutation.lisp: COD-61, numero di worker invalido: ~S" jobs))
+  (let ((results (make-array (length tasks))))
+    (loop for start from 0 below (length tasks) by jobs do
+      (let ((active nil))
+        (loop for index from start below (min (length tasks) (+ start jobs))
+              for task = (nth index tasks) do
+                (handler-case (push (list index task (funcall launch task)) active)
+                  (error (condition) (setf (aref results index) (worker-failure task condition)))))
+        (dolist (worker (nreverse active))
+          (destructuring-bind (index task process) worker
+            (let ((exit nil))
+              (handler-case
+                  (multiple-value-bind (code signal) (uiop:wait-process process)
+                    (setf exit code)
+                    (when signal (error "Worker terminato dal segnale ~D." signal))
+                    (setf (aref results index) (funcall collect task exit)))
+                (error (condition)
+                  (setf (aref results index) (worker-failure task condition exit)))))))))
+    (coerce results 'list)))
+
+(defun launch-mutant (task)
+  "Copia la baseline verificata, applica una sola mutazione e avvia un processo privato."
+  (let* ((directory (getf task :directory)) (scope (getf task :scope))
+         (source-scope (if (dedicated-scope-p scope) "recovery" scope)))
+    (destructuring-bind (name file before after) (getf task :mutant)
+      (declare (ignore name))
+      (new-directory directory)
+      (uiop:with-current-directory ((getf task :baseline-directory))
+        (copy-test-system directory))
+      (let* ((source (merge-pathnames file
+                      (merge-pathnames (format nil "src/~A/" source-scope) directory)))
+             (modified (substitute-first (read-text source) before after)))
         (with-open-file (stream source :direction :output :if-exists :supersede
                                       :external-format :utf-8)
           (write-string modified stream))))
-    (multiple-value-bind (result exit log) (execute-decisions directory)
-      (list :name name :result result :exit-code exit :log (namestring log)))))
+    (launch-copy directory scope)))
 
-(defun run-decision-campaign (directory)
-  "La baseline deve passare; tutti i mutanti sono eseguiti e il riepilogo è salvato."
-  (validate-decision-mutants)
-  (let ((baseline-directory (merge-pathnames "baseline/" directory)))
+(defun collect-mutant (task exit)
+  "Classificazione runtime distinta da compilazione, pre-test ed errori worker."
+  (let ((log (merge-pathnames "test.log" (getf task :directory))))
+    (list :name (getf task :name) :result (decision-result (read-text log) exit (getf task :scope))
+          :exit-code exit :log (namestring log))))
+
+(defun save-campaign (report directory)
+  "Conserva stato e risultati, compresi tutti i fallimenti, nella directory esclusiva."
+  (with-open-file (stream (merge-pathnames "report.lisp" directory)
+                          :direction :output :if-exists :supersede :external-format :utf-8)
+    (write report :stream stream :pretty t) (terpri stream)))
+
+(defun run-campaign (mutants directory scope jobs)
+  "Baseline seriale prima di ogni worker; mutanti isolati e risultato finale deterministico."
+  (let* ((directory (new-directory directory))
+         (report (list :scope (intern (string-upcase scope) :keyword) :jobs jobs :status :running))
+         (baseline-directory (merge-pathnames "baseline/" directory)))
+    (when (dedicated-scope-p scope) (validate-decision-mutants mutants))
+    (save-campaign report directory)
+    (new-directory baseline-directory)
     (copy-test-system baseline-directory)
-    (multiple-value-bind (result exit log) (execute-decisions baseline-directory)
+    (multiple-value-bind (result exit log) (execute-decisions baseline-directory scope)
+      (setf (getf report :baseline) (if (eq result :survived) :passed result)
+            (getf report :baseline-exit-code) exit (getf report :baseline-log) (namestring log))
       (unless (eq result :survived)
-        (error "foundation-mutation.lisp: COD-61, baseline DECISION ~A, exit ~A; ~A"
-               result exit log))))
-  (let* ((results (loop for mutant in *decision-mutants* for i from 0
-                        collect (run-decision-mutant mutant
-                                  (merge-pathnames (format nil "~D/" i) directory))))
-         (report (list :scope :decisions :baseline :passed :mutants results
-                       :detected (count :detected results :key (lambda (result) (getf result :result)))
-                       :survived (count :survived results :key (lambda (result) (getf result :result)))
-                       :compilation-failures
-                       (count :compilation-failure results :key (lambda (result) (getf result :result)))
-                       :before-tests (count :before-tests results
-                                            :key (lambda (result) (getf result :result))))))
-    (with-open-file (stream (merge-pathnames "report.lisp" directory)
-                            :direction :output :if-exists :error :external-format :utf-8)
-      (write report :stream stream :pretty t) (terpri stream))
-    (write report :pretty t) (terpri)
-    (unless (= (length results) (getf report :detected))
-      (error "foundation-mutation.lisp: COD-61, campagna DECISION incompleta; ~A"
-             (merge-pathnames "report.lisp" directory)))))
+        (setf (getf report :status) :failed)
+        (save-campaign report directory)
+        (error "foundation-mutation.lisp: COD-61, baseline ~A: ~A; ~A" scope result log)))
+    (save-campaign report directory)
+    (let* ((tasks (loop for mutant in mutants for index from 0
+                        collect (list :name (first mutant) :mutant mutant :scope scope
+                                      :baseline-directory baseline-directory
+                                      :directory (merge-pathnames (format nil "~D/" index) directory))))
+           (results (parallel-results tasks jobs #'launch-mutant #'collect-mutant)))
+      (setf (getf report :mutants) results)
+      (loop for (key value) on '(:detected :detected :survived :survived
+                                 :compilation-failures :compilation-failure
+                                 :before-tests :before-tests :worker-errors :worker-error) by #'cddr
+            do (setf (getf report key)
+                     (count value results :key (lambda (result) (getf result :result)))))
+      (setf (getf report :status) (if (= (length mutants) (getf report :detected)) :ok :failed))
+      (save-campaign report directory)
+      (write (if (dedicated-scope-p scope) report results) :pretty t) (terpri)
+      (unless (eq (getf report :status) :ok)
+        (error "foundation-mutation.lisp: COD-61, campagna ~A incompleta; ~A"
+               scope (merge-pathnames "report.lisp" directory))))))
 
-(defun run-mutant (mutant directory scope)
-  (destructuring-bind (name file before after) mutant
-    (let* ((path (merge-pathnames (format nil "src/~A/" scope) directory))
-           (source (merge-pathnames file path)) (log (merge-pathnames "test.log" directory)))
-      (copy-test-system directory)
-      (let ((modified (substitute-first (read-text source) before after)))
-        (with-open-file (stream source :direction :output :if-exists :supersede)
-          (write-string modified stream)))
-      (multiple-value-bind (out err exit)
-          (uiop:run-program '("sbcl" "--noinform" "--no-userinit" "--script" "tools/build.lisp")
-                            :directory directory :output log :error-output :output
-                            :ignore-error-status t)
-        (declare (ignore out err))
-        (let* ((text (read-text log))
-               (detected (detected-p text exit)))
-          (unless detected
-            (error "foundation-mutation.lisp: COD-61, ~A sopravvissuto o non compilabile; ~A" name log))
-          (list :name name :result :detected :exit-code exit))))))
+(defun expect-error (function)
+  "Il self-test deve rilevare anche le configurazioni e i worker intenzionalmente invalidi."
+  (let ((caught nil))
+    (handler-case (funcall function) (error () (setf caught t)))
+    (unless caught (error "foundation-mutation.lisp: COD-60, errore atteso non rilevato."))))
 
-(let ((args (rest sb-ext:*posix-argv*)))
-  (cond ((equal args '("--self-test"))
-         (unless (and (string= "xAxB" (substitute-first "xBxB" "B" "A"))
-                      (detected-p "ok    ARCDOCDB:*VERSION*" 1)
-                      (not (detected-p "ok    ARCDOCDB:*VERSION*" 0))
-                      (not (detected-p "compilation aborted" 1)))
-           (error "foundation-mutation.lisp: COD-60, sostituzione o classificazione errata."))
-         (unless (and (eq :detected (decision-result "decision-test-start TEST" 1))
-                      (eq :survived (decision-result
-                                      (format nil "decision-test-start TEST~%decision-tests-complete 1~%")
-                                      0))
-                      (eq :before-tests (decision-result "ok    ARCDOCDB:*VERSION*" 1))
-                      (eq :before-tests (decision-result "decision-test-start TEST" 0))
-                      (eq :before-tests (decision-result "decision-test-start TEST" nil))
-                      (eq :before-tests
-                          (decision-result
-                            "6: (SB-C::%COMPILE-IN-LEXENV
- (LET* ((TESTS (ERROR \"Harness recovery non caricato.\")))
-   (FORMAT T \"~&decision-test-start ~A~%\" TEST)
-   (FORMAT T \"~&decision-tests-complete ~D~%\" (LENGTH TESTS))))" 1))
-                      (eq :before-tests
-                          (decision-result "prefix decision-test-start TEST" 1))
-                      (eq :before-tests
-                          (decision-result
-                            (format nil "decision-test-start TEST~%6: (FORMAT T \"decision-tests-complete 1\")~%")
-                            0))
-                      (eq :compilation-failure (decision-result "COMPILE-FILE-ERROR" 1))
-                      (eq :compilation-failure (decision-result
-                                                 "decision-test-start TEST compilation aborted" 1)))
-           (error "foundation-mutation.lisp: COD-60, classificazione DECISION errata."))
-         (validate-decision-mutants)
-         (format t "Mutazioni: self-test superato.~%"))
-        ((and (<= 2 (length args) 3) (string= (first args) "--run")
-              (or (= (length args) 2)
-                  (member (third args) '("foundation" "storage" "recovery" "decisions" "io" "wal") :test #'string=)))
-         (let ((directory (uiop:ensure-directory-pathname (second args)))
-               (scope (or (third args) "foundation")))
-           (when (probe-file directory)
-             (error "foundation-mutation.lisp: destinazione già presente: ~A" directory))
-           (ensure-directories-exist directory)
-           (if (string= scope "decisions")
-               (run-decision-campaign (merge-pathnames directory (truename "./")))
-               (progn
-                 (write (loop for mutant in (cond ((string= scope "storage") *storage-mutants*)
-                                                 ((string= scope "recovery") *recovery-mutants*)
-                                                 ((string= scope "io") *io-mutants*)
-                                                 ((string= scope "wal") *wal-mutants*)
-                                                 (t *mutants*))
-                              for i from 0 collect (run-mutant mutant
-                                                     (merge-pathnames (format nil "~D/" i) directory)
-                                                     scope))
-                        :pretty t)
-                 (terpri)))))
-        (t (error "foundation-mutation.lisp: usare --self-test o --run directory-nuova/ [foundation|storage|recovery|decisions|io|wal]."))))
+(defun classifier-self-test ()
+  "Rifiuta marker nel backtrace, marker dell'altro ambito e guasti di compilazione."
+  (dolist (scope '("decisions" "manifest"))
+    (multiple-value-bind (start complete) (scope-markers scope)
+      (let ((started (concatenate 'string start "TEST")))
+        (unless (and (eq :detected (decision-result started 1 scope))
+                     (eq :survived (decision-result (format nil "~A~%~A1~%" started complete) 0 scope))
+                     (eq :worker-error
+                         (decision-result (format nil "~A~%~A1~%" started complete) 1 scope))
+                     (eq :before-tests (decision-result started 0 scope))
+                     (eq :before-tests (decision-result started nil scope))
+                     (eq :before-tests (decision-result "ok    ARCDOCDB:*VERSION*" 1 scope))
+                     (eq :before-tests (decision-result (format nil "0: (FORMAT T ~S)" started) 1 scope))
+                     (eq :before-tests (decision-result (format nil "prefix ~A" started) 1 scope))
+                     (eq :before-tests (decision-result
+                                         (format nil "~A~%0: (FORMAT T ~S)" started complete) 0 scope))
+                     (eq :compilation-failure (decision-result "COMPILE-FILE-ERROR" 1 scope))
+                     (eq :compilation-failure (decision-result
+                                                 (format nil "~A~%compilation aborted" started) 1 scope)))
+          (error "foundation-mutation.lisp: COD-60, classificazione ~A errata." scope)))))
+  (unless (eq :before-tests (decision-result "decision-test-start TEST" 1 "manifest"))
+    (error "foundation-mutation.lisp: COD-60, marker di un altro ambito accettato.")))
+
+(defun configuration-self-test ()
+  "CLI precedente conservata; default seriale, jobs limitati e argomenti malformati rifiutati."
+  (unless (and (equal '(:run "out/" "foundation" 1)
+                      (multiple-value-list (parse-options '("--run" "out/"))))
+               (equal '(:run "out/" "manifest" 4)
+                      (multiple-value-list (parse-options '("--run" "out/" "manifest" "--jobs" "4"))))
+               (equal '(:run "out/" "decisions" 2)
+                      (multiple-value-list (parse-options '("--jobs" "2" "--run" "out/" "decisions")))))
+    (error "foundation-mutation.lisp: COD-60, parsing CLI errato."))
+  (dolist (args '(nil ("--run") ("--run" "out/" "unknown")
+                  ("--run" "out/" "--jobs") ("--run" "out/" "--jobs" "0")
+                  ("--run" "out/" "--jobs" "5") ("--run" "out/" "--jobs" "-1")
+                  ("--run" "out/" "--jobs" "1x") ("--run" "out/" "--jobs" "1.5")
+                  ("--run" "out/" "--jobs" "2" "--jobs" "2")
+                  ("--run" "out/" "manifest" "extra")))
+    (expect-error (lambda () (parse-options args))))
+  (expect-error (lambda () (parallel-results nil 5 #'identity #'identity))))
+
+(defun system-source-files ()
+  "Legge i due DEFSYSTEM come dati, senza eval, caricamento ASD o package di prodotto."
+  (let ((*read-eval* nil) (*package* (find-package "ASDF-USER"))
+        (root (truename "./")) (systems nil) (files nil))
+    (labels ((sources (components directory)
+               (mapcan
+                 (lambda (component)
+                   (destructuring-bind (kind name &rest options) component
+                     (case kind
+                       ((:file :cl-source-file)
+                        (let ((path (pathname (or (getf options :pathname) name))))
+                          (list (merge-pathnames
+                                  (make-pathname :type (or (pathname-type path) "lisp")
+                                                  :defaults path)
+                                  directory))))
+                       (:module
+                        (sources (getf options :components)
+                                 (merge-pathnames
+                                   (uiop:ensure-directory-pathname
+                                     (or (getf options :pathname) name)) directory)))
+                       (:static-file nil)
+                       (otherwise
+                        (error "foundation-mutation.lisp: COD-60, componente ASD non supportato: ~S"
+                               component)))))
+                 components)))
+      (with-open-file (input "arcdocdb.asd" :external-format :utf-8)
+        (loop for form = (read input nil :eof) until (eq form :eof)
+              when (and (consp form) (symbolp (first form))
+                        (string= (symbol-name (first form)) "DEFSYSTEM")
+                        (member (second form) '("arcdocdb" "arcdocdb/tests") :test #'equal))
+                do (let ((name (second form)) (options (cddr form)))
+                     (when (member name systems :test #'equal)
+                       (error "foundation-mutation.lisp: COD-60, sistema ASD ripetuto: ~A" name))
+                     (push name systems)
+                     (setf files
+                           (append files
+                                   (sources (getf options :components)
+                                            (merge-pathnames
+                                              (uiop:ensure-directory-pathname
+                                                (or (getf options :pathname) "./")) root))))))))
+    (unless (= (length systems) 2)
+      (error "foundation-mutation.lisp: COD-60, sistemi ASD mancanti: ~S" systems))
+    files))
+
+(defun check-system-copy (directory files root)
+  "Ogni sorgente richiesto dall'ASD effettivo deve essere presente e identico nella copia."
+  (dolist (source files)
+    (let* ((relative (enough-namestring source root))
+           (target (merge-pathnames relative directory)))
+      (unless (and (probe-file target) (string= (read-text source) (read-text target)))
+        (error "foundation-mutation.lisp: COD-60, copia ASD incompleta o diversa: ~A" relative))))
+  nil)
+
+(defun copier-self-test ()
+  "Verifica il copier contro ASDF e prova che un sorgente mancante venga rifiutato."
+  (let* ((root (truename "./")) (files (system-source-files))
+         (directory (new-directory
+                      (format nil "spikes/out/~D-mutation-copy-self-test-~D/"
+                              (get-universal-time) (sb-posix:getpid)))))
+    (unless files (error "foundation-mutation.lisp: COD-60, ASD senza sorgenti Lisp."))
+    (copy-test-system directory)
+    (check-system-copy directory files root)
+    (delete-file (merge-pathnames (enough-namestring (first files) root) directory))
+    (expect-error (lambda () (check-system-copy directory files root)))
+    (save-campaign (list :kind :copier-self-test :status :passed
+                         :source-files (mapcar (lambda (file) (enough-namestring file root)) files)
+                         :missing-source-rejected t) directory)
+    (format t "Copie: ~D sorgenti ASDF identici, omissione rifiutata; ~A~%"
+            (length files) directory)))
+
+(defun write-worker-fixture (directory)
+  "Il primo worker attende il segnale del secondo: un avvio seriale fallirebbe il test."
+  (let ((source (merge-pathnames "worker-fixture.lisp" directory)))
+    (with-open-file (stream source :direction :output :if-exists :error)
+      (write '(let* ((args (rest sb-ext:*posix-argv*)) (mode (first args))
+                    (release (merge-pathnames "release" (second args))))
+                (cond ((string= mode "waiting")
+                       (loop repeat 500 until (probe-file release) do (sleep 0.01))
+                       (sb-ext:exit :code (if (probe-file release) 0 11)))
+                      ((string= mode "failing")
+                       (with-open-file (output release :direction :output :if-exists :error)
+                         (write-line "rilasciato" output))
+                       (format t "worker-fixture-failure~%")
+                       (sb-ext:exit :code 7))
+                      (t (sb-ext:exit :code 0)))) :stream stream :pretty t))
+    source))
+
+(defun parallel-self-test ()
+  "Verifica avvio concorrente, exit nonzero, guasti di avvio/raccolta e ordine stabile."
+  (let* ((directory (new-directory
+                      (format nil "spikes/out/~D-mutation-self-test-~D/"
+                              (get-universal-time) (sb-posix:getpid))))
+         (source (write-worker-fixture directory))
+         (tasks (loop for name in '("waiting" "failing" "launch-error" "collect-error")
+                      for index from 0
+                      collect (list :name name :directory
+                                    (new-directory (merge-pathnames (format nil "~D/" index) directory)))))
+         (results
+           (parallel-results tasks 2
+             (lambda (task)
+               (when (string= (getf task :name) "launch-error") (error "Guasto avvio fixture."))
+               (uiop:launch-program
+                 (list "sbcl" "--noinform" "--no-userinit" "--no-sysinit" "--script"
+                       (namestring source) (getf task :name) (namestring directory))
+                 :output (merge-pathnames "test.log" (getf task :directory)) :error-output :output))
+             (lambda (task exit)
+               (when (string= (getf task :name) "collect-error") (error "Guasto raccolta fixture."))
+               (list :name (getf task :name) :result (if (zerop exit) :detected :worker-error)
+                     :exit-code exit)))))
+    (save-campaign (list :kind :parallel-self-test :jobs 2 :results results) directory)
+    (unless (and (equal '("waiting" "failing" "launch-error" "collect-error")
+                        (mapcar (lambda (result) (getf result :name)) results))
+                 (equal '(:detected :worker-error :worker-error :worker-error)
+                        (mapcar (lambda (result) (getf result :result)) results))
+                 (= 0 (getf (first results) :exit-code)) (= 7 (getf (second results) :exit-code)))
+      (error "foundation-mutation.lisp: COD-60, worker concorrenti o fallimenti non rilevati; ~A"
+             directory))
+    (format t "Worker: concorrenza, fallimenti e ordine verificati; ~A~%" directory)))
+
+(defun self-test ()
+  "Sostituzione, classificazioni, CLI, concorrenza e fallimenti worker sono verificati."
+  (unless (and (string= "xAxB" (substitute-first "xBxB" "B" "A"))
+               (detected-p "ok    ARCDOCDB:*VERSION*" 1)
+               (not (detected-p "ok    ARCDOCDB:*VERSION*" 0))
+               (not (detected-p "compilation aborted" 1)))
+    (error "foundation-mutation.lisp: COD-60, sostituzione o classificazione errata."))
+  (classifier-self-test)
+  (configuration-self-test)
+  (copier-self-test)
+  (validate-decision-mutants)
+  (validate-decision-mutants *manifest-mutants*)
+  (parallel-self-test)
+  (format t "Mutazioni: self-test superato.~%"))
+
+(defun scope-mutants (scope)
+  "Selezione esplicita delle campagne supportate."
+  (cond ((string= scope "foundation") *mutants*)
+        ((string= scope "storage") *storage-mutants*)
+        ((string= scope "recovery") *recovery-mutants*)
+        ((string= scope "decisions") *decision-mutants*)
+        ((string= scope "manifest") *manifest-mutants*)
+        ((string= scope "io") *io-mutants*)
+        ((string= scope "wal") *wal-mutants*)
+        (t (error "foundation-mutation.lisp: COD-61, ambito non supportato: ~A" scope))))
+
+(multiple-value-bind (mode directory scope jobs) (parse-options (rest sb-ext:*posix-argv*))
+  (if (eq mode :self-test) (self-test) (run-campaign (scope-mutants scope) directory scope jobs)))
