@@ -1,0 +1,36 @@
+(:SCHEMA-VERSION 1 :KIND :EVIDENCE-CATALOG :SCOPE :RECOVERY-DECISION-SORT
+ :BENCHMARK-BASE "10576a0495ddebbe4cef492abd47ec9a084aa33f" :INTEGRATION-BASE
+ "f316ceb022075fd37933c7437592d5fd2a3d4bc6" :ENTRIES
+ ((:ARTIFACT "benchmark-100ms-dati.lisp")
+  (:ARTIFACT "benchmark-100ms-processo.lisp")
+  (:ARTIFACT "benchmark-50ms-dati.lisp")
+  (:ARTIFACT "benchmark-50ms-processo.lisp")
+  (:ARTIFACT "check-completo-finale.lisp")
+  (:ARTIFACT "check-link-iniziale-fallito.lisp")
+  (:ARTIFACT "copertura-grezza.lisp") (:ARTIFACT "copertura-processo.lisp")
+  (:ARTIFACT "copertura-self-test.lisp")
+  (:ARTIFACT "driver-100ms-self-test.lisp")
+  (:ARTIFACT "driver-iniziale-fallito.lisp")
+  (:ARTIFACT "driver-let-fallito.lisp")
+  (:ARTIFACT "evidenze-check-finale.lisp") (:ARTIFACT "letture-c1-finali.lisp")
+  (:ARTIFACT "mutazioni-dati.lisp") (:ARTIFACT "mutazioni-log.lisp")
+  (:ARTIFACT "mutazioni-processo.lisp")
+  (:ARTIFACT "probe-agenti-importate.lisp") (:ARTIFACT "selezione-100ms.lisp")
+  (:ARTIFACT "selezione-50ms.lisp")
+  (:ARTIFACT "sorgenti-benchmark-e-strumenti.lisp")
+  (:ARTIFACT "spikes-check-finale.lisp")
+  (:ARTIFACT "spikes-spk-01-finale.lisp")
+  (:ARTIFACT "spikes-spk-02-finale.lisp")
+  (:ARTIFACT "spikes-spk-03-finale.lisp")
+  (:ARTIFACT "spikes-spk-04-finale.lisp")
+  (:ARTIFACT "spikes-spk-05-finale.lisp")
+  (:ARTIFACT "spikes-spk-06-finale.lisp")
+  (:ARTIFACT "spikes-spk-07-finale.lisp")
+  (:ARTIFACT "spikes-spk-08-finale.lisp")
+  (:ARTIFACT "spikes-spk-09-finale.lisp")
+  (:ARTIFACT "spikes-spk-10-finale.lisp")
+  (:ARTIFACT "strumenti-self-test-rigoroso.lisp"))
+ :LIMITS
+ (:COLD-SORT-ONLY :LOCAL-MACOS-ARM64 :SOURCE-HASHES-IDENTIFY-VARIANTS
+  :FAILED-AND-INSUFFICIENT-ATTEMPTS-PRESERVED :NO-EXCLUSIONS-APPROVED
+  :NO-MCDC-OR-ENGINE-OR-P99-OR-ZERO-HEAP-QUALIFICATION))
