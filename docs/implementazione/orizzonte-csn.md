@@ -14,8 +14,9 @@ client. Il completamento rimuove un CSN dal registro solo quando il proprietario
 ha già soddisfatto le condizioni di visibilità.
 
 Il normale GET non consulta questo registro. Gli snapshot useranno `H` per
-stabilire quando possono iniziare; registrazione della soglia, versioni trattenute,
-scadenza, parcheggio e risveglio dei contesti sono componenti successivi. La query
+stabilire quando possono iniziare. Il [registro snapshot](registro-snapshot.md)
+aggiunge annuncio della soglia, attivazione e scadenza dei contesti. Versioni
+trattenute, parcheggio e risveglio restano da integrare. La query
 dei tre contatori fornisce una lettura coerente sotto mutex, utile al controllo e
 all'osservabilità; non è ancora il percorso ottimizzato di lettura atomica di `H`
 previsto da ADR-0038.

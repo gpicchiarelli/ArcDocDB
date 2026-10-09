@@ -46,7 +46,7 @@ RESOURCE-EXHAUSTED senza mutazione per capacità/u64 esauriti; INVALID-ARGUMENT 
                  (incf (registro-csn-pending registry))
                  (setf complete t)
                  next)
-            (unless complete (setf (registro-csn-state registry) :faulted))))))))
+            (unless complete (marca-guasto-registro-csn registry))))))))
 
 ;;; REQ: REQ-MVC-008 REQ-MVC-005
 (declaim (ftype (function (registro-csn csn-slot) u64) orizzonte-dopo-rilascio))
@@ -100,7 +100,7 @@ INVALID-ARGUMENT senza mutazione per completamenti duplicati/tardivi o identità
                  (decf (registro-csn-pending registry))
                  (setf complete t)
                  (values next (> next old)))
-            (unless complete (setf (registro-csn-state registry) :faulted))))))))
+            (unless complete (marca-guasto-registro-csn registry))))))))
 
 ;;; REQ: REQ-MVC-008 REQ-MVC-005
 (declaim (ftype (function (registro-csn) (values u64 u64 (integer 0 65536) &optional))

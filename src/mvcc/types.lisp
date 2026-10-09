@@ -1,5 +1,5 @@
 ;;; OWNER: un registro per Archivio; una prenotazione preallocata per contesto di commit.
-;;; SHARED: ogni campo mutabile si consulta/modifica sotto il mutex del suo registro.
+;;; SHARED: mutazioni/query coerenti sotto mutex; snapshot legge solo STATE con barriera acquire.
 (in-package #:arcdocdb.mvcc)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 
@@ -30,6 +30,15 @@ WORD[0] conserva il CSN; slot riusabile solo con identità CSN verificata."
   (state :libera :type (member :libera :attiva :conclusa)))
 
 ;;; REQ: REQ-MVC-008 REQ-AFF-004
+(declaim (ftype (function (registro-csn) null) marca-guasto-registro-csn))
+(defun marca-guasto-registro-csn (registry)
+  "Pre: mutex CSN posseduto. Post: FAULTED pubblicato prima dei reader snapshot acquire.
+Cleanup soltanto; nessuna riparazione, eccezione o accesso ai contatori del registro."
+  (sb-thread:barrier (:write))
+  (setf (registro-csn-state registry) :faulted)
+  nil)
+
+;;; REQ: REQ-MVC-008 REQ-AFF-004
 (declaim (ftype (function (registro-csn) null) esigi-registro-csn))
 (defun esigi-registro-csn (registry)
   "Pre: mutex del registro posseduto. Post: registro sano.
@@ -50,7 +59,7 @@ INVARIANT-VIOLATION dopo un'interruzione di una transizione; nessuna riparazione
 (defun guasto-registro-csn (registry reason)
   "Pre: mutex posseduto, incoerenza interna. Post: registro FAULTED e errore tipizzato.
 Il proprietario isola l'Archivio; nessun successivo orizzonte viene restituito."
-  (setf (registro-csn-state registry) :faulted)
+  (marca-guasto-registro-csn registry)
   (error 'invariant-violation :reason reason))
 
 ;;; REQ: REQ-MVC-008 REQ-AFF-008

@@ -7,6 +7,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Registro snapshot per Archivio: soglia annunciata prima della cattura del CSN,
+  contesti preallocati con generazione, controlli di lettura senza mutex,
+  deadline e scadenze con budget. Interfaccia in buffer per i reader;
+  qualifica concorrente, controller ed EBR restano da integrare.
+
 - Registro CSN per Archivio: prenotazioni preallocate, identità dei completamenti,
   orizzonte monotono e budget finito; esaurimento u64 senza wrap e fail-stop delle
   transizioni interrotte. La qualifica concorrente e gli snapshot completi restano aperti.

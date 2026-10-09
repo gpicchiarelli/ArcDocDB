@@ -94,7 +94,11 @@
 (defun tok-at (toks i) (when (and (>= i 0) (< i (length toks))) (aref toks i)))
 
 (defun call-position-p (toks i)
-  (let ((prev (tok-at toks (1- i)))) (and prev (eq (tok-kind prev) :open))))
+  "Una chiamata inizia con un simbolo; i keyword dei macroargomenti non sono funzioni."
+  (let ((prev (tok-at toks (1- i))) (token (tok-at toks i)))
+    ;; (:read) in SB-THREAD:BARRIER è una lista di opzioni, non una chiamata a CL:READ.
+    (and prev (eq (tok-kind prev) :open) token (eq (tok-kind token) :sym)
+         (plusp (length (tok-text token))) (char/= #\: (char (tok-text token) 0)))))
 
 (defun integer-token (tk)
   (and tk (eq (tok-kind tk) :sym)
