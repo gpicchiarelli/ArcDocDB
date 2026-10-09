@@ -71,21 +71,29 @@ Post: ring SIMPLE-VECTOR privato allocato una volta; INVALID-ARGUMENT al rifiuto
     queue))
 
 ;;; REQ: REQ-CON-001 REQ-CON-004 REQ-CON-005 REQ-AFF-008
+(declaim (ftype (function (coda-writer t) index) %accoda-sotto-guard))
+(defun %accoda-sotto-guard (queue message)
+  "Pre: guard locale posseduta dal thread corrente, payload del produttore.
+Post: una sola accettazione FIFO e count aggiornato; RESOURCE-EXHAUSTED se full
+senza mutazioni, INVARIANT-VIOLATION per guard o indici incoerenti."
+  (unless (eq (coda-writer-guard queue) sb-thread:*current-thread*)
+    (error 'invariant-violation :reason :writer-guard))
+  (%check-queue queue)
+  (when (= (coda-writer-count queue) (coda-writer-capacity queue))
+    (error 'resource-exhausted :reason :writer-queue-full))
+  (let ((tail (coda-writer-tail queue)))
+    (setf (svref (coda-writer-slots queue) tail) message
+          (coda-writer-tail queue) (mod (1+ tail) (coda-writer-capacity queue))
+          (coda-writer-count queue) (1+ (coda-writer-count queue))))
+  (%check-queue queue)
+  (coda-writer-count queue))
+
+;;; REQ: REQ-CON-001 REQ-CON-004 REQ-CON-005 REQ-AFF-008
 (declaim (ftype (function (coda-writer t) index) accoda-messaggio))
 (defun accoda-messaggio (queue message)
   "Pre: payload opaco posseduto dal chiamante, compreso NIL. Post: accettato in FIFO,
 ownership alla coda, restituisce il count dopo l'accettazione. RESOURCE-EXHAUSTED
 per full/busy senza mutare ring o payload; nessun callback, attesa o wakeup."
   (let ((thread (%acquisisci-guard queue)))
-    (unwind-protect
-         (progn
-           (%check-queue queue)
-           (when (= (coda-writer-count queue) (coda-writer-capacity queue))
-             (error 'resource-exhausted :reason :writer-queue-full))
-           (let ((tail (coda-writer-tail queue)))
-             (setf (svref (coda-writer-slots queue) tail) message
-                   (coda-writer-tail queue) (mod (1+ tail) (coda-writer-capacity queue))
-                   (coda-writer-count queue) (1+ (coda-writer-count queue))))
-           (%check-queue queue)
-           (coda-writer-count queue))
+    (unwind-protect (%accoda-sotto-guard queue message)
       (%rilascia-guard queue thread))))

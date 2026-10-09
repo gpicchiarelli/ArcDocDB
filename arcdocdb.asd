@@ -21,7 +21,8 @@
                (:module "codec" :serial t
                 :components ((:file "package") (:file "utf8")))
                (:module "execution" :serial t
-                :components ((:file "package") (:file "queue") (:file "writer")))
+                :components ((:file "package") (:file "queue") (:file "writer")
+                             (:file "handoff")))
                (:module "storage"
                 :serial t
                 :components ((:file "package") (:file "formats") (:file "segment-header")
@@ -57,7 +58,8 @@
                (:module "codec" :serial t
                 :components ((:file "support") (:file "utf8") (:file "threads")))
                (:module "execution" :serial t
-                :components ((:file "support") (:file "queue") (:file "threads")))
+                :components ((:file "support") (:file "queue") (:file "threads")
+                             (:file "handoff")))
                (:module "storage"
                 :serial t
                 :components ((:file "support") (:file "segment-header") (:file "log-header")
