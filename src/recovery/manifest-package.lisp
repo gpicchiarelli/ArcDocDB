@@ -17,4 +17,6 @@
   (:import-from #:arcdocdb.recovery.scan #:scansiona-log)
   (:export #:ricostruisci-manifest #:segmento-attivo #:prossimo-id-segmento
            #:numero-segmenti-chiusi #:numero-segmenti-rimossi
-           #:trova-segmento #:trova-esito-chiusura))
+           #:trova-segmento #:trova-esito-chiusura
+           #:file-segmento #:pianifica-riconciliazione #:stato-riconciliazione
+           #:numero-azioni-riconciliazione #:azione-riconciliazione))

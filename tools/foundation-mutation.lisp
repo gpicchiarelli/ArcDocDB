@@ -1,5 +1,5 @@
 ;;;; Mutazioni mirate in copie isolate; nessun sorgente del repository viene riscritto.
-;;;; Uso: --run directory-nuova/ [foundation|storage|recovery|decisions|manifest|io|wal] [--jobs 1..4]
+;;;; Uso: --run directory-nuova/ [foundation|storage|recovery|decisions|manifest|inventory|io|wal] [--jobs 1..4]
 ;;;; oppure --self-test; baseline seriale, copie e processi dei mutanti indipendenti.
 ;;;; REQ: REQ-FOR-003 REQ-FOR-004 REQ-AFF-002 REQ-LIM-001 REQ-LIM-003 REQ-VAL-001
 (require :asdf)
@@ -104,6 +104,32 @@
     ("manifest-csn-high-word" "manifest-decode.lisp"
       "(csn (leggi-u64 buffer" "(csn (leggi-u32 buffer")))
 
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-REC-004 REQ-AFF-008 REQ-AFF-018 REQ-VAL-001
+(defparameter *inventory-mutants*
+  '(("inventory-file-boundary" "inventory-build.lisp"
+      "(when (> (length files) max-files)" "(when (>= (length files) max-files)")
+    ("inventory-missing-closed" "inventory-build.lisp"
+      "(setf (gethash id presence) (gethash id presence 0))"
+      "(when (nth-value 1 (gethash id presence))
+               (setf (gethash id presence) (gethash id presence 0)))")
+    ("inventory-id-high-word" "inventory-build.lisp"
+      "(sort ids #'<)"
+      "(sort ids (lambda (left right)
+                 (< (ldb (byte 32 0) left) (ldb (byte 32 0) right))))")
+    ("inventory-unknown-final" "inventory-build.lisp"
+      "(:unknown (if (eq form :temporary) :delete :anomaly))"
+      "(:unknown (if (eq form :final) :delete :anomaly))")
+    ("inventory-conflict-action" "inventory-build.lisp"
+      "(%make-reconciliation-entry id :both :conflict state)"
+      "(%make-reconciliation-entry id :both :anomaly state)")
+    ("inventory-active-severity" "inventory-build.lisp"
+      "(:active 2) (:closed 1)" "(:active 1) (:closed 1)")
+    ("inventory-health-priority" "inventory-build.lisp"
+      "(max severity (entry-severity entry))" "(entry-severity entry)")
+    ("inventory-query-zero" "inventory-query.lisp"
+      "(unless (<= 0 position (1- (numero-azioni-riconciliazione plan)))"
+      "(unless (< 0 position (1- (numero-azioni-riconciliazione plan)))")))
+
 (defparameter *io-mutants*
   '(("input-mutates-health" "types.lisp" "(unless (eq operation :read)" "(when (eq operation :read)")
     ("write-does-not-fault" "types.lisp" "(setf (file-state file) :faulted)"
@@ -173,6 +199,8 @@
                        (mapcar #'enough-namestring (directory "tests/foundation/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/codec/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/codec/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/csn/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/csn/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/execution/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/execution/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/storage/*.lisp"))
@@ -198,8 +226,8 @@
                      (string= marker line :end2 (length marker)))))
 
 (defun dedicated-scope-p (scope)
-  "DECISION e manifest richiedono i propri marker, oltre alla compilazione rigorosa."
-  (member scope '("decisions" "manifest") :test #'string=))
+  "DECISION, manifest e inventory richiedono marker e compilazione rigorosa."
+  (member scope '("decisions" "manifest" "inventory") :test #'string=))
 
 (defun scope-token (scope)
   "Token stabile dei marker dei test dedicati."
@@ -213,10 +241,11 @@
       (values "ok    ARCDOCDB:*VERSION* è una stringa"
               "build e test: nessun avviso, tutti i controlli superati")))
 
-(defun decision-result (text exit &optional (scope "decisions"))
+(defun decision-result (text exit &optional (scope "decisions") signal)
   "Compilazione e guasti prima dei test dell'ambito non rilevano il mutante."
   (multiple-value-bind (started completed) (scope-markers scope)
-    (cond ((or (search "compilation aborted" text :test #'char-equal)
+    (cond (signal :worker-error)
+          ((or (search "compilation aborted" text :test #'char-equal)
                (search "COMPILE-FILE-ERROR" text :test #'char-equal)
                (search "COMPILE-FILE-WARNED" text :test #'char-equal)
                (search "non ammesso (COD-01)" text))
@@ -244,14 +273,17 @@
   nil)
 
 (defun dedicated-test-form (scope)
-  "Seleziona DEFTEST caricati: tre file DECISION, due manifest; lettura priva di eval."
+  "Seleziona DEFTEST caricati: tre file DECISION, due manifest, uno inventory; senza eval."
   `(let* ((*package* (or (find-package "ARCDOCDB.RECOVERY.TESTS")
                         (error "Harness recovery non caricato.")))
           (*read-eval* nil) (deftest (find-symbol "DEFTEST" *package*)) (tests nil))
-     (dolist (file ',(if (string= scope "decisions")
-                        '("tests/recovery/decisions.lisp" "tests/recovery/decisions-audit.lisp"
-                          "tests/recovery/decisions-radix.lisp")
-                        '("tests/recovery/manifest.lisp" "tests/recovery/manifest-audit.lisp")))
+     (dolist (file ',(cond ((string= scope "decisions")
+                          '("tests/recovery/decisions.lisp" "tests/recovery/decisions-audit.lisp"
+                            "tests/recovery/decisions-radix.lisp"))
+                         ((string= scope "manifest")
+                          '("tests/recovery/manifest.lisp" "tests/recovery/manifest-audit.lisp"))
+                         ((string= scope "inventory") '("tests/recovery/inventory.lisp"))
+                         (t (error "Ambito senza test dedicati: ~A" scope))))
        (let ((selected 0))
          (with-open-file (input file :external-format :utf-8)
            (loop for form = (read input nil :eof) until (eq form :eof)
@@ -267,7 +299,7 @@
      (format t ,(format nil "~~&~A-tests-complete ~~D~~%" (scope-token scope)) (length tests))))
 
 (defun write-decision-runner (directory &optional (scope "decisions"))
-  "Cache privata e build rigorosa; test dedicati per manifest e DECISION."
+  "Cache privata e build rigorosa; test dedicati per DECISION, manifest e inventory."
   (let ((runner (merge-pathnames "tools/mutation-isolated-build.lisp" directory)))
     (with-open-file (stream runner :direction :output :if-exists :error)
       (dolist (form
@@ -300,10 +332,10 @@
                        :error-output :output))
 
 (defun execute-decisions (directory &optional (scope "decisions"))
-  "Compila tutti i componenti e invoca solo i test dedicati; conserva il log."
+  "Compila tutti i componenti e invoca test dedicati; conserva log, exit e segnale OS."
   (let ((log (merge-pathnames "test.log" directory)))
-    (let ((exit (uiop:wait-process (launch-copy directory scope))))
-      (values (decision-result (read-text log) exit scope) exit log))))
+    (multiple-value-bind (exit signal) (uiop:wait-process (launch-copy directory scope))
+      (values (decision-result (read-text log) exit scope signal) exit log signal))))
 
 (defun new-directory (name)
   "Directory esclusiva: prepara solo i genitori e rifiuta ogni destinazione esistente."
@@ -340,14 +372,14 @@
           ((and (<= 2 (length positional) 3) (string= (first positional) "--run")
                 (or (= (length positional) 2)
                     (member (third positional)
-                            '("foundation" "storage" "recovery" "decisions" "manifest" "io" "wal")
+                            '("foundation" "storage" "recovery" "decisions" "manifest" "inventory" "io" "wal")
                             :test #'string=)))
            (values :run (second positional) (or (third positional) "foundation") jobs))
-          (t (error "foundation-mutation.lisp: COD-61, usare --self-test oppure --run directory-nuova/ [foundation|storage|recovery|decisions|manifest|io|wal] [--jobs 1..4].")))))
+          (t (error "foundation-mutation.lisp: COD-61, usare --self-test oppure --run directory-nuova/ [foundation|storage|recovery|decisions|manifest|inventory|io|wal] [--jobs 1..4].")))))
 
-(defun worker-failure (task condition &optional exit)
+(defun worker-failure (task condition &optional exit signal)
   "I guasti di preparazione, avvio e raccolta non interrompono gli altri worker."
-  (list :name (getf task :name) :result :worker-error :exit-code exit
+  (list :name (getf task :name) :result :worker-error :exit-code exit :signal signal
         :diagnostic (princ-to-string condition)
         :log (namestring (merge-pathnames "test.log" (getf task :directory)))))
 
@@ -364,14 +396,14 @@
                   (error (condition) (setf (aref results index) (worker-failure task condition)))))
         (dolist (worker (nreverse active))
           (destructuring-bind (index task process) worker
-            (let ((exit nil))
+            (let ((exit nil) (termination-signal nil))
               (handler-case
                   (multiple-value-bind (code signal) (uiop:wait-process process)
-                    (setf exit code)
+                    (setf exit code termination-signal signal)
                     (when signal (error "Worker terminato dal segnale ~D." signal))
                     (setf (aref results index) (funcall collect task exit)))
                 (error (condition)
-                  (setf (aref results index) (worker-failure task condition exit)))))))))
+                  (setf (aref results index) (worker-failure task condition exit termination-signal)))))))))
     (coerce results 'list)))
 
 (defun launch-mutant (task)
@@ -395,7 +427,7 @@
   "Classificazione runtime distinta da compilazione, pre-test ed errori worker."
   (let ((log (merge-pathnames "test.log" (getf task :directory))))
     (list :name (getf task :name) :result (decision-result (read-text log) exit (getf task :scope))
-          :exit-code exit :log (namestring log))))
+          :exit-code exit :signal nil :log (namestring log))))
 
 (defun save-campaign (report directory)
   "Conserva stato e risultati, compresi tutti i fallimenti, nella directory esclusiva."
@@ -412,9 +444,10 @@
     (save-campaign report directory)
     (new-directory baseline-directory)
     (copy-test-system baseline-directory)
-    (multiple-value-bind (result exit log) (execute-decisions baseline-directory scope)
+    (multiple-value-bind (result exit log signal) (execute-decisions baseline-directory scope)
       (setf (getf report :baseline) (if (eq result :survived) :passed result)
-            (getf report :baseline-exit-code) exit (getf report :baseline-log) (namestring log))
+            (getf report :baseline-exit-code) exit (getf report :baseline-signal) signal
+            (getf report :baseline-log) (namestring log))
       (unless (eq result :survived)
         (setf (getf report :status) :failed)
         (save-campaign report directory)
@@ -446,7 +479,7 @@
 
 (defun classifier-self-test ()
   "Rifiuta marker nel backtrace, marker dell'altro ambito e guasti di compilazione."
-  (dolist (scope '("decisions" "manifest"))
+  (dolist (scope '("decisions" "manifest" "inventory"))
     (multiple-value-bind (start complete) (scope-markers scope)
       (let ((started (concatenate 'string start "TEST")))
         (unless (and (eq :detected (decision-result started 1 scope))
@@ -455,6 +488,10 @@
                          (decision-result (format nil "~A~%~A1~%" started complete) 1 scope))
                      (eq :before-tests (decision-result started 0 scope))
                      (eq :before-tests (decision-result started nil scope))
+                     (eq :worker-error (decision-result started 137 scope sb-posix:sigkill))
+                     (eq :worker-error (decision-result "compilation aborted" 137 scope sb-posix:sigkill))
+                     (eq :worker-error (decision-result (format nil "~A~%~A1~%" started complete)
+                                                        0 scope sb-posix:sigkill))
                      (eq :before-tests (decision-result "ok    ARCDOCDB:*VERSION*" 1 scope))
                      (eq :before-tests (decision-result (format nil "0: (FORMAT T ~S)" started) 1 scope))
                      (eq :before-tests (decision-result (format nil "prefix ~A" started) 1 scope))
@@ -463,9 +500,14 @@
                      (eq :compilation-failure (decision-result "COMPILE-FILE-ERROR" 1 scope))
                      (eq :compilation-failure (decision-result
                                                  (format nil "~A~%compilation aborted" started) 1 scope)))
-          (error "foundation-mutation.lisp: COD-60, classificazione ~A errata." scope)))))
-  (unless (eq :before-tests (decision-result "decision-test-start TEST" 1 "manifest"))
-    (error "foundation-mutation.lisp: COD-60, marker di un altro ambito accettato.")))
+          (error "foundation-mutation.lisp: COD-60, classificazione ~A errata." scope))))
+    (dolist (other '("decisions" "manifest" "inventory"))
+      (unless (string= scope other)
+        (multiple-value-bind (start complete) (scope-markers other)
+          (unless (eq :before-tests
+                      (decision-result (format nil "~ATEST~%~A1~%" start complete) 1 scope))
+            (error "foundation-mutation.lisp: COD-60, marker ~A accettato da ~A."
+                   other scope)))))))
 
 (defun configuration-self-test ()
   "CLI precedente conservata; default seriale, jobs limitati e argomenti malformati rifiutati."
@@ -474,7 +516,9 @@
                (equal '(:run "out/" "manifest" 4)
                       (multiple-value-list (parse-options '("--run" "out/" "manifest" "--jobs" "4"))))
                (equal '(:run "out/" "decisions" 2)
-                      (multiple-value-list (parse-options '("--jobs" "2" "--run" "out/" "decisions")))))
+                      (multiple-value-list (parse-options '("--jobs" "2" "--run" "out/" "decisions"))))
+               (equal '(:run "out/" "inventory" 4)
+                      (multiple-value-list (parse-options '("--run" "out/" "inventory" "--jobs" "4")))))
     (error "foundation-mutation.lisp: COD-60, parsing CLI errato."))
   (dolist (args '(nil ("--run") ("--run" "out/" "unknown")
                   ("--run" "out/" "--jobs") ("--run" "out/" "--jobs" "0")
@@ -559,6 +603,7 @@
   "Il primo worker attende il segnale del secondo: un avvio seriale fallirebbe il test."
   (let ((source (merge-pathnames "worker-fixture.lisp" directory)))
     (with-open-file (stream source :direction :output :if-exists :error)
+      (write '(require :sb-posix) :stream stream) (terpri stream)
       (write '(let* ((args (rest sb-ext:*posix-argv*)) (mode (first args))
                     (release (merge-pathnames "release" (second args))))
                 (cond ((string= mode "waiting")
@@ -569,6 +614,10 @@
                          (write-line "rilasciato" output))
                        (format t "worker-fixture-failure~%")
                        (sb-ext:exit :code 7))
+                      ((string= mode "signaled")
+                       (format t "inventory-test-start SIGNAL-FIXTURE~%")
+                       (finish-output)
+                       (sb-posix:kill (sb-posix:getpid) sb-posix:sigkill))
                       (t (sb-ext:exit :code 0)))) :stream stream :pretty t))
     source))
 
@@ -578,7 +627,7 @@
                       (format nil "spikes/out/~D-mutation-self-test-~D/"
                               (get-universal-time) (sb-posix:getpid))))
          (source (write-worker-fixture directory))
-         (tasks (loop for name in '("waiting" "failing" "launch-error" "collect-error")
+         (tasks (loop for name in '("waiting" "failing" "launch-error" "collect-error" "signaled")
                       for index from 0
                       collect (list :name name :directory
                                     (new-directory (merge-pathnames (format nil "~D/" index) directory)))))
@@ -595,11 +644,13 @@
                (list :name (getf task :name) :result (if (zerop exit) :detected :worker-error)
                      :exit-code exit)))))
     (save-campaign (list :kind :parallel-self-test :jobs 2 :results results) directory)
-    (unless (and (equal '("waiting" "failing" "launch-error" "collect-error")
+    (unless (and (equal '("waiting" "failing" "launch-error" "collect-error" "signaled")
                         (mapcar (lambda (result) (getf result :name)) results))
-                 (equal '(:detected :worker-error :worker-error :worker-error)
+                 (equal '(:detected :worker-error :worker-error :worker-error :worker-error)
                         (mapcar (lambda (result) (getf result :result)) results))
-                 (= 0 (getf (first results) :exit-code)) (= 7 (getf (second results) :exit-code)))
+                 (= 0 (getf (first results) :exit-code)) (= 7 (getf (second results) :exit-code))
+                 (not (eql 0 (getf (fifth results) :exit-code)))
+                 (eql sb-posix:sigkill (getf (fifth results) :signal)))
       (error "foundation-mutation.lisp: COD-60, worker concorrenti o fallimenti non rilevati; ~A"
              directory))
     (format t "Worker: concorrenza, fallimenti e ordine verificati; ~A~%" directory)))
@@ -616,6 +667,7 @@
   (copier-self-test)
   (validate-decision-mutants)
   (validate-decision-mutants *manifest-mutants*)
+  (validate-decision-mutants *inventory-mutants*)
   (parallel-self-test)
   (format t "Mutazioni: self-test superato.~%"))
 
@@ -626,6 +678,7 @@
         ((string= scope "recovery") *recovery-mutants*)
         ((string= scope "decisions") *decision-mutants*)
         ((string= scope "manifest") *manifest-mutants*)
+        ((string= scope "inventory") *inventory-mutants*)
         ((string= scope "io") *io-mutants*)
         ((string= scope "wal") *wal-mutants*)
         (t (error "foundation-mutation.lisp: COD-61, ambito non supportato: ~A" scope))))

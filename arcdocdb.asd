@@ -46,7 +46,9 @@
                              (:file "decisions-query")
                              (:file "manifest-package") (:file "manifest-types")
                              (:file "manifest-decode") (:file "manifest-fold")
-                             (:file "manifest-build") (:file "manifest-query"))))
+                             (:file "manifest-build") (:file "manifest-query")
+                             (:file "inventory-types") (:file "inventory-build")
+                             (:file "inventory-query"))))
   :in-order-to ((test-op (test-op "arcdocdb/tests"))))
 
 (defsystem "arcdocdb/tests"
@@ -81,7 +83,8 @@
                 :components ((:file "support") (:file "scan") (:file "corruption")
                              (:file "decisions-support") (:file "decisions")
                              (:file "decisions-audit") (:file "decisions-radix") (:file "manifest-support")
-                             (:file "manifest") (:file "manifest-audit")))
+                             (:file "manifest") (:file "manifest-audit")
+                             (:file "inventory-support") (:file "inventory")))
                (:module "wal" :serial t
                 :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
                              (:file "native"))))
