@@ -94,7 +94,12 @@
 (defun tok-at (toks i) (when (and (>= i 0) (< i (length toks))) (aref toks i)))
 
 (defun call-position-p (toks i)
-  (let ((prev (tok-at toks (1- i)))) (and prev (eq (tok-kind prev) :open))))
+  "Keyword nelle liste di opzioni non sono chiamate, anche dopo una parentesi."
+  (let* ((prev (tok-at toks (1- i)))
+         (text (tok-text (aref toks i)))
+         (colon (position #\: text)))
+    (and prev (eq (tok-kind prev) :open)
+         (not (and colon (or (zerop colon) (string= text "keyword" :end1 colon)))))))
 
 (defun integer-token (tk)
   (and tk (eq (tok-kind tk) :sym)
