@@ -11,6 +11,7 @@ qualifica del motore completo.
 | Header dei log | [Identità e integrità di control e multiserie](header-log.md) | [`src/storage/log-header.lisp`](../../src/storage/log-header.lisp) |
 | Confine I/O | [Append, pread e flush durevole](io.md) | [`src/io/`](../../src/io/) |
 | Lotti WAL | [Formazione, SEAL e group commit](wal.md) | [`src/wal/`](../../src/wal/) |
+| Orizzonte CSN | [Registro limitato dei commit in volo](orizzonte-csn.md) | [`src/mvcc/`](../../src/mvcc/) |
 | Scansione recovery | [Prefisso dei log e testimonianze SEAL](scansione-log.md) | [`src/recovery/`](../../src/recovery/) |
 
 Le evidenze hanno un ambito esplicito: un test del codec non verifica transazioni,

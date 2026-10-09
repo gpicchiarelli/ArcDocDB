@@ -30,6 +30,8 @@
                (:module "wal" :serial t
                 :components ((:file "package") (:file "types") (:file "builder")
                              (:file "group") (:file "executor")))
+               (:module "mvcc" :serial t
+                :components ((:file "package") (:file "types") (:file "horizon")))
                (:module "recovery"
                 :serial t
                 :components ((:file "package") (:file "scan"))))

@@ -7,6 +7,10 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Registro CSN per Archivio: prenotazioni preallocate, identità dei completamenti,
+  orizzonte monotono e budget finito; esaurimento u64 senza wrap e fail-stop delle
+  transizioni interrotte. La qualifica concorrente e gli snapshot completi restano aperti.
+
 - SPK-08 bitmap: kernel scalari byte/u64 equivalenti, oracoli indipendenti,
   90 campioni locali e disassemblati conservati. Packing escluso e nessuna
   promozione a ottimizzazione del motore.
