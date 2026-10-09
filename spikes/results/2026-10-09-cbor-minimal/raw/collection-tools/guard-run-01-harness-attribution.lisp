@@ -1,0 +1,20 @@
+(:SCHEMA-VERSION 1 :KIND :CBOR-MINIMAL-COLLECTION-GUARD-HARNESS-ATTRIBUTION
+ :STATUS :OBSERVED-FAILURE :FORMATS NIL :RECORDED-AT 4000547328
+ :FAILED-COMMAND-WRAPPER "spikes/out/4000547152-command-91683-0/report.lisp"
+ :FAILED-GUARD-REPORT
+ "spikes/out/cbor-minimal-collection/guard-run-01/report.lisp"
+ :COMMAND-EXIT-CODE 1 :DIAGNOSTIC
+ #A((30) BASE-CHAR . "Conteggio casi guard inatteso.") :SOURCE-CONSISTENCY
+ :STABLE :ORIGINAL-GUARD-SOURCE
+ "spikes/out/cbor-minimal-collection/guard-v1-report-plist.lisp"
+ :ORIGINAL-GUARD-SHA256
+ "d092bdcd4cc1b9aeeb63a050af5c45ad4944ade79879d0fcc533fd62046ef729"
+ :RAW-LOGS-AND-FIXTURES "spikes/out/cbor-minimal-collection/guard-run-01/"
+ :DEFECT :LOCAL-PLIST-HEAD-ADDED-INSTEAD-OF-SHARED-EXISTING-CELL :CAUSE
+ "CASE/INVOCATION keys absent in initial report. SETF GETF added a new head only to each callee parameter, so MAIN retained no case or invocation entries."
+ :FIX
+ "Prepopulate :CASES NIL and :INVOCATIONS NIL in MAIN report; callees update existing shared value cells."
+ :SCOPE :C4-GUARD-REPORT-ACCOUNTING-ONLY :PRODUCT-CHANGES NIL
+ :COLLECTOR-CHANGES NIL :PRODUCT-OR-GUARD-CAMPAIGN-RERUNS-BY-WRITER NIL
+ :CORRECTED-GUARD-RUNTIME-RESULT :NOT-YET-RUN :LIMITS
+ (:ORIGINAL-ATTEMPT-IS-FAILED :NO-RESULT-UPGRADE :RAW-ORIGINALS-PRESERVED))

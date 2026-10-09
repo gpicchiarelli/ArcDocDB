@@ -1,0 +1,34 @@
+Unhandled SIMPLE-ERROR in thread #<SB-THREAD:THREAD tid=259 "main thread" RUNNING
+                                    {80086B04B3}>:
+  Raccolta esistente: /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/guard-run-02/archive-positive/.
+
+Backtrace for: #<SB-THREAD:THREAD tid=259 "main thread" RUNNING {80086B04B3}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SIMPLE-ERROR "Raccolta esistente: ~A." {8006EB7943}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK SB-EXT:*INVOKE-DEBUGGER-HOOK* #<SIMPLE-ERROR "Raccolta esistente: ~A." {8006EB7943}>)
+2: (INVOKE-DEBUGGER #<SIMPLE-ERROR "Raccolta esistente: ~A." {8006EB7943}>)
+3: (ERROR "Raccolta esistente: ~A." #P"/Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/guard-run-02/archive-positive/")
+4: (COLLECT "/Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/guard-run-02/manifest.lisp" "/Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/guard-run-02/archive-positive/")
+5: ((FLET "G" :IN SB-C::%COMPILE-IN-LEXENV))
+6: (SB-C::%COMPILE-IN-LEXENV (LET ((ARGS (UIOP/IMAGE:COMMAND-LINE-ARGUMENTS))) (COND ((AND (= 3 #) (STRING= "--collect" #)) (COLLECT (SECOND ARGS) (THIRD ARGS))) ((AND (= 2 #) (STRING= "--audit" #)) (AUDIT (SECOND ARGS))) ((AND (= 4 #) (STRING= "--append" #)) (APPEND-PROCESS (SECOND ARGS) (THIRD ARGS) (FOURTH ARGS))) (T (ERROR "Uso: --collect manifest destinazione oppure --audit destinazione.")))) #<NULL-LEXENV> NIL #<SB-C::SOURCE-INFO {8008680423}> 13 NIL T T)
+7: (SB-C:EVAL-WITH-COMPILE-IN-LEXENV (LET ((ARGS (UIOP/IMAGE:COMMAND-LINE-ARGUMENTS))) (COND ((AND (= 3 #) (STRING= "--collect" #)) (COLLECT (SECOND ARGS) (THIRD ARGS))) ((AND (= 2 #) (STRING= "--audit" #)) (AUDIT (SECOND ARGS))) ((AND (= 4 #) (STRING= "--append" #)) (APPEND-PROCESS (SECOND ARGS) (THIRD ARGS) (FOURTH ARGS))) (T (ERROR "Uso: --collect manifest destinazione oppure --audit destinazione.")))) #<NULL-LEXENV> #<SB-C::SOURCE-INFO {8008680423}> 13 NIL)
+8: (SB-IMPL::%SIMPLE-EVAL (LET ((ARGS (UIOP/IMAGE:COMMAND-LINE-ARGUMENTS))) (COND ((AND (= 3 #) (STRING= "--collect" #)) (COLLECT (SECOND ARGS) (THIRD ARGS))) ((AND (= 2 #) (STRING= "--audit" #)) (AUDIT (SECOND ARGS))) ((AND (= 4 #) (STRING= "--append" #)) (APPEND-PROCESS (SECOND ARGS) (THIRD ARGS) (FOURTH ARGS))) (T (ERROR "Uso: --collect manifest destinazione oppure --audit destinazione.")))) #<NULL-LEXENV>)
+9: (SB-INT:SIMPLE-EVAL-IN-LEXENV (LET ((ARGS (UIOP/IMAGE:COMMAND-LINE-ARGUMENTS))) (COND ((AND (= 3 #) (STRING= "--collect" #)) (COLLECT (SECOND ARGS) (THIRD ARGS))) ((AND (= 2 #) (STRING= "--audit" #)) (AUDIT (SECOND ARGS))) ((AND (= 4 #) (STRING= "--append" #)) (APPEND-PROCESS (SECOND ARGS) (THIRD ARGS) (FOURTH ARGS))) (T (ERROR "Uso: --collect manifest destinazione oppure --audit destinazione.")))) #<NULL-LEXENV>)
+10: (SB-EXT:EVAL-TLF (LET ((ARGS (UIOP/IMAGE:COMMAND-LINE-ARGUMENTS))) (COND ((AND (= 3 #) (STRING= "--collect" #)) (COLLECT (SECOND ARGS) (THIRD ARGS))) ((AND (= 2 #) (STRING= "--audit" #)) (AUDIT (SECOND ARGS))) ((AND (= 4 #) (STRING= "--append" #)) (APPEND-PROCESS (SECOND ARGS) (THIRD ARGS) (FOURTH ARGS))) (T (ERROR "Uso: --collect manifest destinazione oppure --audit destinazione.")))) 13 NIL)
+11: ((LABELS SB-FASL::EVAL-FORM :IN SB-INT:LOAD-AS-SOURCE) (LET ((ARGS (UIOP/IMAGE:COMMAND-LINE-ARGUMENTS))) (COND ((AND (= 3 #) (STRING= "--collect" #)) (COLLECT (SECOND ARGS) (THIRD ARGS))) ((AND (= 2 #) (STRING= "--audit" #)) (AUDIT (SECOND ARGS))) ((AND (= 4 #) (STRING= "--append" #)) (APPEND-PROCESS (SECOND ARGS) (THIRD ARGS) (FOURTH ARGS))) (T (ERROR "Uso: --collect manifest destinazione oppure --audit destinazione.")))) 13)
+12: ((LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) (LET ((ARGS (UIOP/IMAGE:COMMAND-LINE-ARGUMENTS))) (COND ((AND (= 3 #) (STRING= "--collect" #)) (COLLECT (SECOND ARGS) (THIRD ARGS))) ((AND (= 2 #) (STRING= "--audit" #)) (AUDIT (SECOND ARGS))) ((AND (= 4 #) (STRING= "--append" #)) (APPEND-PROCESS (SECOND ARGS) (THIRD ARGS) (FOURTH ARGS))) (T (ERROR "Uso: --collect manifest destinazione oppure --audit destinazione.")))) :CURRENT-INDEX 13)
+13: (SB-C::%DO-FORMS-FROM-INFO #<FUNCTION (LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) {1058F0F1B}> #<SB-C::SOURCE-INFO {8008680423}> SB-C::INPUT-ERROR-IN-LOAD)
+14: (SB-INT:LOAD-AS-SOURCE #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/collect.lisp" {8008680043}> :VERBOSE NIL :PRINT NIL :CONTEXT "loading")
+15: ((LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/collect.lisp" {8008680043}> NIL)
+16: (SB-FASL::CALL-WITH-LOAD-BINDINGS #<FUNCTION (LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) {1058F09EB}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/collect.lisp" {8008680043}> NIL #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/collect.lisp" {8008680043}>)
+17: ((LABELS SB-FASL::LOAD-STREAM :IN LOAD) #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/collect.lisp" {8008680043}> NIL)
+18: (LOAD #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/collect.lisp" {8008680043}> :VERBOSE NIL :PRINT NIL :IF-DOES-NOT-EXIST :ERROR :EXTERNAL-FORMAT :DEFAULT)
+19: ((FLET SB-IMPL::LOAD-SCRIPT :IN SB-IMPL::PROCESS-SCRIPT) #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-preferred/ArcDocDB/spikes/out/cbor-minimal-collection/collect.lisp" {8008680043}>)
+20: ((FLET SB-UNIX::BODY :IN SB-IMPL::PROCESS-SCRIPT))
+21: ((FLET "WITHOUT-INTERRUPTS-BODY-" :IN SB-IMPL::PROCESS-SCRIPT))
+22: (SB-IMPL::PROCESS-SCRIPT "spikes/out/cbor-minimal-collection/collect.lisp")
+23: (SB-IMPL::TOPLEVEL-INIT)
+24: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+25: ((FLET "WITHOUT-INTERRUPTS-BODY-3" :IN SB-IMPL::START-LISP))
+26: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting

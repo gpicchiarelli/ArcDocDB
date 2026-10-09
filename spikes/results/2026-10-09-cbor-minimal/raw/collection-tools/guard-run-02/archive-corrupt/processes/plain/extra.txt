@@ -1,0 +1,1 @@
+process mode conserva txt
