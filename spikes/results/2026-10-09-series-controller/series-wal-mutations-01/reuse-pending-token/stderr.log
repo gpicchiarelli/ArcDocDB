@@ -1,0 +1,13 @@
+SIMPLE-ERROR: Asserzione fallita: (HANDLER-CASE
+                                   (PROGN
+                                    (FUNCALL ARCDOCDB.WAL.TESTS::THUNK)
+                                    NIL)
+                                   (ARCDOCDB.CONDITIONS:ARCDOCDB-ERROR
+                                    (CONDITION)
+                                    (ARCDOCDB.FOUNDATION.TESTS::IS
+                                     (TYPEP CONDITION TYPE))
+                                    (ARCDOCDB.FOUNDATION.TESTS::IS
+                                     (EQ ARCDOCDB.WAL.TESTS::REASON
+                                         (ARCDOCDB.CONDITIONS:ERROR-REASON
+                                          CONDITION)))
+                                    T))

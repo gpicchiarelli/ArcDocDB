@@ -1,0 +1,38 @@
+(require :asdf)
+(defvar *current-test* nil)
+(defvar *passed-tests* nil)
+(defun isolated-main ()
+  (let ((phase :compile-product) (failure nil) (code 0))
+    (handler-case
+        (let ((*standard-output* *error-output*))
+          (handler-bind ((warning (lambda (condition) (error condition))))
+            (asdf:load-asd (merge-pathnames "arcdocdb.asd" (truename "./")))
+            (let* ((root (truename "./")) (destination (merge-pathnames "fasl/" root)))
+              (asdf:initialize-output-translations
+               `(:output-translations
+                 (,(merge-pathnames "**/*.*" root) ,(merge-pathnames "**/*.*" destination))
+                 :ignore-inherited-configuration))
+              (unless (uiop:subpathp
+                       (asdf:apply-output-translations (merge-pathnames "src/foundation/record.fasl" root))
+                       destination)
+                (error "Cache della copia non isolata.")))
+            (asdf:load-system "arcdocdb" :force t)
+            (setf phase :compile-probes)
+            (asdf:load-system "arcdocdb/tests" :force t)
+            (ensure-directories-exist "fasl/probes.fasl")
+            (load (compile-file "probes.lisp" :output-file "fasl/probes.fasl"))
+            (setf phase :tests)
+            (funcall (find-symbol "RUN-PROBES" "ARCDOCDB.SERIES-CONTROLLER.MUTATION.PROBES")
+                     (first (rest sb-ext:*posix-argv*)))
+            (setf phase :complete)))
+      (error (condition)
+        (setf failure condition code (if (eq phase :tests) 1 2))
+        (format *error-output* "~&~A: ~A~%" (type-of condition) condition)))
+    (let ((*print-readably* t))
+      (write (list :schema-version 1 :kind :series-controller-mutation-probe
+                   :status (if failure :failed :ok) :phase phase :failed-test *current-test*
+                   :passed-tests (reverse *passed-tests*)
+                   :diagnostic (when failure (princ-to-string failure))) :pretty t)
+      (terpri))
+    (sb-ext:exit :code code)))
+(isolated-main)

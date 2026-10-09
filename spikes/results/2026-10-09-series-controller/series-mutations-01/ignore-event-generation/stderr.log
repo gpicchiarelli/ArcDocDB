@@ -1,0 +1,15 @@
+; 
+; caught ERROR:
+;   READ error during COMPILE-FILE:
+;   
+;     unmatched close parenthesis
+;   
+;       Line: 20, Column: 8, File-Position: 1147
+;   
+;       Stream: #<SB-INT:FORM-TRACKING-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/controller-serie/ArcDocDB/spikes/out/series-mutations-01/ignore-event-generation/src/series/events.lisp" {8007AC4BA3}>
+; 
+; compilation unit aborted
+;   caught 2 fatal ERROR conditions
+;   caught 1 ERROR condition
+COMPILE-FILE-ERROR: COMPILE-FILE-ERROR while
+                    compiling #<CL-SOURCE-FILE "arcdocdb" "series" "events">
