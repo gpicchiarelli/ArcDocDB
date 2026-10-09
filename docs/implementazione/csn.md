@@ -62,4 +62,6 @@ la costruzione. Apertura tardiva di Serie, WAL e lifecycle richiedono integrazio
 questa API non autorizza importazioni concorrenti con CSN superiori alla base.
 
 Il [metodo preregistrato](csn-metodo.md) descrive oracoli, mutanti e misure.
+I [risultati locali](csn-risultati.md) e la [rilettura C1](csn-revisione.md)
+conservano evidenze e confini del componente.
 Il componente conserva solo stato volatile e non introduce atomicità durevole.
