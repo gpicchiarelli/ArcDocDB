@@ -96,4 +96,40 @@
    #A((49) BASE-CHAR . "spikes/out/4000510423-command-53704-0/report.lisp"))
   (:ARTIFACT #A((25) BASE-CHAR . "pubblicazione-finale.lisp") :VARIANT
    #A((25) BASE-CHAR . "pubblicazione-finale.lisp") :SOURCE
-   #A((49) BASE-CHAR . "spikes/out/4000510474-command-55666-0/report.lisp"))))
+   #A((49) BASE-CHAR . "spikes/out/4000510474-command-55666-0/report.lisp"))
+  (:ARTIFACT #A((25) BASE-CHAR . "importazione-fallita.lisp") :VARIANT
+   #A((25) BASE-CHAR . "importazione-fallita.lisp") :SOURCE
+   #A((49) BASE-CHAR . "spikes/out/4000510938-command-72587-0/report.lisp"))
+  (:ARTIFACT #A((28) BASE-CHAR . "importazione-verificata.lisp") :VARIANT
+   #A((28) BASE-CHAR . "importazione-verificata.lisp") :SOURCE
+   #A((49) BASE-CHAR . "spikes/out/4000511066-command-73495-0/report.lisp"))
+  (:ARTIFACT #A((26) BASE-CHAR . "verifica-integrazione.lisp") :VARIANT
+   #A((26) BASE-CHAR . "verifica-integrazione.lisp") :SOURCE
+   #A((49) BASE-CHAR . "spikes/out/4000511197-command-76407-0/report.lisp"))
+  (:ARTIFACT #A((24) BASE-CHAR . "spikes-integrazione.lisp") :VARIANT
+   #A((24) BASE-CHAR . "spikes-integrazione.lisp") :SOURCE
+   #A((64) BASE-CHAR
+      . "spikes/results/2026-10-09-conservazione/spikes-integrazione.lisp"))
+  (:ARTIFACT #A((38) BASE-CHAR . "conservazione-spikes-integrazione.lisp")
+   :VARIANT #A((38) BASE-CHAR . "conservazione-spikes-integrazione.lisp")
+   :SOURCE
+   #A((54) BASE-CHAR
+      . "spikes/out/4000511243-check-78025-0/conservazione.lisp"))
+  (:ARTIFACT "4000509850-command-39826-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000509850-command-39826-0/report.lisp"))
+  (:ARTIFACT "4000509930-command-41899-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000509930-command-41899-0/report.lisp"))
+  (:ARTIFACT "4000510740-command-67842-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000510740-command-67842-0/report.lisp"))
+  (:ARTIFACT "4000511341-command-80780-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511341-command-80780-0/report.lisp"))
+  (:ARTIFACT "4000511373-command-81388-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511373-command-81388-0/report.lisp"))
+  (:ARTIFACT "4000511433-command-81880-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511433-command-81880-0/report.lisp"))))

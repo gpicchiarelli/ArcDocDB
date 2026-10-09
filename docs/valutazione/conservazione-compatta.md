@@ -125,3 +125,12 @@ e `STATUS`, aggiunti durante l'importazione, rimangano nelle plist pubblicate;
 la precedente iterazione perdeva la nuova testa della plist. Sei asserzioni
 aggiuntive confrontano risultati e metadata dei due percorsi. Sono incluse
 in `make evidence-selftest` e nel controllo completo.
+
+La [verifica dopo l'integrazione delle code writer](../../spikes/results/2026-10-09-conservazione/verifica-integrazione.lisp)
+è eseguita sul commit `4362110`, con sorgenti stabili: 168 test del motore,
+123 asserzioni del lettore, sei dell'importatore, due controlli sui limiti,
+tutti i controlli del repository e la
+[campagna integrata dei dieci spike](../../spikes/results/2026-10-09-conservazione/spikes-integrazione.lisp).
+L'[importazione inizialmente fallita](../../spikes/results/2026-10-09-conservazione/importazione-fallita.lisp)
+e il [controllo dopo la correzione](../../spikes/results/2026-10-09-conservazione/importazione-verificata.lisp)
+conservano anche la regressione della testa della plist.
