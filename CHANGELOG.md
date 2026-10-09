@@ -11,6 +11,12 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   ACTIVE, CLOSED con esiti, rimozioni esplicite e limite degli ID. Workspace
   indipendenti per Serie; nessuna riconciliazione o scrittura dei file.
 
+- Validazione UTF-8 pura su span immutabili, con budget massimo di 16 MiB,
+  conteggio dei valori scalari ed errori tipizzati con offset. Utilizzabile
+  in parallelo dai worker prima del writer; il parser CBOR resta da integrare.
+  Diciassette test, nove mutanti rilevati e zero heap nei 25 campioni locali;
+  prove concorrenti ed evidenze grezze conservate.
+
 - Code MPSC locali preallocate e gettone del writer con quota cumulativa:
   contesa e saturazione distinte, FIFO e rifiuto dei gettoni vecchi.
   Diciassette test, inclusi producer/consumer su thread reali e calcolo

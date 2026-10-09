@@ -91,7 +91,7 @@ Le eccezioni degli altri moduli non sono inventariate da questa misura.
 ## Inventario locale del manifest
 
 Misura del 2026-10-09 sui sei file `manifest-*`: 888/1067 espressioni e
-114/146 rami, con 20 test dedicati nella suite recovery di 64 test. I 32
+114/146 rami, con 20 test dedicati nella suite recovery iniziale di 64 test. I 32
 rami non osservati comprendono 28 alternative di guardie interne e quattro
 alternative non marcate nelle specifiche di tipo `NEXT-ID` dei due
 `defstruct`. Lo stato e gli HTML originali sono nel
@@ -132,3 +132,14 @@ irraggiungibili per il solo fatto che la strumentazione non li marca.
 Nessuna forma o alternativa è esclusa dalle 1067 espressioni e dai 146
 rami pubblicati. Nessuna eccezione è approvata e il gate C1 del motore
 resta aperto.
+
+## Consegna locale dei writer — 2026-10-09
+
+La [campagna handoff](../implementazione/writer-handoff-decisioni.md#copertura-raw-osservata)
+conserva il denominatore completo dei quattro file execution: 505/593
+espressioni e 76/94 esiti. Il nuovo handoff ha 173/190 espressioni e 16/16
+esiti strumentati; le 17 forme non marcate (dichiarazioni, default e otherwise
+difensivo) sono inventariate nel documento. Il nuovo helper di accettazione
+non ha esiti strumentati scoperti. Le lacune legacy restano: 42 espressioni
+e dieci esiti in queue, 28 e otto in writer, una forma del package.
+Nessuna esclusione approvata, MC/DC completa o chiusura del gate C1 implicita.

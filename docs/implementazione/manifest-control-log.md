@@ -113,15 +113,22 @@ esclusione è approvata. Le query hanno 8/8 rami osservati. I dati HTML e
 lo stato originale `sb-cover` restano conservati insieme ai fallimenti
 preliminari e ai record dei comandi.
 
-L'allineamento alle code writer e al selettore radix mantiene questi dati
+L'allineamento iniziale alle code writer e al selettore radix mantiene questi dati
 storici e aggiunge una verifica integrata distinta nel catalogo. Il copier
 delle campagne isolate include anche i componenti e i test `execution`;
 ogni mutante continua a partire dalla baseline verificata. La campagna
 DECISION della fotografia iniziale selezionava 25 test; dopo l'allineamento
 il runner seleziona anche i 18 test radix, per 43 test dedicati. La suite
-integrata comprende 82 test recovery e 17 test delle code writer.
+di quella fotografia comprende 82 test recovery e 17 test delle code writer.
 
-Il runner radix conserva exit code e segnale del processo: un'interruzione
+Il successivo allineamento a UTF-8 e alla consegna dei tratti del writer
+include anche i sorgenti e i test `codec` nelle copie isolate. La suite
+comprende 82 test recovery, 34 test execution e 17 test UTF-8; il manifest
+mantiene i suoi 20 test dedicati. I record di questa integrazione sono
+distinti da quelli delle fotografie precedenti nel
+[catalogo d'integrazione](../../spikes/results/2026-10-09-manifest-integration/catalogo.lisp).
+
+I runner radix, UTF-8 e handoff conservano exit code e segnale del processo: un'interruzione
 OS o un exit nonzero dopo il completamento dei test è un errore del worker,
 distinto da un mutante rilevato. Il self-test usa un processo figlio che
 stampa il marker di avvio e termina sé stesso con SIGKILL; runner, log e

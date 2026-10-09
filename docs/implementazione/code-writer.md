@@ -59,8 +59,10 @@ ring vengono svuotati, evitando riferimenti trattenuti dalla coda.
 
 ## Integrazione e verifica
 
-Il modulo non crea thread, esegue callback o chiama I/O. Un pool potrà usare le
-stesse primitive per assegnare tratti a worker diversi. Lista delle Serie pronte,
+Queste primitive non creano thread, eseguono callback o chiamano I/O. La
+[consegna locale dei tratti](writer-handoff.md) aggiunge un wrapper con coda
+privata e coordina il prossimo compito sotto la stessa guard. Un pool potrà usare
+le primitive per assegnare tratti a worker diversi. Lista delle Serie pronte,
 risvegli, retry, deadline, crescita adattiva dei pool, pubblicazione e conferme
 restano responsabilità dei componenti successivi. Un'accettazione non notifica
 automaticamente un worker: queste primitive non chiudono il protocollo contro

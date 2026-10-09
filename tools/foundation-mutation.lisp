@@ -171,6 +171,8 @@
   (dolist (file (append '("arcdocdb.asd" "src/package.lisp" "tests/smoke.lisp" "tools/build.lisp")
                        (mapcar #'enough-namestring (directory "src/foundation/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/foundation/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/codec/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/codec/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/execution/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/execution/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/storage/*.lisp"))

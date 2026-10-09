@@ -6,4 +6,6 @@
   (:import-from #:arcdocdb.conditions #:invalid-argument #:resource-exhausted
                 #:invariant-violation)
   (:export #:coda-writer #:crea-coda-writer #:accoda-messaggio
-           #:acquisisci-writer #:preleva-messaggi #:rilascia-writer))
+           #:acquisisci-writer #:preleva-messaggi #:rilascia-writer
+           #:writer-programmabile #:crea-writer-programmabile #:accoda-lavoro-writer
+           #:inizia-tratto-writer #:preleva-lavori-writer #:termina-tratto-writer))

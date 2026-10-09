@@ -1,5 +1,5 @@
 ;;;; Copertura con contrib SBCL; processo e cache separati dai benchmark.
-;;;; Uso: --report directory/ [foundation|execution|storage|recovery|io|wal] oppure --self-test directory/
+;;;; Uso: --report directory/ [foundation|codec|execution|storage|recovery|io|wal] oppure --self-test directory/
 ;;;; REQ: REQ-FOR-003 REQ-AFF-002 REQ-LIM-001 REQ-VAL-001
 (require :asdf)
 (require :sb-cover)
@@ -35,7 +35,8 @@
       (asdf:load-asd (merge-pathnames "arcdocdb.asd" root))
       (asdf:load-system "arcdocdb" :force t)
       (asdf:load-system "arcdocdb/tests" :force t)
-      (uiop:symbol-call (cond ((string= scope "execution") '#:arcdocdb.execution.tests)
+      (uiop:symbol-call (cond ((string= scope "codec") '#:arcdocdb.utf8.tests)
+                             ((string= scope "execution") '#:arcdocdb.execution.tests)
                              ((string= scope "storage") '#:arcdocdb.storage.tests)
                              ((string= scope "recovery") '#:arcdocdb.recovery.tests)
                              ((string= scope "io") '#:arcdocdb.io.tests)
@@ -52,8 +53,8 @@
   (unless (and (<= 2 (length args) 3) (member (first args) '("--report" "--self-test")
                                             :test #'string=)
                (or (= (length args) 2)
-                   (member (third args) '("foundation" "execution" "storage" "recovery" "io" "wal") :test #'string=)))
-    (error "foundation-coverage.lisp: usare --report directory/ [foundation|execution|storage|recovery|io|wal] o --self-test directory/."))
+                   (member (third args) '("foundation" "codec" "execution" "storage" "recovery" "io" "wal") :test #'string=)))
+    (error "foundation-coverage.lisp: usare --report directory/ [foundation|codec|execution|storage|recovery|io|wal] o --self-test directory/."))
   (let ((directory (merge-pathnames (uiop:ensure-directory-pathname (second args))
                                    (truename "./")))
         (scope (or (third args) "foundation")))
