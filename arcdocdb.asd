@@ -20,12 +20,16 @@
                              (:file "record") (:file "batch")))
                (:module "codec" :serial t
                 :components ((:file "package") (:file "utf8")
-                             (:file "cbor-package") (:file "cbor-header")))
+                             (:file "cbor-package") (:file "cbor-header")
+                             (:file "cbor-space") (:file "cbor-scan-input")
+                             (:file "cbor-scan-stack") (:file "cbor-scan-items")
+                             (:file "cbor-scan")))
                (:module "csn" :serial t
                 :components ((:file "package") (:file "registry")))
                (:module "execution" :serial t
                 :components ((:file "package") (:file "queue") (:file "writer")
-                             (:file "handoff") (:file "ready-types") (:file "ready")))
+                             (:file "handoff") (:file "ready-types") (:file "ready")
+                             (:file "ready-recycle")))
                (:module "storage"
                 :serial t
                 :components ((:file "package") (:file "formats") (:file "segment-header")
@@ -37,7 +41,7 @@
                              (:file "lifecycle") (:file "transfer") (:file "flush")))
                (:module "wal" :serial t
                 :components ((:file "package") (:file "types") (:file "builder")
-                             (:file "group") (:file "executor")))
+                             (:file "group") (:file "executor") (:file "csn")))
                (:module "recovery"
                 :serial t
                 :components ((:file "package") (:file "scan")
@@ -65,12 +69,14 @@
                              (:file "record") (:file "batch")))
                (:module "codec" :serial t
                 :components ((:file "support") (:file "utf8") (:file "threads")
-                             (:file "cbor-support") (:file "cbor-header") (:file "cbor-threads")))
+                             (:file "cbor-support") (:file "cbor-header") (:file "cbor-threads")
+                             (:file "cbor-structure-support") (:file "cbor-structure")
+                             (:file "cbor-structure-threads")))
                (:module "csn" :serial t
                 :components ((:file "support") (:file "registry") (:file "threads")))
                (:module "execution" :serial t
                 :components ((:file "support") (:file "queue") (:file "threads")
-                             (:file "handoff") (:file "ready")))
+                             (:file "handoff") (:file "ready") (:file "ready-recycle")))
                (:module "storage"
                 :serial t
                 :components ((:file "support") (:file "segment-header") (:file "log-header")
@@ -87,12 +93,13 @@
                              (:file "inventory-support") (:file "inventory")))
                (:module "wal" :serial t
                 :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
-                             (:file "native"))))
+                             (:file "native") (:file "csn") (:file "csn-threads"))))
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.utf8.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.cbor.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.cbor.structure.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.csn.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.execution.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)

@@ -1,5 +1,35 @@
 (in-package #:arcdocdb.foundation.tests)
 
+;;; REQ: REQ-FOR-003 REQ-LIM-001
+(deftest test-REQ-FOR-003-word-encoding-independent-oracle
+  (dolist (version '(1 2))
+    (dolist (stamp '(0 1 #xffffffff #x100000000 #x8000000000000000 #xffffffffffffffff))
+      (let* ((key (bytes 1 255)) (value (bytes #xa1 1 2))
+             (data (make-array 64 :element-type '(unsigned-byte 8) :initial-element #xcc))
+             (expected (reference-put key value stamp 1))
+             (end (arcdocdb.record:scrivi-record-parole
+                   data 3 1 (ldb (byte 32 32) stamp) (ldb (byte 32 0) stamp)
+                   key value :version version :flags 1)))
+        (is (= end (+ 3 (length expected))))
+        (is (equalp expected (subseq data 3 end)))
+        (is (every (lambda (byte) (= byte #xcc)) (subseq data 0 3)))
+        (is (every (lambda (byte) (= byte #xcc)) (subseq data end)))))))
+
+;;; REQ: REQ-FOR-003 REQ-LIM-001
+(deftest test-REQ-LIM-001-word-encoding-preflight
+  (let* ((data (make-array 64 :element-type '(unsigned-byte 8) :initial-element #xcc))
+         (before (copy-seq data)) (key (bytes 1)) (value (bytes #xa0)))
+    (signals invalid-argument
+             (arcdocdb.record:scrivi-record-parole data 63 1 #xffffffff #xffffffff key value)
+             :buffer-range)
+    (signals invalid-argument
+             (arcdocdb.record:scrivi-record-parole data 0 1 0 1 data value) :input-alias)
+    (signals unsupported-format
+             (arcdocdb.record:scrivi-record-parole data 0 1 0 1 key value :version 3))
+    (signals corruption-detected
+             (arcdocdb.record:scrivi-record-parole data 0 1 0 1 (bytes) value) :empty-key)
+    (is (equalp data before))))
+
 (defun reference-put (key value stamp flags)
   "Cornice PUT indipendente: packing bytewise e CRC bitwise, senza encoder del prodotto."
   (let ((buffer (make-array (+ 24 (length key) (length value))

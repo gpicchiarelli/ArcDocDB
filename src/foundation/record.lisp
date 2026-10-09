@@ -127,6 +127,9 @@ Segnala INVALID-ARGUMENT per alias, RESOURCE-EXHAUSTED per budget; errori di cor
       total)))
 
 ;;; REQ: REQ-FOR-003 REQ-LIM-001 REQ-LIM-003
+(declaim (ftype (function (octets index u8 u32 u32 octets octets
+                         &key (:version integer) (:flags u8) (:document-limit index))
+                         (values index &optional)) scrivi-record-parole))
 (declaim (ftype (function (octets index u8 u64 octets octets
                                 &key (:version integer) (:flags u8)
                                 (:document-limit index))
@@ -134,9 +137,22 @@ Segnala INVALID-ARGUMENT per alias, RESOURCE-EXHAUSTED per budget; errori di cor
 (defun scrivi-record (buffer start kind stamp key value
                      &key (version 2) (flags 0)
                           (document-limit +max-document-bytes+))
-  "Pre: buffer esclusivo; KEY/VALUE non alias di BUFFER; versione e budget espliciti.
-Post: cornice scritta in [START,risultato), CRC completi; fuori range invariato.
-Errore di validazione non modifica BUFFER. Non commit: prepara bytes, senza I/O."
+  "Pre: buffer esclusivo e stamp u64; key/value stabili. Post: cornice e CRC completi.
+Propaga la validazione di scrivi-record-parole prima della prima modifica; nessun I/O."
+  (scrivi-record-parole buffer start kind (ldb (byte 32 32) stamp) (ldb (byte 32 0) stamp)
+                       key value :version version :flags flags :document-limit document-limit))
+
+;;; REQ: REQ-FOR-003 REQ-LIM-001 REQ-LIM-003
+(declaim (ftype (function (octets index u8 u32 u32 octets octets
+                                &key (:version integer) (:flags u8)
+                                (:document-limit index))
+                         (values index &optional)) scrivi-record-parole))
+(defun scrivi-record-parole (buffer start kind stamp-high stamp-low key value
+                            &key (version 2) (flags 0)
+                                 (document-limit +max-document-bytes+))
+  "Pre: buffer esclusivo; stamp in due u32; KEY/VALUE non alias di BUFFER.
+Post: cornice LE in [START,risultato), CRC completi, resto invariato; nessun bignum.
+La validazione segnala condizioni tipizzate prima di scrivere. Prepara byte, nessun I/O."
   (let* ((size (encoding-size buffer start kind flags key value version document-limit))
          (body (+ start +header-bytes+)) (value-start (+ body (length key)))
          (end (+ start size)))
@@ -144,7 +160,8 @@ Errore di validazione non modifica BUFFER. Non commit: prepara bytes, senza I/O.
           (aref buffer (+ start +flags-offset+)) flags)
     (scrivi-u16 buffer (+ start +key-length-offset+) (length key))
     (scrivi-u32 buffer (+ start +value-length-offset+) (length value))
-    (scrivi-u64 buffer (+ start +stamp-offset+) stamp)
+    (scrivi-u32 buffer (+ start +stamp-offset+) stamp-low)
+    (scrivi-u32 buffer (+ start +stamp-offset+ 4) stamp-high)
     (replace buffer key :start1 body :end1 value-start)
     (replace buffer value :start1 value-start :end1 end)
     (scrivi-u32 buffer (+ start +body-crc-offset+) (crc32c buffer body end))

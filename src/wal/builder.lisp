@@ -1,5 +1,5 @@
 ;;; OWNER: writer logico; il buffer privato non attraversa API di mutazione esterne.
-;;; SHARED: nessuno stato tra Serie; CSN fornito dal chiamante alla chiusura.
+;;; SHARED: token locale; solo il registro CSN di Archivio toccato dal ponte alla chiusura/risoluzione.
 (in-package #:arcdocdb.wal)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 
@@ -19,6 +19,7 @@
 Budget/rifiuto di formato prima della mutazione; stamp ordinario fissato alla chiusura.
 RESOURCE-EXHAUSTED/INVALID-ARGUMENT; prepara byte, nessun punto di atomicità durevole."
   (esigi-lotto lotto :open)
+  (when (lotto-csn-registry lotto) (error 'invalid-argument :reason :lotto-csn-bound))
   (unless (log-record-p (lotto-kind lotto) kind)
     (error 'invalid-argument :reason :lotto-record-kind))
   (when (or (= (lotto-count lotto) (length (lotto-offsets lotto)))
@@ -36,38 +37,55 @@ RESOURCE-EXHAUSTED/INVALID-ARGUMENT; prepara byte, nessun punto di atomicità du
     end))
 
 ;;; REQ: REQ-WAL-005
-(declaim (ftype (function (lotto u64) u32) ristampa-record))
-(defun ristampa-record (lotto stamp)
+(declaim (ftype (function (lotto u32 u32) u32) ristampa-record-parole))
+(defun ristampa-record-parole (lotto high low)
   "Pre: buffer esclusivo scritto dal codec. Post: CSN ordinari e CRC aggregato.
-TXID prepared/OUTCOME/DECISION invariati; nessuna scansione o copia del body."
+TXID prepared/OUTCOME/DECISION invariati; nessuna scansione o copia del body.
+INVARIANT-VIOLATION per conteggio/offset corrotto, prima di accedere al relativo header."
+  (esigi-lotto lotto :open)
+  (unless (<= (lotto-count lotto) (length (lotto-offsets lotto)))
+    (error 'invariant-violation :reason :lotto-record-count))
   (let ((buffer (lotto-buffer lotto)) (checksum 0))
     (dotimes (i (lotto-count lotto) checksum)
-      (let* ((pos (aref (lotto-offsets lotto) i))
-             (kind (aref buffer (+ pos +type-offset+)))
-             (flags (aref buffer (+ pos +flags-offset+))))
-        (when (and (or (= kind +put+) (= kind +tombstone+) (= kind +edit+)) (not (logbitp 0 flags)))
-          (scrivi-u64 buffer (+ pos +stamp-offset+) stamp)
-          (scrivi-u32 buffer pos (crc32c buffer (+ pos +body-crc-offset+) (+ pos +header-bytes+))))
-        (setf checksum (crc32c buffer pos (+ pos +header-crc-bytes+) checksum))))))
+      (let ((pos (aref (lotto-offsets lotto) i)))
+        (unless (<= (+ pos +header-bytes+) (lotto-used lotto))
+          (error 'invariant-violation :reason :lotto-record-offset))
+        (let ((kind (aref buffer (+ pos +type-offset+)))
+              (flags (aref buffer (+ pos +flags-offset+))))
+          (when (and (or (= kind +put+) (= kind +tombstone+) (= kind +edit+)) (not (logbitp 0 flags)))
+            (scrivi-u32 buffer (+ pos +stamp-offset+) low)
+            (scrivi-u32 buffer (+ pos +stamp-offset+ 4) high)
+            (scrivi-u32 buffer pos (crc32c buffer (+ pos +body-crc-offset+) (+ pos +header-bytes+))))
+          (setf checksum (crc32c buffer pos (+ pos +header-crc-bytes+) checksum)))))))
 
 ;;; REQ: REQ-WAL-005 REQ-AFF-008
-(declaim (ftype (function (lotto u64 file-offset file-offset) index) sigilla-lotto))
-(defun sigilla-lotto (lotto stamp file-start durable)
-  "Pre: CSN preso ora dal chiamante; durable è frontiera storica di questo file.
-Post: SEAL completo e buffer immutabile fino al riuso esclusivo. Punto atomico: SEAL,
-qui solo preparato; durability richiede write/flush. INVALID-ARGUMENT prima di modificare."
+(declaim (ftype (function (lotto file-offset file-offset) null) verifica-chiusura-lotto))
+(defun verifica-chiusura-lotto (lotto file-start durable)
+  "Pre: writer esclusivo. Post: lotto aperto e spazio SEAL/offset validi prima del CSN.
+INVALID-ARGUMENT per offset; INVARIANT-VIOLATION per budget interno corrotto."
   (esigi-lotto lotto :open)
   (unless (and (<= durable file-start)
                (<= (+ file-start (lotto-used lotto) +seal-total+) most-positive-fixnum))
     (error 'invalid-argument :reason :lotto-offset))
-  (let ((seal (lotto-seal-value lotto)) (checksum (ristampa-record lotto stamp)))
+  (unless (and (<= (lotto-count lotto) (length (lotto-offsets lotto)))
+               (<= (+ (lotto-used lotto) +seal-total+) (length (lotto-buffer lotto))))
+    (error 'invariant-violation :reason :lotto-seal-space))
+  nil)
+
+;;; REQ: REQ-WAL-005 REQ-AFF-008
+(declaim (ftype (function (lotto u32 u32 file-offset file-offset) index) sigilla-lotto-parole))
+(defun sigilla-lotto-parole (lotto high low file-start durable)
+  "Pre: verifica-chiusura-lotto conclusa; buffer privato del writer e parole CSN u32.
+Post: record e SEAL con CRC completi; buffer immutabile, SEAL solo preparato prima dell'I/O.
+INVARIANT-VIOLATION per lunghezza finale incoerente; nessun rollback di un CSN già preso."
+  (let ((seal (lotto-seal-value lotto)) (checksum (ristampa-record-parole lotto high low)))
     (scrivi-u64 seal +seal-batch-start-offset+ file-start)
     (scrivi-u64 seal +seal-durable-offset+ durable)
     (scrivi-u32 seal +seal-count-offset+ (lotto-count lotto))
     (scrivi-u32 seal +seal-checksum-offset+ checksum)
     (setf (lotto-used lotto)
-          (scrivi-record (lotto-buffer lotto) (lotto-used lotto) +seal+ stamp
-                         (lotto-empty-key lotto) seal :version (lotto-version lotto))
+          (scrivi-record-parole (lotto-buffer lotto) (lotto-used lotto) +seal+ high low
+                                (lotto-empty-key lotto) seal :version (lotto-version lotto))
           (lotto-start lotto) file-start
           (lotto-state lotto) :sealed)
     (unless (<= +seal-total+ (lotto-used lotto) (length (lotto-buffer lotto)))
@@ -75,13 +93,26 @@ qui solo preparato; durability richiede write/flush. INVALID-ARGUMENT prima di m
     (lotto-used lotto)))
 
 ;;; REQ: REQ-WAL-005 REQ-AFF-008
+(declaim (ftype (function (lotto u64 file-offset file-offset) index) sigilla-lotto))
+(defun sigilla-lotto (lotto stamp file-start durable)
+  "Pre: stamp preso dal chiamante, nessuna associazione CSN del ponte; durable storico.
+Post: buffer sigillato; SEAL preparato, punto atomico persistito dal successivo write/flush.
+INVALID-ARGUMENT prima di modificare; non registra o risolve il CSN del chiamante."
+  (verifica-chiusura-lotto lotto file-start durable)
+  (when (lotto-csn-registry lotto) (error 'invalid-argument :reason :lotto-csn-bound))
+  (sigilla-lotto-parole lotto (ldb (byte 32 32) stamp) (ldb (byte 32 0) stamp) file-start durable))
+
+;;; REQ: REQ-WAL-005 REQ-AFF-008
 (declaim (ftype (function (lotto) null) riusa-lotto))
 (defun riusa-lotto (lotto)
   "Pre: durevole, rimosso dal gruppo e nessun consumatore/riferimento in volo.
 Post: stesso buffer aperto e vuoto. INVALID-ARGUMENT se non durevole; non attesta reclaim."
   (esigi-lotto lotto :durable)
+  (when (lotto-csn-pending lotto) (error 'invalid-argument :reason :lotto-csn-pending))
   (unless (null (lotto-owner lotto)) (error 'invalid-argument :reason :lotto-owned))
-  (setf (lotto-used lotto) 0 (lotto-count lotto) 0 (lotto-start lotto) 0 (lotto-state lotto) :open)
+  (setf (lotto-used lotto) 0 (lotto-count lotto) 0 (lotto-start lotto) 0 (lotto-state lotto) :open
+        (lotto-csn-registry lotto) nil (lotto-csn-log lotto) nil (lotto-csn-pending lotto) nil
+        (lotto-csn-slot lotto) 0 (lotto-csn-high lotto) 0 (lotto-csn-low lotto) 0)
   nil)
 
 ;;; REQ: REQ-WAL-005

@@ -1,0 +1,6 @@
+(require :asdf)
+(load "tools/evidence-storage.lisp")
+(let* ((report (arcdocdb.evidence:read-evidence (first (uiop:command-line-arguments))))
+       (stderr (getf report :stderr)))
+  (let ((start (or (search "Unhandled" stderr) 0)))
+    (format t "~A~%" (subseq stderr start (min (+ start 2800) (length stderr))))))

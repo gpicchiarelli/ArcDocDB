@@ -1,0 +1,17 @@
+ok :READER-DISABLED-EVAL
+ok :READER-EXTRA-EOF
+ok :MISSING-AND-DUPLICATED-TARGETS
+ok :FRESH-TARGET-RETAINS-EXISTING-BYTES
+Conservati 3 file, 148 byte, 1 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/byte-out/
+ok :BYTE-COPY-AND-CBOR-STRUCTURE-EMBEDDED
+ok :NIL-AND-ABSENT-CHANNELS
+Conservati 5 file, 2194 byte, 2 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/mut-out/
+ok :MUTATION-ALL-LOG-STRINGS
+Conservati 2 file, 200 byte, 0 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/append-out/
+ok :APPEND-PRIOR-BYTE-IDENTITY-AND-REPEATED-NAME
+ok :MISMATCHED-CATALOG-DATA-AND-BYTES-BEFORE-WRITE
+Conservati 4 file, 1468 byte, 1 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/coverage-out/
+FAILED :COVERAGE-EXACT-FOCAL-METADATA-AND-RAW-FILES: Asserzione della guardia fallita.
+Conservati 4 file, 920 byte, 1 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/catalog-out/
+ok :CATALOG-TOP-ENTRIES-SCHEMA-ONE-BASENAMES
+Collector guard self-test: 10 passed, 1 failed.

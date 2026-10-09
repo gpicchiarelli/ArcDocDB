@@ -1,0 +1,68 @@
+<html><head><style type='text/css'>
+*.state-0 { background-color: #eeeeee }
+*.state-1 { background-color: #aaffaa }
+*.state-5 { background-color: #44dd44 }
+*.state-2 { background-color: #ffaaaa }
+*.state-10 { background-color: #ee6666 }
+*.state-15 { color: #aaaaaa; background-color: #eeeeee }
+*.state-9,*.state-6 { background-color: #ffffaa }
+div.key { margin: 20px; width: 200px }
+div.source { width: 88ex; background-color: #eeeeee; padding-left: 5px;
+             /* border-style: solid none none none; border-width: 1px;
+             border-color: #dddddd */ }
+
+*.line-number { color: #666666; float: left; width: 6ex; text-align: right; margin-right: 1ex; }
+
+table.summary tr.head-row { background-color: #aaaaff }
+table.summary tr td.text-cell { text-align: left }
+table.summary tr td.main-head { text-align: center }
+table.summary tr td { text-align: right }
+table.summary tr.even { background-color: #eeeeff }
+table.summary tr.subheading { background-color: #aaaaff}
+table.summary tr.subheading td { text-align: left; font-weight: bold; padding-left: 5ex; }
+</style></head><body><h3>Coverage report: /Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/src/foundation/conditions.lisp <br />
+</h3>
+<table class='summary'><tr class='head-row'><td width='80px'>Kind</td><td width='80px'>Covered</td><td width='80px'>All</td><td width='80px'>%</td><tr class='odd'><td>expression</td><td>8</td><td>16</td><td> 50.0</td></tr>
+<tr class='even'><td>branch</td><td>0</td><td>0</td><td>nil  </td></tr>
+</table><div class='key'><b>Key</b><br />
+<div class='state-0'>Not instrumented</div><div class='state-15'>Conditionalized out</div><div class='state-1'>Executed</div><div class='state-2'>Not executed</div><div>&#160;</div><div class='state-5'>Both branches taken</div><div class='state-6'>One branch taken</div><div class='state-10'>Neither branch taken</div></div><nobr><div><code>
+</code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>1</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#59;&#160;Errori&#160;di&#160;confine&#58;&#160;nessuna&#160;gestione&#160;del&#160;ciclo&#160;di&#160;vita&#160;di&#160;Serie&#160;in&#160;questo&#160;strato&#46;</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>2</code></div><code>&#160;<span class='state-2'>&#40;in&#45;package&#160;&#35;&#58;arcdocdb&#46;conditions&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>3</code></div><code>&#160;<span class='state-2'>&#40;declaim&#160;&#40;optimize&#160;&#40;safety&#160;3&#41;&#160;&#40;debug&#160;2&#41;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>4</code></div><code>&#160;<span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>5</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;AFF&#45;004</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>6</code></div><code>&#160;<span class='state-1'>&#40;define&#45;condition&#160;arcdocdb&#45;error&#160;&#40;error&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>7</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#40;&#40;reason&#160;&#58;initarg&#160;&#58;reason&#160;&#58;reader&#160;error&#45;reason&#160;&#58;type&#160;keyword&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>8</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#160;&#40;offset&#160;&#58;initarg&#160;&#58;offset&#160;&#58;initform&#160;nil&#160;&#58;reader&#160;error&#45;offset</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>9</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#58;type&#160;&#40;or&#160;null&#160;&#40;integer&#160;0&#160;&#42;&#41;&#41;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>10</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#40;&#58;documentation&#160;&#34;Errore&#160;tipizzato&#59;&#160;reason&#160;non&#160;contiene&#160;dati&#160;del&#160;documento&#46;&#34;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>11</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#40;&#58;report&#160;&#40;lambda&#160;&#40;condition&#160;stream&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>12</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#40;format&#160;stream&#160;&#34;ArcDocDB&#58;&#160;&#126;A&#126;&#64;&#91;&#160;all&#39;offset&#160;&#126;D&#126;&#93;&#34;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>13</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#40;error&#45;reason&#160;condition&#41;&#160;&#40;error&#45;offset&#160;condition&#41;&#41;&#41;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>14</code></div><code>&#160;<span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>15</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;AFF&#45;004</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>16</code></div><code>&#160;<span class='state-2'>&#40;define&#45;condition&#160;invalid&#45;argument&#160;&#40;arcdocdb&#45;error&#41;&#160;&#40;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>17</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#40;&#58;documentation&#160;&#34;Argomento&#160;o&#160;intervallo&#160;non&#160;valido&#59;&#160;nessuna&#160;scrittura&#160;eseguita&#46;&#34;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>18</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;AFF&#45;004&#160;REQ&#45;AFF&#45;002</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>19</code></div><code>&#160;<span class='state-2'>&#40;define&#45;condition&#160;corruption&#45;detected&#160;&#40;arcdocdb&#45;error&#41;&#160;&#40;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>20</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#40;&#58;documentation&#160;&#34;Record&#160;o&#160;prova&#160;incoerenti&#59;&#160;nessun&#160;dato&#160;verificato&#160;restituito&#46;&#34;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>21</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;FOR&#45;002</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>22</code></div><code>&#160;<span class='state-2'>&#40;define&#45;condition&#160;unsupported&#45;format&#160;&#40;arcdocdb&#45;error&#41;&#160;&#40;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>23</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#40;&#58;documentation&#160;&#34;Versione&#160;sconosciuta&#59;&#160;nessuna&#160;interpretazione&#160;per&#160;tentativi&#46;&#34;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>24</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;LIM&#45;001&#160;REQ&#45;LIM&#45;003</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>25</code></div><code>&#160;<span class='state-2'>&#40;define&#45;condition&#160;resource&#45;exhausted&#160;&#40;arcdocdb&#45;error&#41;&#160;&#40;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>26</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#40;&#58;documentation&#160;&#34;Budget&#160;configurato&#160;esaurito&#59;&#160;rifiuto&#160;precedente&#160;alla&#160;scrittura&#46;&#34;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>27</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;AFF&#45;004</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>28</code></div><code>&#160;<span class='state-2'>&#40;define&#45;condition&#160;invariant&#45;violation&#160;&#40;arcdocdb&#45;error&#41;&#160;&#40;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>29</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#40;&#58;documentation&#160;&#34;Invariante&#160;interna&#160;violata&#59;&#160;il&#160;proprietario&#160;applica&#160;fail&#45;stop&#46;&#34;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>30</code></div><code>&#160;<span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>31</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;AFF&#45;001&#160;REQ&#45;AFF&#45;004</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>32</code></div><code>&#160;<span class='state-2'>&#40;define&#45;condition&#160;io&#45;fault&#160;&#40;arcdocdb&#45;error&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>33</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#40;&#40;operation&#160;&#58;initarg&#160;&#58;operation&#160;&#58;reader&#160;error&#45;operation&#160;&#58;type&#160;keyword&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>34</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#160;&#40;errno&#160;&#58;initarg&#160;&#58;errno&#160;&#58;initform&#160;nil&#160;&#58;reader&#160;error&#45;errno&#160;&#58;type&#160;&#40;or&#160;null&#160;fixnum&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>35</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#160;&#40;cleanup&#45;errno&#160;&#58;initarg&#160;&#58;cleanup&#45;errno&#160;&#58;initform&#160;nil&#160;&#58;reader&#160;error&#45;cleanup&#45;errno</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>36</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#58;type&#160;&#40;or&#160;null&#160;fixnum&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>37</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#160;&#40;transferred&#160;&#58;initarg&#160;&#58;transferred&#160;&#58;initform&#160;0&#160;&#58;reader&#160;error&#45;transferred</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>38</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#58;type&#160;&#40;integer&#160;0&#160;&#42;&#41;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>39</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#40;&#58;documentation&#160;&#34;Guasto&#160;I&#47;O&#160;dichiarato&#44;&#160;con&#160;errno&#160;e&#160;progresso&#160;noto&#59;&#160;nessun&#160;retry&#46;&#34;&#41;&#41;</code></div></body></html>
