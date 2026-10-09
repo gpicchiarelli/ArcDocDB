@@ -1,0 +1,71 @@
+(require :asdf)
+(load "tools/evidence-storage.lisp")
+(defparameter *base* #p"spikes/results/2026-10-09-cbor-mutation-signals/")
+(defun read-proof (path) (arcdocdb.evidence:read-evidence path))
+(defun save-proof (leaf value &optional (exists :error))
+  (with-open-file (out (merge-pathnames leaf *base*) :direction :output
+                       :if-exists exists :external-format :utf-8)
+    (let ((*print-readably* t) (*print-pretty* t)) (write value :stream out) (terpri out))))
+(defun root-report (leaf)
+  (let* ((wrapper (read-proof (merge-pathnames leaf *base*)))
+         (entries (remove-if-not
+                   (lambda (entry) (string= "report.lisp" (file-namestring (getf entry :path))))
+                   (getf wrapper :original-reports))))
+    (unless (= 1 (length entries)) (error "Unique campaign report required ~A" leaf))
+    (or (getf (first entries) :original-report) (error "No root report ~A" leaf))))
+(defun main ()
+  (let* ((commands (sort (directory (merge-pathnames "commands/*/report.lisp" *base*))
+                         #'string< :key #'namestring))
+         (header (root-report "header-mutazioni.lisp"))
+         (structure (root-report "struttura-mutazioni.lisp"))
+         (observations nil))
+    (unless (= 7 (length commands)) (error "Seven preregistered command reports required"))
+    (dolist (path commands)
+      (let* ((record (read-proof path)) (argv (getf record :command))
+             (negative (member "--invalid" argv :test #'equal)))
+        (unless (and (eq (getf record :source-consistency) :stable)
+                     (eq (getf record :status) (if negative :failed :ok))
+                     (eql (getf record :exit-code) (if negative 1 0))
+                     (or (not negative) (search "COD-61" (concatenate 'string
+                                               (or (getf record :stdout) "")
+                                               (or (getf record :stderr) "")))))
+          (error "Unexpected record ~A" path))
+        (push (list :artifact (enough-namestring path *base*) :command argv
+                    :status (getf record :status) :exit-code (getf record :exit-code)
+                    :source-consistency (getf record :source-consistency)
+                    :negative-control (and negative t)) observations)))
+    (loop for report in (list header structure) for count in '(9 10)
+          do (unless (and (eq (getf report :status) :ok)
+                          (eq (getf report :source-consistency) :stable)
+                          (eq (getf (getf report :baseline) :status) :ok)
+                          (eql 0 (getf (getf report :baseline) :exit-code))
+                          (null (getf (getf report :baseline) :signal))
+                          (eql 0 (getf report :worker-errors))
+                          (= count (length (getf report :mutants)))
+                          (every (lambda (row) (and (eq (getf row :result) :detected)
+                                                   (getf row :detected) (null (getf row :signal))))
+                                 (getf report :mutants)))
+               (error "Unexpected campaign report")))
+    (save-proof "riepilogo.lisp"
+                (list :schema-version 1 :kind :cbor-process-verification-summary :date "2026-10-09"
+                      :status :ok :scope :verification-tools-only
+                      :observed-commands (nreverse observations)
+                      :test-modules '(28 17 17 24 20 66 44 18 95 48) :total-tests 377 :smoke :passed
+                      :spikes 10 :header-mutants 9 :structure-mutants 10 :campaign-worker-errors 0
+                      :fixture-executions 4 :fixture-observations '((:exit-code 137 :signal 9 :result :worker-error)
+                                                                 (:exit-code 7 :signal nil :result :worker-error))
+                      :structure-injected-baseline-errors '(:copy :transport)
+                      :limits '(:raw-reports-are-authoritative :negative-statuses-preserved
+                                :no-product-change :no-coverage-repeat :no-mcdc-or-engine-qualification))))
+  (let ((entries (sort (remove-if (lambda (path) (string= (file-namestring path) "catalogo.lisp"))
+                                 (directory (merge-pathnames "**/*.lisp" *base*)))
+                       #'string< :key #'namestring)))
+    (dolist (path entries) (read-proof path))
+    (save-proof "catalogo.lisp"
+                (list :schema-version 1 :kind :evidence-catalog :date "2026-10-09"
+                      :scope :cbor-mutation-processes :path-base (namestring *base*)
+                      :entries (mapcar (lambda (path) (list :artifact (enough-namestring path *base*))) entries)
+                      :limits '(:structure-presence-size-and-compressed-integrity
+                                :original-statuses-preserved :no-automatic-gate-promotion)))
+    (format t "Published ~D schema-one artifacts; raw outputs remain exact.~%" (length entries))))
+(main)

@@ -92,26 +92,32 @@
   "Una riga esatta dimostra il completamento della build e di tutti i test copiati."
   (line-present-p text "build e test: nessun avviso, tutti i controlli superati"))
 
-(defun classify-baseline-result (text exit)
-  "Una baseline è OK solo con exit zero, smoke esatto e completamento esatto."
-  (cond ((compilation-failure-p text) (values :invalid :compilation-failure))
+(defun classify-baseline-result (text exit &optional signal)
+  "Una baseline è OK solo con exit zero; segnali e guasti dopo completamento sono worker."
+  (cond (signal (values :worker-error :process-signal))
+        ((and (integerp exit) (not (zerop exit)) (build-completed-p text))
+         (values :worker-error :after-build-completion))
+        ((compilation-failure-p text) (values :invalid :compilation-failure))
         ((or (not (integerp exit)) (not (zerop exit))) (values :invalid :baseline-exit))
         ((not (smoke-started-p text)) (values :invalid :before-smoke))
         ((not (build-completed-p text)) (values :invalid :missing-build-completion))
         (t (values :ok nil))))
 
-(defun classify-result (text exit)
-  "Solo errore runtime dopo smoke rileva il mutante; gli altri guasti sono INVALID."
-  (cond ((compilation-failure-p text) (values :invalid :compilation-failure))
+(defun classify-result (text exit &optional signal)
+  "Solo errore runtime dopo smoke rileva il mutante; segnali e guasti finali sono worker."
+  (cond (signal (values :worker-error :process-signal))
+        ((and (integerp exit) (not (zerop exit)) (build-completed-p text))
+         (values :worker-error :after-build-completion))
+        ((compilation-failure-p text) (values :invalid :compilation-failure))
         ((or (not (integerp exit)) (not (smoke-started-p text)))
          (values :invalid :before-smoke))
         ((zerop exit) (if (build-completed-p text) (values :survived nil)
                          (values :invalid :missing-build-completion)))
         (t (values :detected nil))))
 
-(defun detected-p (text exit)
-  "Rilevato solo con exit nonzero dopo smoke; compilazione fallita non conta."
-  (eq :detected (classify-result text exit)))
+(defun detected-p (text exit &optional signal)
+  "Rilevato solo con exit nonzero dopo smoke, senza segnale o completamento precedente."
+  (eq :detected (classify-result text exit signal)))
 
 (defun esigi-target-invalido (funzione motivo)
   "Verifica il self-test dei bersagli, distinguendo assenza e ambiguità."
@@ -122,8 +128,10 @@
         (setf rilevato t)))
     (unless rilevato (error "Self-test: bersaglio invalido non rilevato."))))
 
+(declaim (ftype (function () (values string &optional)) self-test-process-signal))
+
 (defun self-test ()
-  "Verifica prima sostituzione, classificazioni e applicabilità al codec congelato."
+  "Verifica sostituzione, classificazioni, processi figli e applicabilità al codec congelato."
   (let* ((smoke "ok    ARCDOCDB:*VERSION* è una stringa")
          (completion "build e test: nessun avviso, tutti i controlli superati")
          (full (format nil "~A~%~A~%" smoke completion))
@@ -135,13 +143,16 @@
                  (not (detected-p (format nil "~A~%COMPILE-FILE-ERROR" smoke) 1))
                  (not (detected-p (format nil "~A~%COMPILE-FILE-WARNED" smoke) 1))
                  (not (detected-p backtrace 1))
+                 (not (detected-p (format nil "; ~A~%" smoke) 1))
                  (not (detected-p (concatenate 'string "  " smoke) 1))
                  (not (detected-p (concatenate 'string smoke " citato") 1))
                  (eq :ok (classify-baseline-result full 0))
                  (eq :invalid (classify-baseline-result smoke 0))
                  (eq :invalid (classify-baseline-result completion 0))
                  (eq :invalid (classify-baseline-result full nil))
-                 (eq :invalid (classify-baseline-result full 1))
+                 (equal '(:worker-error :after-build-completion)
+                        (multiple-value-list (classify-baseline-result full 1)))
+                 (eq :worker-error (classify-baseline-result completion 7))
                  (eq :invalid (classify-baseline-result
                                (format nil "~Acompilation aborted" full) 0))
                  (eq :invalid (classify-baseline-result
@@ -151,6 +162,36 @@
                  (eq :invalid (classify-baseline-result
                                (format nil "~A~%~A citato" smoke completion) 0))
                  (eq :survived (classify-result full 0))
+                 (equal '(:worker-error :after-build-completion)
+                        (multiple-value-list (classify-result full 7)))
+                 (eq :worker-error (classify-result completion 7))
+                 (eq :worker-error (classify-result
+                                   (format nil "~Acompilation aborted~%" full) 7))
+                 (eq :worker-error (classify-baseline-result
+                                   (format nil "~Acompilation aborted~%" full) 7))
+                 (eq :detected (classify-result
+                                (format nil "~A~%0: (SEARCH ~S TEST-LOG)" smoke completion) 7))
+                 (eq :detected (classify-result (format nil "~A~%; ~A~%" smoke completion) 7))
+                 (eq :detected (classify-result (format nil "~A~%  ~A~%" smoke completion) 7))
+                 (eq :detected (classify-result (format nil "~A~%~A citato~%" smoke completion) 7))
+                 (eq :survived (classify-result
+                               (format nil "~A~C~%~A~C~%" smoke #\Return completion #\Return) 0))
+                 (eq :ok (classify-baseline-result
+                          (format nil "~A~C~%~A~C~%" smoke #\Return completion #\Return) 0))
+                 (eq :worker-error (classify-result
+                                   (format nil "~A~C~%~A~C~%" smoke #\Return completion #\Return) 7))
+                 (eq :worker-error (classify-baseline-result
+                                   (format nil "~A~C~%~A~C~%" smoke #\Return completion #\Return) 7))
+                 (equal '(:worker-error :process-signal)
+                        (multiple-value-list (classify-result smoke 1 sb-posix:sigkill)))
+                 (equal '(:worker-error :process-signal)
+                        (multiple-value-list (classify-baseline-result smoke 1 sb-posix:sigkill)))
+                 (not (detected-p smoke 1 sb-posix:sigkill))
+                 (eq :worker-error (classify-result "compilation aborted" 1 sb-posix:sigkill))
+                 (eq :worker-error (classify-baseline-result "compilation aborted" 1 sb-posix:sigkill))
+                 (eq :worker-error (classify-result full 0 sb-posix:sigkill))
+                 (eq :worker-error (classify-baseline-result full 0 sb-posix:sigkill))
+                 (eq :invalid (classify-result smoke nil))
                  (eq :invalid (classify-result smoke 0))
                  (eq :invalid (classify-result backtrace 1))
                  (eq :invalid (classify-result "compilation aborted" 1))
@@ -165,6 +206,8 @@
         :invalid-targets '(:missing :ambiguous) :compilation-failure :invalid
         :baseline-completion :exact-build-end-line :missing-baseline-completion :invalid
         :zero-exit-without-completion :invalid
+        :after-completion-failure :worker-error :os-signal :worker-error
+        :signal-fixture-report (self-test-process-signal)
         :applicable-mutants 8))
 
 (defun new-directory (name)
@@ -197,30 +240,42 @@
       (write '(load "tools/build.lisp") :stream stream) (terpri stream))
     runner))
 
+(defun execute-runner (directory)
+  "Conserva log, exit code e segnale OS del runner preparato, compresa la fixture."
+  (let* ((log (merge-pathnames "test.log" directory))
+         (process (uiop:launch-program
+                   '("sbcl" "--noinform" "--no-userinit" "--no-sysinit"
+                     "--disable-debugger" "--script" "tools/cbor-minimal-isolated-build.lisp")
+                   :directory directory :output log :error-output :output)))
+    (multiple-value-bind (exit signal) (uiop:wait-process process)
+      (values (read-text log) exit log signal))))
+
 (defun execute-copy (directory)
   "Esegue la build rigorosa della copia con cache locale e log conservato."
-  (let ((log (merge-pathnames "test.log" directory)))
-    (isolated-runner directory)
-    (multiple-value-bind (out err exit)
-        (uiop:run-program '("sbcl" "--noinform" "--no-userinit" "--no-sysinit"
-                            "--disable-debugger" "--script" "tools/cbor-minimal-isolated-build.lisp")
-                          :directory directory :output log :error-output :output
-                          :ignore-error-status t)
-      (declare (ignore out err))
-      (values (read-text log) exit log))))
-
-(defun run-baseline (directory)
-  "La copia invariata deve completare smoke e test con exit zero prima dei mutanti."
-  (copy-test-system directory)
-  (multiple-value-bind (text exit log) (execute-copy directory)
-    (multiple-value-bind (result diagnostic) (classify-baseline-result text exit)
-      (list :status result :exit-code exit :log (namestring log) :diagnostic diagnostic))))
+  (isolated-runner directory)
+  (execute-runner directory))
 
 (defun preserve-setup-error (log condition)
   "Conserva anche la diagnostica di setup, senza troncare un log eventualmente già scritto."
   (with-open-file (stream log :direction :output :if-exists :append :if-does-not-exist :create
                               :external-format :utf-8)
     (format stream "~&Errore di infrastruttura della campagna: ~A~%" condition)))
+
+(defun run-baseline (directory)
+  "Conserva anche guasti di setup/trasporto; nessun exit o segnale viene inventato."
+  (let ((log (merge-pathnames "test.log" directory)))
+    (handler-case
+        (progn
+          (copy-test-system directory)
+          (multiple-value-bind (text exit path-log signal) (execute-copy directory)
+            (multiple-value-bind (result diagnostic) (classify-baseline-result text exit signal)
+              (list :status result :result result :exit-code exit :signal signal
+                    :log (namestring path-log) :diagnostic diagnostic))))
+      (error (condition)
+        (preserve-setup-error log condition)
+        (list :status :worker-error :result :worker-error :exit-code nil :signal nil
+              :diagnostic :infrastructure-error :detail (princ-to-string condition)
+              :log (namestring log))))))
 
 (defun run-mutant (mutant directory)
   "Conserva copia e log anche in caso di sopravvivenza, errore di setup o compilazione."
@@ -234,13 +289,13 @@
               (with-open-file (stream source :direction :output :if-exists :supersede
                                             :external-format :utf-8)
                 (write-string (substitute-first text before after) stream)))
-            (multiple-value-bind (text exit path-log) (execute-copy directory)
-              (multiple-value-bind (result diagnostic) (classify-result text exit)
+            (multiple-value-bind (text exit path-log signal) (execute-copy directory)
+              (multiple-value-bind (result diagnostic) (classify-result text exit signal)
                 (list :name name :source-file path :detected (eq result :detected) :exit-code exit
-                      :result result :diagnostic diagnostic :log (namestring path-log)))))
+                      :signal signal :result result :diagnostic diagnostic :log (namestring path-log)))))
         (error (condizione)
           (preserve-setup-error log condizione)
-          (list :name name :source-file path :detected nil :exit-code nil :result :invalid
+          (list :name name :source-file path :detected nil :exit-code nil :signal nil :result :worker-error
                 :diagnostic :infrastructure-error :detail (princ-to-string condizione)
                 :log (namestring log)))))))
 
@@ -251,10 +306,151 @@
                            :direction :output :if-exists :supersede :if-does-not-exist :create)
       (let ((*print-readably* t)) (write report :stream stream :pretty t) (terpri stream)))))
 
+(defun record-baseline-result (report result)
+  "Conserva la baseline e conta i suoi guasti worker prima di interrompere la campagna."
+  (setf (getf report :baseline) result)
+  (when (eq :worker-error (getf result :status))
+    (incf (getf report :worker-errors 0)))
+  report)
+
+(defun append-mutation-result (report result)
+  "Registra ogni risultato e conta i guasti worker separatamente dai mutanti rilevati."
+  (setf (getf report :mutants) (append (getf report :mutants) (list result)))
+  (when (eq :worker-error (getf result :result))
+    (incf (getf report :worker-errors 0)))
+  report)
+
+(defun write-worker-fixture (directory mode)
+  "Scrive un child che emette marker reali e termina solo se stesso, senza caricare il prodotto."
+  (let ((runner (merge-pathnames "tools/cbor-minimal-isolated-build.lisp" directory)))
+    (ensure-directories-exist runner)
+    (with-open-file (output runner :direction :output :if-exists :error :external-format :utf-8)
+      (dolist (form (append '((require :sb-posix)
+                             (format t "ok    ARCDOCDB:*VERSION* è una stringa~%"))
+                           (when (eq mode :completion-exit)
+                             '((format t "build e test: nessun avviso, tutti i controlli superati~%")))
+                           '((finish-output))
+                           (ecase mode
+                             (:signal '((sb-posix:kill (sb-posix:getpid) sb-posix:sigkill)))
+                             (:completion-exit '((sb-ext:exit :code 7))))))
+        (write form :stream output :pretty t) (terpri output)))
+    (namestring runner)))
+
+(defun execute-worker-fixture (directory mode)
+  "Usa il trasporto reale; restituisce tutte le osservazioni prima delle asserzioni del parent."
+  (let ((runner (write-worker-fixture directory mode)))
+    (multiple-value-bind (text exit log signal) (execute-runner directory)
+      (multiple-value-bind (result diagnostic) (classify-result text exit signal)
+        (multiple-value-bind (baseline baseline-diagnostic) (classify-baseline-result text exit signal)
+          (list :name mode :result result :detected (eq result :detected)
+                :baseline-status baseline :baseline-diagnostic baseline-diagnostic
+                :exit-code exit :signal signal :diagnostic diagnostic
+                :runner runner :log (namestring log)))))))
+
+(defun check-worker-fixture (entry)
+  "Valida osservazioni già salvate: entrambi i classificatori rifiutano i due guasti reali."
+  (let* ((mode (getf entry :name)) (text (read-text (getf entry :log)))
+         (expected (ecase mode (:signal :process-signal) (:completion-exit :after-build-completion)))
+         (counter-report (list :worker-errors 0)))
+    (setf counter-report
+          (record-baseline-result counter-report (list :status (getf entry :baseline-status))))
+    (unless (and (eq :worker-error (getf entry :result))
+                 (eq :worker-error (getf entry :baseline-status))
+                 (eq expected (getf entry :diagnostic)) (eq expected (getf entry :baseline-diagnostic))
+                 (= 1 (getf counter-report :worker-errors)) (smoke-started-p text)
+                 (ecase mode
+                   (:signal (and (eql (getf entry :signal) sb-posix:sigkill)
+                                 (not (eql (getf entry :exit-code) 0)) (not (build-completed-p text))))
+                   (:completion-exit (and (eql (getf entry :exit-code) 7)
+                                          (null (getf entry :signal)) (build-completed-p text)))))
+      (error "Self-test CBOR: segnale/guasto finale perso o contato come rilevamento.")))
+  nil)
+
+(defun verify-worker-fixture-report (directory report)
+  "Rilegge senza read-eval: due guasti, nessun rilevamento ed exit/segnale/percorsi salvati."
+  (let* ((*read-eval* nil)
+         (saved (with-open-file (input (merge-pathnames "report.lisp" directory) :external-format :utf-8)
+                  (let ((data (read input)))
+                    (unless (eq :eof (read input nil :eof))
+                      (error "Self-test CBOR: forme aggiuntive nel report."))
+                    data)))
+         (entries (getf saved :mutants))
+         (signal-entry (first entries)) (completion-entry (second entries)))
+    (unless (and (= 2 (getf saved :worker-errors)) (= 2 (length entries))
+                 (equal entries (getf report :mutants))
+                 (every (lambda (entry) (and (eq :worker-error (getf entry :result))
+                                            (not (getf entry :detected)))) entries)
+                 (eql sb-posix:sigkill (getf signal-entry :signal))
+                 (not (eql 0 (getf signal-entry :exit-code)))
+                 (null (getf completion-entry :signal)) (eql 7 (getf completion-entry :exit-code)))
+      (error "Self-test CBOR: esiti, exit, segnale o contatori non conservati.")))
+  nil)
+
+(defun self-test-baseline-infrastructure (directory)
+  "Inietta rifiuti dichiarati prima/dopo la copia; non compila prodotto o avvia altri child."
+  (let ((copy-function (symbol-function 'copy-test-system))
+        (execute-function (symbol-function 'execute-copy)) (paths nil))
+    (unwind-protect
+         (dolist (mode '(:copy :transport))
+           (let* ((child (new-directory (merge-pathnames (format nil "baseline-~(~A~)/" mode) directory)))
+                  (report (list :schema-version 1 :kind :baseline-infrastructure-self-test :status :running
+                                :stage :setup :worker-errors 0 :injected-boundary mode)))
+             (setf (symbol-function 'copy-test-system)
+                   (if (eq mode :copy)
+                       (lambda (target) (declare (ignore target)) (error "Fixture baseline copy refusal."))
+                       (lambda (target) (declare (ignore target)) nil))
+                   (symbol-function 'execute-copy)
+                   (lambda (target) (declare (ignore target)) (error "Fixture baseline transport refusal.")))
+             (setf report (record-baseline-result report (run-baseline child)))
+             (save-report report child)
+             (let ((baseline (getf report :baseline)))
+               (unless (and (eq :worker-error (getf baseline :status))
+                            (eq :worker-error (getf baseline :result))
+                            (eq :infrastructure-error (getf baseline :diagnostic))
+                            (null (getf baseline :exit-code)) (null (getf baseline :signal))
+                            (= 1 (getf report :worker-errors))
+                            (search "Fixture baseline" (read-text (getf baseline :log))))
+                 (error "Self-test CBOR: guasto baseline senza log/esito/contatore.")))
+             (setf (getf report :status) :passed (getf report :stage) :complete)
+             (save-report report child)
+             (push (namestring (merge-pathnames "report.lisp" child)) paths)))
+      (setf (symbol-function 'copy-test-system) copy-function
+            (symbol-function 'execute-copy) execute-function))
+    (nreverse paths)))
+
+(defun self-test-process-signal ()
+  "Conserva runner/log/report di SIGKILL ed exit7 reali; soltanto i child vengono terminati."
+  (let* ((directory (new-directory
+                     (format nil "spikes/out/~D-cbor-minimal-worker-self-test-~D/"
+                             (get-universal-time) (sb-posix:getpid))))
+         (report (list :schema-version 1 :kind :process-signal-self-test :scope :cbor-minimal
+                       :status :running :stage :runner :worker-errors 0 :mutants nil)))
+    (save-report report directory)
+    (handler-case
+        (progn
+          (dolist (mode '(:signal :completion-exit))
+            (let ((entry (execute-worker-fixture
+                          (new-directory (merge-pathnames (format nil "~(~A~)/" mode) directory)) mode)))
+              (setf report (append-mutation-result report entry))
+              (save-report report directory)
+              (check-worker-fixture entry)))
+          (verify-worker-fixture-report directory report)
+          (setf (getf report :baseline-fixture-reports) (self-test-baseline-infrastructure directory))
+          (setf (getf report :status) :passed (getf report :stage) :complete)
+          (save-report report directory))
+      (error (condition)
+        (setf (getf report :status) :failed (getf report :diagnostic) (princ-to-string condition))
+        (save-report report directory)
+        (error condition)))
+    (format t "~&CBOR minimo: self-test worker superato; ~A~%"
+            (merge-pathnames "report.lisp" directory))
+    (namestring (merge-pathnames "report.lisp" directory))))
+
 (defun main ()
   "Self-test o otto copie nuove; plist finale e exit nonzero per campagna non valida."
   (let* ((args (rest sb-ext:*posix-argv*)) (before (fingerprints)) (directory nil)
          (report (list :schema-version 1 :kind :cbor-minimal-mutations :status :running
+                       :worker-errors 0 :mutants nil
                        :recorded-at (get-universal-time) :sbcl (lisp-implementation-version)
                        :source-fingerprints-before before
                        :targets (loop for (path name old new) in *mutants*
@@ -271,27 +467,30 @@
           (when (string= (first args) "--run")
             (setf directory (new-directory (second args)))
             (save-report report directory)
-            (setf (getf report :baseline)
-                  (run-baseline (new-directory (merge-pathnames "baseline/" directory))))
+            (setf report (record-baseline-result
+                          report (run-baseline (new-directory (merge-pathnames "baseline/" directory)))))
             (save-report report directory)
             (unless (eq (getf (getf report :baseline) :status) :ok)
               (error "Mutazioni CBOR: baseline invariata non riuscita."))
             (loop for mutant in *mutants* for i from 0
                   do (let* ((child (new-directory (merge-pathnames (format nil "~D/" i) directory)))
                             (result (run-mutant mutant child)))
-                       (setf (getf report :mutants) (append (getf report :mutants) (list result)))
+                       (append-mutation-result report result)
                        (save-report report directory)))
             (unless (and (= 8 (length (getf report :mutants)))
                          (every (lambda (result) (getf result :detected)) (getf report :mutants)))
-              (error "Mutazioni CBOR: sopravvivenza o errore prima dello smoke.")))
+              (error "Mutazioni CBOR: sopravvivenza, worker-error o errore prima dello smoke.")))
           (setf (getf report :status) :ok))
       (error (condizione) (setf (getf report :status) :failed
-                               (getf report :diagnostic) (princ-to-string condizione))))
+                               (getf report :diagnostic)
+                               (format nil "tools/cbor-minimal-mutation.lisp COD-61: ~A" condizione))))
     (let ((after (fingerprints)))
       (setf (getf report :source-fingerprints-after) after
             (getf report :source-consistency) (if (equal before after) :stable :changed))
       (when (and (eq (getf report :status) :ok) (not (equal before after)))
-        (setf (getf report :status) :source-changed)))
+        (setf (getf report :status) :source-changed
+              (getf report :diagnostic)
+              "tools/cbor-minimal-mutation.lisp COD-61: sorgenti cambiati durante l'esecuzione.")))
     (save-report report directory)
     (let ((*print-readably* t)) (write report :pretty t) (terpri))
     (unless (eq (getf report :status) :ok) (sb-ext:exit :code 1))))

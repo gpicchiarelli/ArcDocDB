@@ -38,3 +38,6 @@ qualifica del motore completo.
 
 Le evidenze hanno un ambito esplicito: un test del codec non verifica transazioni,
 durability, recovery o prestazioni del database.
+
+Gli [esiti dei processi nelle mutazioni CBOR](cbor-mutazioni-processi.md)
+distinguono i rilevamenti dei mutanti dagli errori dei worker di verifica.
