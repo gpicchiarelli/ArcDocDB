@@ -395,3 +395,30 @@ nessuna oltre il limite COD-12 di 60. Sono osservazioni sintattiche, non esito
 di lint/build o copertura. Tipi e docstring osservati; nessuna verifica runtime
 dei rifiuti, barriere o interruzioni. I due P2 precedenti sono chiusi staticamente;
 la checklist C1 complessiva con due letture e prove è responsabilità dell'integrazione.
+
+## Addendum E — dichiarazioni e lettura dell'integratore
+
+L'integratore ha riletto ownership, geometria del ring, adozione, pubblicazione,
+ritiro, query e nuove preflight WAL; la lettura indipendente D ha prodotto i
+due P2 poi corretti. Nessun P1/P2 aperto nel perimetro sotto le precondizioni
+P01–P08. Pool, indice, snapshot e arresto globale dell'Archivio restano esterni.
+
+Dopo il primo build fermato da COD-01, `%serie-invariant` dichiara ritorno
+`nil`, il tipo vuoto, invece di `null`: la funzione segnala sempre una condizione
+e non ritorna normalmente. La dichiarazione anticipata del getter di salute
+coincide con quella in `query.lisp`. Una seconda rilettura indipendente del
+delta non ha trovato regressioni o nuovi P1/P2; massimo 8 e 42 funzioni invariati.
+
+| File riletto | Blob Git | SHA-256 |
+|---|---|---|
+| `src/series/ownership.lisp` | `7352a27581b8e2e68407611e65e46773efdc333c` | `195e71c81a6993d5c021ba520918885f6c91629af7940688f723fe421fc388e4` |
+| `src/series/types.lisp` | `a0def7fc9452d291e2e60dbeff26a56a2b06e3a3` | `5b35f8f0b017476e14078ba073840e40f182438af41750dd1b3262d0a80c1ca9` |
+
+Il lint distingue ora `(:read)` della barriera da `(cl:read stream)`: le due
+fixture positive/negative verificano questa distinzione. La rilettura indipendente
+conferma il divieto sulle chiamate dirette al reader, anche non qualificate o
+con package `common-lisp:`. È una proprietà sintattica, non un'analisi semantica
+generale del programma. La matrice D02/D03 riceve FI separate su capacità,
+cursori e contatori; D06 riceve truth-pairs esplicite. Gli esiti runtime e
+l'allocazione sono responsabilità dei registri della campagna, distinti dalle
+due letture statiche.

@@ -102,7 +102,7 @@
                 :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
                              (:file "native") (:file "csn") (:file "csn-threads")))
                (:module "series" :serial t
-                :components ((:file "support") (:file "controller") (:file "threads"))))
+                :components ((:file "support") (:file "controller") (:file "boundaries") (:file "threads"))))
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
