@@ -109,12 +109,6 @@ La directory dei mutanti deve essere nuova. La copertura `recovery`
 comprende scanner e tabella; il rapporto separa i file e conserva il
 denominatore grezzo. Non equivale a copertura MC/DC o a qualifica del motore.
 
-Le [evidenze conservate](../../spikes/results/2026-10-09-decisions-verifica/catalogo.lisp)
-comprendono comandi, ambiente, hash dei sorgenti prima/dopo, output grezzi,
-due letture del prodotto, sette mutanti rilevati e nove mutanti di regressione
-dello scanner. Restano conservati anche i fallimenti della fixture iniziale
-e le verifiche precedenti alla correzione del classificatore dei mutanti.
-
 Le [evidenze del 2026-10-09](../../spikes/results/2026-10-09-decisions-verifica/catalogo.lisp)
 conservano self-test, comandi, ambiente, hash prima/dopo, output delle
 mutazioni e stato grezzo di `sb-cover`. La campagna rileva sette mutanti
@@ -122,7 +116,12 @@ su sette dopo l'avvio dei test dedicati, senza errori di compilazione o
 fallimenti precedenti ai test. Per i soli cinque file `decisions-*`, la
 copertura grezza osservata è 935 forme su 1.121 e 82 rami su 122.
 Definizioni e guardie difensive restano nei totali; nessuna eccezione alla
-copertura viene approvata o sottratta in questa integrazione.
+copertura viene approvata o sottratta in questa integrazione. Il catalogo
+comprende anche nove mutanti di regressione dello scanner e i fallimenti
+della fixture iniziale. Il [catalogo delle letture e prove di integrazione](../../spikes/results/2026-10-09-decisions/catalogo.lisp)
+conserva le varianti precedenti e il controllo completo della copia isolata.
+L'[inventario delle forme mancanti](../affidabilita/copertura-eccezioni.md)
+riporta le motivazioni e i limiti osservati.
 
 Requisiti: REQ-TXM-001/005, REQ-FOR-003, REQ-AFF-008/009/017, REQ-VAL-001.
 Invarianti interessati: INV-F1/F2/F3, INV-A7/A8/A9, INV-T4, INV-P6, INV-X3.
@@ -130,10 +129,3 @@ Il modulo non verifica il catalogo, non applica i prepared, non scrive
 esiti nel manifest e non compatta `multiserie.log`. Non realizza il
 coordinatore 2PC né l'apertura completa del database; nessun gate del
 motore è chiuso sulla sola evidenza di questa tabella.
-
-
-La copertura grezza dei soli cinque sorgenti della tabella misura
-**935/1121 espressioni (83,41%) e 82/122 rami (67,21%)**. Le guardie
-interne e le forme dichiarative restano incluse; l'
-[inventario delle forme mancanti](../affidabilita/copertura-eccezioni.md)
-riporta motivazioni e limiti senza escluderle o approvare eccezioni.

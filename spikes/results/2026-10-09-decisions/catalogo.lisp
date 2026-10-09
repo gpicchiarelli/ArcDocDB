@@ -5,9 +5,28 @@
   (:KIND :TOOL-SELF-TEST :ARTIFACT "copertura-self-test.lisp")
   (:KIND :IMPORTED-OUTPUT :ARTIFACT "mutazioni-iniziali.lisp")
   (:KIND :DEVELOPMENT-DIAGNOSTIC :ARTIFACT "diagnostica-fixture.lisp")
-  (:KIND :MUTATION :FORMATS (1 2) :ARTIFACT "mutazioni-finale.lisp")
-  (:KIND :RAW-MUTATION-OUTPUT :ARTIFACT "mutazioni-dati.lisp" :PROCESS-ARTIFACT
-   "mutazioni-finale.lisp")
-  (:KIND :COVERAGE :FORMATS (1 2) :ARTIFACT "copertura-finale.lisp")
-  (:KIND :RAW-COVERAGE :ARTIFACT "copertura-dati.lisp" :PROCESS-ARTIFACT
-   "copertura-finale.lisp")))
+  (:VARIANT :PREVIOUS-24-DEDICATED-TESTS :KIND :MUTATION :FORMATS (1 2)
+   :ARTIFACT "mutazioni-finale.lisp")
+  (:VARIANT :PREVIOUS-24-DEDICATED-TESTS :KIND :RAW-MUTATION-OUTPUT :ARTIFACT
+   "mutazioni-dati.lisp" :PROCESS-ARTIFACT "mutazioni-finale.lisp")
+  (:VARIANT :PREVIOUS-24-DEDICATED-TESTS :KIND :COVERAGE :FORMATS (1 2)
+   :ARTIFACT "copertura-finale.lisp")
+  (:VARIANT :PREVIOUS-24-DEDICATED-TESTS :KIND :RAW-COVERAGE :ARTIFACT
+   "copertura-dati.lisp" :PROCESS-ARTIFACT "copertura-finale.lisp")
+  (:KIND :MUTATION :FORMATS (1 2) :VARIANT :BEFORE-DEFAULT-FILE-OFFSET-CASE
+   :ARTIFACT "mutazioni-25-test.lisp")
+  (:KIND :RAW-MUTATION-OUTPUT :VARIANT :BEFORE-DEFAULT-FILE-OFFSET-CASE
+   :ARTIFACT "mutazioni-dati-25-test.lisp" :PROCESS-ARTIFACT
+   "mutazioni-25-test.lisp")
+  (:KIND :COVERAGE :FORMATS (1 2) :VARIANT :BEFORE-DEFAULT-FILE-OFFSET-CASE
+   :ARTIFACT "copertura-25-test.lisp")
+  (:KIND :RAW-COVERAGE :VARIANT :BEFORE-DEFAULT-FILE-OFFSET-CASE :ARTIFACT
+   "copertura-dati-25-test.lisp" :PROCESS-ARTIFACT "copertura-25-test.lisp")
+  (:KIND :CHECK :VARIANT :BEFORE-FINAL-DOCUMENTATION-CORRECTION :ARTIFACT
+   "check-iniziale-25-test.lisp")
+  (:KIND :CHECK :VARIANT :BEFORE-DEFAULT-FILE-OFFSET-CASE :ARTIFACT
+   "check-candidato-prima-offset-zero.lisp")
+  (:KIND :CHECK :VARIANT :FINAL-DECISIONS-SNAPSHOT-BEFORE-CONCURRENT-COMPACTION
+   :ARTIFACT "check-finale.lisp")
+  (:KIND :LINKS-AND-EVIDENCE :VARIANT :CURRENT-INTEGRATED-WORKSPACE :ARTIFACT
+   "check-documentazione-integrata.lisp")))
