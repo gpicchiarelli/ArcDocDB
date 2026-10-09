@@ -1,5 +1,15 @@
 (:SCHEMA-VERSION 1 :KIND :EVIDENCE-CATALOG :SCOPE :CSN-REGISTRY :ENTRIES
  ((:ARTIFACT
+   #A((52) BASE-CHAR . "campagna-4000522094-check-47648-0-conservazione.lisp")
+   :KIND :SPIKE-CAMPAIGN :SOURCE
+   #A((117) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522094-check-47648-0/conservazione.lisp"))
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "campagna-4000522094-check-47648-0-report.lisp") :KIND
+   :SPIKE-CAMPAIGN :SOURCE
+   #A((110) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522094-check-47648-0/report.lisp"))
+  (:ARTIFACT
    #A((52) BASE-CHAR . "campagna-4000521755-check-39164-0-conservazione.lisp")
    :KIND :SPIKE-CAMPAIGN :SOURCE
    #A((117) BASE-CHAR
@@ -185,11 +195,122 @@
    #A((119) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000521694-command-34600-0/conservazione.lisp")
    :SHA256 "7f8fd1dcd8fbaf6c52e8d782d79af597ffb7e25999fd6d8f42a7dbc427c80856")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000521839-command-42503-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000521839-command-42503-0/report.lisp")
+   :SHA256 "e591dc6af426aa14cb930f1864a70ded1eaf56ee13ee0b605898f02dcb73d301")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000521839-command-42503-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000521839-command-42503-0/conservazione.lisp")
+   :SHA256 "9e952f0ff154a266cad90f61de3a468f60de9220fb54983797d4b4e158bb0108")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000521879-command-43933-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000521879-command-43933-0/report.lisp")
+   :SHA256 "9f6270627fcd5b4a9ca25aa4b5b6d6df671b1031ca39b5833ea67c6e51bfe528")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000521879-command-43933-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000521879-command-43933-0/conservazione.lisp")
+   :SHA256 "ee93fc6086388a005b9bd08abc9e839264beae4ade84c26ad00bcef947776991")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000522025-command-47116-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522025-command-47116-0/report.lisp")
+   :SHA256 "6f1c995aa49bb3007f5b91b86c01e1b1942a8eb88c250dd3b69934d4ebdf02ea")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000522025-command-47116-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522025-command-47116-0/conservazione.lisp")
+   :SHA256 "f888ac0329245be67924935b7e369a64ef27e33a0885452e6976e254cc02f386")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000522025-command-47131-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522025-command-47131-0/report.lisp")
+   :SHA256 "d08102fee3f4be6ad4f94ccb44795b2455a36fe11d63ad5b208074480e6a99ae")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000522025-command-47131-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522025-command-47131-0/conservazione.lisp")
+   :SHA256 "c1ac2fc39cc1916fc33f5b9a7a19e1395dd126c1bd939d917fecc92703b0c005")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000522138-command-48018-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522138-command-48018-0/report.lisp")
+   :SHA256 "e224f1aea63b3e5c6414a8666f0f1ddd5383ee76e8525363c01df522767a076b")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000522138-command-48018-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522138-command-48018-0/conservazione.lisp")
+   :SHA256 "bc7554f4bc221f7183340d9cec01a1e41967bf78aa867e7144d961aad4584c96")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000522250-command-49167-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522250-command-49167-0/report.lisp")
+   :SHA256 "8e1f8ca6e7cb81f8b99c8b92af598676d2a4af6821b046cb9ef32015842dde16")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000522250-command-49167-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522250-command-49167-0/conservazione.lisp")
+   :SHA256 "e9c8d582af6f111c34502d1d2090778ae011810604df9c82c9e5a1f665e184ea")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000522313-command-52518-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522313-command-52518-0/report.lisp")
+   :SHA256 "255b7527693096fd6d6605a9b6587b1ce9612721e640b84fc58152cc4903d431")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000522313-command-52518-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522313-command-52518-0/conservazione.lisp")
+   :SHA256 "d87e877db1c927a2ec8ad38ead738504cf825749f55cc2831f6d4dec3d8c7fb9")
   (:ARTIFACT "revisione-indipendente.lisp" :KIND :C1-REVIEW))
  :ASSOCIATED-RAW-FILES
  ((:FILE "raccolta-campagne-source.txt" :BYTES 1210 :SHA256
    "8674ca52111a13e3c6d06e7d89cb0f814f1dcc4aec80fe807ce818b2feb44f89" :SOURCE
    #A((38) BASE-CHAR . "/private/tmp/collect-csn-campaign.lisp"))
+  (:FILE
+   "csn-coverage-integration-self-test_a26eb5a6b8f474e5a5c5acc7c65c0b42.html"
+   :BYTES 2828 :SHA256
+   "0fc11ab092cc90646cf41edebce51387be0bac2dc1e856cc2925185b028348b5" :SOURCE
+   #A((146) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/csn-coverage-integration-self-test/a26eb5a6b8f474e5a5c5acc7c65c0b42.html"))
+  (:FILE "csn-coverage-integration-self-test_cover-index.html" :BYTES 1788
+   :SHA256 "2120814a43eb01697bb798f42ed5777c9e7a57b387937c3d8b3e9a366dfdc88e"
+   :SOURCE
+   #A((125) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/csn-coverage-integration-self-test/cover-index.html"))
+  (:FILE "csn-coverage-integration-self-test_coverage-fixture.lisp" :BYTES 147
+   :SHA256 "3767518fde8bde1e1286dbf663e97eac01f02e038d7f3161df436d9fd3e92559"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/csn-coverage-integration-self-test/coverage-fixture.lisp"))
+  (:FILE "csn-coverage-integration_45de7ea2835ce6e8fa3d1f13fc59dde0.html"
+   :BYTES 4304 :SHA256
+   "d7316f007c69447b79b600afbc2ea5ce54949ccb150f00ccd5f76041331ee218" :SOURCE
+   #A((136) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/csn-coverage-integration/45de7ea2835ce6e8fa3d1f13fc59dde0.html"))
+  (:FILE "csn-coverage-integration_57ed7add4063e87aa873948743e5210f.html"
+   :BYTES 70292 :SHA256
+   "0dfb4558e3400828bed9449546ae8d9635c4d1881e0bc0caeb8176154abff506" :SOURCE
+   #A((136) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/csn-coverage-integration/57ed7add4063e87aa873948743e5210f.html"))
+  (:FILE "csn-coverage-integration_cover-index.html" :BYTES 1925 :SHA256
+   "60382228bb3383f8f36eabe757532cceae6d360e844c1fc056936973c3adea3a" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/csn-coverage-integration/cover-index.html"))
+  (:FILE "csn-coverage-integration_coverage-state.lisp" :BYTES 612393 :SHA256
+   "e3dbbde1073fa82be615418d14f4df9d20d1b5e4a7cde2ec6ae41d23a00ee6ee" :SOURCE
+   #A((118) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/csn-coverage-integration/coverage-state.lisp"))
   (:FILE "csn-coverage-self-test_4401882634e700ac2a6c023a6c71d788.html" :BYTES
    2816 :SHA256
    "6292ada582ea3b12363054119f383b3da605192e342c03511df28f6c5a75522e" :SOURCE

@@ -1,0 +1,40 @@
+(:FINISHED-AT-UNIVERSAL-TIME 4000522129 :STATUS :OK :STDERR "" :STDOUT
+ "(:SCHEMA-VERSION 1 :KIND :EVIDENCE-COMPACTION :STATUS :OK :ROOT
+ #A((99) BASE-CHAR
+    . \"/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522094-check-47648-0/\")
+ :JOBS 4 :MINIMUM-AGE-SECONDS 0 :FILES 2 :WALL-SECONDS 1.661246d0
+ :CLOCK-UNITS-PER-SECOND 1000000 :ORIGINAL-BYTES 57106557 :STORED-BYTES 878346
+ :RESULTS
+ ((:PATH
+   #A((110) BASE-CHAR
+      . \"/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522094-check-47648-0/SPK-07.lisp\")
+   :STATUS :OK :ORIGINAL-BYTES 28144283 :STORED-BYTES 411012 :DESCRIPTOR
+   (:SCHEMA-VERSION 1 :KIND :COMPRESSED-EVIDENCE :CODEC :GZIP :PAYLOAD
+    \"SPK-07.lisp.gz\" :UNCOMPRESSED-BYTES 28144283 :UNCOMPRESSED-SHA256
+    \"7d442122e99c3ecc3b9cb632869fd94840f4edd5998791bba7df3fa58416f681\"
+    :COMPRESSED-BYTES 410694 :COMPRESSED-SHA256
+    \"8d945ee86e49e74f721768d3d24d222c47929fb3c3f96c11625b8aa2c7bcad63\"))
+  (:PATH
+   #A((110) BASE-CHAR
+      . \"/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522094-check-47648-0/report.lisp\")
+   :STATUS :OK :ORIGINAL-BYTES 28962274 :STORED-BYTES 467334 :DESCRIPTOR
+   (:SCHEMA-VERSION 1 :KIND :COMPRESSED-EVIDENCE :CODEC :GZIP :PAYLOAD
+    \"report.lisp.gz\" :UNCOMPRESSED-BYTES 28962274 :UNCOMPRESSED-SHA256
+    \"78fbc1c474d6f43422884d07a49a8502aa696e9795b84c9a222a928317f8137b\"
+    :COMPRESSED-BYTES 467016 :COMPRESSED-SHA256
+    \"214cad1da3d186d3bd9447f116b1f01839e2468dcbc1be03f6799ed505b2b5b8\")))
+ :LIMITS
+ (:LOSSLESS-BYTE-VERIFICATION :NO-GIT-HISTORY-REWRITE
+  :REQUIRES-IMMUTABLE-INPUT-FILES :NO-POWER-LOSS-DURABILITY-CLAIM))
+"
+ :EXIT-CODE 0 :SCHEMA-VERSION 1 :KIND :EVIDENCE-FINALIZATION :COMMAND
+ (#A((48) BASE-CHAR . "/opt/homebrew/Cellar/sbcl/2.6.9/libexec/bin/sbcl")
+  "--dynamic-space-size" "2048" "--noinform" "--no-userinit" "--no-sysinit"
+  "--script"
+  #A((90) BASE-CHAR
+     . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/tools/compact-evidence.lisp")
+  "--root"
+  #A((99) BASE-CHAR
+     . "/Users/gpicchiarelli/.codex/worktrees/sequenze-commit/ArcDocDB/spikes/out/4000522094-check-47648-0/")
+  "--jobs" "4" "--finished-owner-pid" #A((5) BASE-CHAR . "47648"))
+ :STARTED-AT-UNIVERSAL-TIME 4000522127)
