@@ -1,5 +1,6 @@
 ;;;; Mutazioni del verificatore CBOR in copie isolate; il checkout non è modificato.
-;;;; Uso: --self-test oppure --run directory-nuova/.
+;;;; Uso header invariato: --self-test | --run directory-nuova/.
+;;;; Gruppo scanner separato: --scan --self-test | --scan --run directory-nuova/.
 ;;; REQ: REQ-LIM-001 REQ-LIM-002 REQ-AFF-004 REQ-AFF-008
 (require :asdf)
 (require :sb-md5)
@@ -25,6 +26,72 @@
      "((= exponent 2047)" "((= exponent 2046)")
     ("src/codec/cbor-float-minimal.lisp" "float64-single-subnormal-lower-bound"
      "(<= 874 exponent 896)" "(<= 875 exponent 896)")))
+
+;;; Catalogo scan fissato sul prodotto congelato, indipendente dai nuovi test.
+;;; Tutte le sostituzioni mantengono parametri usati e range dichiarati;
+;;; la compilabilita effettiva e il kill saranno verificati solo nella campagna.
+(defparameter *scan-mutants*
+  '(("src/codec/cbor-scan-minimal.lisp" "scan-minimal-wrapper-bypass"
+     "(verifica-struttura-cbor-interna buffer start end space max-bytes max-nodes max-depth t)"
+     "(verifica-struttura-cbor-interna buffer start end space max-bytes max-nodes max-depth nil)")
+    ("src/codec/cbor-scan.lisp" "scan-minimal-root-only"
+     "(passo-struttura-cbor bytes scratch limit node-limit depth-limit minimal)"
+     "(passo-struttura-cbor bytes scratch limit node-limit depth-limit (and minimal (zerop (spazio-cbor-nodes scratch))))")
+    ("src/codec/cbor-scan.lisp" "scan-minimal-disabled-after-tag"
+     "(if minimal (leggi-header-cbor-minimo buffer lead end)"
+     "(if (and minimal (not (spazio-cbor-pending-tag space))) (leggi-header-cbor-minimo buffer lead end)")
+    ("src/codec/cbor-scan.lisp" "scan-reset-only-unused-space"
+     "(azzera-spazio-cbor scratch begin)"
+     "(when (zerop (spazio-cbor-nodes scratch)) (azzera-spazio-cbor scratch begin))")
+    ("src/codec/cbor-scan.lisp" "scan-node-budget-plus-one"
+     "(conta-nodo-cbor space max-nodes lead)"
+     "(conta-nodo-cbor space (min +cbor-scan-max-bytes+ (1+ max-nodes)) lead)")
+    ("src/codec/cbor-scan.lisp" "scan-depth-budget-plus-one"
+     "(tratta-item-cbor buffer space major high low next end form max-depth lead)"
+     "(tratta-item-cbor buffer space major high low next end form (min +cbor-scan-max-depth+ (1+ max-depth)) lead)")
+    ("src/codec/cbor-scan.lisp" "scan-reported-nodes-minus-one"
+     "(values (spazio-cbor-nodes space) (spazio-cbor-peak-depth space) end)"
+     "(values (max 0 (1- (spazio-cbor-nodes space))) (spazio-cbor-peak-depth space) end)")
+    ("src/codec/cbor-scan.lisp" "scan-reported-end-minus-one"
+     "(values (spazio-cbor-nodes space) (spazio-cbor-peak-depth space) end)"
+     "(values (spazio-cbor-nodes space) (spazio-cbor-peak-depth space) (max 0 (1- end)))")))
+
+(define-condition invalid-options (error)
+  ((arguments :initarg :arguments :reader invalid-options-arguments))
+  (:report (lambda (condition stream)
+             (format stream "Opzioni mutazioni CBOR invalide: ~S."
+                     (invalid-options-arguments condition)))))
+
+(defun parse-options (arguments)
+  "Dispatcher puro: sintassi header precedente o prefisso --scan esatto."
+  (let* ((scan-p (and arguments (string= (first arguments) "--scan")))
+         (rest (if scan-p (rest arguments) arguments))
+         (group (if scan-p :scan :header)))
+    (cond ((equal rest '("--self-test")) (values group :self-test nil))
+          ((and (= 2 (length rest)) (string= (first rest) "--run"))
+           (values group :run (second rest)))
+          (t (error 'invalid-options :arguments arguments)))))
+
+(defun dispatch-self-test ()
+  "Quattro chiamate valide e dodici negative; nessun I/O o directory creata."
+  (dolist (fixture '((("--self-test") (:header :self-test nil))
+                     (("--run" "new/") (:header :run "new/"))
+                     (("--scan" "--self-test") (:scan :self-test nil))
+                     (("--scan" "--run" "new/") (:scan :run "new/"))))
+    (unless (equal (second fixture) (multiple-value-list (parse-options (first fixture))))
+      (error "Dispatcher mutazioni CBOR: chiamata valida interpretata diversamente.")))
+  (let ((negative '(nil ("--run") ("--self-test" "extra") ("--run" "x" "extra")
+                    ("--unknown") ("--scan") ("--scan" "--run")
+                    ("--scan" "--self-test" "extra") ("--scan" "--run" "x" "extra")
+                    ("--scan" "--scan" "--self-test") ("--scan" "--unknown")
+                    ("--run" "x" "--scan"))))
+    (dolist (arguments negative)
+      (let ((rejected nil))
+        (handler-case (parse-options arguments)
+          (invalid-options () (setf rejected t)))
+        (unless rejected (error "Dispatcher mutazioni CBOR accetta ~S." arguments))))
+    (list :status :ok :legacy-and-scan-valid 4 :negative-rejected (length negative)
+          :rejection-before-directory-creation t)))
 
 (define-condition target-invalido (error)
   ((motivo :initarg :motivo :reader motivo-target))
@@ -202,6 +269,7 @@
   (esigi-target-invalido (lambda () (unique-position "abc" "Z")) :assente)
   (validate-mutants)
   (list :status :ok :substitution :first-only :classification :after-exact-smoke-line
+        :dispatch (dispatch-self-test)
         :backtrace-marker :invalid
         :invalid-targets '(:missing :ambiguous) :compilation-failure :invalid
         :baseline-completion :exact-build-end-line :missing-baseline-completion :invalid
@@ -446,26 +514,38 @@
             (merge-pathnames "report.lisp" directory))
     (namestring (merge-pathnames "report.lisp" directory))))
 
+(defun initial-report (before)
+  "Rapporto privato inizialmente header; solo MAIN seleziona l'altro catalogo."
+  (list :schema-version 1 :kind :cbor-minimal-mutations :status :running
+        :worker-errors 0 :mutants nil
+        :recorded-at (get-universal-time) :sbcl (lisp-implementation-version)
+        :source-fingerprints-before before
+        :targets (loop for (path name old new) in *mutants*
+                       collect (list :source-file path :name name :before old :after new))
+        :limits '(:targeted-mutants-only :bounded-minimum-header-tests
+                  :compile-failure-not-detection :no-materialized-document-or-semantic-tag-profile
+                  :no-durability-engine-or-release-qualification)))
+
 (defun main ()
   "Self-test o otto copie nuove; plist finale e exit nonzero per campagna non valida."
   (let* ((args (rest sb-ext:*posix-argv*)) (before (fingerprints)) (directory nil)
-         (report (list :schema-version 1 :kind :cbor-minimal-mutations :status :running
-                       :worker-errors 0 :mutants nil
-                       :recorded-at (get-universal-time) :sbcl (lisp-implementation-version)
-                       :source-fingerprints-before before
-                       :targets (loop for (path name old new) in *mutants*
-                                      collect (list :source-file path :name name :before old :after new))
-                       :limits '(:targeted-mutants-only :bounded-minimum-header-tests
-                                 :compile-failure-not-detection :no-materialized-document-or-semantic-tag-profile
-                                 :no-durability-engine-or-release-qualification))))
+         (*mutants* *mutants*) (action nil) (output nil) (group :header)
+         (report (initial-report before)))
     (handler-case
         (progn
-          (unless (or (equal args '("--self-test"))
-                      (and (= (length args) 2) (string= (first args) "--run")))
-            (error "Usare --self-test oppure --run directory-nuova/."))
+          (multiple-value-setq (group action output) (parse-options args))
+          (when (eq group :scan)
+            (setf *mutants* *scan-mutants* (getf report :kind) :cbor-minimal-scan-mutations
+                  (getf report :limits) '(:targeted-scan-mutants-only :bounded-minimal-structure-tests
+                                         :compile-failure-not-detection :full-asdf-private-baseline
+                                         :no-engine-or-release-qualification)))
+          (setf (getf report :campaign-group) group
+                (getf report :targets)
+                (loop for (path name old new) in *mutants*
+                      collect (list :source-file path :name name :before old :after new)))
           (setf (getf report :self-test) (self-test))
-          (when (string= (first args) "--run")
-            (setf directory (new-directory (second args)))
+          (when (eq action :run)
+            (setf directory (new-directory output))
             (save-report report directory)
             (setf report (record-baseline-result
                           report (run-baseline (new-directory (merge-pathnames "baseline/" directory)))))
