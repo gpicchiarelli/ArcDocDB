@@ -1,0 +1,51 @@
+
+; file: /tmp/cbor-minimal-measurement-reader.lisp
+; in: DEFUN MINIMUM-FLOAT-P => DEFUN MUTATION-AUDIT
+;     (NTH I *KILL-FIXTURES*)
+; 
+; caught WARNING:
+;   undefined variable: COMMON-LISP-USER::*KILL-FIXTURES*
+; 
+; caught WARNING:
+;   undefined variable: COMMON-LISP-USER::*KILL-FIXTURES*
+
+; in: DEFUN MINIMUM-FLOAT-P
+;     (GETF DATUM :CHECKS)
+; 
+; caught WARNING:
+;   undefined variable: COMMON-LISP-USER::DATUM
+
+;     (WRITE DATUM :STREAM STREAM :PRETTY T)
+; 
+; caught WARNING:
+;   undefined variable: COMMON-LISP-USER::DATUM
+
+;     (GETF MUTATIONS :COPIED-FILE-COUNT-PER-BUILD)
+; 
+; caught WARNING:
+;   undefined variable: COMMON-LISP-USER::MUTATIONS
+
+;     (ARCDOCDB.EVIDENCE:READ-EVIDENCE OUTPUT)
+; 
+; caught WARNING:
+;   undefined variable: COMMON-LISP-USER::OUTPUT
+
+;     (WITH-OPEN-FILE
+;         (STREAM OUTPUT :DIRECTION :OUTPUT :IF-EXISTS :ERROR :IF-DOES-NOT-EXIST
+;          :CREATE)
+;       (LET ((*PRINT-READABLY* T))
+;         (WRITE DATUM :STREAM STREAM :PRETTY T)
+;         (TERPRI STREAM)))
+; ==>
+;   (OPEN OUTPUT :DIRECTION :OUTPUT :IF-EXISTS :ERROR :IF-DOES-NOT-EXIST :CREATE
+;         :AUTO-CLOSE NIL)
+; 
+; caught WARNING:
+;   undefined variable: COMMON-LISP-USER::OUTPUT
+; 
+; compilation unit finished
+;   Undefined function:
+;     OUTPUT
+;   Undefined variables:
+;     *KILL-FIXTURES* DATUM MUTATIONS OUTPUT
+;   caught 7 WARNING conditions

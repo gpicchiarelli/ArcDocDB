@@ -1,0 +1,70 @@
+(in-package #:arcdocdb.cbor.structure.tests)
+
+;;; REQ: REQ-CON-005 REQ-AFF-004 REQ-AFF-008
+(deftest test-REQ-CON-005-cbor-structure-two-private-workspaces-real-cpu-overlap
+  (let* ((children 32768) (repetitions 24) (prefix 3)
+         (buffers (make-array 2)) (copies (make-array 2))
+         (spaces (vector (arcdocdb.cbor:crea-spazio-cbor) (arcdocdb.cbor:crea-spazio-cbor)))
+         (limits (vector 0 0)) (expected-nodes (vector (1+ children) (+ 1 (* 2 children))))
+         (ready (sb-thread:make-semaphore)) (go (sb-thread:make-semaphore))
+         (starts (vector 0 0)) (ends (vector 0 0))
+         (sinks (vector 0 0)) (threads nil))
+    ;; Fixture e snapshot precedono i worker; ogni Serie simulata ha input/scratch propri.
+    (dotimes (index 2)
+      (let* ((unit (if (zerop index) '(#x64 #xf0 #x90 #x80 #x80) '(#xc0 #x00)))
+             (header (cs-argument 4 children))
+             (end (+ prefix (length header) (* children (length unit))))
+             (buffer (make-array (+ end 5) :element-type '(unsigned-byte 8) :initial-element #xff)))
+        (replace buffer header :start1 prefix)
+        (dotimes (child children)
+          (replace buffer unit :start1 (+ prefix (length header) (* child (length unit)))))
+        (setf (svref buffers index) buffer (svref copies index) (copy-seq buffer)
+              (svref limits index) end)))
+    (is (not (eq (svref buffers 0) (svref buffers 1))))
+    (is (not (eq (svref spaces 0) (svref spaces 1))))
+    (is (not (eq (arcdocdb.cbor::spazio-cbor-kinds (svref spaces 0))
+                 (arcdocdb.cbor::spazio-cbor-kinds (svref spaces 1)))))
+    (unwind-protect
+         (progn
+           (dotimes (i 2)
+             (let ((index i))
+               (push (sb-thread:make-thread
+                      (lambda ()
+                        (handler-case
+                            (progn
+                              (sb-thread:signal-semaphore ready)
+                              (cs-wait go)
+                              (setf (svref starts index) (get-internal-real-time))
+                              (let ((buffer (svref buffers index)) (space (svref spaces index))
+                                    (end (svref limits index)) (sink 0))
+                                (dotimes (iteration repetitions)
+                                  (let ((actual (multiple-value-list
+                                                 (arcdocdb.cbor:verifica-struttura-cbor
+                                                  buffer prefix end space))))
+                                    (is (= (length actual) 3))
+                                    (destructuring-bind (nodes peak next) actual
+                                      (is (= nodes (svref expected-nodes index)))
+                                      (is (= peak 1)) (is (= next end))
+                                      (incf sink (+ nodes peak next)))))
+                                (setf (svref sinks index) sink))
+                              (setf (svref ends index) (get-internal-real-time))
+                              :ok)
+                          (error (condition) condition)))
+                      :name "CBOR structure private worker") threads)))
+           (dotimes (i 2) (cs-wait ready))
+           (sb-thread:signal-semaphore go 2)
+           (dolist (thread threads) (cs-join thread))
+           (dotimes (index 2)
+             (is (> (svref ends index) (svref starts index)))
+             (is (= (svref sinks index)
+                    (* repetitions (+ (svref expected-nodes index) 1 (svref limits index)))))
+             (is (equalp (svref buffers index) (svref copies index))))
+           (let ((overlap (- (min (svref ends 0) (svref ends 1))
+                             (max (svref starts 0) (svref starts 1)))))
+             (is (plusp overlap))
+             (format t "  CBOR structure CPU: 2 worker, ~D scansioni, ~D nodi, ~D byte, sink ~D/~D, overlap ~D tick, ~D tick/s.~%"
+                     (* 2 repetitions) (* repetitions (+ (svref expected-nodes 0) (svref expected-nodes 1)))
+                     (* repetitions (+ (- (svref limits 0) prefix) (- (svref limits 1) prefix)))
+                     (svref sinks 0) (svref sinks 1) overlap internal-time-units-per-second)))
+      (sb-thread:signal-semaphore go 2)
+      (cs-stop-workers threads))))

@@ -1,0 +1,52 @@
+(defpackage #:arcdocdb.io.tests
+  (:use #:cl)
+  (:import-from #:arcdocdb.foundation.tests #:is #:signals #:bytes)
+  (:import-from #:arcdocdb.conditions #:io-fault #:invalid-argument #:resource-exhausted
+                #:invariant-violation #:error-reason #:error-errno #:error-operation
+                #:error-transferred)
+  (:import-from #:arcdocdb.io #:make-backend #:crea-temporaneo #:apri-lettura #:apri-directory
+                #:append-esatto #:leggi-esatto #:durable-flush #:chiudi #:stato-file
+                #:posizione-scritta #:posizione-durevole)
+  (:export #:run))
+(in-package #:arcdocdb.io.tests)
+(defvar *tests* nil)
+(defmacro deftest (name &body body)
+  `(progn (defun ,name () ,@body) (pushnew ',name *tests*)))
+(defun run ()
+  (dolist (test (reverse *tests*)) (funcall test) (format t "ok    ~A~%" test))
+  (format t "~D test I/O superati.~%" (length *tests*))
+  t)
+(defun zeros (n) (make-array n :element-type '(unsigned-byte 8) :initial-element 0))
+(defun succeeds (fd) (declare (ignore fd)) 0)
+(defun unexpected-read (&rest args) (error "Read inattesa: ~S" args))
+(defun unexpected-write (&rest args) (error "Write inattesa: ~S" args))
+(defun backend (&key (open (lambda (name mode) (declare (ignore name mode)) 7))
+                     (reader #'unexpected-read) (writer #'unexpected-write)
+                     (flush #'succeeds) (directory-flush #'succeeds) (close #'succeeds))
+  (make-backend open reader writer flush directory-flush close))
+(defun raises-errno (errno)
+  (lambda (&rest args) (declare (ignore args))
+    (error 'sb-posix:syscall-error :errno errno :name 'injected)))
+(defun check-io-error (thunk operation errno transferred)
+  (handler-case (progn (funcall thunk) (error "Guasto I/O non rilevato."))
+    (io-fault (c) (is (eq operation (error-operation c)))
+                 (is (eql errno (error-errno c)))
+                 (is (= transferred (error-transferred c))))))
+(defmacro with-file ((var expression) &body body)
+  `(let ((,var ,expression)) (unwind-protect (progn ,@body) (chiudi ,var))))
+
+(defun fresh-directory ()
+  (loop for attempt below 1000
+        for path = (merge-pathnames (format nil "arcdocdb-io-~D-~D-~D/"
+                                           (get-universal-time) (sb-posix:getpid) attempt)
+                                    (uiop:temporary-directory))
+        do (handler-case (progn (sb-posix:mkdir path #o700) (return-from fresh-directory path))
+             (sb-posix:syscall-error (c)
+               (unless (= sb-posix:eexist (sb-posix:syscall-errno c)) (error c)))))
+  (error "Directory esclusiva delle fixture non disponibile."))
+(defmacro with-directory ((var) &body body)
+  `(let ((,var (fresh-directory)))
+     (unwind-protect (progn ,@body)
+       ;; C4: ogni foglia appartiene alla directory esclusiva 0700 creata da questo test.
+       (dolist (path (uiop:directory-files ,var)) (sb-posix:unlink (namestring path)))
+       (sb-posix:rmdir (namestring ,var)))))

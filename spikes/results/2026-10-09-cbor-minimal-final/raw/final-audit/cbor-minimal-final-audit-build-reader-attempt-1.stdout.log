@@ -1,0 +1,27 @@
+(:SCHEMA-VERSION 1 :KIND :READ-ONLY-BUILD-MARKER-AUDIT :SOURCE
+ "spikes/out/4000548089-command-42461-0/report.lisp" :STATUS :OK :EXIT-CODE 0
+ :SOURCE-CONSISTENCY :STABLE :BUILD-SUMMARY-LINE 930 :TOTAL-OK-MARKERS 396
+ :BUILD-OK-MARKERS 394 :POST-BUILD-OK-MARKERS 2 :FIRST-BUILD-MARKERS
+ ((:LINE 497 :TEXT "ok    package ARCDOCDB presente")
+  (:LINE 498 :TEXT "ok    ARCDOCDB:*VERSION* è una stringa")
+  (:LINE 499 :TEXT "ok    TEST-REQ-AFF-004-TYPED-ERRORS-RENDERING")
+  (:LINE 500 :TEXT "ok    TEST-REQ-FOR-003-OUT-OF-LINE-READERS"))
+ :LAST-BUILD-MARKERS
+ ((:LINE 924 :TEXT
+   "ok    TEST-REQ-AFF-004-WAL-CSN-INCOMPLETE-ASSOCIATION-BEFORE-RESOLUTION")
+  (:LINE 925 :TEXT
+   "ok    TEST-REQ-AFF-008-WAL-CSN-FILE-BUDGET-AND-AVAILABILITY-BEFORE-ASSIGNMENT")
+  (:LINE 926 :TEXT
+   "ok    TEST-REQ-AFF-004-WAL-CSN-INVALID-RECORD-OFFSET-RETAINS-OBLIGATION")
+  (:LINE 928 :TEXT
+   "ok    TEST-REQ-MVC-008-FOUR-SERIES-SHARED-CSN-WAL-LIFECYCLE"))
+ :POST-BUILD-MARKERS
+ ((:LINE 935 :TEXT "ok    good.lisp: nessuna violazione")
+  (:LINE 934 :TEXT
+   "ok    bad.lisp: COD-02 COD-03 COD-12 COD-20 COD-22 COD-34 COD-43 COD-50"))
+ :SECTION-MARKERS
+ ((:LINE 1 :TEXT
+   "sbcl --noinform --no-userinit --non-interactive --load tools/build.lisp")
+  (:LINE 930 :TEXT "build e test: nessun avviso, tutti i controlli superati")
+  (:LINE 931 :TEXT "sbcl --script tools/lint.lisp src")
+  (:LINE 933 :TEXT "sbcl --script tools/lint.lisp --self-test")))
