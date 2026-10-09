@@ -39,5 +39,43 @@
   (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-09.lisp")
   (:KIND :SPIKE-CHECK :ARTIFACT "spike-SPK-10.lisp")
   (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT "spike-report.lisp")
-  (:KIND :COMMAND-VERIFICATION :ARTIFACT "statici-iniziali.lisp"))
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "statici-iniziali.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "integrazione-check.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT
+   "integrazione-mutazioni-decisions-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-mutazioni-decisions.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-mutazioni-decisions.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT "integrazione-mutazioni-manifest-dati.lisp"
+   :PROCESS-ARTIFACT "integrazione-mutazioni-manifest.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-mutazioni-manifest.lisp")
+  (:KIND :COPIER-SELF-TEST-OUTPUT :ARTIFACT
+   "integrazione-self-test-copier-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-self-test-foundation.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-self-test-foundation.lisp")
+  (:KIND :PARALLEL-SELF-TEST-OUTPUT :ARTIFACT
+   "integrazione-self-test-parallelo-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-self-test-foundation.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-self-test-radix-finale.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-self-test-radix-preliminare.lisp")
+  (:KIND :PROCESS-SIGNAL-SELF-TEST-OUTPUT :ARTIFACT
+   "integrazione-self-test-segnale-dati.lisp" :PROCESS-ARTIFACT
+   "integrazione-self-test-radix-finale.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-01.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-02.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-03.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-04.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-05.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-06.lisp")
+  (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT
+   "integrazione-spike-SPK-07.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-08.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-09.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-10.lisp")
+  (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT
+   "integrazione-spike-report.lisp"))
  :LIMITS (:STRUCTURE-AND-PRESENCE-ONLY :NO-AUTOMATIC-GATE-PROMOTION))

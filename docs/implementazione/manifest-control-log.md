@@ -105,13 +105,21 @@ predicati composti e le guardie interne.
 
 La campagna del 2026-10-09 conserva i risultati nel
 [catalogo](../../spikes/results/2026-10-09-manifest/catalogo.lisp): 20 test
-dedicati, 64 test recovery, quattro thread con 32 ricostruzioni private e
+dedicati, 64 test recovery nella fotografia iniziale, quattro thread con 32 ricostruzioni private e
 un manifest comune; otto mutanti manifest rilevati e sette mutanti
 DECISION rilevati per verificare la compatibilità del tool. La copertura
 grezza dei sei file manifest è 888/1067 forme e 114/146 rami; nessuna
 esclusione è approvata. Le query hanno 8/8 rami osservati. I dati HTML e
 lo stato originale `sb-cover` restano conservati insieme ai fallimenti
 preliminari e ai record dei comandi.
+
+L'allineamento alle code writer e al selettore radix mantiene questi dati
+storici e aggiunge una verifica integrata distinta nel catalogo. Il copier
+delle campagne isolate include anche i componenti e i test `execution`;
+ogni mutante continua a partire dalla baseline verificata. La campagna
+DECISION della fotografia iniziale selezionava 25 test; dopo l'allineamento
+il runner seleziona anche i 18 test radix, per 43 test dedicati. La suite
+integrata comprende 82 test recovery e 17 test delle code writer.
 
 Questo modulo non riconcilia file o directory, non rinomina o elimina,
 non legge i segmenti, non risolve i prepared e non scrive un nuovo control

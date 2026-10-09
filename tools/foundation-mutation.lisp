@@ -171,6 +171,8 @@
   (dolist (file (append '("arcdocdb.asd" "src/package.lisp" "tests/smoke.lisp" "tools/build.lisp")
                        (mapcar #'enough-namestring (directory "src/foundation/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/foundation/*.lisp"))
+                       (mapcar #'enough-namestring (directory "src/execution/*.lisp"))
+                       (mapcar #'enough-namestring (directory "tests/execution/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/storage/*.lisp"))
                        (mapcar #'enough-namestring (directory "tests/storage/*.lisp"))
                        (mapcar #'enough-namestring (directory "src/recovery/*.lisp"))
@@ -240,12 +242,13 @@
   nil)
 
 (defun dedicated-test-form (scope)
-  "Seleziona solo DEFTEST caricati dei due file dedicati, con lettura priva di eval."
+  "Seleziona DEFTEST caricati: tre file DECISION, due manifest; lettura priva di eval."
   `(let* ((*package* (or (find-package "ARCDOCDB.RECOVERY.TESTS")
                         (error "Harness recovery non caricato.")))
           (*read-eval* nil) (deftest (find-symbol "DEFTEST" *package*)) (tests nil))
      (dolist (file ',(if (string= scope "decisions")
-                        '("tests/recovery/decisions.lisp" "tests/recovery/decisions-audit.lisp")
+                        '("tests/recovery/decisions.lisp" "tests/recovery/decisions-audit.lisp"
+                          "tests/recovery/decisions-radix.lisp")
                         '("tests/recovery/manifest.lisp" "tests/recovery/manifest-audit.lisp")))
        (let ((selected 0))
          (with-open-file (input file :external-format :utf-8)
@@ -480,6 +483,76 @@
     (expect-error (lambda () (parse-options args))))
   (expect-error (lambda () (parallel-results nil 5 #'identity #'identity))))
 
+(defun system-source-files ()
+  "Legge i due DEFSYSTEM come dati, senza eval, caricamento ASD o package di prodotto."
+  (let ((*read-eval* nil) (*package* (find-package "ASDF-USER"))
+        (root (truename "./")) (systems nil) (files nil))
+    (labels ((sources (components directory)
+               (mapcan
+                 (lambda (component)
+                   (destructuring-bind (kind name &rest options) component
+                     (case kind
+                       ((:file :cl-source-file)
+                        (let ((path (pathname (or (getf options :pathname) name))))
+                          (list (merge-pathnames
+                                  (make-pathname :type (or (pathname-type path) "lisp")
+                                                  :defaults path)
+                                  directory))))
+                       (:module
+                        (sources (getf options :components)
+                                 (merge-pathnames
+                                   (uiop:ensure-directory-pathname
+                                     (or (getf options :pathname) name)) directory)))
+                       (:static-file nil)
+                       (otherwise
+                        (error "foundation-mutation.lisp: COD-60, componente ASD non supportato: ~S"
+                               component)))))
+                 components)))
+      (with-open-file (input "arcdocdb.asd" :external-format :utf-8)
+        (loop for form = (read input nil :eof) until (eq form :eof)
+              when (and (consp form) (symbolp (first form))
+                        (string= (symbol-name (first form)) "DEFSYSTEM")
+                        (member (second form) '("arcdocdb" "arcdocdb/tests") :test #'equal))
+                do (let ((name (second form)) (options (cddr form)))
+                     (when (member name systems :test #'equal)
+                       (error "foundation-mutation.lisp: COD-60, sistema ASD ripetuto: ~A" name))
+                     (push name systems)
+                     (setf files
+                           (append files
+                                   (sources (getf options :components)
+                                            (merge-pathnames
+                                              (uiop:ensure-directory-pathname
+                                                (or (getf options :pathname) "./")) root))))))))
+    (unless (= (length systems) 2)
+      (error "foundation-mutation.lisp: COD-60, sistemi ASD mancanti: ~S" systems))
+    files))
+
+(defun check-system-copy (directory files root)
+  "Ogni sorgente richiesto dall'ASD effettivo deve essere presente e identico nella copia."
+  (dolist (source files)
+    (let* ((relative (enough-namestring source root))
+           (target (merge-pathnames relative directory)))
+      (unless (and (probe-file target) (string= (read-text source) (read-text target)))
+        (error "foundation-mutation.lisp: COD-60, copia ASD incompleta o diversa: ~A" relative))))
+  nil)
+
+(defun copier-self-test ()
+  "Verifica il copier contro ASDF e prova che un sorgente mancante venga rifiutato."
+  (let* ((root (truename "./")) (files (system-source-files))
+         (directory (new-directory
+                      (format nil "spikes/out/~D-mutation-copy-self-test-~D/"
+                              (get-universal-time) (sb-posix:getpid)))))
+    (unless files (error "foundation-mutation.lisp: COD-60, ASD senza sorgenti Lisp."))
+    (copy-test-system directory)
+    (check-system-copy directory files root)
+    (delete-file (merge-pathnames (enough-namestring (first files) root) directory))
+    (expect-error (lambda () (check-system-copy directory files root)))
+    (save-campaign (list :kind :copier-self-test :status :passed
+                         :source-files (mapcar (lambda (file) (enough-namestring file root)) files)
+                         :missing-source-rejected t) directory)
+    (format t "Copie: ~D sorgenti ASDF identici, omissione rifiutata; ~A~%"
+            (length files) directory)))
+
 (defun write-worker-fixture (directory)
   "Il primo worker attende il segnale del secondo: un avvio seriale fallirebbe il test."
   (let ((source (merge-pathnames "worker-fixture.lisp" directory)))
@@ -538,6 +611,7 @@
     (error "foundation-mutation.lisp: COD-60, sostituzione o classificazione errata."))
   (classifier-self-test)
   (configuration-self-test)
+  (copier-self-test)
   (validate-decision-mutants)
   (validate-decision-mutants *manifest-mutants*)
   (parallel-self-test)

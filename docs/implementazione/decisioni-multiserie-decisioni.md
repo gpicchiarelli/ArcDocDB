@@ -3,6 +3,8 @@
 Inventario COD-54 da verificare in due letture C1. I casi sono in
 [`tests/recovery/`](../../tests/recovery/). La tabella non certifica da sola
 copertura MC/DC, durability o applicazione atomica del motore.
+L'[inventario radix](decisioni-radix-decisioni.md) completa questo documento
+con i due dispatch, istogrammi, scatter e guardie dell'ordinamento adottato.
 
 | Controllo | Condizioni e casi |
 |---|---|
@@ -47,7 +49,7 @@ dal denominatore e non costituisce una qualifica MC/DC.
 | `preflight-decisions`: `and` su posizione finale e numero di decisioni | scanner e rilettura di un buffer stabile contano le stesse cornici. Guardia interna `decision-prefix-consumption` |
 | `decode-decisions`: `and` su posizione finale, entry prodotte e partecipanti letti | conteggi fissati da scanner e preflight; nessuna mutazione del buffer. Guardia interna `decision-prefix-consumption` |
 | `same-decision-p`: `and` su CSN, count e uguaglianza di ogni byte | `conflicting-csn-set-or-count` prova CSN diverso a set costante, set diverso a count costante e count diverso a CSN costante; `seeded-histories-and-permuted-duplicates` verifica uguaglianza dopo canonizzazione |
-| `unique-decision-count`: `and` su predecessore presente e TXID decrescente | primo record e successivi osservati; TXID decrescente impossibile dopo il merge stabile. Guardia interna `decision-entry-order` |
+| `unique-decision-count`: `and` su predecessore presente e TXID decrescente | primo record e successivi osservati; TXID decrescente impossibile dopo l'ordinamento stabile. Guardia interna `decision-entry-order` |
 | `unique-decision-count` e `collapse-decisions`: `and` su predecessore presente e TXID uguale | primo record, TXID nuovo, duplicato coerente o discordante; `decision-table-ordered-unordered-oracle`, `seeded-histories-and-permuted-duplicates`, `first-physical-decision-conflict-across-txid-groups` |
 | `merge-id-runs`: `and` su vettori non vuoti, misura uguale, identità distinta e multiplo di 16 | copie e workspace privati di misura verificata; negazioni contraddicono la costruzione. Guardia interna `decision-sort-arrays` |
 | `merge-entry-runs`: `and` su misura uguale e identità distinta | scratch della stessa lunghezza del vettore privato; guardia interna `decision-sort-arrays` |

@@ -19,12 +19,23 @@ Nessuna eccezione è approvata. Le misure locali seguenti conservano il denomina
 
 ## Inventario locale delle decisioni multiserie
 
-Misura del 2026-10-09: 935/1121 espressioni e 82/122 rami sui cinque
+Misura iniziale del 2026-10-09: 935/1121 espressioni e 82/122 rami sui cinque
 file `decisions-*`, con tutte le forme nel denominatore. Le 40 alternative
 di ramo mancanti appartengono a 30 siti di segnalazione difensiva: una
 condizione composta può registrare più alternative. Le letture dell'autore
 e di un revisore indipendente sono conservate nel
 [catalogo](../../spikes/results/2026-10-09-decisions-verifica/catalogo.lisp).
+
+La successiva [variante radix](../implementazione/decisioni-radix-decisioni.md)
+osserva 1.332/1.530 espressioni e 138/176 alternative sui sei file.
+I test privati di forma coprono anche le negazioni prima mancanti di
+COV-020, COV-029 e COV-030: le alternative mancanti dei cinque file
+preesistenti scendono da 40 a 37. Il file radix aggiunge una alternativa
+non osservata, per 38 complessive. Il controllo richiede una lunghezza
+array non rappresentabile in u64, impossibile sul runtime esaminato con
+`index` fixnum più stretto. L'inventario iniziale sotto è conservato come
+storia della misura; l'inventario radix descrive guardie, forme dichiarative
+e postcondizioni ancora mancanti. Nessuna eccezione viene approvata.
 
 Queste sono motivazioni osservate e verifiche sostitutive locali; non sono
 esclusioni approvate, copertura MC/DC o chiusura del gate C1. Il contratto

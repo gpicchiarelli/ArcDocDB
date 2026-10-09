@@ -11,6 +11,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   ACTIVE, CLOSED con esiti, rimozioni esplicite e limite degli ID. Workspace
   indipendenti per Serie; nessuna riconciliazione o scrittura dei file.
 
+- Code MPSC locali preallocate e gettone del writer con quota cumulativa:
+  contesa e saturazione distinte, FIFO e rifiuto dei gettoni vecchi.
+  Diciassette test, inclusi producer/consumer su thread reali e calcolo
+  sovrapposto tra Serie; otto mutanti rilevati e zero heap nelle misure locali.
+
 - Verifica in memoria dei segmenti compattati CLOSED v1/v2: identità, CRC,
   soli PUT/TOMBSTONE ordinari, limite valido autorevole e budget byte/record.
   Conteggi fisici restituiti dopo il controllo integrale; 15 test indipendenti,

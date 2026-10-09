@@ -1,0 +1,457 @@
+sbcl --noinform --no-userinit --non-interactive --load tools/build.lisp
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/package.lisp" (written 03 OCT 2026 11:29:31 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/package-tmpGHU3ALSV.fasl
+; compilation finished in 0:00:00.002
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/package.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/package-tmpAAURSO1.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/conditions.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/conditions-tmp5GEXGEG5.fasl
+; compilation finished in 0:00:00.004
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/binary.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/binary-tmpAR3FSGEY.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/crc32c.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/crc32c-tmpJAIDFZTC.fasl
+; compilation finished in 0:00:00.011
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/record.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/record-tmp8V3J6PE9.fasl
+; compilation finished in 0:00:00.097
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/batch.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/foundation/batch-tmp9V47YWQF.fasl
+; compilation finished in 0:00:00.030
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/execution/package.lisp" (written 09 OCT 2026 06:28:38 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/execution/package-tmp9BN22RMA.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/execution/queue.lisp" (written 09 OCT 2026 06:30:25 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/execution/queue-tmp1CXFJSK9.fasl
+; compilation finished in 0:00:00.023
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/execution/writer.lisp" (written 09 OCT 2026 06:28:38 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/execution/writer-tmpX4BRKI0R.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/package.lisp" (written 09 OCT 2026 05:53:06 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/package-tmpQ371UGST.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/formats.lisp" (written 08 OCT 2026 11:39:48 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/formats-tmp2OWI3Q7U.fasl
+; compilation finished in 0:00:00.004
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/segment-header.lisp" (written 08 OCT 2026 10:24:12 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/segment-header-tmp9KKTJMYV.fasl
+; compilation finished in 0:00:00.038
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/log-header.lisp" (written 08 OCT 2026 11:42:34 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/log-header-tmpJU0JWO19.fasl
+; compilation finished in 0:00:00.027
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/compaction-scan.lisp" (written 09 OCT 2026 05:59:10 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/compaction-scan-tmpZX2WN8N4.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/control-payload.lisp" (written 08 OCT 2026 10:24:12 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/control-payload-tmpOU81XRV0.fasl
+; compilation finished in 0:00:00.035
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/payload-record.lisp" (written 08 OCT 2026 10:24:12 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/payload-record-tmpY2ML9CFA.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/payload-write.lisp" (written 08 OCT 2026 10:24:12 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/storage/payload-write-tmpX2JYJDQE.fasl
+; compilation finished in 0:00:00.058
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/io/package.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/io/package-tmpOPCILR65.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/io/types.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/io/types-tmpRV9F8A9A.fasl
+; compilation finished in 0:00:00.016
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/io/native.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/io/native-tmpK2ZAJT4I.fasl
+; compilation finished in 0:00:00.020
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/io/lifecycle.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/io/lifecycle-tmpUX5S4ADN.fasl
+; compilation finished in 0:00:00.028
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/io/transfer.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/io/transfer-tmp10401X32.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/io/flush.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/io/flush-tmpZ7CBRM0G.fasl
+; compilation finished in 0:00:00.002
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/package.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/package-tmp9OZEQ0G2.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/types.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/types-tmpB2JTL1W9.fasl
+; compilation finished in 0:00:00.069
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/builder.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/builder-tmpP3BI68WQ.fasl
+; compilation finished in 0:00:00.017
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/group.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/group-tmpQDARA81Z.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/executor.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/wal/executor-tmpYEMMM7SE.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/package.lisp" (written 08 OCT 2026 10:32:10 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/package-tmp73HU0RPK.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/scan.lisp" (written 08 OCT 2026 10:33:46 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/scan-tmpIO5N7K88.fasl
+; compilation finished in 0:00:00.039
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-package.lisp" (written 08 OCT 2026 11:32:13 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-package-tmpCM21U60Z.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-types.lisp" (written 08 OCT 2026 11:32:13 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-types-tmp9DT7SEFG.fasl
+; compilation finished in 0:00:00.007
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-sort.lisp" (written 08 OCT 2026 11:32:13 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-sort-tmp8065ESJT.fasl
+; compilation finished in 0:00:00.037
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-build.lisp" (written 08 OCT 2026 11:34:43 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-build-tmp7S8Z6FGF.fasl
+; compilation finished in 0:00:00.039
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-query.lisp" (written 08 OCT 2026 11:34:43 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/src/recovery/decisions-query-tmpSIT3QPKP.fasl
+; compilation finished in 0:00:00.013
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/smoke.lisp" (written 02 OCT 2026 11:35:37 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/smoke-tmpE0PA0714.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/support.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/support-tmpJRWHHVG0.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/binary.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/binary-tmp4WZVROCX.fasl
+; compilation finished in 0:00:00.017
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/record.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/record-tmpA0I3UKX8.fasl
+; compilation finished in 0:00:00.057
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/batch.lisp" (written 08 OCT 2026 09:38:30 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/foundation/batch-tmp267Y2N80.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/execution/support.lisp" (written 09 OCT 2026 06:29:54 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/execution/support-tmpOUPE5FSJ.fasl
+; compilation finished in 0:00:00.016
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/execution/queue.lisp" (written 09 OCT 2026 06:33:21 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/execution/queue-tmpIGHCU6ZA.fasl
+; compilation finished in 0:00:00.040
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/execution/threads.lisp" (written 09 OCT 2026 06:31:57 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/execution/threads-tmpBO0TUGLK.fasl
+; compilation finished in 0:00:00.044
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/support.lisp" (written 08 OCT 2026 10:24:12 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/support-tmpIIXPIQNW.fasl
+; compilation finished in 0:00:00.033
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/segment-header.lisp" (written 08 OCT 2026 10:24:12 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/segment-header-tmpOHM494YR.fasl
+; compilation finished in 0:00:00.013
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/log-header.lisp" (written 08 OCT 2026 11:46:57 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/log-header-tmpOVFB07XF.fasl
+; compilation finished in 0:00:00.063
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/compaction-scan.lisp" (written 09 OCT 2026 06:00:27 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/compaction-scan-tmpG6VFGMYP.fasl
+; compilation finished in 0:00:00.041
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/control-payload.lisp" (written 08 OCT 2026 10:24:12 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/storage/control-payload-tmp4QIPRMOF.fasl
+; compilation finished in 0:00:00.053
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/io/support.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/io/support-tmpGW0QV22K.fasl
+; compilation finished in 0:00:00.042
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/io/transfer.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/io/transfer-tmp2K9J0HSR.fasl
+; compilation finished in 0:00:00.040
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/io/native.lisp" (written 08 OCT 2026 11:07:46 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/io/native-tmpP44I4E0Y.fasl
+; compilation finished in 0:00:00.033
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/support.lisp" (written 08 OCT 2026 10:34:58 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/support-tmp63LQ7EX6.fasl
+; compilation finished in 0:00:00.051
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/scan.lisp" (written 08 OCT 2026 11:06:52 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/scan-tmp86F1A8FB.fasl
+; compilation finished in 0:00:00.052
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/corruption.lisp" (written 08 OCT 2026 10:39:32 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/corruption-tmpH7D4HL98.fasl
+; compilation finished in 0:00:00.017
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/decisions-support.lisp" (written 09 OCT 2026 05:47:29 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/decisions-support-tmpCDM7YXYI.fasl
+; compilation finished in 0:00:00.037
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/decisions.lisp" (written 09 OCT 2026 05:48:37 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/decisions-tmpLM57P5P.fasl
+; compilation finished in 0:00:00.054
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/decisions-audit.lisp" (written 09 OCT 2026 06:01:28 AM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/recovery/decisions-audit-tmpZE69DN33.fasl
+; compilation finished in 0:00:00.035
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/support.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/support-tmpG8099TO3.fasl
+; compilation finished in 0:00:00.020
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/builder.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/builder-tmpTASQCYAW.fasl
+; compilation finished in 0:00:00.014
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/group.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/group-tmp35U57IV6.fasl
+; compilation finished in 0:00:00.028
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/fault.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/fault-tmpTZOONXRW.fasl
+; compilation finished in 0:00:00.021
+; compiling file "/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/native.lisp" (written 08 OCT 2026 11:57:06 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/Documents/ArcDocDB/tests/wal/native-tmpWN0UKDSV.fasl
+; compilation finished in 0:00:00.007
+ok    package ARCDOCDB presente
+ok    ARCDOCDB:*VERSION* è una stringa
+ok    TEST-REQ-AFF-004-TYPED-ERRORS-RENDERING
+ok    TEST-REQ-FOR-003-OUT-OF-LINE-READERS
+ok    TEST-REQ-FOR-003-LITTLE-ENDIAN
+ok    TEST-REQ-FOR-003-RANGES
+ok    TEST-REQ-FOR-003-CRC-KNOWN-VECTORS
+ok    TEST-REQ-FOR-003-CRC-DIFFERENTIAL-INCREMENTAL
+ok    TEST-REQ-FOR-003-INDEPENDENT-ENCODING-ORACLE
+ok    TEST-REQ-LIM-001-ROUNDTRIP-VERSIONS
+ok    TEST-REQ-LIM-003-KEY-BOUNDARIES
+ok    TEST-REQ-LIM-001-DOCUMENT-BOUNDARIES
+ok    TEST-REQ-FOR-003-EVERY-BYTE-CORRUPTION
+ok    TEST-REQ-FOR-003-EVERY-TRUNCATION
+ok    TEST-REQ-FOR-003-VALID-CRC-INVALID-FIELDS
+ok    TEST-REQ-LIM-001-PREFLIGHT-NO-PARTIAL-WRITE
+ok    TEST-REQ-AFF-002-INDEX-IDENTITY
+ok    TEST-REQ-FOR-004-PREPARED-OUTCOME
+ok    TEST-REQ-FOR-003-CONTROL-RECORD-SHAPES
+ok    TEST-REQ-LIM-001-SEMANTIC-BOUNDARIES
+ok    TEST-REQ-FOR-004-OUTCOME-PROVENANCE-FIELDS
+ok    TEST-REQ-FOR-004-U64-BOTH-WORDS
+ok    TEST-REQ-FOR-003-SEALED-BATCHES
+ok    TEST-REQ-FOR-003-BATCH-ALL-TRUNCATIONS
+ok    TEST-REQ-FOR-003-BATCH-SEAL-SEMANTIC-CORRUPTION
+ok    TEST-REQ-FOR-003-BATCH-STAMP-AND-TYPE
+ok    TEST-REQ-LIM-003-BATCH-BUDGETS
+ok    TEST-REQ-FOR-004-BATCH-TXID-INDEPENDENT-OF-SEAL-CSN
+26 test delle fondazioni superati.
+ok    TEST-REQ-AFF-008-WRITER-CONFIGURATION
+ok    TEST-REQ-AFF-008-WRITER-DEFAULTS-AND-CONFIGURATION-BOUNDARIES
+ok    TEST-REQ-CON-001-WRITER-FIFO-RING-WRAP-AND-NIL
+ok    TEST-REQ-AFF-008-WRITER-FULL-REFUSAL-RETAINS-PAYLOAD
+ok    TEST-REQ-CON-004-WRITER-GUARD-BUSY-DOES-NOT-MUTATE
+ok    TEST-REQ-CON-001-WRITER-TARGET-SUBRANGE-AND-EMPTY
+ok    TEST-REQ-AFF-004-WRITER-INVALID-TARGET-PREFLIGHT
+ok    TEST-REQ-AFF-004-WRITER-PRIVATE-RING-ALIAS-REFUSED
+ok    TEST-REQ-CON-001-WRITER-LEASE-LIFECYCLE
+ok    TEST-REQ-CON-001-WRITER-STALE-LEASE-SAME-THREAD
+ok    TEST-REQ-AFF-008-WRITER-QUANTUM-IS-CUMULATIVE-PER-LEASE
+ok    TEST-REQ-AFF-008-WRITER-GENERATION-DOES-NOT-WRAP
+ok    TEST-REQ-CON-001-WRITER-SEEDED-LIST-ORACLE
+ok    TEST-REQ-CON-001-WRITER-FOREIGN-THREAD-CANNOT-USE-LEASE
+ok    TEST-REQ-CON-001-WRITER-CAS-HAS-ONE-OWNER
+  CPU due Serie: 1048576 byte, overlap 34091 tick, unita 1000000 tick/s.
+ok    TEST-REQ-CON-003-INDEPENDENT-SERIES-PROGRESS-AND-CPU-OVERLAP
+  wave 0: 144 messaggi, 3 producer, 2 consumer, 5 worker riusati, drain aperto.
+  wave 1: 144 messaggi, 3 producer, 2 consumer, 5 worker riusati, drain aperto.
+  wave 2: 144 messaggi, 3 producer, 2 consumer, 5 worker riusati, drain aperto.
+ok    TEST-REQ-CON-001-WRITER-REAL-PRODUCERS-CONSUMERS-AND-WORKER-REUSE
+17 test delle code writer superati.
+ok    TEST-REQ-FOR-002-SEGMENT-HEADER-INDEPENDENT-ORACLE
+ok    TEST-REQ-FOR-001-SEGMENT-HEADER-ALL-TRUNCATIONS-AND-BIT-FLIPS
+ok    TEST-REQ-FOR-002-SEGMENT-HEADER-CRC-VALID-INVALID-FIELDS
+ok    TEST-REQ-AFF-002-SEGMENT-HEADER-IDENTITY
+ok    TEST-REQ-FOR-002-SEGMENT-HEADER-PREFLIGHT-PRESERVES-BUFFER
+ok    TEST-REQ-FOR-002-LOG-HEADER-INDEPENDENT-ORACLE
+ok    TEST-REQ-FOR-002-LOG-HEADER-DEFAULT-VERSION-IS-TWO
+ok    TEST-REQ-FOR-001-LOG-HEADER-ALL-TRUNCATIONS
+ok    TEST-REQ-FOR-001-LOG-HEADER-ALL-BIT-FLIPS
+ok    TEST-REQ-FOR-002-LOG-HEADER-EVERY-RESERVED-BYTE
+ok    TEST-REQ-FOR-002-LOG-HEADER-EVERY-IDENTITY-BYTE
+ok    TEST-REQ-FOR-002-LOG-HEADER-CRC-VALID-WRONG-MAGIC
+ok    TEST-REQ-FOR-002-LOG-HEADER-UNKNOWN-VERSION-WITH-VALID-CRC
+ok    TEST-REQ-FOR-001-LOG-HEADER-CRC-BEFORE-UNKNOWN-VERSION
+ok    TEST-REQ-FOR-002-LOG-HEADER-ENCODER-PREFLIGHT-PRESERVES-BUFFER
+ok    TEST-REQ-FOR-002-LOG-HEADER-READER-PREFLIGHT
+ok    TEST-REQ-FOR-002-COMPACTION-EMPTY-HEADERS
+ok    TEST-REQ-CMP-009-COMPACTION-RESOLVED-RECORDS-AND-COUNTS
+ok    TEST-REQ-FOR-002-COMPACTION-VERSION-FROM-FILE
+ok    TEST-REQ-FOR-003-COMPACTION-EVERY-CONTENT-TRUNCATION
+ok    TEST-REQ-FOR-001-COMPACTION-EVERY-BIT-CORRUPTION
+ok    TEST-REQ-FOR-002-COMPACTION-AUTHORITATIVE-IDENTITIES
+ok    TEST-REQ-FOR-002-COMPACTION-HEADER-FIELDS-AND-VERSION
+ok    TEST-REQ-CMP-009-COMPACTION-REJECTS-WRITER-ORIGIN
+ok    TEST-REQ-CMP-009-COMPACTION-REJECTS-PREPARED-RECORDS
+ok    TEST-REQ-CMP-009-COMPACTION-REJECTS-CONTROL-RECORDS
+ok    TEST-REQ-FOR-003-COMPACTION-CRC-VALID-INVALID-TYPE-AND-FLAGS
+ok    TEST-REQ-FOR-003-COMPACTION-CRC-VALID-INCONSISTENT-LENGTHS
+ok    TEST-REQ-FOR-001-COMPACTION-IGNORES-PHYSICAL-TAIL
+ok    TEST-REQ-AFF-008-COMPACTION-EXACT-AND-EXHAUSTED-BUDGETS
+ok    TEST-REQ-AFF-008-COMPACTION-INVALID-ARGUMENTS
+ok    TEST-REQ-FOR-003-EDIT-ENCODING-LAYOUT
+ok    TEST-REQ-FOR-003-EDIT-TRUNCATION-COUNTS-AND-LENGTHS
+ok    TEST-REQ-AFF-008-EDIT-BUDGET-BOUNDARIES
+ok    TEST-REQ-TXM-001-DECISION-ENCODING-LAYOUT
+ok    TEST-REQ-TXM-001-DECISION-TRUNCATION-AND-BUDGETS
+ok    TEST-REQ-FOR-003-CONTROL-RECORD-BOTH-VERSIONS
+ok    TEST-REQ-FOR-003-CONTROL-RECORD-INTEGRITY-BEFORE-COUNTS
+ok    TEST-REQ-AFF-008-ENCODER-PREFLIGHT-NO-PARTIAL-WRITE
+ok    TEST-REQ-AFF-008-EDIT-CUMULATIVE-BUDGET-AND-CORRUPT-HUGE-COUNTS
+ok    TEST-REQ-AFF-008-ENCODER-OVERFLOW-AND-UNUSED-SECTIONS
+ok    TEST-REQ-FOR-003-DECISION-RECORD-ALL-TRUNCATIONS-AND-BIT-FLIPS
+ok    TEST-REQ-AFF-008-BYTE-BUDGET-BEFORE-CRC-SCAN
+ok    TEST-REQ-AFF-008-INTERNAL-RANGE-GUARDS
+44 test dei metadati storage superati.
+ok    TEST-REQ-AFF-001-SHORT-APPEND-AND-GROUP-FLUSH
+ok    TEST-REQ-STO-003-SHORT-PREAD-POSITIONAL-NO-STATE-WRITE
+ok    TEST-REQ-AFF-001-WRITE-ERRORS-NEVER-RETRY
+ok    TEST-REQ-AFF-001-FLUSH-ERROR-PRESERVES-DURABLE-FRONTIER
+ok    TEST-REQ-AFF-002-READ-ERRORS-NO-RETRY-NO-SHARED-MUTATION
+ok    TEST-REQ-AFF-008-INVALID-PROGRESS-AND-EOF
+ok    TEST-REQ-AFF-008-PREFLIGHT-BUDGET-AND-ZERO-LENGTH
+ok    TEST-REQ-AFF-001-CLOSE-ONCE-EVEN-EINTR
+ok    TEST-REQ-AFF-001-DIRECTORY-FLUSH-DISPATCH-AND-INVALID-RETURN
+ok    TEST-REQ-STO-003-OPEN-PREFLIGHT-AND-ERRORS
+ok    TEST-REQ-AFF-001-DIRECTORY-FAILURE-AND-EMPTY-FILE-FLUSH
+ok    TEST-REQ-AFF-001-INVALID-CLOSE-RESULT-AND-CLOSED-READER
+ok    TEST-REQ-AFF-004-INVALID-PRIVATE-DESCRIPTOR-BEFORE-SYSCALL
+ok    TEST-REQ-STO-003-NATIVE-APPEND-FLUSH-AND-CHECKED-RECORD
+ok    TEST-REQ-STO-003-NATIVE-NO-FOLLOW-FILE-KINDS-AND-CLOEXEC
+ok    TEST-REQ-STO-003-CONCURRENT-PREAD-DISTINCT-BUFFERS
+ok    TEST-REQ-FOR-003-NATIVE-TWO-SEALED-BATCHES-ONE-FLUSH
+ok    TEST-REQ-AFF-004-NATIVE-ERRNO-AND-CLEANUP-PROVENANCE
+18 test I/O superati.
+ok    TEST-REQ-FOR-003-VALID-LOG-ORACLE-AND-DETERMINISM
+ok    TEST-REQ-FOR-003-EMPTY-LOG-AND-EMPTY-BATCHES
+ok    TEST-REQ-AFF-009-EVERY-LOG-TRUNCATION
+ok    TEST-REQ-AFF-009-FRONTIER-BOUNDARY-AND-FAILED-BATCH-START
+ok    TEST-REQ-AFF-009-DAMAGED-WITNESS-BATCH-REMAINS-EVIDENCE
+ok    TEST-REQ-AFF-009-INVALID-WITNESSES-ARE-IGNORED
+ok    TEST-REQ-AFF-009-CORRUPT-LENGTH-CANNOT-HIDE-WITNESS
+ok    TEST-REQ-AFF-009-BROKEN-HEADER-DOES-NOT-END-SEARCH
+ok    TEST-REQ-AFF-009-WITNESS-AT-EVERY-ALIGNMENT
+ok    TEST-REQ-AFF-009-NESTED-SEAL-AT-LAST-SEARCH-POSITION
+ok    TEST-REQ-AFF-008-LOG-AND-BATCH-BUDGETS
+ok    TEST-REQ-AFF-008-BATCH-BUDGET-CANNOT-CLASSIFY-UNCHECKED-TAIL
+ok    TEST-REQ-AFF-008-SEARCH-BUDGET-COUNTS-POSITIONS
+ok    TEST-REQ-AFF-008-EOF-IS-EXPLICIT-AND-COMPLETE
+ok    TEST-REQ-AFF-008-INVALID-CONFIGURATION-IS-NEVER-TAIL
+ok    TEST-REQ-AFF-009-U64-OFFSETS-AND-OVERFLOW
+13504 mutazioni bit prima del testimone durevole verificate.
+ok    TEST-REQ-AFF-009-EVERY-BIT-BEFORE-DURABLE-WITNESS
+6752 mutazioni bit nel lotto finale senza testimone verificate.
+ok    TEST-REQ-AFF-017-EVERY-BIT-IN-FINAL-UNWITNESSED-BATCH
+ok    TEST-REQ-AFF-009-OVERLAPPING-SEAL-AFTER-NONCOVERING-FRONTIER
+ok    TEST-REQ-TXM-005-DECISION-TABLE-ORDERED-UNORDERED-ORACLE
+ok    TEST-REQ-TXM-005-SEEDED-HISTORIES-AND-PERMUTED-DUPLICATES
+ok    TEST-REQ-TXM-001-ZERO-MAXIMUM-U64-AND-SHARED-CSN
+ok    TEST-REQ-TXM-005-TABLE-OWNS-PARTICIPANT-COPIES
+ok    TEST-REQ-TXM-001-PARTICIPANT-EXACT-BYTES-AND-QUERY-RANGES
+ok    TEST-REQ-TXM-005-CONFLICTING-CSN-SET-OR-COUNT
+ok    TEST-REQ-TXM-005-DUPLICATE-PARTICIPANTS-WITHIN-RECORD
+ok    TEST-REQ-TXM-005-EVERY-CUT-KEEPS-ONLY-SEALED-DECISIONS
+ok    TEST-REQ-TXM-005-PRESUMED-ABORT-AFTER-COMPLETE-TAIL-SEARCH
+ok    TEST-REQ-TXM-005-SCANS-LATER-CORRUPTION-BEFORE-PAYLOAD-OR-BUDGET
+ok    TEST-REQ-FOR-003-SEALED-INVALID-DECISION-PAYLOAD-IS-NOT-TAIL
+ok    TEST-REQ-AFF-008-EMPTY-DECISIONS-ZERO-AND-LARGE-BUDGETS
+ok    TEST-REQ-AFF-008-PHYSICAL-DUPLICATE-RECORD-BUDGETS
+ok    TEST-REQ-AFF-008-INVALID-DECISION-BUDGETS-EVEN-EMPTY
+ok    TEST-REQ-AFF-008-DECISION-SCANNER-BUDGETS-PROPAGATE
+ok    TEST-REQ-AFF-008-DECISION-EOF-AND-VERSION-ERRORS
+ok    TEST-REQ-TXM-005-HIGH-FILE-OFFSET-AND-CONFLICT-PROVENANCE
+ok    TEST-REQ-TXM-005-FIRST-PHYSICAL-DECISION-CONFLICT-ACROSS-TXID-GROUPS
+ok    TEST-REQ-TXM-001-PARTICIPANT-EVERY-BYTE-AND-EVERY-BIT
+ok    TEST-REQ-FOR-003-SEALED-TRAILING-DECISION-PAYLOAD
+ok    TEST-REQ-FOR-003-SHORT-DECISION-FRAME-REQUIRES-COVERING-WITNESS
+ok    TEST-REQ-TXM-005-UNSEALED-SEMANTIC-ERRORS-AND-COVERING-WITNESS
+ok    TEST-REQ-AFF-008-DECISION-BUDGET-OFFSETS-BEFORE-COALESCENCE
+ok    TEST-REQ-TXM-005-PUBLIC-DEFAULT-BUDGETS-AND-EXPLICIT-VERSION
+ok    TEST-REQ-TXM-001-MAXIMUM-U16-PARTICIPANT-COUNT
+44 test recovery superati.
+ok    TEST-REQ-WAL-005-CODEC-V1-V2-AND-HIGH-U64
+ok    TEST-REQ-WAL-005-PRESERVE-PREPARED-OUTCOME-DECISION-TXID
+ok    TEST-REQ-WAL-005-EMPTY-AND-SEAL-EXACT-CAPACITY
+ok    TEST-REQ-AFF-008-BUILDER-PREFLIGHT-AND-SEALED-IMMUTABILITY
+ok    TEST-REQ-WAL-002-TWO-LOTS-ONE-FLUSH-AND-REUSE
+ok    TEST-REQ-AFF-008-GROUP-BUDGET-IDENTITY-AND-ORDER
+ok    TEST-REQ-AFF-008-FILE-BUDGET-BEFORE-ANY-WRITE
+ok    TEST-REQ-WAL-005-OFFSET-AND-DURABLE-WITNESS-BEFORE-WRITE
+ok    TEST-REQ-WAL-003-CONTROL-LOG-NEVER-ASYNC
+ok    TEST-REQ-AFF-008-CANCEL-UNSENT-GROUP-RELEASES-CAPACITY
+ok    TEST-REQ-AFF-001-WRITE-FAILURE-STOPS-LOG-AND-ALL-BATCHES
+ok    TEST-REQ-AFF-001-FLUSH-FAILURE-NEVER-ADVANCES-DURABILITY
+ok    TEST-REQ-WAL-005-CRASH-AT-EVERY-WRITTEN-BYTE-V1-V2
+ok    TEST-REQ-AFF-001-PRIVATE-OWNERSHIP-VIOLATION-STOPS-BEFORE-FLUSH
+ok    TEST-REQ-WAL-002-SECOND-GROUP-REJECTED-UNTIL-FLUSH
+ok    TEST-REQ-WAL-002-CONCURRENT-GROUPS-AT-MOST-ONE-WRITE
+ok    TEST-REQ-WAL-002-CONCURRENT-FLUSH-AT-MOST-ONE-SYSCALL
+ok    TEST-REQ-WAL-002-NATIVE-GROUP-AND-DURABLE-WITNESS-V1-V2
+ok    TEST-REQ-AFF-009-SUBSEQUENT-BATCH-WITNESS-DETECTS-OLD-CORRUPTION
+19 test WAL superati.
+build e test: nessun avviso, tutti i controlli superati
+sbcl --script tools/lint.lisp src
+37 file, 0 violazioni
+sbcl --script tools/lint.lisp --self-test
+ok    bad.lisp: COD-02 COD-03 COD-12 COD-20 COD-22 COD-34 COD-43 COD-50
+ok    good.lisp: nessuna violazione
+sbcl --script tools/check-trace.lisp
+114 requisiti, 65 invarianti, 13 scenari FI, 52 ADR: 0 errori
+sbcl --script tools/check-links.lisp .
+168 file, 1757 link controllati, 0 rotti
+sbcl --noinform --no-userinit --no-sysinit --script tools/check-evidence.lisp
+(:STATUS :OK :CATALOGS 12 :ARTIFACT-REFERENCES 432 :LIMITS
+ (:STRUCTURE-AND-PRESENCE-ONLY :NO-RESULT-REINTERPRETATION))
+sbcl --noinform --no-userinit --script tools/run-spikes.lisp --check
+10 spike completati; risultati: /Users/gpicchiarelli/Documents/ArcDocDB/spikes/out/4000509733-check-35646-0/
