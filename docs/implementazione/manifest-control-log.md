@@ -121,6 +121,13 @@ DECISION della fotografia iniziale selezionava 25 test; dopo l'allineamento
 il runner seleziona anche i 18 test radix, per 43 test dedicati. La suite
 integrata comprende 82 test recovery e 17 test delle code writer.
 
+Il runner radix conserva exit code e segnale del processo: un'interruzione
+OS o un exit nonzero dopo il completamento dei test è un errore del worker,
+distinto da un mutante rilevato. Il self-test usa un processo figlio che
+stampa il marker di avvio e termina sé stesso con SIGKILL; runner, log e
+report originali sono conservati nel catalogo. Questa prova riguarda lo
+strumento, non un guasto del prodotto.
+
 Questo modulo non riconcilia file o directory, non rinomina o elimina,
 non legge i segmenti, non risolve i prepared e non scrive un nuovo control
 log. La ricostruzione in memoria non chiude il gate del recovery completo.

@@ -1,6 +1,6 @@
 SBCL ?= sbcl
 
-.PHONY: build test lint lint-selftest links trace trace-write evidence check check-core spikes-check spikes-bench
+.PHONY: build test lint lint-selftest links trace trace-write evidence evidence-selftest compact-evidence check check-core spikes-check spikes-bench
 build test:  ## compila senza avvisi (COD-01) ed esegue gli smoke test
 	$(SBCL) --noinform --no-userinit --non-interactive --load tools/build.lisp
 
@@ -22,6 +22,14 @@ trace-write:  ## rigenera docs/tracciabilita/matrice.md da requisiti.lisp
 evidence:  ## verifica struttura e presenza degli artefatti conservati nel catalogo
 	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/check-evidence.lisp
 
+evidence-selftest:  ## controlli negativi e positivi della conservazione compressa
+	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/check-evidence-storage.lisp
+	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/check-evidence-publication.lisp
+	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/check-evidence-normalize.lisp
+
+compact-evidence:  ## comprime senza perdita i registri pubblicati grandi, con quattro worker
+	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/record-command.lisp -- $(SBCL) --noinform --no-userinit --no-sysinit --script tools/compact-evidence.lisp --root spikes/results/ --jobs 4
+
 spikes-check:  ## correttezza degli esperimenti Fase 0, processi isolati, senza benchmark
 	$(SBCL) --noinform --no-userinit --script tools/run-spikes.lisp --check
 
@@ -31,4 +39,4 @@ spikes-bench:  ## misure locali, in serie; dati grezzi e ambiente in spikes/out/
 check:  ## tutti i controlli, con record strutturato anche in caso di fallimento
 	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/record-command.lisp -- $(MAKE) check-core
 
-check-core: test lint lint-selftest trace links evidence spikes-check  ## controlli chiamati dal registro
+check-core: test lint lint-selftest trace links evidence-selftest evidence spikes-check  ## controlli chiamati dal registro

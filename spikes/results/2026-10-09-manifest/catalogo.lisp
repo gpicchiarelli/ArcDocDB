@@ -77,5 +77,25 @@
   (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-09.lisp")
   (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-spike-SPK-10.lisp")
   (:KIND :COMPRESSED-ORIGINAL-RECORD :ARTIFACT
-   "integrazione-spike-report.lisp"))
+   "integrazione-spike-report.lisp")
+  (:KIND :C1-REVIEW :ARTIFACT "integrazione-letture-c1.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-01.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-02.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-03.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-04.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-05.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-06.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-07.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-08.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-09.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-SPK-10.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "integrazione-main-check.lisp")
+  (:KIND :EVIDENCE-FINALIZATION :ARTIFACT
+   "integrazione-main-conservazione.lisp")
+  (:KIND :SPIKE-CHECK :ARTIFACT "integrazione-main-report.lisp")
+  (:KIND :MUTATION-OUTPUT :ARTIFACT "integrazione-mutazioni-radix-dati.lisp"
+   :PROCESS-ARTIFACT "integrazione-mutazioni-radix.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT "integrazione-mutazioni-radix.lisp")
+  (:KIND :COMMAND-VERIFICATION :ARTIFACT
+   "integrazione-catalogo-verifica.lisp"))
  :LIMITS (:STRUCTURE-AND-PRESENCE-ONLY :NO-AUTOMATIC-GATE-PROMOTION))

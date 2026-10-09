@@ -1,6 +1,7 @@
 ;;;; Verifica dei cataloghi e dei record conservati, letti soltanto come dati.
 ;;; REQ: REQ-VAL-001 REQ-AFF-012
 (require :asdf)
+(load (merge-pathnames "evidence-storage.lisp" *load-truename*))
 (declaim (optimize (safety 3) (debug 3)))
 
 (define-condition invalid-evidence (error)
@@ -9,14 +10,23 @@
 
 (defun leggi-dati (path)
   "Una sola plist; read-eval disabilitato, nessun load del record."
-  (let ((*read-eval* nil) (eof (gensym "EOF")))
-    (with-open-file (stream path)
-      (let ((data (read stream nil eof)))
-        (unless (and (listp data) data (evenp (length data))
-                     (loop for key in data by #'cddr always (keywordp key))
-                     (eq (read stream nil eof) eof))
-          (error 'invalid-evidence :path path))
-        data))))
+  (arcdocdb.evidence:read-evidence path))
+
+(defun verifica-dimensioni (base)
+  "Rifiuta nuovi registri enormi, anche se non ancora inclusi in un catalogo."
+  (let ((count 0) (bytes 0))
+    (labels ((walk (directory)
+               (dolist (path (uiop:directory-files directory))
+                 (let* ((size (arcdocdb.evidence:file-bytes path))
+                        (compressed (equal (pathname-type path) "gz"))
+                        (limit (if compressed (* 8 1024 1024) (* 1024 1024))))
+                   (when (> size limit)
+                     (error "Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence."
+                            path size limit))
+                   (incf count) (incf bytes size)))
+               (dolist (subdirectory (uiop:subdirectories directory)) (walk subdirectory))))
+      (walk base))
+    (values count bytes)))
 
 (defun artefatto (nome base)
   "Il catalogo può riferire solo nomi di file nella propria directory datata."
@@ -29,6 +39,7 @@
 (uiop:with-current-directory
     ((merge-pathnames "../" (uiop:pathname-directory-pathname *load-truename*)))
   (let ((cataloghi 0) (record 0))
+    (multiple-value-bind (files bytes) (verifica-dimensioni #P"spikes/results/")
     (dolist (path (directory "spikes/results/*/catalogo.lisp"))
       (let* ((data (leggi-dati path)) (base (uiop:pathname-directory-pathname path)))
         (unless (and (eql 1 (getf data :schema-version))
@@ -46,5 +57,7 @@
                 (incf record)))))))
     (unless (plusp cataloghi) (error 'invalid-evidence :path "Nessun catalogo."))
     (write (list :status :ok :catalogs cataloghi :artifact-references record
-                 :limits '(:structure-and-presence-only :no-result-reinterpretation)))
-    (terpri)))
+                 :stored-files files :stored-bytes bytes
+                 :limits '(:structure-presence-size-and-compressed-integrity
+                           :no-result-reinterpretation)))
+    (terpri))))

@@ -73,6 +73,14 @@ Il [catalogo delle evidenze](../../spikes/results/README.md) tiene distinti cont
 benchmark, profili, fallimenti e varianti; ambiente e comandi restano nei singoli
 record originali.
 
+I registri superiori a 1 MiB vengono conservati senza perdita secondo il
+[metodo di conservazione compatta](conservazione-compatta.md): il percorso
+originale contiene un descriptor e il payload gzip è accanto. Dimensioni e
+SHA-256 permettono di verificare i byte originali. `tools/read-evidence.lisp`
+risolve il descriptor senza eseguire il record. `make compact-evidence`
+registra la compattazione, con quattro worker indipendenti; `make evidence`
+controlla integrità e limiti di dimensione, anche per file non catalogati.
+
 I metodi si registrano prima dell'esecuzione. Si indicano campione, clock,
 allocazioni misurate e loro scope; la memoria degli array non è RSS. Non si
 stima P99.9 da pochi campioni e un contatore pari a zero non dimostra assenza

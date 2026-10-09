@@ -2,6 +2,7 @@
 ;;; REQ: REQ-VAL-001 REQ-AFF-012
 (require :asdf)
 (require :sb-posix)
+(load (merge-pathnames "finish-evidence.lisp" *load-truename*))
 (declaim (optimize (safety 3) (debug 3)))
 
 (define-condition recording-error (error)
@@ -100,6 +101,8 @@
               (setf (getf record :status) :source-changed)))
         (error (c) (setf (getf record :status) :failed (getf record :diagnostic) (princ-to-string c))))
       (salva record path)
+      (unless (compact-finished-directory out)
+        (sb-ext:exit :code 1))
       (format t "~&~S: ~{~A~^ ~}; record: ~A~%" (getf record :status) argv path)
       (unless (eq (getf record :status) :ok) (sb-ext:exit :code 1)))))
 
