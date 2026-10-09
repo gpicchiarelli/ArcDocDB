@@ -63,7 +63,7 @@
              (arcdocdb.wal:annulla-csn-lotto lot registry slot high low)
              (is (eq :risolto (arcdocdb.wal:stato-csn-lotto lot)))
              (multiple-value-bind (lh ll hh hl) (arcdocdb.csn:leggi-frontiere-csn registry)
-               (is (equal '(0 1 0 1) (list lh ll hh hl)))))))
+               (is (equal '(0 1 0 1) (list lh ll hh hl))))))
       (arcdocdb.io:chiudi file))))
 
 ;;; REQ: REQ-MVC-008 REQ-WAL-005 REQ-WAL-006 REQ-CON-004 REQ-AFF-008
