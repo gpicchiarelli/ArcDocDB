@@ -19,7 +19,8 @@
                              (:file "binary") (:file "crc32c")
                              (:file "record") (:file "batch")))
                (:module "codec" :serial t
-                :components ((:file "package") (:file "utf8")))
+                :components ((:file "package") (:file "utf8")
+                             (:file "cbor-package") (:file "cbor-header")))
                (:module "execution" :serial t
                 :components ((:file "package") (:file "queue") (:file "writer")
                              (:file "handoff")))
@@ -59,7 +60,8 @@
                 :components ((:file "support") (:file "binary")
                              (:file "record") (:file "batch")))
                (:module "codec" :serial t
-                :components ((:file "support") (:file "utf8") (:file "threads")))
+                :components ((:file "support") (:file "utf8") (:file "threads")
+                             (:file "cbor-support") (:file "cbor-header") (:file "cbor-threads")))
                (:module "execution" :serial t
                 :components ((:file "support") (:file "queue") (:file "threads")
                              (:file "handoff")))
@@ -83,6 +85,7 @@
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.utf8.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.cbor.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.execution.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.io.tests '#:run)
