@@ -71,3 +71,57 @@ di COD-61; i due registri restano `:failed` come previsto dal metodo.
 Il [catalogo](../../spikes/results/2026-10-09-cbor-mutation-signals/catalogo.lisp)
 conserva i comandi, le letture C4, i report e i byte originali di log e runner.
 Non è imposto un timeout automatico ai processi delle campagne.
+
+## Metodo della nuova integrazione con CBOR minimo
+
+Il main `e07d772` aggiunge il profilo CBOR minimo e 15 test. Il relativo
+runner di mutazione presenta gli stessi due difetti degli altri strumenti:
+la nuova correzione C4 riguarda soltanto il runner. Il codec, i formati e
+i test di prodotto introdotti dal main restano invariati. I runner di
+testate e struttura conservano i rispettivi hash della precedente revisione.
+
+Il [metodo della nuova integrazione](../../spikes/results/2026-10-09-cbor-mutation-signals-integration/metodo.lisp)
+è registrato prima delle nuove esecuzioni. Dopo il freeze e la lettura C4
+si prevedono `--self-test` e `--invalid` del runner minimo, tre campagne
+complete in directory nuove e indipendenti, `make check-core` e il controllo
+finale `make evidence trace links` dopo la conservazione delle prove.
+I conteggi attesi sono 8 mutanti del minimo, 9 delle testate, 10 della
+struttura e 392 test più smoke: sono previsioni, non risultati osservati.
+
+Ogni `--run` ripete il self-test con i due processi figli reali. Si
+conservano exit, segnale, contatori, report, log e runner delle fixture e
+delle campagne. Il controllo CLI negativo deve restare `:failed` con
+diagnostica del file e di COD-61. Tutti i comandi vengono registrati con
+argomenti, ambiente, output e hash effettivi; nessuna fonte o indice Git
+può cambiare durante una di queste esecuzioni.
+
+Il nuovo catalogo userà soltanto nomi di artefatti al livello della cartella
+datata, conservando i byte dei registri nativi e i nomi dei payload gzip.
+La precedente fotografia osservata da 377 test resta originale. Non si
+ripetono copertura o benchmark e non si approvano C1, MC/DC, recovery
+completo o qualifiche del motore. I worker restano senza timeout automatico.
+
+## Risultati osservati della nuova integrazione
+
+Il self-test del runner minimo è riuscito; `--invalid` resta un controllo
+negativo riuscito con stato originale `:failed`, exit 1 e diagnostica del
+file e di COD-61. Le tre campagne complete rilevano 9 mutanti delle testate,
+10 della struttura e 8 del minimo, con zero errori dei worker. Le baseline
+completano 392 test più smoke, con exit zero, nessun segnale e completamento
+esatto. I sei comandi conservano hash dei sorgenti stabili.
+
+Il nuovo `make check-core` completa 392 test più smoke e dieci spike. Lo
+stato originale dello SPK-07 resta `:pass`; gli altri nove conservano `:ok`
+e il report globale `:complete`. Le quattro esecuzioni delle fixture,
+compresi i self-test ripetuti dai tre `--run`, conservano otto processi
+figli: SIGKILL con exit 137 / signal 9 oppure exit 7 / signal nil dopo
+completamento, sempre `:worker-error` e mai `:detected`. I rifiuti iniettati
+della baseline conservano report, log e contatori originali.
+
+Il [catalogo integrato](../../spikes/results/2026-10-09-cbor-mutation-signals-integration/catalogo.lisp)
+conserva registri nativi e payload gzip con byte invariati, report, log,
+runner delle tre campagne e delle quattro fixture, le due letture C4 del
+minimo e gli audit indipendenti dei risultati. Il controllo finale di
+evidenze, tracciabilità e link viene registrato dopo questa pubblicazione.
+La fotografia precedente da 377 test resta nel suo catalogo originale;
+non si aggiungono misure di copertura, benchmark o qualifiche del motore.
