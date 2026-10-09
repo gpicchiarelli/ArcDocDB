@@ -1,0 +1,167 @@
+(require :asdf)
+(load "tools/evidence-storage.lisp")
+(defparameter *base* #p"spikes/results/2026-10-09-inventory-integration/")
+(defparameter *files* nil)
+(defparameter *records* nil)
+(defun save-data (data name)
+  (with-open-file (stream (merge-pathnames name *base*) :direction :output
+                           :if-exists :error :if-does-not-exist :create :external-format :utf-8)
+    (let ((*print-readably* t)) (write data :stream stream :pretty t) (terpri stream))))
+(defun same-bytes-p (left right)
+  (with-open-file (a left :element-type '(unsigned-byte 8))
+    (with-open-file (b right :element-type '(unsigned-byte 8))
+      (unless (= (file-length a) (file-length b)) (return-from same-bytes-p nil))
+      (let ((x (make-array 65536 :element-type '(unsigned-byte 8)))
+            (y (make-array 65536 :element-type '(unsigned-byte 8))))
+        (loop for nx = (read-sequence x a) for ny = (read-sequence y b)
+              do (unless (and (= nx ny) (equalp (subseq x 0 nx) (subseq y 0 ny)))
+                   (return nil))
+              when (zerop nx) return t)))))
+(defun git-blob (path)
+  (string-right-trim '(#\Newline #\Return)
+    (uiop:run-program (list "git" "hash-object" (namestring path)) :output :string)))
+(defun copy-raw (source name role &optional parent)
+  (let ((target (merge-pathnames name *base*)))
+    (ensure-directories-exist target)
+    (if (probe-file target)
+        (unless (same-bytes-p source target) (error "Copia esistente differente: ~A" target))
+        (uiop:copy-file source target))
+    (unless (same-bytes-p source target) (error "Bytes copiati differenti: ~A" target))
+    (push (list :file name :role role :source (namestring (truename source))
+                :bytes (arcdocdb.evidence:file-bytes target)
+                :sha256 (arcdocdb.evidence:file-sha256 target)
+                :git-blob (git-blob target) :byte-comparison :identical
+                :parent-process-artifact parent) *files*)
+    target))
+(defun source-form (path)
+  (with-open-file (stream path :external-format :utf-8)
+    (let ((*read-eval* nil)) (read stream))))
+(defun copy-record (source name role &optional parent)
+  (let* ((original (arcdocdb.evidence:read-evidence source))
+         (target (copy-raw source name role parent))
+         (descriptor (source-form source)))
+    (when (eq :compressed-evidence (getf descriptor :kind))
+      (let ((payload (getf descriptor :payload)))
+        (copy-raw (merge-pathnames payload source) payload :compressed-payload name)
+        (setf (getf (first *files*) :parent-payload-path)
+              (namestring (truename (merge-pathnames payload source))))))
+    (unless (equalp original (arcdocdb.evidence:read-evidence target))
+      (error "Record risolti differenti: ~A" name))
+    (arcdocdb.evidence:call-with-evidence-bytes source
+      (lambda (plain-source)
+        (arcdocdb.evidence:call-with-evidence-bytes target
+          (lambda (plain-copy)
+            (unless (same-bytes-p plain-source plain-copy)
+              (error "Payload espansi diversi: ~A" name))))))
+    (when (eql 1 (or (getf original :schema-version) (getf original :schema)))
+      (push (list :artifact name :kind role :source (namestring (truename source))
+                  :status (getf original :status) :process-artifact parent) *records*))
+    original))
+(defun require-command (source name)
+  (let ((data (copy-record source name :command-verification)))
+    (unless (and (eq :ok (getf data :status)) (eql 0 (getf data :exit-code))
+                 (eq :stable (getf data :source-consistency))
+                 (equalp (getf data :source-blobs-before) (getf data :source-blobs-after)))
+      (error "Comando non concluso/stabile: ~A" source))
+    data))
+(let* ((check (require-command "spikes/out/4000545800-command-48501-0/report.lisp" "check-core.lisp"))
+       (self (require-command "spikes/out/4000545861-command-50435-0/report.lisp" "foundation-self-test.lisp"))
+       (mutations (require-command "spikes/out/4000545861-command-50434-0/report.lisp" "inventory-mutations-processo.lisp"))
+       (stdout (getf check :stdout))
+       (copy-data nil) (worker-data nil) (mutation-data nil) (spikes nil))
+  (declare (ignore self mutations))
+  (unless (and (search "ok    ARCDOCDB:*VERSION* è una stringa" stdout)
+               (search "build e test: nessun avviso, tutti i controlli superati" stdout))
+    (error "Smoke o completamento assenti."))
+  (loop for directory in '("4000545800-command-48501-0" "4000545861-command-50435-0"
+                          "4000545861-command-50434-0")
+        for name in '("check-core-conservazione.lisp" "foundation-self-test-conservazione.lisp"
+                      "inventory-mutations-processo-conservazione.lisp")
+        do (copy-record (format nil "spikes/out/~A/conservazione.lisp" directory)
+                        name :evidence-finalization))
+  (loop for i from 1 to 10 for name = (format nil "SPK-~2,'0D.lisp" i)
+        for data = (copy-record (concatenate 'string "spikes/out/4000545886-check-51151-0/" name)
+                                name :spike-check "check-core.lisp")
+        do (push (list :artifact name :status (getf data :status)) spikes))
+  (let ((global (copy-record "spikes/out/4000545886-check-51151-0/report.lisp"
+                             "report.lisp" :spike-report "check-core.lisp")))
+    (unless (and (eq :complete (getf global :status)) (= 10 (length (getf global :runs))))
+      (error "Campagna spike non completa: ~S" (getf global :status))))
+  (copy-record "spikes/out/4000545886-check-51151-0/conservazione.lisp"
+               "conservazione.lisp" :evidence-finalization "check-core.lisp")
+  (setf copy-data (copy-record "spikes/out/4000545862-mutation-copy-self-test-50495/report.lisp"
+                              "self-test-copier-dati.lisp" :copier-self-test-output "foundation-self-test.lisp"))
+  (unless (and (eq :passed (getf copy-data :status)) (= 112 (length (getf copy-data :source-files)))
+               (getf copy-data :missing-source-rejected)) (error "Copier fixture invalida."))
+  (copy-raw "spikes/out/4000545862-mutation-copy-self-test-50495/arcdocdb.asd"
+            "self-test-copier/arcdocdb.asd.txt" :copied-asdf "foundation-self-test.lisp")
+  (setf worker-data (copy-record "spikes/out/4000545862-mutation-self-test-50495/report.lisp"
+                                "self-test-parallelo-dati.lisp" :parallel-self-test-output "foundation-self-test.lisp"))
+  (unless (and (= 5 (length (getf worker-data :results)))
+               (eql 9 (getf (fifth (getf worker-data :results)) :signal))
+               (eq :worker-error (getf (fifth (getf worker-data :results)) :result)))
+    (error "Segnale o raccolta worker non conservati."))
+  (copy-raw "spikes/out/4000545862-mutation-self-test-50495/worker-fixture.lisp"
+            "self-test-parallelo/worker-fixture.lisp.txt" :fixture-source "foundation-self-test.lisp")
+  (loop for i from 0 to 4 for source = (format nil "spikes/out/4000545862-mutation-self-test-50495/~D/test.log" i)
+        when (probe-file source) do
+          (copy-raw source (format nil "self-test-parallelo/~D/test.log" i) :worker-log "foundation-self-test.lisp"))
+  (setf mutation-data (copy-record "spikes/out/inventory-integrated-mutations/report.lisp"
+                                  "inventory-mutations-dati.lisp" :mutation-output "inventory-mutations-processo.lisp"))
+  (unless (and (eq :ok (getf mutation-data :status)) (eq :passed (getf mutation-data :baseline))
+               (eql 0 (getf mutation-data :baseline-exit-code)) (null (getf mutation-data :baseline-signal))
+               (= 8 (getf mutation-data :detected)) (= 8 (length (getf mutation-data :mutants)))
+               (= 4 (getf mutation-data :jobs))
+               (every (lambda (key) (eql 0 (getf mutation-data key)))
+                      '(:survived :compilation-failures :before-tests :worker-errors)))
+    (error "Campagna inventory non valida."))
+  (dolist (child '("baseline" "0" "1" "2" "3" "4" "5" "6" "7"))
+    (dolist (leaf '("test.log" "tools/mutation-isolated-build.lisp"))
+      (copy-raw (format nil "spikes/out/inventory-integrated-mutations/~A/~A" child leaf)
+                (format nil "inventory-integrated-mutations/~A/~A~A" child leaf
+                        (if (equal (pathname-type leaf) "lisp") ".txt" ""))
+                (if (string= leaf "test.log") :worker-log :runner-source)
+                "inventory-mutations-processo.lisp")))
+  (loop for i from 0 to 7 for source = (if (= i 7) "inventory-query.lisp" "inventory-build.lisp")
+        do (copy-raw (format nil "spikes/out/inventory-integrated-mutations/~D/src/recovery/~A" i source)
+                     (format nil "inventory-integrated-mutations/~D/~A.txt" i source)
+                     :mutated-source "inventory-mutations-processo.lisp"))
+  (copy-raw "spikes/out/inventory-integrated-mutations/baseline/arcdocdb.asd"
+            "inventory-integrated-mutations/baseline/arcdocdb.asd.txt" :baseline-asdf
+            "inventory-mutations-processo.lisp")
+  (copy-raw "tools/foundation-mutation.lisp" "foundation-mutation-source.lisp.txt" :tool-source
+            "foundation-self-test.lisp")
+  (copy-raw *load-truename* "raccolta-source.lisp.txt" :collector-source)
+  (save-data (list :schema-version 1 :kind :integration-evidence-summary :status :ok
+                   :method "metodo.lisp" :check-core "check-core.lisp"
+                   :source-consistency :stable :check-command '("make" "check-core")
+                   :counts '((:foundation 28) (:utf8 17) (:cbor-header 17) (:cbor-structure 24)
+                             (:csn 20) (:execution 66) (:storage 44) (:io 18) (:recovery 95) (:wal 48))
+                   :total-tests 377 :smoke :passed :build-completion :exact-line
+                   :spike-run "report.lisp" :spikes (nreverse spikes)
+                   :copier (list :raw-artifact "self-test-copier-dati.lisp" :status :passed
+                                 :source-files 112 :missing-source-rejected t
+                                 :parent-process-artifact "foundation-self-test.lisp")
+                   :parallel (list :raw-artifact "self-test-parallelo-dati.lisp"
+                                   :parent-process-artifact "foundation-self-test.lisp"
+                                   :original-status :absent :command-status :ok
+                                   :signal 9 :signal-exit 137 :signal-classification :worker-error
+                                   :missing-log '(:worker "launch-error" :reason :never-started))
+                   :mutations (list :raw-artifact "inventory-mutations-dati.lisp"
+                                    :parent-process-artifact "inventory-mutations-processo.lisp"
+                                    :baseline :passed :baseline-tests 13 :detected 8 :jobs 4
+                                    :survived 0 :compilation-failures 0 :before-tests 0 :worker-errors 0)
+                   :limits '(:no-product-rerun-by-collector :no-inventory-coverage-repetition
+                             :prior-coverage-denominators-unchanged :no-mcdc-proof
+                             :no-full-recovery-gate-qualification :no-worker-timeout))
+             "riepilogo.lisp")
+  (push '(:artifact "metodo.lisp" :kind :integration-method) *records*)
+  (push '(:artifact "riepilogo.lisp" :kind :integration-evidence-summary) *records*)
+  (save-data (list :schema-version 1 :kind :evidence-catalog :date "2026-10-09"
+                   :scope :inventory-integration :path-base (namestring *base*)
+                   :entries (nreverse *records*) :associated-raw-files (nreverse *files*)
+                   :limits '(:original-bytes-and-payload-names-preserved
+                             :resolved-payloads-byte-compared :no-automatic-gate-promotion))
+             "catalogo.lisp")
+  (write (list :status :ok :copied-files (length *files*) :catalog-entries (length *records*)))
+  (terpri))

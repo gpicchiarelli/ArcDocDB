@@ -21,6 +21,7 @@
                (:module "codec" :serial t
                 :components ((:file "package") (:file "utf8")
                              (:file "cbor-package") (:file "cbor-header")
+                             (:file "cbor-float-minimal") (:file "cbor-minimal")
                              (:file "cbor-space") (:file "cbor-scan-input")
                              (:file "cbor-scan-stack") (:file "cbor-scan-items")
                              (:file "cbor-scan")))
@@ -54,7 +55,9 @@
                              (:file "decisions-query")
                              (:file "manifest-package") (:file "manifest-types")
                              (:file "manifest-decode") (:file "manifest-fold")
-                             (:file "manifest-build") (:file "manifest-query"))))
+                             (:file "manifest-build") (:file "manifest-query")
+                             (:file "inventory-types") (:file "inventory-build")
+                             (:file "inventory-query"))))
   :in-order-to ((test-op (test-op "arcdocdb/tests"))))
 
 (defsystem "arcdocdb/tests"
@@ -72,6 +75,8 @@
                (:module "codec" :serial t
                 :components ((:file "support") (:file "utf8") (:file "threads")
                              (:file "cbor-support") (:file "cbor-header") (:file "cbor-threads")
+                             (:file "cbor-minimal-support") (:file "cbor-minimal")
+                             (:file "cbor-minimal-threads") (:file "cbor-minimal-edges")
                              (:file "cbor-structure-support") (:file "cbor-structure")
                              (:file "cbor-structure-threads")))
                (:module "csn" :serial t
@@ -91,7 +96,8 @@
                 :components ((:file "support") (:file "scan") (:file "corruption")
                              (:file "decisions-support") (:file "decisions")
                              (:file "decisions-audit") (:file "decisions-radix") (:file "manifest-support")
-                             (:file "manifest") (:file "manifest-audit")))
+                             (:file "manifest") (:file "manifest-audit")
+                             (:file "inventory-support") (:file "inventory")))
                (:module "wal" :serial t
                 :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
                              (:file "native") (:file "csn") (:file "csn-threads")))
@@ -102,6 +108,7 @@
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.utf8.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.cbor.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.cbor.minimal.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.cbor.structure.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.csn.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.execution.tests '#:run)

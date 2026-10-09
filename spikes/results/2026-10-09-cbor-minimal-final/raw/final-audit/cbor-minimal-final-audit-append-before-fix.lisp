@@ -1,0 +1,23 @@
+;;;; Supplemento dell'indice derivato: conserva il secondo audit senza riscrivere originali.
+(require :asdf)
+;; Il collector esegue prima --audit sulla destinazione: stessi primitivi gia verificati.
+(load "spikes/out/cbor-minimal-collection/collect.lisp")
+(in-package #:cbor-minimal.collection)
+(let* ((destination (second (uiop:command-line-arguments)))
+       (root (truename (uiop:ensure-directory-pathname destination)))
+       (index-path (merge-pathnames "archive-index.lisp" root))
+       (index (read-one index-path))
+       (sources (append (sort (directory "spikes/out/cbor-minimal-final-audit*.*")
+                              #'string< :key #'namestring)
+                        (list (truename "spikes/out/cbor-minimal-append-audit.lisp")
+                              (truename "spikes/out/cbor-minimal-final-manifest-writer.lisp"))))
+       (entries nil))
+  (unless sources (error "Nessun audit finale da conservare."))
+  (dolist (source sources)
+    (push (copy-verified source
+                         (merge-pathnames (format nil "raw/final-audit/~A" (file-namestring source)) root)
+                         root)
+          entries))
+  (setf (getf index :files) (append (getf index :files) (nreverse entries)))
+  (replace-index index-path index)
+  (audit destination))

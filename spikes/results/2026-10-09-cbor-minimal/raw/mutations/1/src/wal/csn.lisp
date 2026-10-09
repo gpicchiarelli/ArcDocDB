@@ -1,0 +1,128 @@
+;;; OWNER: writer logico del lotto; esiti I/O osservati solo dopo handoff sincronizzato.
+;;; SHARED: registro CSN di Archivio, solo alla chiusura e alla risoluzione del lotto.
+;;; Il ponte non possiede indice, scheduler, stato di Serie o conferme al client.
+(in-package #:arcdocdb.wal)
+(declaim (optimize (safety 3) (speed 2) (debug 2)))
+
+;;; REQ: REQ-WAL-005 REQ-AFF-008 REQ-AFF-001
+(declaim (ftype (function (lotto log-io file-offset file-offset) null) verifica-file-csn))
+(defun verifica-file-csn (lotto log file-start durable)
+  "Pre: chiusura del lotto validata, stato file osservato dal writer dopo handoff.
+Post: frontiere e budget pianificati ammessi, file append aperto; nessuna syscall.
+INVALID-ARGUMENT per offset, RESOURCE-EXHAUSTED per budget, IO-FAULT per file indisponibile."
+  (let* ((file (log-io-file log)) (written (posizione-scritta file))
+         (size (+ (lotto-used lotto) +seal-total+)))
+    (unless (<= written file-start)
+      (error 'invalid-argument :reason :lotto-written-offset))
+    (verifica-capienza-append file (+ (- file-start written) size) size)
+    (unless (<= durable (posizione-durevole file))
+      (error 'invalid-argument :reason :lotto-future-durable)))
+  nil)
+
+;;; REQ: REQ-WAL-005 REQ-MVC-008 REQ-AFF-004
+(declaim (ftype (function (lotto log-io file-offset file-offset) null) verifica-log-csn))
+(defun verifica-log-csn (lotto log file-start durable)
+  "Pre: writer esclusivo e log osservato dopo handoff. Post: segmento non vuoto, log coerente.
+INVALID-ARGUMENT per identità/frontiera/associazione; IO-FAULT per log guasto, prima del CSN."
+  (verifica-chiusura-lotto lotto file-start durable)
+  (when (lotto-csn-registry lotto) (error 'invalid-argument :reason :lotto-csn-bound))
+  (unless (and (eq (lotto-kind lotto) :segment) (plusp (lotto-count lotto)))
+    (error 'invalid-argument :reason :lotto-csn-content))
+  (unless (and (eq (log-io-kind log) :segment)
+               (= (lotto-file-id lotto) (log-io-file-id log))
+               (= (lotto-version lotto) (log-io-version log)))
+    (error 'invalid-argument :reason :lotto-csn-log))
+  (unless (eq (log-io-state log) :open)
+    (error 'io-fault :reason :log-faulted :operation :wal))
+  (verifica-file-csn lotto log file-start durable)
+  nil)
+
+;;; REQ: REQ-WAL-005 REQ-MVC-008 REQ-AFF-008
+(declaim (ftype (function (lotto registro-csn log-io file-offset file-offset)
+                         (values index u32 u32 &optional)) sigilla-lotto-con-csn))
+(defun sigilla-lotto-con-csn (lotto registry log file-start durable)
+  "Pre: contenuto fissato dal writer; registro dell'Archivio e log esclusivo della Serie.
+Post: CSN registrato conservato nel lotto, record ordinari/SEAL codificati in due u32.
+SEAL solo preparato; write/flush persistono il punto atomico. Rifiuti pre-CSN senza mutazione.
+RESOURCE-EXHAUSTED pieno/busy/esaurito lascia aperto; errore dopo assegnazione richiede fail-stop."
+  (verifica-log-csn lotto log file-start durable)
+  (multiple-value-bind (slot high low) (prendi-csn registry)
+    (setf (lotto-csn-registry lotto) registry (lotto-csn-log lotto) log
+          (lotto-csn-slot lotto) slot (lotto-csn-high lotto) high (lotto-csn-low lotto) low
+          (lotto-csn-pending lotto) t)
+    (values (sigilla-lotto-parole lotto high low file-start durable) high low)))
+
+;;; REQ: REQ-MVC-008 REQ-AFF-004
+(declaim (ftype (function (lotto registro-csn index u32 u32) null) esigi-identita-csn-lotto))
+(defun esigi-identita-csn-lotto (lotto registry slot high low)
+  "Pre: evento sincronizzato con identità conservata alla chiusura. Post: token corrente esatto.
+INVALID-ARGUMENT per evento vecchio/altro Archivio; nessuna modifica o credito liberato."
+  (esigi-csn-pendente lotto)
+  (unless (and (eq (lotto-csn-registry lotto) registry) (= (lotto-csn-slot lotto) slot)
+               (= (lotto-csn-high lotto) high) (= (lotto-csn-low lotto) low))
+    (error 'invalid-argument :reason :lotto-csn-stale))
+  nil)
+
+;;; REQ: REQ-MVC-008 REQ-AFF-004
+(declaim (ftype (function (lotto) null) esigi-csn-pendente))
+(defun esigi-csn-pendente (lotto)
+  "Pre: lotto posseduto dopo handoff. Post: obbligo di risoluzione ancora conservato.
+INVALID-ARGUMENT per libero/già risolto; INVARIANT-VIOLATION per associazione incompleta."
+  (unless (lotto-csn-pending lotto)
+    (error 'invalid-argument :reason :lotto-csn-not-pending))
+  (unless (and (lotto-csn-registry lotto) (lotto-csn-log lotto)
+               (or (plusp (lotto-csn-high lotto)) (plusp (lotto-csn-low lotto))))
+    (error 'invariant-violation :reason :lotto-csn-token))
+  nil)
+
+;;; REQ: REQ-MVC-008 REQ-AFF-004
+(declaim (ftype (function (lotto) (values u32 u32 &optional)) risolvi-token-lotto))
+(defun risolvi-token-lotto (lotto)
+  "Pre: effetto pubblicato o annullamento valido e token pendente verificati dal ponte.
+Post: credito liberato e lotto risolto. Busy conserva l'obbligo; token errato richiede fail-stop.
+Un'interruzione inattesa durante il passaggio registro/lotto richiede fail-stop, non un retry."
+  (esigi-csn-pendente lotto)
+  (multiple-value-bind (high low)
+      (risolvi-csn (lotto-csn-registry lotto) (lotto-csn-slot lotto)
+                   (lotto-csn-high lotto) (lotto-csn-low lotto))
+    (setf (lotto-csn-pending lotto) nil)
+    (values high low)))
+
+;;; REQ: REQ-WAL-006 REQ-MVC-008 REQ-AFF-001
+(declaim (ftype (function (lotto registro-csn index u32 u32 (member :async :group :strong))
+                         (values u32 u32 &optional)) risolvi-lotto-pubblicato))
+(defun risolvi-lotto-pubblicato (lotto registry slot high low level)
+  "Pre: indice già pubblicato atomicamente dal writer, ordine di Serie rispettato, handoff concluso.
+Post: CSN risolto se byte coperti e log sano; non pubblica l'indice e non conferma al client.
+INVALID-ARGUMENT per copertura/token; IO-FAULT per salute; busy conserva il token per riprogrammare."
+  (esigi-identita-csn-lotto lotto registry slot high low)
+  (unless (eq (log-io-state (lotto-csn-log lotto)) :open)
+    (error 'io-fault :reason :log-faulted :operation :wal))
+  (unless (coperto-p lotto level) (error 'invalid-argument :reason :lotto-not-covered))
+  (risolvi-token-lotto lotto))
+
+;;; REQ: REQ-WAL-006 REQ-MVC-008 REQ-AFF-001
+(declaim (ftype (function (lotto registro-csn index u32 u32) (values u32 u32 &optional)) annulla-csn-lotto))
+(defun annulla-csn-lotto (lotto registry slot high low)
+  "Pre: controller ha portato la Serie in FAULTED e ritirato/completato ogni consumatore I/O.
+Post: solo un log faulted consente l'annullamento del CSN pendente; nessun dato eliminato.
+INVALID-ARGUMENT per log sano/token; busy mantiene il credito. Non riapre il buffer guasto."
+  (esigi-identita-csn-lotto lotto registry slot high low)
+  (unless (eq (log-io-state (lotto-csn-log lotto)) :faulted)
+    (error 'invalid-argument :reason :lotto-log-not-faulted))
+  (risolvi-token-lotto lotto))
+
+;;; REQ: REQ-MVC-008 REQ-WAL-005
+(declaim (ftype (function (lotto) (values (member :libero :pendente :risolto) &optional)) stato-csn-lotto)
+         (ftype (function (lotto) (values index u32 u32 &optional)) leggi-csn-lotto))
+(defun stato-csn-lotto (lotto)
+  "Pre: capacità del writer/evento sincronizzato. Post: associazione CSN locale, senza mutex.
+Non osserva H né salute del log; nessuna modifica o conferma."
+  (if (lotto-csn-registry lotto) (if (lotto-csn-pending lotto) :pendente :risolto) :libero))
+
+;;; REQ: REQ-MVC-008 REQ-WAL-005
+(defun leggi-csn-lotto (lotto)
+  "Pre: lotto posseduto, handoff concluso. Post: slot e parole CSN conservati anche dopo risoluzione.
+INVALID-ARGUMENT senza associazione; non costruisce un u64 e non osserva il registro condiviso."
+  (unless (lotto-csn-registry lotto) (error 'invalid-argument :reason :lotto-csn-free))
+  (values (lotto-csn-slot lotto) (lotto-csn-high lotto) (lotto-csn-low lotto)))
