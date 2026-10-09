@@ -7,6 +7,10 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Ricostruzione in memoria del manifest dal prefisso sigillato di `control.log`:
+  ACTIVE, CLOSED con esiti, rimozioni esplicite e limite degli ID. Workspace
+  indipendenti per Serie; nessuna riconciliazione o scrittura dei file.
+
 - Verifica in memoria dei segmenti compattati CLOSED v1/v2: identità, CRC,
   soli PUT/TOMBSTONE ordinari, limite valido autorevole e budget byte/record.
   Conteggi fisici restituiti dopo il controllo integrale; 15 test indipendenti,
