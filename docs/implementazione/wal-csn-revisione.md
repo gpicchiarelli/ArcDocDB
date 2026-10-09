@@ -314,11 +314,11 @@ certificazione umana. Le prove saranno riportate nei risultati della campagna.
 
 I [risultati](wal-csn-risultati.md) registrano build e test integrati, C4,
 mutanti, copertura e misure heap. Il ponte ha 40/40 rami coperti nel rapporto
-SB-COVER finale; non è una dichiarazione MC/DC. Due campagne osservano zero
-heap nelle venti finestre seriali di successo e rilevano il controllo positivo.
+SB-COVER finale; non è una dichiarazione MC/DC. Tre campagne osservano zero
+heap nelle trenta finestre seriali di successo e rilevano il controllo positivo.
 Le prime prove fallite e i fix dei soli strumenti/test sono conservati.
 
-La verifica complessiva sul codice integrato include 340 test e due smoke,
+La verifica complessiva sul codice integrato include 364 test e due smoke,
 trace, link, lint, evidenze e dieci spike. Questo riscontro del parent completa
 le prove locali delle voci 5 e 9 e la verifica dinamica associata a 2/3/10;
 non estende la seconda lettura statica agli strumenti modificati. O1/O2 e

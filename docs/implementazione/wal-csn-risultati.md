@@ -1,17 +1,20 @@
 # WAL e CSN: risultati della campagna locale
 
-Data: 2026-10-09. Codice integrato `9a5af37699dbf90417ff9f96204a7a79f12e1df2`;
-include il ricircolo dei writer arrivato su main con `75ada9d`.
+Data: 2026-10-09. Codice integrato `ded5b1f8ed591fb893405e5241341879f91ccb0f`;
+include il ricircolo dei writer arrivato su main con `75ada9d` e la scansione
+strutturale CBOR integrata con `e4fa110`. Il prodotto WAL–CSN conserva le
+impronte della revisione indipendente.
 [Contratto](wal-csn.md), [metodo preregistrato](wal-csn-metodo.md),
 [decisioni](wal-csn-decisioni.md), [due letture C1](wal-csn-revisione.md).
 I requisiti dell'intero motore conservano lo stato progettato.
 
 ## Correttezza e controlli
 
-La verifica integrata passa **340 test più due smoke test**, compilazione senza
+La verifica integrata passa **364 test più due smoke test**, compilazione senza
 warning/style-warning, lint e autoverifica, trace, link, conservazione delle
 evidenze e i dieci spike di correttezza. Ripartizione: 28 fondazioni, 17 UTF-8,
-17 CBOR, 20 CSN, 66 writer, 44 storage, 18 I/O, 82 recovery e 48 WAL.
+17 header CBOR, 24 struttura CBOR, 20 CSN, 66 writer, 44 storage, 18 I/O,
+82 recovery e 48 WAL.
 
 Il nuovo contributo comprende due test del codec a parole, 25 test del ponte
 e quattro test di fault/concorrenza. Gli oracoli includono packing bytewise e
@@ -50,30 +53,30 @@ CSN e SEAL, gruppo da un lotto, append/flush simulati, pubblicazione CAS
 di un descrittore preallocato, risoluzione e riuso. Totale 160 byte per ciclo.
 Registro K=256; file-id u64 massimo. Gli oracoli restano attivi nel ciclo.
 
-Due invocazioni riuscite sono conservate. Ciascuna esegue dieci finestre
-seriali e nove repliche parallele. **Tutte le venti finestre seriali osservano
+Tre invocazioni riuscite sono conservate. Ciascuna esegue dieci finestre
+seriali e nove repliche parallele. **Tutte le trenta finestre seriali osservano
 zero byte heap**. Il controllo vuoto osserva zero; quello positivo della
 campagna finale osserva 16.777.472 byte per sedici array vivi da 1 MiB.
 Tempo invalido, heap nonzero e metrica mancante sono rifiutati dall'autoverifica.
 Le metriche sono verificate anche dopo salvataggio e rilettura.
 
-Mediane della seconda invocazione, sul checkout integrato:
+Mediane della terza invocazione, sul checkout integrato con struttura CBOR:
 
 | Scenario | Repliche | Cicli/s |
 |---|---:|---:|
-| Base CSN zero | 5 | 470.799 |
-| Base alta con carry al sedicesimo ciclo | 5 | 470.699 |
-| Un worker, registro/log privati | 3 | 471.576 |
-| Due worker, registri/log indipendenti | 3 | 923.830 |
-| Quattro worker, registri/log indipendenti | 3 | 1.731.977 |
+| Base CSN zero | 5 | 470.289 |
+| Base alta con carry al sedicesimo ciclo | 5 | 471.109 |
+| Un worker, registro/log privati | 3 | 470.688 |
+| Due worker, registri/log indipendenti | 3 | 907.050 |
+| Quattro worker, registri/log indipendenti | 3 | 1.719.321 |
 
-Ogni finestra esegue 20.000 cicli; le seriali finali durano almeno 42.281 tick
+Ogni finestra esegue 20.000 cicli; le seriali finali durano almeno 42.363 tick
 con timer da 1.000.000 tick/s. Busy, full e retry sono zero nel parallelo.
 La contesa di un Archivio condiviso è verificata dal test separato, non da
 queste misure di scalabilità fra Archivi.
 
 L'heap parallelo è osservazionale e globale al processo, con start/join:
-65.520 byte nelle tre repliche a un worker, 131.040/131.040/0 a due e
+65.520 byte nelle tre repliche a un worker, 131.040 nelle tre a due e
 262.080 nelle tre a quattro. Le finestre dei worker si sovrappongono e non
 si sommano. Questi byte non sono attribuiti al singolo ciclo o worker.
 Il gate zero heap riguarda le finestre seriali di successo. Errori e contesa
