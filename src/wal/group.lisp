@@ -13,6 +13,23 @@ INVALID-ARGUMENT per ciclo errato; IO-FAULT dopo un guasto del log."
     (error 'io-fault :reason :log-faulted :operation :wal))
   nil)
 
+;;; REQ: REQ-WAL-002 REQ-WAL-005 REQ-MVC-008
+(declaim (ftype (function (gruppo lotto) null) verifica-identita-lotto))
+(defun verifica-identita-lotto (group lotto)
+  "Pre: gruppo building, lotto sealed. Post: stesso log e layout, posizione contigua.
+INVALID-ARGUMENT prima di acquisire il lotto; un token del ponte resta legato al log originale."
+  (let ((log (gruppo-log group)) (count (gruppo-count group)))
+    (unless (and (eq (lotto-kind lotto) (log-io-kind log))
+                 (= (lotto-file-id lotto) (log-io-file-id log))
+                 (= (lotto-version lotto) (log-io-version log)))
+      (error 'invalid-argument :reason :group-identity-or-order))
+    (when (and (lotto-csn-log lotto) (not (eq (lotto-csn-log lotto) log)))
+      (error 'invalid-argument :reason :lotto-csn-log))
+    (unless (or (zerop count)
+                (= (lotto-start lotto) (+ (gruppo-start group) (gruppo-bytes group))))
+      (error 'invalid-argument :reason :group-identity-or-order)))
+  nil)
+
 ;;; REQ: REQ-WAL-002 REQ-WAL-005 REQ-AFF-008
 (declaim (ftype (function (gruppo lotto) index) aggiungi-lotto))
 (defun aggiungi-lotto (group lotto)
@@ -20,12 +37,8 @@ INVALID-ARGUMENT per ciclo errato; IO-FAULT dopo un guasto del log."
 Post: lotto contiguo e budget rispettati; INVALID-ARGUMENT/RESOURCE-EXHAUSTED senza mutazione."
   (esigi-gruppo group :building)
   (esigi-lotto lotto :sealed)
-  (let ((log (gruppo-log group)) (count (gruppo-count group)))
-    (unless (and (eq (lotto-kind lotto) (log-io-kind log))
-                 (= (lotto-file-id lotto) (log-io-file-id log))
-                 (= (lotto-version lotto) (log-io-version log))
-                 (or (zerop count) (= (lotto-start lotto) (+ (gruppo-start group) (gruppo-bytes group)))))
-      (error 'invalid-argument :reason :group-identity-or-order))
+  (verifica-identita-lotto group lotto)
+  (let ((count (gruppo-count group)))
     (when (or (= count (length (gruppo-slots group)))
               (> (lotto-used lotto) (- (gruppo-max-bytes group) (gruppo-bytes group))))
       (error 'resource-exhausted :reason :group-capacity))

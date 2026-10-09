@@ -10,6 +10,16 @@
 (defconstant +max-group-lots+ 1024)
 (deftype log-kind () '(member :segment :control :multiserie))
 
+;;; REQ: REQ-WAL-002 REQ-AFF-001
+(defstruct (log-io (:constructor %make-log-io (file kind file-id version)) (:copier nil))
+  "Pre: capacità append posseduta esclusivamente dal log. Post: log aperto.
+Un gruppo in volo tramite CAS; nessun lock o contatore globale."
+  (file nil :type file-io :read-only t)
+  (kind :segment :type log-kind :read-only t) (file-id 0 :type u64 :read-only t)
+  (version 2 :type (integer 1 2) :read-only t)
+  (state :open :type (member :open :faulted))
+  (active nil :type t))
+
 ;;; REQ: REQ-WAL-005 REQ-AFF-008
 (defstruct (lotto (:constructor %make-lotto (kind file-id version buffer offsets seal-value empty-key))
                  (:copier nil))
@@ -24,17 +34,11 @@ Il writer è proprietario fino a chiusura; dopo, niente mutazione fino al riuso 
   (empty-key #() :type octets :read-only t)
   (used 0 :type index) (count 0 :type u32) (start 0 :type file-offset)
   (owner nil :type t)
+  (csn-registry nil :type (or null registro-csn))
+  (csn-log nil :type (or null log-io))
+  (csn-slot 0 :type index) (csn-high 0 :type u32) (csn-low 0 :type u32)
+  (csn-pending nil :type boolean)
   (state :open :type (member :open :sealed :written :durable :faulted)))
-
-;;; REQ: REQ-WAL-002 REQ-AFF-001
-(defstruct (log-io (:constructor %make-log-io (file kind file-id version)) (:copier nil))
-  "Pre: capacità append posseduta esclusivamente dal log. Post: log aperto.
-Un gruppo in volo tramite CAS; nessun lock o contatore globale."
-  (file nil :type file-io :read-only t)
-  (kind :segment :type log-kind :read-only t) (file-id 0 :type u64 :read-only t)
-  (version 2 :type (integer 1 2) :read-only t)
-  (state :open :type (member :open :faulted))
-  (active nil :type t))
 
 ;;; REQ: REQ-WAL-002 REQ-AFF-008
 (defstruct (gruppo (:constructor %make-gruppo (log slots max-bytes)) (:copier nil))
