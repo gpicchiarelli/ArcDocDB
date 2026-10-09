@@ -6,7 +6,7 @@
   (:import-from #:arcdocdb.binary #:u64)
   (:import-from #:arcdocdb.conditions #:invalid-argument #:resource-exhausted #:invariant-violation)
   (:export #:registro-epoche #:crea-registro-epoche #:lettore-epoca #:contesto-epoca
-           #:entra-epoca #:esci-epoca
+           #:entra-epoca #:esci-epoca #:epoca-attiva-p
            #:ritiro #:prenota-ritiro #:annulla-ritiro #:pubblica-ritiro
            #:aggiorna-soglia-reclaim #:acquisisci-reclaim #:completa-reclaim
            #:leggi-risorsa-ritiro #:leggi-ritiro #:leggi-registro-epoche))

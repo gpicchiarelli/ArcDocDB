@@ -127,9 +127,10 @@ La validazione rifiuta un contesto scaduto per tempo anche se il timer non lo ha
 ancora visitato; fino a quella visita il pin è conservativo. Terminazione e
 scadenza **non liberano i riferimenti fisici** dei reader già ammessi:
 [EBR](../adr/0016-epoch-based-reclamation.md) deve proteggerli fino al termine
-del compito: le [primitive di epoca](epoche-e-reclaim.md) ora espongono ingresso,
-uscita e frontiera per i segmenti, mentre il collegamento dei compiti resta da
-completare. Il contesto si riusa solo quando tutti i vecchi consumatori sono
+del compito: le [primitive di epoca](epoche-e-reclaim.md) espongono ingresso,
+uscita e frontiera per i segmenti; il [contesto di lettura](compiti-lettura.md)
+collega ingresso, controlli snapshot e cleanup. Indice/cache e confine dei pool
+restano da integrare. Il contesto si riusa solo quando tutti i vecchi consumatori sono
 terminati. Questo modulo non elimina segmenti o strutture dell'indice.
 
 ## Guasti e stato della qualifica

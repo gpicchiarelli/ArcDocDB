@@ -3,6 +3,14 @@
 (in-package #:arcdocdb.mvcc)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 
+;;; REQ: REQ-MVC-005
+(declaim (inline snapshot-del-registro-p))
+(declaim (ftype (function (contesto-snapshot registro-snapshot) boolean) snapshot-del-registro-p))
+(defun snapshot-del-registro-p (context registry)
+  "Pre: oggetti costruiti dai rispettivi controller. Post: identità del registro, senza mutex.
+Non verifica stato, generazione o scadenza e non autorizza la lettura dello snapshot."
+  (eq (contesto-snapshot-registry context) registry))
+
 ;;; REQ: REQ-MVC-007 REQ-AFF-004
 (declaim (ftype (function (registro-snapshot keyword) nil) guasto-lettura-snapshot))
 (defun guasto-lettura-snapshot (registry reason)
@@ -54,6 +62,7 @@ Identità cambiata/fine/scadenza: SNAPSHOT-TOO-OLD. Attesa: INVALID-ARGUMENT o t
             (t (guasto-lettura-snapshot registry :snapshot-slot-state))))))
 
 ;;; REQ: REQ-MVC-004 REQ-MVC-005 REQ-AFF-008
+(declaim (inline verifica-snapshot-in-buffer))
 (declaim (ftype (function (contesto-snapshot u64 u64 csn-words integer) null)
                 verifica-snapshot-in-buffer))
 (defun verifica-snapshot-in-buffer (context expected-generation now result result-index)

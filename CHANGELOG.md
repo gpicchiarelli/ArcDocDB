@@ -7,6 +7,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Contesto di lettura preallocato per worker: ingresso EBR a tentativo singolo,
+  snapshot controllato prima e dopo il lookup, anche sul miss, e cleanup del
+  pin prima della migrazione. Collegato ai registri CSN/snapshot/epoche;
+  indice, cache e pool restano da integrare, qualifica concorrente aperta.
+
 - Dominio EBR per Archivio: annunci dei worker distanti 128 byte, ingresso
   senza mutex a tentativo singolo, ticket preallocati e crediti di epoca prima
   dello swap. Frontiera condivisa da più ritiri e claim esclusivo del reclaim;

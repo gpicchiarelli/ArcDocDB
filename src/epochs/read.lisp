@@ -3,6 +3,16 @@
 (in-package #:arcdocdb.epochs)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 
+;;; REQ: REQ-CMP-005 REQ-CMP-007
+(declaim (inline epoca-attiva-p))
+(declaim (ftype (function (lettore-epoca) boolean) epoca-attiva-p))
+(defun epoca-attiva-p (reader)
+  "Pre: solo worker proprietario o controller dopo join; nessuna lettura della risorsa.
+Post: T se lo slot proprio è annunciato, anche dopo FAULTED. Serve al cleanup del compito.
+Non autorizza dereference, ingresso di altri worker o cancellazione di un reader vivo."
+  (not (zerop (aref (registro-epoche-announcements (lettore-epoca-registry reader))
+                   (lettore-epoca-offset reader)))))
+
 ;;; REQ: REQ-CMP-005 REQ-CMP-007 REQ-AFF-008
 (declaim (inline entra-epoca esci-epoca))
 (declaim (ftype (function (lettore-epoca) boolean) entra-epoca))

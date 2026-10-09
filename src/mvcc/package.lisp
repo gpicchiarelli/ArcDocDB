@@ -10,5 +10,5 @@
            #:riserva-csn #:concludi-csn #:leggi-orizzonte #:orizzonte-raggiunto-p
            #:registro-snapshot #:crea-registro-snapshot #:contesto-snapshot #:crea-contesto-snapshot
            #:registra-snapshot #:attiva-snapshot #:termina-snapshot #:scadi-snapshot
-           #:verifica-snapshot #:verifica-snapshot-in-buffer
+           #:verifica-snapshot #:verifica-snapshot-in-buffer #:snapshot-del-registro-p
            #:soglia-snapshot #:deve-trattenere-p #:leggi-registro-snapshot))

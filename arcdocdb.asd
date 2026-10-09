@@ -43,6 +43,9 @@
                (:module "epochs" :serial t
                 :components ((:file "package") (:file "types") (:file "core")
                              (:file "read") (:file "retire") (:file "reclaim")))
+               (:module "read" :serial t
+                :components ((:file "package") (:file "types") (:file "core")
+                             (:file "task")))
                (:module "recovery"
                 :serial t
                 :components ((:file "package") (:file "scan")

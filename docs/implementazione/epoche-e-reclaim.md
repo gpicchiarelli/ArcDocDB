@@ -51,9 +51,12 @@ deadline della richiesta. Il modulo non attende, non fa retry interno e non
 mantiene una sezione aperta durante la riaccodatura. Una regressione di `E`
 produce fail-stop; zero non è mai un'epoca corrente valida.
 
-Dopo `T`, il chiamante protegge il corpo con `unwind-protect` e richiama
-`esci-epoca` dopo l'ultimo accesso. L'uscita esegue una barriera completa prima
-di pubblicare zero. È consentita anche dopo `FAULTED`, per il cleanup del worker.
+Il [contesto di lettura](compiti-lettura.md) installa il cleanup del compito
+prima dell'ingresso, ammette il lookup solo dopo `T` e richiama `esci-epoca`
+dopo l'ultimo accesso. `epoca-attiva-p`, usato dal solo proprietario, copre
+anche l'interruzione fra conferma e ritorno di `entra-epoca`; non autorizza
+una dereference. L'uscita esegue una barriera completa prima di pubblicare
+zero. È consentita anche dopo `FAULTED`, per il cleanup del worker.
 Ingresso annidato e uscita da slot inattivo sono `invalid-argument`.
 
 ```text
@@ -156,10 +159,11 @@ dei reader: l'I/O di eliminazione richiede anche la prova della rimozione dal
 manifest ([REQ-AFF-018](../tracciabilita/matrice.md)) e un compito del pool di I/O.
 Il registro non chiude descrittori e non elimina file.
 
-La perdita di un worker o un'interruzione tra ammissione e consegna al chiamante
-può lasciare un pin conservativo. Il confine del worker deve terminare il
-compito e fare cleanup; non si può dichiarare inattivo un thread che potrebbe
-ancora leggere. Monitoraggio, join e gestione di questi guasti sono da integrare.
+La perdita di un worker può lasciare un pin conservativo. Il contesto di
+lettura dispone ora del cleanup fra ammissione e consegna al chiamante;
+il confine del worker deve installarlo prima dell'ingresso e terminare il
+compito. Non si può dichiarare inattivo un thread che potrebbe ancora
+leggere. Monitoraggio, join e gestione di questi guasti sono da integrare.
 
 ## Tracciabilità e qualifica
 
