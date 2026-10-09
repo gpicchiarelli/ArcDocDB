@@ -1,0 +1,74 @@
+(require :asdf)
+(let ((*package* (find-package :cl-user)) (*read-eval* nil))
+ (with-open-file (s "/tmp/collect-cbor-header-evidence.lisp")
+  (loop with eof = (gensym) for f = (read s nil eof) until (eq f eof)
+    unless (and (consp f) (null (cdr f)) (symbolp (car f))
+                (string= (symbol-name (car f)) "MAIN")) do (eval f))))
+(in-package :writer-queue.evidence)
+(defun save-config (p datum)
+ (with-open-file (s p :direction :output :if-exists :error)
+  (let ((*print-readably* t)) (write datum :stream s :pretty t) (terpri s))))
+(load "tools/evidence-storage.lisp")
+(let* ((wrapper-path "spikes/out/4000521405-command-21133-0/report.lisp")
+       (wrapper (read-data wrapper-path))
+       (master-path (car (last (sort (directory "spikes/out/*-check-*/report.lisp")
+                                    #'string< :key #'namestring))))
+       (master (arcdocdb.evidence:read-evidence master-path))
+       (runs (getf master :runs))
+       (frozen '(("src/codec/cbor-package.lisp" "d5f72309f3eca0a719507d257a635e5dd680013a")
+                 ("src/codec/cbor-header.lisp" "db635a50678f2712ec9516be335717ea254d4d09")
+                 ("tests/codec/cbor-support.lisp" "172c4a335b2d504f785b2036532346a24ccf1378")
+                 ("tests/codec/cbor-header.lisp" "a1541916590304adccc2092c226ef3be9c644168")
+                 ("tests/codec/cbor-threads.lisp" "720d80c6dd5a962dc724835c1421635ba289b7ef"))))
+ (assert (and (eq :ok (getf wrapper :status)) (zerop (getf wrapper :exit-code))
+              (eq :stable (getf wrapper :source-consistency))))
+ (assert (eq :complete (getf master :status))) (assert (= 10 (length runs)))
+ (assert (every (lambda (r) (and (member (getf r :status) '(:ok :pass))
+                                (zerop (getf r :exit-code))
+                                (eq :stable (getf r :source-consistency)))) runs))
+ (dolist (f frozen)
+  (let ((hash (string-trim '(#\Space #\Newline #\Return)
+               (uiop:run-program (list "git" "hash-object" (first f)) :output :string))))
+   (assert (string= hash (second f)))
+   (dolist (scope '(:source-blobs-before :source-blobs-after))
+    (let ((blob (find (first f) (getf wrapper scope) :key (lambda (b) (getf b :path)) :test #'string=)))
+     (assert (and blob (string= hash (getf blob :git-blob))))))))
+ (let ((descriptor (copy-list (read-data master-path))))
+  (assert (and (eq :compressed-evidence (getf descriptor :kind))
+               (string= "report.lisp.gz" (getf descriptor :payload))))
+  (setf (getf descriptor :payload) "manifest-integration-report.lisp.gz")
+  (if (probe-file "/tmp/cbor-header-manifest-master-descriptor.lisp")
+      (assert (equalp descriptor (read-data "/tmp/cbor-header-manifest-master-descriptor.lisp")))
+      (save-config "/tmp/cbor-header-manifest-master-descriptor.lisp" descriptor)))
+ (save-config "/tmp/cbor-header-manifest-integration-audit.lisp"
+  (list :schema-version 1 :kind :manifest-cbor-integration-audit :formats nil :status :ok
+        :statement-source "root: verifica integrazione su fd96fb3, reader protetto e cinque blob congelati"
+        :total-module-tests 257 :module-tests '(26 17 17 34 44 18 82 19)
+        :upstream "fd96fb3145f593f31552de26a8fd93478b69fc8f"
+        :rebased-commit "12a36ba53da26187724ac773ea9bf3c74d39710a"
+        :wrapper wrapper-path :source-consistency :stable :frozen-blobs frozen
+        :master (namestring master-path) :resolved-master-status :complete
+        :publication '(:derived-descriptor "manifest-integration-spikes.lisp"
+                      :changed-field :payload :new-leaf "manifest-integration-report.lisp.gz"
+                      :original-descriptor-and-payload "manifest-integration-master/"
+                      :gzip-bytewise-copied-twice t :other-descriptor-fields-preserved t)
+        :runs (mapcar (lambda (r) (list :id (getf r :id) :status (getf r :status)
+                                       :exit-code (getf r :exit-code) :source-consistency (getf r :source-consistency))) runs)
+        :limits '(:kernel-and-tests-unchanged :original-campaigns-kept-on-original-base
+                  :integration-full-check-only :no-new-heap-or-mutation-claim
+                  :read-eval-disabled :single-form-eof :no-engine-release-qualification)))
+ (save-config "/tmp/cbor-evidence-integration-config.lisp"
+  (list :schema-version 1 :repo-root (namestring (truename "./")) :date "2026-10-09"
+        :path-base "spikes/results/2026-10-09-cbor-header/" :mode :append
+        :catalog-history-artifact "catalogo-prima-manifest.lisp" :pending nil
+        :process-reports (list (list :source wrapper-path :artifact "manifest-integration-check.lisp" :role :integration-verification))
+        :data-artifacts (list (list :source "/tmp/cbor-header-manifest-master-descriptor.lisp" :artifact "manifest-integration-spikes.lisp" :role :derived-compressed-spikes-master)
+                              (list :source "/tmp/cbor-header-manifest-integration-audit.lisp" :artifact "manifest-integration-audit.lisp" :role :integration-audit)
+                              (list :source "/tmp/cbor-header-integration-collector-attempt.lisp" :artifact "manifest-integration-collector-attempt.lisp" :role :failed-audit-tool-attempt))
+        :raw-files (list (list :source "/tmp/cbor-integration-data-first.lisp" :artifact "manifest-integration-audit-first-code.txt" :role :failed-audit-tool-code)
+                         (list :source (namestring master-path) :artifact "manifest-integration-master/report.lisp" :role :original-compressed-master-descriptor)
+                         (list :source (namestring (merge-pathnames "report.lisp.gz" (uiop:pathname-directory-pathname master-path)))
+                               :artifact "manifest-integration-report.lisp.gz" :role :compressed-master-payload)
+                         (list :source (namestring (merge-pathnames "report.lisp.gz" (uiop:pathname-directory-pathname master-path)))
+                              :artifact "manifest-integration-master/report.lisp.gz" :role :compressed-master-payload)
+                         (list :source "/tmp/cbor-integration-data.lisp" :artifact "manifest-integration-audit-code.txt" :role :c4-audit-code)))))
