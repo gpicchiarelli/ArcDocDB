@@ -18,6 +18,8 @@
                 :components ((:file "package") (:file "conditions")
                              (:file "binary") (:file "crc32c")
                              (:file "record") (:file "batch")))
+               (:module "execution" :serial t
+                :components ((:file "package") (:file "queue") (:file "writer")))
                (:module "storage"
                 :serial t
                 :components ((:file "package") (:file "formats") (:file "segment-header")
@@ -50,6 +52,8 @@
                 :serial t
                 :components ((:file "support") (:file "binary")
                              (:file "record") (:file "batch")))
+               (:module "execution" :serial t
+                :components ((:file "support") (:file "queue") (:file "threads")))
                (:module "storage"
                 :serial t
                 :components ((:file "support") (:file "segment-header") (:file "log-header")
@@ -68,6 +72,7 @@
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.execution.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.io.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.recovery.tests '#:run)
