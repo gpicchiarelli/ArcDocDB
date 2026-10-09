@@ -120,6 +120,8 @@ I registri grandi sono descriptor più gzip verificato senza perdita;
 nessun taglio di stdout/stderr o modifica di stringhe serializzate. I file
 grezzi associati conservano dimensioni e SHA-256. Il raccoglitore applica
 gzip anche al raw oltre 1 MiB e verifica il contenuto decompresso.
+Il controllo whitespace riguarda sorgenti e documenti; stdout/stderr grezzi
+mantengono anche gli spazi originali del compilatore.
 Ogni file pubblicato di questa campagna resta sotto 1 MiB; copie/FASL
 temporanei vengono rimossi con l'archiviazione del worktree dopo il push.
 
