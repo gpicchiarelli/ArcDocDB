@@ -377,6 +377,71 @@
    #A((119) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000531694-command-2424-0/conservazione.lisp")
    :SHA256 "a77dfef86eace76dc612e2bdb96ffd8f08452e02ca974df71b6d6156efa43258")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000531703-command-2490-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000531703-command-2490-0/report.lisp")
+   :SHA256 "32bc22170152706243eb39ebbec757b711fdf5be1db143a9681089bb1147b393")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000531703-command-2490-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000531703-command-2490-0/conservazione.lisp")
+   :SHA256 "26bb4a522ff5c59791fcbd415294d0ed3a0ab33b13f466ac511bfb4b5eccc9c9")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000531827-command-4038-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000531827-command-4038-0/report.lisp")
+   :SHA256 "2b6895fea89e552e2f8175f604e12882b777f4dc3f2782e3ba63c8bc0a89f90b")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000531827-command-4038-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000531827-command-4038-0/conservazione.lisp")
+   :SHA256 "46c176585bd92d75a2e8750d1aa181a24885c74ee0a4d19511176d6ef801aa85")
+  (:ARTIFACT #A((35) BASE-CHAR . "4000531908-check-4591-0-report.lisp") :KIND
+   NIL :STATUS :COMPLETE :SOURCE
+   #A((110) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000531908-check-4591-0/report.lisp")
+   :SHA256 "64386e959b440f76ee4319e77d3d66cc851036883dbb8e95faddedbd85df6e60")
+  (:ARTIFACT #A((42) BASE-CHAR . "4000531908-check-4591-0-conservazione.lisp")
+   :KIND :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((117) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000531908-check-4591-0/conservazione.lisp")
+   :SHA256 "0729d929a56da27a56a2ade231d660597c62163948406931a968a50e7c6f9b7e")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532113-command-5341-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :FAILED :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532113-command-5341-0/report.lisp")
+   :SHA256 "0ba58523b2e620aee07a867e77b6c0f7dfaa20756d94728d50bfe95aabb7395b")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532113-command-5341-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532113-command-5341-0/conservazione.lisp")
+   :SHA256 "d1c68e5f2c46ec1d345a9876d095e70efea3135808ddb7e98cb1fb53a6319ac7")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532191-command-5590-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532191-command-5590-0/report.lisp")
+   :SHA256 "8aa9edef9b692677659ff0efba8052bdf5beb467400bed69e3214158d628d598")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532191-command-5590-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532191-command-5590-0/conservazione.lisp")
+   :SHA256 "9c6c6f7ea44244c346372d05d354b50ecd9e95964c65c08fa9c59dc532c6686b")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532214-command-5695-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532214-command-5695-0/report.lisp")
+   :SHA256 "c0d782d1aa7fcf6bb545a7b6d8393ba6524a1f4379d2b6c0291dd1134c070ad0")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532214-command-5695-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532214-command-5695-0/conservazione.lisp")
+   :SHA256 "c45c362b62d75dc3cedcb3a9177d2c2304a1050530dced91f6442ab25c8d4c70")
   (:ARTIFACT #A((28) BASE-CHAR . "wal-csn-bench-01-report.lisp") :KIND
    :WAL-CSN-BENCHMARK :STATUS :OK :SOURCE
    #A((103) BASE-CHAR
@@ -418,678 +483,678 @@
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-self-test-01/self-test-metrics.lisp")
    :SHA256 "79e1516307628d6b457b9711f20049941d668a7e8ec527c9ba15c72896ff77aa"))
  :ASSOCIATED-RAW-FILES
- ((:FILE "wal-csn-coverage-02_0489d01368017cf4a821514fc35a10fa.html" :BYTES
-   42322 :SHA256
-   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/0489d01368017cf4a821514fc35a10fa.html"))
-  (:FILE "wal-csn-coverage-02_30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
-   9548 :SHA256
-   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/30a37d16d2a7c68ec39af43e9f617364.html"))
-  (:FILE "wal-csn-coverage-02_9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
-   38344 :SHA256
-   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/9b4c24a3870cc610f98a9ea6c7833548.html"))
-  (:FILE "wal-csn-coverage-02_b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
-   32319 :SHA256
-   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
-  (:FILE "wal-csn-coverage-02_cover-index.html" :BYTES 2664 :SHA256
-   "fe70e0a5ec40370b839581102950890649b5f798b3a5de4dca52387b23ee0c72" :SOURCE
-   #A((111) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/cover-index.html"))
-  (:FILE "wal-csn-coverage-02_coverage-state.lisp" :BYTES 717536 :SHA256
-   "0848705d92724a5de0ae60a203045168beb618d1218cf4dc4b37024e0603484e" :SOURCE
-   #A((114) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/coverage-state.lisp"))
-  (:FILE "wal-csn-coverage-02_d8848e823282b321c8369f36c5a10c50.html" :BYTES
-   34477 :SHA256
-   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/d8848e823282b321c8369f36c5a10c50.html"))
-  (:FILE "wal-csn-coverage-02_eaff2eda770c02185a4f671f87644a54.html" :BYTES
-   41044 :SHA256
-   "a2cbe1bc439cd1468eb2bedb6ebdb5111b47b405338d9a22037cd9fb380dc951" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/eaff2eda770c02185a4f671f87644a54.html"))
-  (:FILE "wal-csn-coverage-03_0489d01368017cf4a821514fc35a10fa.html" :BYTES
-   42322 :SHA256
-   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/0489d01368017cf4a821514fc35a10fa.html"))
-  (:FILE "wal-csn-coverage-03_30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
-   9548 :SHA256
-   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/30a37d16d2a7c68ec39af43e9f617364.html"))
-  (:FILE "wal-csn-coverage-03_9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
-   38344 :SHA256
-   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/9b4c24a3870cc610f98a9ea6c7833548.html"))
-  (:FILE "wal-csn-coverage-03_b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
-   32319 :SHA256
-   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
-  (:FILE "wal-csn-coverage-03_cover-index.html" :BYTES 2664 :SHA256
-   "d3bb76e6e9e1851dda4043fc749ed1d9039524fe1575aff5a42714b01c3936aa" :SOURCE
-   #A((111) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/cover-index.html"))
-  (:FILE "wal-csn-coverage-03_coverage-state.lisp" :BYTES 751975 :SHA256
-   "503d35f907d47d687d27d681b97e8a9497a940a5cdac676620e1817743ba7a73" :SOURCE
-   #A((114) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/coverage-state.lisp"))
-  (:FILE "wal-csn-coverage-03_d8848e823282b321c8369f36c5a10c50.html" :BYTES
-   34477 :SHA256
-   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/d8848e823282b321c8369f36c5a10c50.html"))
-  (:FILE "wal-csn-coverage-03_eaff2eda770c02185a4f671f87644a54.html" :BYTES
-   40986 :SHA256
-   "ca1d12caf356363d42555e63806f6e86d582fc941ad2c45425fc7b0e9e93f6af" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/eaff2eda770c02185a4f671f87644a54.html"))
-  (:FILE "wal-csn-coverage-04_0489d01368017cf4a821514fc35a10fa.html" :BYTES
-   42322 :SHA256
-   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/0489d01368017cf4a821514fc35a10fa.html"))
-  (:FILE "wal-csn-coverage-04_30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
-   9548 :SHA256
-   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/30a37d16d2a7c68ec39af43e9f617364.html"))
-  (:FILE "wal-csn-coverage-04_9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
-   38344 :SHA256
-   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/9b4c24a3870cc610f98a9ea6c7833548.html"))
-  (:FILE "wal-csn-coverage-04_b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
-   32319 :SHA256
-   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
-  (:FILE "wal-csn-coverage-04_cover-index.html" :BYTES 2664 :SHA256
-   "85c2e465ea2a50ef521c3713234855e83d9b1c0f647f493a48a4dfbd04342e2b" :SOURCE
-   #A((111) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/cover-index.html"))
-  (:FILE "wal-csn-coverage-04_coverage-state.lisp" :BYTES 752150 :SHA256
-   "9c8a2e542d812e9bbbef12ff3005ba98a0eeb7636b1d5012abfe48900399703c" :SOURCE
-   #A((114) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/coverage-state.lisp"))
-  (:FILE "wal-csn-coverage-04_d8848e823282b321c8369f36c5a10c50.html" :BYTES
-   34477 :SHA256
-   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/d8848e823282b321c8369f36c5a10c50.html"))
-  (:FILE "wal-csn-coverage-04_eaff2eda770c02185a4f671f87644a54.html" :BYTES
-   40928 :SHA256
-   "2c15559189d3349b2085be3807047d42ed243991cffe9cee236b56eda7462c1b" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/eaff2eda770c02185a4f671f87644a54.html"))
-  (:FILE "wal-csn-coverage-05_0489d01368017cf4a821514fc35a10fa.html" :BYTES
-   42322 :SHA256
-   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/0489d01368017cf4a821514fc35a10fa.html"))
-  (:FILE "wal-csn-coverage-05_30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
-   9548 :SHA256
-   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/30a37d16d2a7c68ec39af43e9f617364.html"))
-  (:FILE "wal-csn-coverage-05_9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
-   38344 :SHA256
-   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/9b4c24a3870cc610f98a9ea6c7833548.html"))
-  (:FILE "wal-csn-coverage-05_b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
-   32319 :SHA256
-   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
-  (:FILE "wal-csn-coverage-05_cover-index.html" :BYTES 2664 :SHA256
-   "85c2e465ea2a50ef521c3713234855e83d9b1c0f647f493a48a4dfbd04342e2b" :SOURCE
-   #A((111) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/cover-index.html"))
-  (:FILE "wal-csn-coverage-05_coverage-state.lisp" :BYTES 804399 :SHA256
-   "e5d0bc837f448baeecc316536847893e00d25d65afbe4ecf379efc647490b503" :SOURCE
-   #A((114) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/coverage-state.lisp"))
-  (:FILE "wal-csn-coverage-05_d8848e823282b321c8369f36c5a10c50.html" :BYTES
-   34477 :SHA256
-   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/d8848e823282b321c8369f36c5a10c50.html"))
-  (:FILE "wal-csn-coverage-05_eaff2eda770c02185a4f671f87644a54.html" :BYTES
-   40928 :SHA256
-   "2c15559189d3349b2085be3807047d42ed243991cffe9cee236b56eda7462c1b" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/eaff2eda770c02185a4f671f87644a54.html"))
-  (:FILE "wal-csn-coverage-foundation-01_1d4528278f56d803f4b94f353071bc32.html"
-   :BYTES 95004 :SHA256
-   "dda7159ef4bde702eff178b55bbb78b4485ae29f1168139d281775bea119d8e0" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/1d4528278f56d803f4b94f353071bc32.html"))
-  (:FILE "wal-csn-coverage-foundation-01_1e826bf1d8c70894c4cf99ff08102761.html"
-   :BYTES 12422 :SHA256
-   "9604fc98e1903c11592aaf68d2cd97048e2f5b2f01e8f969f5cdfa75285c6e83" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/1e826bf1d8c70894c4cf99ff08102761.html"))
-  (:FILE "wal-csn-coverage-foundation-01_429f26994625481f5bef0001ea99b876.html"
-   :BYTES 32985 :SHA256
-   "6b6777b083e74fd7ecd26d0804d2196ea2a21de4c7ceec05f8dc4c50df0a922c" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/429f26994625481f5bef0001ea99b876.html"))
-  (:FILE "wal-csn-coverage-foundation-01_4e8ef0be46aba4a89aa1bbb8dd641c4a.html"
-   :BYTES 20570 :SHA256
-   "665a35e2699b6b048abdeef4edabdf2b44e469000f3797d97b6d943205721a1b" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/4e8ef0be46aba4a89aa1bbb8dd641c4a.html"))
-  (:FILE "wal-csn-coverage-foundation-01_54d1d9b607ca7da05faf8ff15e4aac1f.html"
-   :BYTES 22162 :SHA256
-   "bb3872724c1ce337bad51cbeb5cd7fee9e40057b7b7551085d217bf8ebe28b8c" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/54d1d9b607ca7da05faf8ff15e4aac1f.html"))
-  (:FILE "wal-csn-coverage-foundation-01_a901c948640eeb92e31715300f88c89d.html"
-   :BYTES 10085 :SHA256
-   "d4bf4d68da4d2e4d7a894ba7449e34e7c4fc6e36ae4b56463d4a6f75ce7e20fd" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/a901c948640eeb92e31715300f88c89d.html"))
-  (:FILE "wal-csn-coverage-foundation-01_cover-index.html" :BYTES 2663 :SHA256
-   "c43eb6133769a27aa49e31a03433bfaf06c6bbdb32ea784de1165f54642960e1" :SOURCE
-   #A((122) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/cover-index.html"))
-  (:FILE "wal-csn-coverage-foundation-01_coverage-state.lisp" :BYTES 717536
-   :SHA256 "9adc5b33a7ad11aa767ecd0d16e97383c722ab04c1d42a36730b212fc650a590"
-   :SOURCE
-   #A((125) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/coverage-state.lisp"))
-  (:FILE "wal-csn-coverage-foundation-02_1d4528278f56d803f4b94f353071bc32.html"
-   :BYTES 95004 :SHA256
-   "dda7159ef4bde702eff178b55bbb78b4485ae29f1168139d281775bea119d8e0" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/1d4528278f56d803f4b94f353071bc32.html"))
-  (:FILE "wal-csn-coverage-foundation-02_1e826bf1d8c70894c4cf99ff08102761.html"
-   :BYTES 12422 :SHA256
-   "9604fc98e1903c11592aaf68d2cd97048e2f5b2f01e8f969f5cdfa75285c6e83" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/1e826bf1d8c70894c4cf99ff08102761.html"))
-  (:FILE "wal-csn-coverage-foundation-02_429f26994625481f5bef0001ea99b876.html"
-   :BYTES 32985 :SHA256
-   "6b6777b083e74fd7ecd26d0804d2196ea2a21de4c7ceec05f8dc4c50df0a922c" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/429f26994625481f5bef0001ea99b876.html"))
-  (:FILE "wal-csn-coverage-foundation-02_4e8ef0be46aba4a89aa1bbb8dd641c4a.html"
-   :BYTES 20570 :SHA256
-   "665a35e2699b6b048abdeef4edabdf2b44e469000f3797d97b6d943205721a1b" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/4e8ef0be46aba4a89aa1bbb8dd641c4a.html"))
-  (:FILE "wal-csn-coverage-foundation-02_54d1d9b607ca7da05faf8ff15e4aac1f.html"
-   :BYTES 22162 :SHA256
-   "bb3872724c1ce337bad51cbeb5cd7fee9e40057b7b7551085d217bf8ebe28b8c" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/54d1d9b607ca7da05faf8ff15e4aac1f.html"))
-  (:FILE "wal-csn-coverage-foundation-02_a901c948640eeb92e31715300f88c89d.html"
-   :BYTES 10085 :SHA256
-   "d4bf4d68da4d2e4d7a894ba7449e34e7c4fc6e36ae4b56463d4a6f75ce7e20fd" :SOURCE
-   #A((143) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/a901c948640eeb92e31715300f88c89d.html"))
-  (:FILE "wal-csn-coverage-foundation-02_cover-index.html" :BYTES 2663 :SHA256
-   "c43eb6133769a27aa49e31a03433bfaf06c6bbdb32ea784de1165f54642960e1" :SOURCE
-   #A((122) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/cover-index.html"))
-  (:FILE "wal-csn-coverage-foundation-02_coverage-state.lisp" :BYTES 717536
-   :SHA256 "9adc5b33a7ad11aa767ecd0d16e97383c722ab04c1d42a36730b212fc650a590"
-   :SOURCE
-   #A((125) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/coverage-state.lisp"))
-  (:FILE "wal-csn-coverage-self-test-01_831870812bf661d6126736fa70d122aa.html"
-   :BYTES 2824 :SHA256
-   "6322cb67a26b46efc71352aa8d49145c2a1268dea4d471d7fc14d9d8f4e507d6" :SOURCE
-   #A((142) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-01/831870812bf661d6126736fa70d122aa.html"))
-  (:FILE "wal-csn-coverage-self-test-01_cover-index.html" :BYTES 1784 :SHA256
-   "b83bc5e8ebfe9087de519cadcf4f3cd4ea3da68aae0759429aa1657cfc616e4e" :SOURCE
-   #A((121) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-01/cover-index.html"))
-  (:FILE "wal-csn-coverage-self-test-01_coverage-fixture.lisp" :BYTES 147
-   :SHA256 "3767518fde8bde1e1286dbf663e97eac01f02e038d7f3161df436d9fd3e92559"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-01/coverage-fixture.lisp"))
-  (:FILE "wal-csn-coverage-self-test-02_995a9e3e2aa797e77ee000eb03ea014f.html"
-   :BYTES 2824 :SHA256
-   "7e99db18a943cc440eed7ff295bc97a4ef76f34d582f13ed85971da03e3a0c5c" :SOURCE
-   #A((142) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-02/995a9e3e2aa797e77ee000eb03ea014f.html"))
-  (:FILE "wal-csn-coverage-self-test-02_cover-index.html" :BYTES 1784 :SHA256
-   "638c06cb4aac7aa6a87b78e64ff83ec2dbf1d6bf97f60189c80438152a3d282c" :SOURCE
-   #A((121) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-02/cover-index.html"))
-  (:FILE "wal-csn-coverage-self-test-02_coverage-fixture.lisp" :BYTES 147
-   :SHA256 "3767518fde8bde1e1286dbf663e97eac01f02e038d7f3161df436d9fd3e92559"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-02/coverage-fixture.lisp"))
-  (:FILE "wal-csn-coverage-self-test-03_a5ffb8ccc1dfc1067428fd292fa03f53.html"
-   :BYTES 2824 :SHA256
-   "cb2396ebe84b1377e412b60c193369642e1965980320a3b60c7728b808ba8746" :SOURCE
-   #A((142) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-03/a5ffb8ccc1dfc1067428fd292fa03f53.html"))
-  (:FILE "wal-csn-coverage-self-test-03_cover-index.html" :BYTES 1784 :SHA256
-   "3fc9f16a7433f9c237b13eb7827f3e8c144858d0a049e783d1b6cd08bffeb507" :SOURCE
-   #A((121) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-03/cover-index.html"))
-  (:FILE "wal-csn-coverage-self-test-03_coverage-fixture.lisp" :BYTES 147
-   :SHA256 "3767518fde8bde1e1286dbf663e97eac01f02e038d7f3161df436d9fd3e92559"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-03/coverage-fixture.lisp"))
-  (:FILE "wal-csn-mutations-01_report.lisp" :BYTES 23995 :SHA256
-   "a2b34285422da78593580e02b508fa48257e14b4b84d3450b9caf8a1df02f788" :SOURCE
-   #A((107) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/report.lisp"))
-  (:FILE "wal-csn-mutations-01_baseline_arcdocdb.asd" :BYTES 5248 :SHA256
-   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
-   #A((117) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-01_baseline_isolated-build.lisp" :BYTES 1592
-   :SHA256 "3323a7742a12d8914984c71f981158154e280455cdd4ff62a1c6ff18eeb28415"
-   :SOURCE
-   #A((124) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-01_baseline_probes.lisp" :BYTES 896 :SHA256
-   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
-   #A((116) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/probes.lisp"))
-  (:FILE "wal-csn-mutations-01_baseline_stderr.log" :BYTES 210 :SHA256
-   "49856b743b2c1fcde71a47ac7e935bbd0938b0700b2cadf9946888639f8f8bea" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/stderr.log"))
-  (:FILE "wal-csn-mutations-01_baseline_stdout.log" :BYTES 318 :SHA256
-   "f3fbb6508d0d701af9804792aa755d74b40a40352430f9b6fbc0a2341761d539" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/stdout.log"))
-  (:FILE "wal-csn-mutations-02_report.lisp" :BYTES 30199 :SHA256
-   "b2d4e4fb170d3d8496ea9b50d84f82227078e4ebb1416f4a9f12263163bf81fd" :SOURCE
-   #A((107) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/report.lisp"))
-  (:FILE "wal-csn-mutations-02_baseline_arcdocdb.asd" :BYTES 5248 :SHA256
-   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
-   #A((117) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-02_baseline_isolated-build.lisp" :BYTES 1993
-   :SHA256 "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2"
-   :SOURCE
-   #A((124) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-02_baseline_probes.lisp" :BYTES 896 :SHA256
-   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
-   #A((116) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/probes.lisp"))
-  (:FILE "wal-csn-mutations-02_baseline_stderr.log" :BYTES 0 :SHA256
-   "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/stderr.log"))
-  (:FILE "wal-csn-mutations-02_baseline_stdout.log" :BYTES 380 :SHA256
-   "ff35cb5a63f9b33faacfa8d28ae4096edc294902cc28d05133fac50b033a6783" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/stdout.log"))
-  (:FILE "wal-csn-mutations-02_drop-record-high-word_arcdocdb.asd" :BYTES 5248
-   :SHA256 "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-02_drop-record-high-word_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((137) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-02_drop-record-high-word_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((129) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/probes.lisp"))
-  (:FILE "wal-csn-mutations-02_drop-record-high-word_stderr.log" :BYTES 309
-   :SHA256 "2b9b3a5e785848355023489cc0017c9ed139d60b972b343f652ced15b089c308"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/stderr.log"))
-  (:FILE "wal-csn-mutations-02_drop-record-high-word_stdout.log" :BYTES 399
-   :SHA256 "bae11f54f1e09cf1dc115f51c91322d01b983c9389cfa3c27dde0d5c208e2c44"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/stdout.log"))
-  (:FILE "wal-csn-mutations-02_publish-after-log-fault_arcdocdb.asd" :BYTES
-   5248 :SHA256
-   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-02_publish-after-log-fault_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((139) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-02_publish-after-log-fault_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((131) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/probes.lisp"))
-  (:FILE "wal-csn-mutations-02_publish-after-log-fault_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/stderr.log"))
-  (:FILE "wal-csn-mutations-02_publish-after-log-fault_stdout.log" :BYTES 674
-   :SHA256 "b4aad59f824efa5567559af340ffa90e8dedaa87653722b4b47def0410edc2e3"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/stdout.log"))
-  (:FILE "wal-csn-mutations-02_reuse-pending-token_arcdocdb.asd" :BYTES 5248
-   :SHA256 "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-02_reuse-pending-token_isolated-build.lisp" :BYTES
-   1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((135) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-02_reuse-pending-token_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((127) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/probes.lisp"))
-  (:FILE "wal-csn-mutations-02_reuse-pending-token_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/stderr.log"))
-  (:FILE "wal-csn-mutations-02_reuse-pending-token_stdout.log" :BYTES 670
-   :SHA256 "8cba8e62dab401551d997f29af7c10e7de1a7d8d00af59b31dd361241220c5ab"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/stdout.log"))
-  (:FILE "wal-csn-mutations-02_transfer-token-other-log_arcdocdb.asd" :BYTES
-   5248 :SHA256
-   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
-   #A((133) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-02_transfer-token-other-log_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((140) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-02_transfer-token-other-log_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/probes.lisp"))
-  (:FILE "wal-csn-mutations-02_transfer-token-other-log_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((131) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/stderr.log"))
-  (:FILE "wal-csn-mutations-02_transfer-token-other-log_stdout.log" :BYTES 669
-   :SHA256 "6b8bbb6fc2cec24466a1c184b60545096aa67a703652331aaa5abfb74799fea5"
-   :SOURCE
-   #A((131) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/stdout.log"))
-  (:FILE "wal-csn-mutations-03_report.lisp" :BYTES 30639 :SHA256
-   "53d2254d77fc83746fec9b9670dd5d465a17b7f8310fdeb21587ccea5d2b0115" :SOURCE
-   #A((107) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/report.lisp"))
-  (:FILE "wal-csn-mutations-03_baseline_arcdocdb.asd" :BYTES 5325 :SHA256
-   "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471" :SOURCE
-   #A((117) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-03_baseline_isolated-build.lisp" :BYTES 1993
-   :SHA256 "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2"
-   :SOURCE
-   #A((124) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-03_baseline_probes.lisp" :BYTES 896 :SHA256
-   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
-   #A((116) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/probes.lisp"))
-  (:FILE "wal-csn-mutations-03_baseline_stderr.log" :BYTES 0 :SHA256
-   "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/stderr.log"))
-  (:FILE "wal-csn-mutations-03_baseline_stdout.log" :BYTES 380 :SHA256
-   "ff35cb5a63f9b33faacfa8d28ae4096edc294902cc28d05133fac50b033a6783" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/stdout.log"))
-  (:FILE "wal-csn-mutations-03_drop-record-high-word_arcdocdb.asd" :BYTES 5325
-   :SHA256 "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-03_drop-record-high-word_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((137) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-03_drop-record-high-word_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((129) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/probes.lisp"))
-  (:FILE "wal-csn-mutations-03_drop-record-high-word_stderr.log" :BYTES 309
-   :SHA256 "2b9b3a5e785848355023489cc0017c9ed139d60b972b343f652ced15b089c308"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/stderr.log"))
-  (:FILE "wal-csn-mutations-03_drop-record-high-word_stdout.log" :BYTES 399
-   :SHA256 "bae11f54f1e09cf1dc115f51c91322d01b983c9389cfa3c27dde0d5c208e2c44"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/stdout.log"))
-  (:FILE "wal-csn-mutations-03_publish-after-log-fault_arcdocdb.asd" :BYTES
-   5325 :SHA256
-   "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-03_publish-after-log-fault_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((139) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-03_publish-after-log-fault_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((131) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/probes.lisp"))
-  (:FILE "wal-csn-mutations-03_publish-after-log-fault_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/stderr.log"))
-  (:FILE "wal-csn-mutations-03_publish-after-log-fault_stdout.log" :BYTES 674
-   :SHA256 "b4aad59f824efa5567559af340ffa90e8dedaa87653722b4b47def0410edc2e3"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/stdout.log"))
-  (:FILE "wal-csn-mutations-03_reuse-pending-token_arcdocdb.asd" :BYTES 5325
-   :SHA256 "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-03_reuse-pending-token_isolated-build.lisp" :BYTES
-   1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((135) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-03_reuse-pending-token_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((127) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/probes.lisp"))
-  (:FILE "wal-csn-mutations-03_reuse-pending-token_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/stderr.log"))
-  (:FILE "wal-csn-mutations-03_reuse-pending-token_stdout.log" :BYTES 670
-   :SHA256 "8cba8e62dab401551d997f29af7c10e7de1a7d8d00af59b31dd361241220c5ab"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/stdout.log"))
-  (:FILE "wal-csn-mutations-03_transfer-token-other-log_arcdocdb.asd" :BYTES
-   5325 :SHA256
-   "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471" :SOURCE
-   #A((133) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-03_transfer-token-other-log_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((140) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-03_transfer-token-other-log_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/probes.lisp"))
-  (:FILE "wal-csn-mutations-03_transfer-token-other-log_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((131) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/stderr.log"))
-  (:FILE "wal-csn-mutations-03_transfer-token-other-log_stdout.log" :BYTES 669
-   :SHA256 "6b8bbb6fc2cec24466a1c184b60545096aa67a703652331aaa5abfb74799fea5"
-   :SOURCE
-   #A((131) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/stdout.log"))
-  (:FILE "wal-csn-mutations-04_report.lisp" :BYTES 32367 :SHA256
-   "a516e094dd87eb154a2dbac3a30524cfe63530393cc2654619d05858b7eaaf1d" :SOURCE
-   #A((107) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/report.lisp"))
-  (:FILE "wal-csn-mutations-04_baseline_arcdocdb.asd" :BYTES 5752 :SHA256
-   "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5" :SOURCE
-   #A((117) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-04_baseline_isolated-build.lisp" :BYTES 1993
-   :SHA256 "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2"
-   :SOURCE
-   #A((124) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-04_baseline_probes.lisp" :BYTES 896 :SHA256
-   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
-   #A((116) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/probes.lisp"))
-  (:FILE "wal-csn-mutations-04_baseline_stderr.log" :BYTES 0 :SHA256
-   "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/stderr.log"))
-  (:FILE "wal-csn-mutations-04_baseline_stdout.log" :BYTES 380 :SHA256
-   "ff35cb5a63f9b33faacfa8d28ae4096edc294902cc28d05133fac50b033a6783" :SOURCE
-   #A((115) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/stdout.log"))
-  (:FILE "wal-csn-mutations-04_drop-record-high-word_arcdocdb.asd" :BYTES 5752
-   :SHA256 "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-04_drop-record-high-word_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((137) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-04_drop-record-high-word_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((129) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/probes.lisp"))
-  (:FILE "wal-csn-mutations-04_drop-record-high-word_stderr.log" :BYTES 309
-   :SHA256 "2b9b3a5e785848355023489cc0017c9ed139d60b972b343f652ced15b089c308"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/stderr.log"))
-  (:FILE "wal-csn-mutations-04_drop-record-high-word_stdout.log" :BYTES 399
-   :SHA256 "bae11f54f1e09cf1dc115f51c91322d01b983c9389cfa3c27dde0d5c208e2c44"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/stdout.log"))
-  (:FILE "wal-csn-mutations-04_publish-after-log-fault_arcdocdb.asd" :BYTES
-   5752 :SHA256
-   "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5" :SOURCE
-   #A((132) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-04_publish-after-log-fault_isolated-build.lisp"
-   :BYTES 1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((139) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-04_publish-after-log-fault_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((131) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/probes.lisp"))
-  (:FILE "wal-csn-mutations-04_publish-after-log-fault_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/stderr.log"))
-  (:FILE "wal-csn-mutations-04_publish-after-log-fault_stdout.log" :BYTES 674
-   :SHA256 "b4aad59f824efa5567559af340ffa90e8dedaa87653722b4b47def0410edc2e3"
-   :SOURCE
-   #A((130) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/stdout.log"))
-  (:FILE "wal-csn-mutations-04_reuse-pending-token_arcdocdb.asd" :BYTES 5752
-   :SHA256 "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5"
-   :SOURCE
-   #A((128) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-04_reuse-pending-token_isolated-build.lisp" :BYTES
-   1993 :SHA256
-   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
-   #A((135) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-04_reuse-pending-token_probes.lisp" :BYTES 896
-   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
-   :SOURCE
-   #A((127) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/probes.lisp"))
-  (:FILE "wal-csn-mutations-04_reuse-pending-token_stderr.log" :BYTES 755
-   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/stderr.log"))
-  (:FILE "wal-csn-mutations-04_reuse-pending-token_stdout.log" :BYTES 670
-   :SHA256 "8cba8e62dab401551d997f29af7c10e7de1a7d8d00af59b31dd361241220c5ab"
-   :SOURCE
-   #A((126) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/stdout.log"))
-  (:FILE "wal-csn-mutations-04_transfer-token-other-log_arcdocdb.asd" :BYTES
+ ((:FILE "wal-csn-mutations-04/transfer-token-other-log/arcdocdb.asd" :BYTES
    5752 :SHA256
    "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5" :SOURCE
    #A((133) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/transfer-token-other-log/arcdocdb.asd"))
-  (:FILE "wal-csn-mutations-04_transfer-token-other-log_isolated-build.lisp"
+  (:FILE "wal-csn-mutations-04/transfer-token-other-log/isolated-build.lisp"
    :BYTES 1993 :SHA256
    "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
    #A((140) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/transfer-token-other-log/isolated-build.lisp"))
-  (:FILE "wal-csn-mutations-04_transfer-token-other-log_probes.lisp" :BYTES 896
+  (:FILE "wal-csn-mutations-04/transfer-token-other-log/probes.lisp" :BYTES 896
    :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
    :SOURCE
    #A((132) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/transfer-token-other-log/probes.lisp"))
-  (:FILE "wal-csn-mutations-04_transfer-token-other-log_stderr.log" :BYTES 755
+  (:FILE "wal-csn-mutations-04/transfer-token-other-log/stderr.log" :BYTES 755
    :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
    :SOURCE
    #A((131) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/transfer-token-other-log/stderr.log"))
-  (:FILE "wal-csn-mutations-04_transfer-token-other-log_stdout.log" :BYTES 669
+  (:FILE "wal-csn-mutations-04/transfer-token-other-log/stdout.log" :BYTES 669
    :SHA256 "6b8bbb6fc2cec24466a1c184b60545096aa67a703652331aaa5abfb74799fea5"
    :SOURCE
    #A((131) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/transfer-token-other-log/stdout.log"))
+  (:FILE "wal-csn-mutations-04/reuse-pending-token/arcdocdb.asd" :BYTES 5752
+   :SHA256 "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-04/reuse-pending-token/isolated-build.lisp" :BYTES
+   1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((135) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-04/reuse-pending-token/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((127) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/probes.lisp"))
+  (:FILE "wal-csn-mutations-04/reuse-pending-token/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/stderr.log"))
+  (:FILE "wal-csn-mutations-04/reuse-pending-token/stdout.log" :BYTES 670
+   :SHA256 "8cba8e62dab401551d997f29af7c10e7de1a7d8d00af59b31dd361241220c5ab"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/reuse-pending-token/stdout.log"))
+  (:FILE "wal-csn-mutations-04/publish-after-log-fault/arcdocdb.asd" :BYTES
+   5752 :SHA256
+   "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-04/publish-after-log-fault/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((139) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-04/publish-after-log-fault/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((131) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/probes.lisp"))
+  (:FILE "wal-csn-mutations-04/publish-after-log-fault/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/stderr.log"))
+  (:FILE "wal-csn-mutations-04/publish-after-log-fault/stdout.log" :BYTES 674
+   :SHA256 "b4aad59f824efa5567559af340ffa90e8dedaa87653722b4b47def0410edc2e3"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/publish-after-log-fault/stdout.log"))
+  (:FILE "wal-csn-mutations-04/drop-record-high-word/arcdocdb.asd" :BYTES 5752
+   :SHA256 "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-04/drop-record-high-word/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((137) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-04/drop-record-high-word/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((129) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/probes.lisp"))
+  (:FILE "wal-csn-mutations-04/drop-record-high-word/stderr.log" :BYTES 309
+   :SHA256 "2b9b3a5e785848355023489cc0017c9ed139d60b972b343f652ced15b089c308"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/stderr.log"))
+  (:FILE "wal-csn-mutations-04/drop-record-high-word/stdout.log" :BYTES 399
+   :SHA256 "bae11f54f1e09cf1dc115f51c91322d01b983c9389cfa3c27dde0d5c208e2c44"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/drop-record-high-word/stdout.log"))
+  (:FILE "wal-csn-mutations-04/baseline/arcdocdb.asd" :BYTES 5752 :SHA256
+   "1f194a585165cf8aef43779b6f9e14cf5431550014884381b2b668f6b6b7aea5" :SOURCE
+   #A((117) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-04/baseline/isolated-build.lisp" :BYTES 1993
+   :SHA256 "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2"
+   :SOURCE
+   #A((124) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-04/baseline/probes.lisp" :BYTES 896 :SHA256
+   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
+   #A((116) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/probes.lisp"))
+  (:FILE "wal-csn-mutations-04/baseline/stderr.log" :BYTES 0 :SHA256
+   "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/stderr.log"))
+  (:FILE "wal-csn-mutations-04/baseline/stdout.log" :BYTES 380 :SHA256
+   "ff35cb5a63f9b33faacfa8d28ae4096edc294902cc28d05133fac50b033a6783" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/baseline/stdout.log"))
+  (:FILE "wal-csn-mutations-04/report.lisp" :BYTES 32367 :SHA256
+   "a516e094dd87eb154a2dbac3a30524cfe63530393cc2654619d05858b7eaaf1d" :SOURCE
+   #A((107) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/report.lisp"))
+  (:FILE "wal-csn-mutations-03/transfer-token-other-log/arcdocdb.asd" :BYTES
+   5325 :SHA256
+   "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471" :SOURCE
+   #A((133) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-03/transfer-token-other-log/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((140) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-03/transfer-token-other-log/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/probes.lisp"))
+  (:FILE "wal-csn-mutations-03/transfer-token-other-log/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((131) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/stderr.log"))
+  (:FILE "wal-csn-mutations-03/transfer-token-other-log/stdout.log" :BYTES 669
+   :SHA256 "6b8bbb6fc2cec24466a1c184b60545096aa67a703652331aaa5abfb74799fea5"
+   :SOURCE
+   #A((131) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/transfer-token-other-log/stdout.log"))
+  (:FILE "wal-csn-mutations-03/reuse-pending-token/arcdocdb.asd" :BYTES 5325
+   :SHA256 "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-03/reuse-pending-token/isolated-build.lisp" :BYTES
+   1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((135) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-03/reuse-pending-token/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((127) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/probes.lisp"))
+  (:FILE "wal-csn-mutations-03/reuse-pending-token/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/stderr.log"))
+  (:FILE "wal-csn-mutations-03/reuse-pending-token/stdout.log" :BYTES 670
+   :SHA256 "8cba8e62dab401551d997f29af7c10e7de1a7d8d00af59b31dd361241220c5ab"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/reuse-pending-token/stdout.log"))
+  (:FILE "wal-csn-mutations-03/publish-after-log-fault/arcdocdb.asd" :BYTES
+   5325 :SHA256
+   "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-03/publish-after-log-fault/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((139) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-03/publish-after-log-fault/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((131) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/probes.lisp"))
+  (:FILE "wal-csn-mutations-03/publish-after-log-fault/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/stderr.log"))
+  (:FILE "wal-csn-mutations-03/publish-after-log-fault/stdout.log" :BYTES 674
+   :SHA256 "b4aad59f824efa5567559af340ffa90e8dedaa87653722b4b47def0410edc2e3"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/publish-after-log-fault/stdout.log"))
+  (:FILE "wal-csn-mutations-03/drop-record-high-word/arcdocdb.asd" :BYTES 5325
+   :SHA256 "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-03/drop-record-high-word/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((137) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-03/drop-record-high-word/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((129) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/probes.lisp"))
+  (:FILE "wal-csn-mutations-03/drop-record-high-word/stderr.log" :BYTES 309
+   :SHA256 "2b9b3a5e785848355023489cc0017c9ed139d60b972b343f652ced15b089c308"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/stderr.log"))
+  (:FILE "wal-csn-mutations-03/drop-record-high-word/stdout.log" :BYTES 399
+   :SHA256 "bae11f54f1e09cf1dc115f51c91322d01b983c9389cfa3c27dde0d5c208e2c44"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/drop-record-high-word/stdout.log"))
+  (:FILE "wal-csn-mutations-03/baseline/arcdocdb.asd" :BYTES 5325 :SHA256
+   "4eeff13b5c34285d38cf05161736c1ed3ab1ddafe0ab73abc9a1b49fe2364471" :SOURCE
+   #A((117) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-03/baseline/isolated-build.lisp" :BYTES 1993
+   :SHA256 "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2"
+   :SOURCE
+   #A((124) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-03/baseline/probes.lisp" :BYTES 896 :SHA256
+   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
+   #A((116) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/probes.lisp"))
+  (:FILE "wal-csn-mutations-03/baseline/stderr.log" :BYTES 0 :SHA256
+   "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/stderr.log"))
+  (:FILE "wal-csn-mutations-03/baseline/stdout.log" :BYTES 380 :SHA256
+   "ff35cb5a63f9b33faacfa8d28ae4096edc294902cc28d05133fac50b033a6783" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/baseline/stdout.log"))
+  (:FILE "wal-csn-mutations-03/report.lisp" :BYTES 30639 :SHA256
+   "53d2254d77fc83746fec9b9670dd5d465a17b7f8310fdeb21587ccea5d2b0115" :SOURCE
+   #A((107) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-03/report.lisp"))
+  (:FILE "wal-csn-mutations-02/transfer-token-other-log/arcdocdb.asd" :BYTES
+   5248 :SHA256
+   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
+   #A((133) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-02/transfer-token-other-log/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((140) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-02/transfer-token-other-log/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/probes.lisp"))
+  (:FILE "wal-csn-mutations-02/transfer-token-other-log/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((131) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/stderr.log"))
+  (:FILE "wal-csn-mutations-02/transfer-token-other-log/stdout.log" :BYTES 669
+   :SHA256 "6b8bbb6fc2cec24466a1c184b60545096aa67a703652331aaa5abfb74799fea5"
+   :SOURCE
+   #A((131) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/transfer-token-other-log/stdout.log"))
+  (:FILE "wal-csn-mutations-02/reuse-pending-token/arcdocdb.asd" :BYTES 5248
+   :SHA256 "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-02/reuse-pending-token/isolated-build.lisp" :BYTES
+   1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((135) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-02/reuse-pending-token/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((127) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/probes.lisp"))
+  (:FILE "wal-csn-mutations-02/reuse-pending-token/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/stderr.log"))
+  (:FILE "wal-csn-mutations-02/reuse-pending-token/stdout.log" :BYTES 670
+   :SHA256 "8cba8e62dab401551d997f29af7c10e7de1a7d8d00af59b31dd361241220c5ab"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/reuse-pending-token/stdout.log"))
+  (:FILE "wal-csn-mutations-02/publish-after-log-fault/arcdocdb.asd" :BYTES
+   5248 :SHA256
+   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-02/publish-after-log-fault/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((139) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-02/publish-after-log-fault/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((131) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/probes.lisp"))
+  (:FILE "wal-csn-mutations-02/publish-after-log-fault/stderr.log" :BYTES 755
+   :SHA256 "0b4bc45a4cd6ad9a898d5ff3b85e2ea5078014183492155a8a6d8ce3b97b8620"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/stderr.log"))
+  (:FILE "wal-csn-mutations-02/publish-after-log-fault/stdout.log" :BYTES 674
+   :SHA256 "b4aad59f824efa5567559af340ffa90e8dedaa87653722b4b47def0410edc2e3"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/publish-after-log-fault/stdout.log"))
+  (:FILE "wal-csn-mutations-02/drop-record-high-word/arcdocdb.asd" :BYTES 5248
+   :SHA256 "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21"
+   :SOURCE
+   #A((130) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-02/drop-record-high-word/isolated-build.lisp"
+   :BYTES 1993 :SHA256
+   "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2" :SOURCE
+   #A((137) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-02/drop-record-high-word/probes.lisp" :BYTES 896
+   :SHA256 "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2"
+   :SOURCE
+   #A((129) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/probes.lisp"))
+  (:FILE "wal-csn-mutations-02/drop-record-high-word/stderr.log" :BYTES 309
+   :SHA256 "2b9b3a5e785848355023489cc0017c9ed139d60b972b343f652ced15b089c308"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/stderr.log"))
+  (:FILE "wal-csn-mutations-02/drop-record-high-word/stdout.log" :BYTES 399
+   :SHA256 "bae11f54f1e09cf1dc115f51c91322d01b983c9389cfa3c27dde0d5c208e2c44"
+   :SOURCE
+   #A((128) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/drop-record-high-word/stdout.log"))
+  (:FILE "wal-csn-mutations-02/baseline/arcdocdb.asd" :BYTES 5248 :SHA256
+   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
+   #A((117) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-02/baseline/isolated-build.lisp" :BYTES 1993
+   :SHA256 "5e8a56873f8d178be31288a1ad60ac550f40e0430c38a3e3e78c19e678c954d2"
+   :SOURCE
+   #A((124) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-02/baseline/probes.lisp" :BYTES 896 :SHA256
+   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
+   #A((116) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/probes.lisp"))
+  (:FILE "wal-csn-mutations-02/baseline/stderr.log" :BYTES 0 :SHA256
+   "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/stderr.log"))
+  (:FILE "wal-csn-mutations-02/baseline/stdout.log" :BYTES 380 :SHA256
+   "ff35cb5a63f9b33faacfa8d28ae4096edc294902cc28d05133fac50b033a6783" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/baseline/stdout.log"))
+  (:FILE "wal-csn-mutations-02/report.lisp" :BYTES 30199 :SHA256
+   "b2d4e4fb170d3d8496ea9b50d84f82227078e4ebb1416f4a9f12263163bf81fd" :SOURCE
+   #A((107) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-02/report.lisp"))
+  (:FILE "wal-csn-mutations-01/baseline/arcdocdb.asd" :BYTES 5248 :SHA256
+   "21034aa1a31100a0bbbda31ea02e9a84f2736d06a8f07d062b83cb2a42ed7a21" :SOURCE
+   #A((117) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/arcdocdb.asd"))
+  (:FILE "wal-csn-mutations-01/baseline/isolated-build.lisp" :BYTES 1592
+   :SHA256 "3323a7742a12d8914984c71f981158154e280455cdd4ff62a1c6ff18eeb28415"
+   :SOURCE
+   #A((124) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/isolated-build.lisp"))
+  (:FILE "wal-csn-mutations-01/baseline/probes.lisp" :BYTES 896 :SHA256
+   "2dd08434d8759b33c28026dfdb95bb1e3cc540829e2651092d4fc4c3ce7a44f2" :SOURCE
+   #A((116) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/probes.lisp"))
+  (:FILE "wal-csn-mutations-01/baseline/stderr.log" :BYTES 210 :SHA256
+   "49856b743b2c1fcde71a47ac7e935bbd0938b0700b2cadf9946888639f8f8bea" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/stderr.log"))
+  (:FILE "wal-csn-mutations-01/baseline/stdout.log" :BYTES 318 :SHA256
+   "f3fbb6508d0d701af9804792aa755d74b40a40352430f9b6fbc0a2341761d539" :SOURCE
+   #A((115) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/stdout.log"))
+  (:FILE "wal-csn-mutations-01/report.lisp" :BYTES 23995 :SHA256
+   "a2b34285422da78593580e02b508fa48257e14b4b84d3450b9caf8a1df02f788" :SOURCE
+   #A((107) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/report.lisp"))
+  (:FILE "wal-csn-coverage-self-test-03/a5ffb8ccc1dfc1067428fd292fa03f53.html"
+   :BYTES 2824 :SHA256
+   "cb2396ebe84b1377e412b60c193369642e1965980320a3b60c7728b808ba8746" :SOURCE
+   #A((142) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-03/a5ffb8ccc1dfc1067428fd292fa03f53.html"))
+  (:FILE "wal-csn-coverage-self-test-03/cover-index.html" :BYTES 1784 :SHA256
+   "3fc9f16a7433f9c237b13eb7827f3e8c144858d0a049e783d1b6cd08bffeb507" :SOURCE
+   #A((121) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-03/cover-index.html"))
+  (:FILE "wal-csn-coverage-self-test-03/coverage-fixture.lisp" :BYTES 147
+   :SHA256 "3767518fde8bde1e1286dbf663e97eac01f02e038d7f3161df436d9fd3e92559"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-03/coverage-fixture.lisp"))
+  (:FILE "wal-csn-coverage-self-test-02/995a9e3e2aa797e77ee000eb03ea014f.html"
+   :BYTES 2824 :SHA256
+   "7e99db18a943cc440eed7ff295bc97a4ef76f34d582f13ed85971da03e3a0c5c" :SOURCE
+   #A((142) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-02/995a9e3e2aa797e77ee000eb03ea014f.html"))
+  (:FILE "wal-csn-coverage-self-test-02/cover-index.html" :BYTES 1784 :SHA256
+   "638c06cb4aac7aa6a87b78e64ff83ec2dbf1d6bf97f60189c80438152a3d282c" :SOURCE
+   #A((121) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-02/cover-index.html"))
+  (:FILE "wal-csn-coverage-self-test-02/coverage-fixture.lisp" :BYTES 147
+   :SHA256 "3767518fde8bde1e1286dbf663e97eac01f02e038d7f3161df436d9fd3e92559"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-02/coverage-fixture.lisp"))
+  (:FILE "wal-csn-coverage-self-test-01/831870812bf661d6126736fa70d122aa.html"
+   :BYTES 2824 :SHA256
+   "6322cb67a26b46efc71352aa8d49145c2a1268dea4d471d7fc14d9d8f4e507d6" :SOURCE
+   #A((142) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-01/831870812bf661d6126736fa70d122aa.html"))
+  (:FILE "wal-csn-coverage-self-test-01/cover-index.html" :BYTES 1784 :SHA256
+   "b83bc5e8ebfe9087de519cadcf4f3cd4ea3da68aae0759429aa1657cfc616e4e" :SOURCE
+   #A((121) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-01/cover-index.html"))
+  (:FILE "wal-csn-coverage-self-test-01/coverage-fixture.lisp" :BYTES 147
+   :SHA256 "3767518fde8bde1e1286dbf663e97eac01f02e038d7f3161df436d9fd3e92559"
+   :SOURCE
+   #A((126) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-self-test-01/coverage-fixture.lisp"))
+  (:FILE "wal-csn-coverage-foundation-02/1d4528278f56d803f4b94f353071bc32.html"
+   :BYTES 95004 :SHA256
+   "dda7159ef4bde702eff178b55bbb78b4485ae29f1168139d281775bea119d8e0" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/1d4528278f56d803f4b94f353071bc32.html"))
+  (:FILE "wal-csn-coverage-foundation-02/1e826bf1d8c70894c4cf99ff08102761.html"
+   :BYTES 12422 :SHA256
+   "9604fc98e1903c11592aaf68d2cd97048e2f5b2f01e8f969f5cdfa75285c6e83" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/1e826bf1d8c70894c4cf99ff08102761.html"))
+  (:FILE "wal-csn-coverage-foundation-02/429f26994625481f5bef0001ea99b876.html"
+   :BYTES 32985 :SHA256
+   "6b6777b083e74fd7ecd26d0804d2196ea2a21de4c7ceec05f8dc4c50df0a922c" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/429f26994625481f5bef0001ea99b876.html"))
+  (:FILE "wal-csn-coverage-foundation-02/4e8ef0be46aba4a89aa1bbb8dd641c4a.html"
+   :BYTES 20570 :SHA256
+   "665a35e2699b6b048abdeef4edabdf2b44e469000f3797d97b6d943205721a1b" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/4e8ef0be46aba4a89aa1bbb8dd641c4a.html"))
+  (:FILE "wal-csn-coverage-foundation-02/54d1d9b607ca7da05faf8ff15e4aac1f.html"
+   :BYTES 22162 :SHA256
+   "bb3872724c1ce337bad51cbeb5cd7fee9e40057b7b7551085d217bf8ebe28b8c" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/54d1d9b607ca7da05faf8ff15e4aac1f.html"))
+  (:FILE "wal-csn-coverage-foundation-02/a901c948640eeb92e31715300f88c89d.html"
+   :BYTES 10085 :SHA256
+   "d4bf4d68da4d2e4d7a894ba7449e34e7c4fc6e36ae4b56463d4a6f75ce7e20fd" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/a901c948640eeb92e31715300f88c89d.html"))
+  (:FILE "wal-csn-coverage-foundation-02/cover-index.html" :BYTES 2663 :SHA256
+   "c43eb6133769a27aa49e31a03433bfaf06c6bbdb32ea784de1165f54642960e1" :SOURCE
+   #A((122) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/cover-index.html"))
+  (:FILE "wal-csn-coverage-foundation-02/coverage-state.lisp" :BYTES 717536
+   :SHA256 "9adc5b33a7ad11aa767ecd0d16e97383c722ab04c1d42a36730b212fc650a590"
+   :SOURCE
+   #A((125) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-02/coverage-state.lisp"))
+  (:FILE "wal-csn-coverage-foundation-01/1d4528278f56d803f4b94f353071bc32.html"
+   :BYTES 95004 :SHA256
+   "dda7159ef4bde702eff178b55bbb78b4485ae29f1168139d281775bea119d8e0" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/1d4528278f56d803f4b94f353071bc32.html"))
+  (:FILE "wal-csn-coverage-foundation-01/1e826bf1d8c70894c4cf99ff08102761.html"
+   :BYTES 12422 :SHA256
+   "9604fc98e1903c11592aaf68d2cd97048e2f5b2f01e8f969f5cdfa75285c6e83" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/1e826bf1d8c70894c4cf99ff08102761.html"))
+  (:FILE "wal-csn-coverage-foundation-01/429f26994625481f5bef0001ea99b876.html"
+   :BYTES 32985 :SHA256
+   "6b6777b083e74fd7ecd26d0804d2196ea2a21de4c7ceec05f8dc4c50df0a922c" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/429f26994625481f5bef0001ea99b876.html"))
+  (:FILE "wal-csn-coverage-foundation-01/4e8ef0be46aba4a89aa1bbb8dd641c4a.html"
+   :BYTES 20570 :SHA256
+   "665a35e2699b6b048abdeef4edabdf2b44e469000f3797d97b6d943205721a1b" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/4e8ef0be46aba4a89aa1bbb8dd641c4a.html"))
+  (:FILE "wal-csn-coverage-foundation-01/54d1d9b607ca7da05faf8ff15e4aac1f.html"
+   :BYTES 22162 :SHA256
+   "bb3872724c1ce337bad51cbeb5cd7fee9e40057b7b7551085d217bf8ebe28b8c" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/54d1d9b607ca7da05faf8ff15e4aac1f.html"))
+  (:FILE "wal-csn-coverage-foundation-01/a901c948640eeb92e31715300f88c89d.html"
+   :BYTES 10085 :SHA256
+   "d4bf4d68da4d2e4d7a894ba7449e34e7c4fc6e36ae4b56463d4a6f75ce7e20fd" :SOURCE
+   #A((143) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/a901c948640eeb92e31715300f88c89d.html"))
+  (:FILE "wal-csn-coverage-foundation-01/cover-index.html" :BYTES 2663 :SHA256
+   "c43eb6133769a27aa49e31a03433bfaf06c6bbdb32ea784de1165f54642960e1" :SOURCE
+   #A((122) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/cover-index.html"))
+  (:FILE "wal-csn-coverage-foundation-01/coverage-state.lisp" :BYTES 717536
+   :SHA256 "9adc5b33a7ad11aa767ecd0d16e97383c722ab04c1d42a36730b212fc650a590"
+   :SOURCE
+   #A((125) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-foundation-01/coverage-state.lisp"))
+  (:FILE "wal-csn-coverage-05/0489d01368017cf4a821514fc35a10fa.html" :BYTES
+   42322 :SHA256
+   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/0489d01368017cf4a821514fc35a10fa.html"))
+  (:FILE "wal-csn-coverage-05/30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
+   9548 :SHA256
+   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/30a37d16d2a7c68ec39af43e9f617364.html"))
+  (:FILE "wal-csn-coverage-05/9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
+   38344 :SHA256
+   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/9b4c24a3870cc610f98a9ea6c7833548.html"))
+  (:FILE "wal-csn-coverage-05/b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
+   32319 :SHA256
+   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
+  (:FILE "wal-csn-coverage-05/cover-index.html" :BYTES 2664 :SHA256
+   "85c2e465ea2a50ef521c3713234855e83d9b1c0f647f493a48a4dfbd04342e2b" :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/cover-index.html"))
+  (:FILE "wal-csn-coverage-05/coverage-state.lisp" :BYTES 804399 :SHA256
+   "e5d0bc837f448baeecc316536847893e00d25d65afbe4ecf379efc647490b503" :SOURCE
+   #A((114) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/coverage-state.lisp"))
+  (:FILE "wal-csn-coverage-05/d8848e823282b321c8369f36c5a10c50.html" :BYTES
+   34477 :SHA256
+   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/d8848e823282b321c8369f36c5a10c50.html"))
+  (:FILE "wal-csn-coverage-05/eaff2eda770c02185a4f671f87644a54.html" :BYTES
+   40928 :SHA256
+   "2c15559189d3349b2085be3807047d42ed243991cffe9cee236b56eda7462c1b" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-05/eaff2eda770c02185a4f671f87644a54.html"))
+  (:FILE "wal-csn-coverage-04/0489d01368017cf4a821514fc35a10fa.html" :BYTES
+   42322 :SHA256
+   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/0489d01368017cf4a821514fc35a10fa.html"))
+  (:FILE "wal-csn-coverage-04/30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
+   9548 :SHA256
+   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/30a37d16d2a7c68ec39af43e9f617364.html"))
+  (:FILE "wal-csn-coverage-04/9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
+   38344 :SHA256
+   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/9b4c24a3870cc610f98a9ea6c7833548.html"))
+  (:FILE "wal-csn-coverage-04/b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
+   32319 :SHA256
+   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
+  (:FILE "wal-csn-coverage-04/cover-index.html" :BYTES 2664 :SHA256
+   "85c2e465ea2a50ef521c3713234855e83d9b1c0f647f493a48a4dfbd04342e2b" :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/cover-index.html"))
+  (:FILE "wal-csn-coverage-04/coverage-state.lisp" :BYTES 752150 :SHA256
+   "9c8a2e542d812e9bbbef12ff3005ba98a0eeb7636b1d5012abfe48900399703c" :SOURCE
+   #A((114) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/coverage-state.lisp"))
+  (:FILE "wal-csn-coverage-04/d8848e823282b321c8369f36c5a10c50.html" :BYTES
+   34477 :SHA256
+   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/d8848e823282b321c8369f36c5a10c50.html"))
+  (:FILE "wal-csn-coverage-04/eaff2eda770c02185a4f671f87644a54.html" :BYTES
+   40928 :SHA256
+   "2c15559189d3349b2085be3807047d42ed243991cffe9cee236b56eda7462c1b" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-04/eaff2eda770c02185a4f671f87644a54.html"))
+  (:FILE "wal-csn-coverage-03/0489d01368017cf4a821514fc35a10fa.html" :BYTES
+   42322 :SHA256
+   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/0489d01368017cf4a821514fc35a10fa.html"))
+  (:FILE "wal-csn-coverage-03/30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
+   9548 :SHA256
+   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/30a37d16d2a7c68ec39af43e9f617364.html"))
+  (:FILE "wal-csn-coverage-03/9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
+   38344 :SHA256
+   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/9b4c24a3870cc610f98a9ea6c7833548.html"))
+  (:FILE "wal-csn-coverage-03/b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
+   32319 :SHA256
+   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
+  (:FILE "wal-csn-coverage-03/cover-index.html" :BYTES 2664 :SHA256
+   "d3bb76e6e9e1851dda4043fc749ed1d9039524fe1575aff5a42714b01c3936aa" :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/cover-index.html"))
+  (:FILE "wal-csn-coverage-03/coverage-state.lisp" :BYTES 751975 :SHA256
+   "503d35f907d47d687d27d681b97e8a9497a940a5cdac676620e1817743ba7a73" :SOURCE
+   #A((114) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/coverage-state.lisp"))
+  (:FILE "wal-csn-coverage-03/d8848e823282b321c8369f36c5a10c50.html" :BYTES
+   34477 :SHA256
+   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/d8848e823282b321c8369f36c5a10c50.html"))
+  (:FILE "wal-csn-coverage-03/eaff2eda770c02185a4f671f87644a54.html" :BYTES
+   40986 :SHA256
+   "ca1d12caf356363d42555e63806f6e86d582fc941ad2c45425fc7b0e9e93f6af" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-03/eaff2eda770c02185a4f671f87644a54.html"))
+  (:FILE "wal-csn-coverage-02/0489d01368017cf4a821514fc35a10fa.html" :BYTES
+   42322 :SHA256
+   "73f655bd939e271bf58cd4ad344defb96670943492bd28fb4c613329bc5286d8" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/0489d01368017cf4a821514fc35a10fa.html"))
+  (:FILE "wal-csn-coverage-02/30a37d16d2a7c68ec39af43e9f617364.html" :BYTES
+   9548 :SHA256
+   "0b2242e96b2bda888cd644ba4f48a9b3e1e1ccdad57927ee82f54c95a151a74a" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/30a37d16d2a7c68ec39af43e9f617364.html"))
+  (:FILE "wal-csn-coverage-02/9b4c24a3870cc610f98a9ea6c7833548.html" :BYTES
+   38344 :SHA256
+   "7e3bef386318d8dbe32f138d57527a01c2e64d4473dec02ee1cb75554dcb5c2d" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/9b4c24a3870cc610f98a9ea6c7833548.html"))
+  (:FILE "wal-csn-coverage-02/b3e27b54a02a7a50d24fe6ad1fb64e37.html" :BYTES
+   32319 :SHA256
+   "3993db45c57a826137e12d3ba479c351b29c5e3e6e7857f40f82309735d0bbc4" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/b3e27b54a02a7a50d24fe6ad1fb64e37.html"))
+  (:FILE "wal-csn-coverage-02/cover-index.html" :BYTES 2664 :SHA256
+   "fe70e0a5ec40370b839581102950890649b5f798b3a5de4dca52387b23ee0c72" :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/cover-index.html"))
+  (:FILE "wal-csn-coverage-02/coverage-state.lisp" :BYTES 717536 :SHA256
+   "0848705d92724a5de0ae60a203045168beb618d1218cf4dc4b37024e0603484e" :SOURCE
+   #A((114) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/coverage-state.lisp"))
+  (:FILE "wal-csn-coverage-02/d8848e823282b321c8369f36c5a10c50.html" :BYTES
+   34477 :SHA256
+   "6b1105adb897d88caf0f7ee3ffecc8ee7d092be10967407e9d8780ee2b8628b1" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/d8848e823282b321c8369f36c5a10c50.html"))
+  (:FILE "wal-csn-coverage-02/eaff2eda770c02185a4f671f87644a54.html" :BYTES
+   41044 :SHA256
+   "a2cbe1bc439cd1468eb2bedb6ebdb5111b47b405338d9a22037cd9fb380dc951" :SOURCE
+   #A((132) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-coverage-02/eaff2eda770c02185a4f671f87644a54.html"))
   (:FILE "wal-csn-mutations-02_drop-record-high-word_mutated-source.txt" :BYTES
    7549 :SHA256
    "faba9cf8f108ee50ac1a29e6eda31621ccbb244ec71081c1d806ea22135bb9fe" :SOURCE
@@ -1150,9 +1215,15 @@
    "6b0cd4467107e7c2937a4bf025fc810c2bc3acd14ae9539109c41f81b0791945" :SOURCE
    #A((139) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-04/transfer-token-other-log/src/wal/group.lisp"))
+  (:FILE "raccolta-v3-source.txt" :BYTES 14234 :SHA256
+   "087edb419d35796a2d2688a7d9674a1c6c0678b8beee0179cd7fa77b5757a384" :SOURCE
+   #A((45) BASE-CHAR . "/private/tmp/collect-wal-csn-evidence-v3.lisp"))
   (:FILE "raccolta-v2-source.txt" :BYTES 8851 :SHA256
    "18a52f6691d65da7a949f34fba983437c4e40de86a2d0d9588ca1983c7f281e2" :SOURCE
-   #A((45) BASE-CHAR . "/private/tmp/collect-wal-csn-evidence-v2.lisp"))
+   #A((37) BASE-CHAR . "/tmp/collect-wal-csn-evidence-v2.lisp"))
+  (:FILE "raccolta-v3-failed-01-source.txt" :BYTES 12492 :SHA256
+   "d40b5700729da314ef3b6858bf93ff389093627312c512c64c6609edca008619" :SOURCE
+   #A((47) BASE-CHAR . "/tmp/collect-wal-csn-evidence-v3-failed-01.lisp"))
   (:FILE "summarize-wal-csn.lisp.txt" :BYTES 2775 :SHA256
    "bf5e5df2cc10ae9b2c10b16af4d70cae08423923a8756c78e729123d60dfa52f" :SOURCE
    #A((27) BASE-CHAR . "/tmp/summarize-wal-csn.lisp"))

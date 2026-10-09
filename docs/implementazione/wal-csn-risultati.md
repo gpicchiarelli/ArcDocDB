@@ -42,7 +42,10 @@ fuori dal test atteso rendono la prova invalida; non vengono contati come kill.
 | `src/wal/builder.lisp` | 302/322, 93,8% | 38/40, 95% |
 | `src/foundation/record.lisp` | 670/744, 90,1% | 75/76, 98,7% |
 
-Rapporti HTML e stato grezzo SB-COVER sono conservati. Il 100% riguarda i
+Rapporti HTML e stato grezzo SB-COVER sono conservati:
+[WAL](../../spikes/results/2026-10-09-wal-csn/wal-csn-coverage-05/cover-index.html)
+e [codec](../../spikes/results/2026-10-09-wal-csn/wal-csn-coverage-foundation-02/cover-index.html).
+Il 100% riguarda i
 rami del ponte: non è MC/DC, copertura dell'intero WAL o qualifica del motore.
 
 ## Prestazioni del ciclo simulato
@@ -103,6 +106,19 @@ Il primo riepilogo della raccolta ha mostrato conteggi pari a uno dopo `nreverse
 pur avendo salvato il catalogo completo. La versione successiva conta dalla
 rilettura del catalogo e aggiunge un'autoverifica 3/2. Entrambe le fonti sono
 conservate. Questa correzione riguarda il riepilogo, non i risultati delle prove.
+
+La raccolta v3 conserva la gerarchia originale dei file di copertura e mutanti,
+così i link relativi degli indici HTML restano navigabili. Il trasferimento
+verifica dimensioni e SHA256 prima e dopo lo spostamento, senza duplicare i
+payload; la pubblicazione rifiuta link HTML mancanti. L'autoverifica iniziale
+ha rifiutato un simbolo UIOP non disponibile: fonte e diagnostico sono
+conservati. La versione corretta usa I/O Common Lisp e passa nove controlli,
+compresi gerarchia, bytes invariati e rifiuto di un collegamento mancante.
+
+Il controllo Git di spaziatura esteso ai registri segnala gli spazi finali
+dell'output grezzo SBCL. Il riscontro è conservato; l'output resta identico.
+Il controllo di spaziatura su codice e documentazione esclude gli archivi
+delle prove, che sono verificati attraverso dimensioni, lettura e impronte.
 
 ## Conservazione e prossima integrazione
 
