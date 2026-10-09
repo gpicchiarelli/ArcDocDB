@@ -82,6 +82,8 @@
              (is (= high 0)) (is (= low 1))
              (signals invalid-argument (aggiungi-record lot 1 (bytes 2) (bytes #xa0)) :lotto-csn-bound)
              (signals invalid-argument (sigilla-lotto lot 2 0 0) :lotto-csn-bound)
+             (signals invalid-argument
+                      (arcdocdb.wal:sigilla-lotto-con-csn lot registry log 0 0) :lotto-csn-bound)
              (signals invalid-argument (riusa-lotto lot) :lotto-state)
              (multiple-value-bind (lh ll hh hl) (arcdocdb.csn:leggi-frontiere-csn registry)
                (is (equal '(0 1 0 0) (list lh ll hh hl))))
