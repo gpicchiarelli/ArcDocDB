@@ -211,15 +211,7 @@
    :STATUS NIL :STATEMENT-SOURCE NIL :SOURCE-PATH
    #A((65) BASE-CHAR
       . "/private/tmp/cbor-structure-writer-recycle-master-descriptor.lisp")
-   :SOURCE-ARTIFACTS NIL)
-  (:KIND :PRIOR-CATALOG :FORMATS NIL :ARTIFACT
-   "catalogo-prima-chiusura-integrazione.lisp" :ARTIFACT-SCHEMA-VERSION 1
-   :ARTIFACT-KIND :EVIDENCE-CATALOG)
-  (:KIND :INTEGRATION-FINAL-ARTIFACT-VERIFICATION :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-final-verification.lisp"
-   :ARTIFACT-SCHEMA-VERSION 1 :ARTIFACT-KIND :COMMAND-VERIFICATION :STATUS :OK
-   :SOURCE-CONSISTENCY :STABLE :EXIT-CODE 0 :STARTED-AT 4000530482 :FINISHED-AT
-   4000530531 :WALL-SECONDS 48.680133d0))
+   :SOURCE-ARTIFACTS NIL))
  :ASSOCIATED-RAW-FILES
  ((:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
    #A((22) BASE-CHAR . "preliminary.stdout.log") :PROCESS-ARTIFACT
@@ -459,19 +451,7 @@
   (:KIND :DESCRIPTOR-DERIVATION-CODE :FORMATS NIL :ARTIFACT
    "writer-recycle-integration-descriptor-code.txt" :SOURCE-PATH
    #A((59) BASE-CHAR
-      . "/private/tmp/cbor-structure-integration-descriptor-run.lisp"))
-  (:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
-   #A((56) BASE-CHAR
-      . "writer-recycle-integration-final-verification.stdout.log")
-   :PROCESS-ARTIFACT "writer-recycle-integration-final-verification.lisp"
-   :CHANNEL :STDOUT :SOURCE-KIND :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8
-   :CHARACTERS 345)
-  (:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
-   #A((56) BASE-CHAR
-      . "writer-recycle-integration-final-verification.stderr.log")
-   :PROCESS-ARTIFACT "writer-recycle-integration-final-verification.lisp"
-   :CHANNEL :STDERR :SOURCE-KIND :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8
-   :CHARACTERS 0))
+      . "/private/tmp/cbor-structure-integration-descriptor-run.lisp")))
  :PENDING NIL :LIMITS
  (:RUNTIME-ONLY :LOCAL-AGENT-READINGS-NOT-HUMAN-APPROVAL
   :NO-ENGINE-OR-RELEASE-QUALIFICATION))

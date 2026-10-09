@@ -53,3 +53,20 @@ durabilità o motore completo. Il controllo complessivo `make check` è PASS: 32
 smoke, e tutti i 10 spike con exit 0. Snapshot prima/dopo identico e nove blob
 di prodotto/test coincidenti con il freeze. Il master compresso è riletto
 con verifica dei byte espansi; audit e originali sono conservati nel catalogo.
+
+
+## Integrazione con il ricircolo dei writer
+
+Dopo le campagne, `main` è avanzato a `75ada9d` con il ricircolo dei writer
+pronti. Rebase senza conflitti; tutti i sei blob del kernel e i tre dei test
+CBOR restano identici. ASDF e indice dei moduli conservano entrambi i blocchi.
+Il nuovo `make check` è PASS: 335 test ASDF, compresi 24 del nuovo scanner,
+e tutti i dieci spike. Snapshot prima/dopo identico; audit separato, wrapper
+e master sono aggiunti al catalogo, senza riscrivere gli esiti precedenti.
+
+Il secondo master conserva descrittore e gzip originali nella sottocartella
+`writer-recycle-integration-master/`. Un descrittore derivato cambia soltanto
+il basename PAYLOAD per la copia alla radice, mantenendo bytes e checksum del
+gzip; questa derivazione evita la collisione con il primo `report.lisp.gz`.
+Le misure mirate precedenti restano relative al kernel invariato e al loro
+snapshot; l'integrazione non introduce nuovi claim di heap o scaling.

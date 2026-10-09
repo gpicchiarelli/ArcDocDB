@@ -186,40 +186,7 @@
   (:KIND :FINAL-ARTIFACT-VERIFICATION :FORMATS NIL :ARTIFACT
    "final-verification.lisp" :ARTIFACT-SCHEMA-VERSION 1 :ARTIFACT-KIND
    :COMMAND-VERIFICATION :STATUS :OK :SOURCE-CONSISTENCY :STABLE :EXIT-CODE 0
-   :STARTED-AT 4000529988 :FINISHED-AT 4000530035 :WALL-SECONDS 47.463186d0)
-  (:KIND :PRIOR-CATALOG :FORMATS NIL :ARTIFACT
-   "catalogo-prima-writer-recycle.lisp" :ARTIFACT-SCHEMA-VERSION 1
-   :ARTIFACT-KIND :EVIDENCE-CATALOG)
-  (:KIND :INTEGRATION-VERIFICATION :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-check.lisp" :ARTIFACT-SCHEMA-VERSION 1
-   :ARTIFACT-KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE-CONSISTENCY :STABLE
-   :EXIT-CODE 0 :STARTED-AT 4000530204 :FINISHED-AT 4000530317 :WALL-SECONDS
-   113.401894d0)
-  (:KIND :INTEGRATION-AUDIT :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-audit.lisp" :ARTIFACT-SCHEMA-VERSION 1
-   :ARTIFACT-SCHEMA-KEY :SCHEMA-VERSION :ARTIFACT-KIND
-   :CBOR-STRUCTURE-WRITER-RECYCLE-INTEGRATION-AUDIT :STATUS :OK
-   :STATEMENT-SOURCE
-   "root: integrazione su75ada9d, lettura protetta wrapper make check e master compresso, nove blob CBOR invariati"
-   :SOURCE-PATH
-   #A((65) BASE-CHAR
-      . "/private/tmp/cbor-structure-writer-recycle-integration-audit.lisp")
-   :SOURCE-ARTIFACTS NIL)
-  (:KIND :DERIVED-COMPRESSED-SPIKES-MASTER :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-spikes.lisp" :ARTIFACT-SCHEMA-VERSION 1
-   :ARTIFACT-SCHEMA-KEY :SCHEMA-VERSION :ARTIFACT-KIND :COMPRESSED-EVIDENCE
-   :STATUS NIL :STATEMENT-SOURCE NIL :SOURCE-PATH
-   #A((65) BASE-CHAR
-      . "/private/tmp/cbor-structure-writer-recycle-master-descriptor.lisp")
-   :SOURCE-ARTIFACTS NIL)
-  (:KIND :PRIOR-CATALOG :FORMATS NIL :ARTIFACT
-   "catalogo-prima-chiusura-integrazione.lisp" :ARTIFACT-SCHEMA-VERSION 1
-   :ARTIFACT-KIND :EVIDENCE-CATALOG)
-  (:KIND :INTEGRATION-FINAL-ARTIFACT-VERIFICATION :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-final-verification.lisp"
-   :ARTIFACT-SCHEMA-VERSION 1 :ARTIFACT-KIND :COMMAND-VERIFICATION :STATUS :OK
-   :SOURCE-CONSISTENCY :STABLE :EXIT-CODE 0 :STARTED-AT 4000530482 :FINISHED-AT
-   4000530531 :WALL-SECONDS 48.680133d0))
+   :STARTED-AT 4000529988 :FINISHED-AT 4000530035 :WALL-SECONDS 47.463186d0))
  :ASSOCIATED-RAW-FILES
  ((:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
    #A((22) BASE-CHAR . "preliminary.stdout.log") :PROCESS-ARTIFACT
@@ -431,47 +398,7 @@
   (:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
    #A((29) BASE-CHAR . "final-verification.stderr.log") :PROCESS-ARTIFACT
    "final-verification.lisp" :CHANNEL :STDERR :SOURCE-KIND
-   :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8 :CHARACTERS 0)
-  (:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
-   #A((43) BASE-CHAR . "writer-recycle-integration-check.stdout.log")
-   :PROCESS-ARTIFACT "writer-recycle-integration-check.lisp" :CHANNEL :STDOUT
-   :SOURCE-KIND :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8 :CHARACTERS 77211)
-  (:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
-   #A((43) BASE-CHAR . "writer-recycle-integration-check.stderr.log")
-   :PROCESS-ARTIFACT "writer-recycle-integration-check.lisp" :CHANNEL :STDERR
-   :SOURCE-KIND :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8 :CHARACTERS 29714)
-  (:KIND :ORIGINAL-COMPRESSED-MASTER-DESCRIPTOR :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-master/report.lisp" :SOURCE-PATH
-   #A((109) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/cbor-structure/ArcDocDB/spikes/out/4000530281-check-93758-0/report.lisp"))
-  (:KIND :ORIGINAL-COMPRESSED-MASTER-PAYLOAD :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-master/report.lisp.gz" :SOURCE-PATH
-   #A((112) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/cbor-structure/ArcDocDB/spikes/out/4000530281-check-93758-0/report.lisp.gz"))
-  (:KIND :COMPRESSED-MASTER-PAYLOAD :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-report.lisp.gz" :SOURCE-PATH
-   #A((112) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/cbor-structure/ArcDocDB/spikes/out/4000530281-check-93758-0/report.lisp.gz"))
-  (:KIND :AUDIT-CODE :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-audit-code.txt" :SOURCE-PATH
-   #A((54) BASE-CHAR
-      . "/private/tmp/cbor-structure-integration-audit-run.lisp"))
-  (:KIND :DESCRIPTOR-DERIVATION-CODE :FORMATS NIL :ARTIFACT
-   "writer-recycle-integration-descriptor-code.txt" :SOURCE-PATH
-   #A((59) BASE-CHAR
-      . "/private/tmp/cbor-structure-integration-descriptor-run.lisp"))
-  (:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
-   #A((56) BASE-CHAR
-      . "writer-recycle-integration-final-verification.stdout.log")
-   :PROCESS-ARTIFACT "writer-recycle-integration-final-verification.lisp"
-   :CHANNEL :STDOUT :SOURCE-KIND :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8
-   :CHARACTERS 345)
-  (:KIND :RAW-PROCESS-OUTPUT :FORMATS NIL :ARTIFACT
-   #A((56) BASE-CHAR
-      . "writer-recycle-integration-final-verification.stderr.log")
-   :PROCESS-ARTIFACT "writer-recycle-integration-final-verification.lisp"
-   :CHANNEL :STDERR :SOURCE-KIND :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8
-   :CHARACTERS 0))
+   :WRAPPER-EMBEDDED-STRING :ENCODING :UTF-8 :CHARACTERS 0))
  :PENDING NIL :LIMITS
  (:RUNTIME-ONLY :LOCAL-AGENT-READINGS-NOT-HUMAN-APPROVAL
   :NO-ENGINE-OR-RELEASE-QUALIFICATION))
