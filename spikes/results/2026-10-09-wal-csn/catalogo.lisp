@@ -251,6 +251,17 @@
    #A((120) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000530619-command-95685-0/conservazione.lisp")
    :SHA256 "dca825b7567ce9be77eba2d5dcfba7fc8a3f24fbad362d111f0f26fdd1e512d3")
+  (:ARTIFACT #A((38) BASE-CHAR . "4000530853-command-97580-0-report.lisp")
+   :KIND :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((113) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000530853-command-97580-0/report.lisp")
+   :SHA256 "fa7926a18a724c2cd67d93fb9c89b20bb41441544dd7950fb078ff34db85bec1")
+  (:ARTIFACT
+   #A((45) BASE-CHAR . "4000530853-command-97580-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((120) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000530853-command-97580-0/conservazione.lisp")
+   :SHA256 "1a478573913db4081ef46b9c94bd2970f790aaf920272c66519f43c94cb3ce8d")
   (:ARTIFACT #A((28) BASE-CHAR . "wal-csn-bench-01-report.lisp") :KIND
    :WAL-CSN-BENCHMARK :STATUS :OK :SOURCE
    #A((103) BASE-CHAR
