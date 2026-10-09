@@ -442,6 +442,61 @@
    #A((119) BASE-CHAR
       . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532214-command-5695-0/conservazione.lisp")
    :SHA256 "c45c362b62d75dc3cedcb3a9177d2c2304a1050530dced91f6442ab25c8d4c70")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532253-command-6117-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532253-command-6117-0/report.lisp")
+   :SHA256 "61ced26aeacf30f615e8e3be3776eb1668e465887425854e9e8006346a493014")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532253-command-6117-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532253-command-6117-0/conservazione.lisp")
+   :SHA256 "63ebc98078ca7a3322486a150c71432272365b265afcbb0d364461936ce5c4ea")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532510-command-8057-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :FAILED :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532510-command-8057-0/report.lisp")
+   :SHA256 "96fb32131462df96c325eeaca7481eea909fee5ea9b5fdce802d05086d451380")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532510-command-8057-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532510-command-8057-0/conservazione.lisp")
+   :SHA256 "506deaf770f93ab02e3d3064b7a589c961c310d4c7142fb29a2043735807e4ef")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532533-command-8178-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532533-command-8178-0/report.lisp")
+   :SHA256 "58b70d8902defad1a278979a50eee11436aa711edd9cd87bef074df951cfc409")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532533-command-8178-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532533-command-8178-0/conservazione.lisp")
+   :SHA256 "24154369f03a4b043bf2cbac99d4357458067fa05b7dcff37bc5ba18582077b9")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532533-command-8179-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532533-command-8179-0/report.lisp")
+   :SHA256 "08216f81bf68c0a02df91c322a209ba84245fe700f7c9d5618a9be9a9a76e8fe")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532533-command-8179-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532533-command-8179-0/conservazione.lisp")
+   :SHA256 "c2c14b0f211ec0a629bbba9e43570bdcababfa0701c27b9082b093b2c5642f2b")
+  (:ARTIFACT #A((37) BASE-CHAR . "4000532533-command-8180-0-report.lisp") :KIND
+   :COMMAND-VERIFICATION :STATUS :OK :SOURCE
+   #A((112) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532533-command-8180-0/report.lisp")
+   :SHA256 "ee7a1bd68bc26567782236a331fca04ac117afbd697cd3d4c628f6a451134eff")
+  (:ARTIFACT
+   #A((44) BASE-CHAR . "4000532533-command-8180-0-conservazione.lisp") :KIND
+   :EVIDENCE-FINALIZATION :STATUS :OK :SOURCE
+   #A((119) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/4000532533-command-8180-0/conservazione.lisp")
+   :SHA256 "af0d18f7d2784ba87d5bd769ce63c1b8d55ba2af1d95b5c76e90ae73fcc77f5e")
   (:ARTIFACT #A((28) BASE-CHAR . "wal-csn-bench-01-report.lisp") :KIND
    :WAL-CSN-BENCHMARK :STATUS :OK :SOURCE
    #A((103) BASE-CHAR
