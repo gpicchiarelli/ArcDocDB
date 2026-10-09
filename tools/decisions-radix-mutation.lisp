@@ -108,12 +108,15 @@
         thereis (and (<= (length marker) (length line))
                      (string= marker line :end2 (length marker)))))
 
-(defun classify-result (text exit)
-  "Compilazione e guasti prima dei test non rilevano il mutante."
-  (cond ((or (search "compilation aborted" text :test #'char-equal)
+(defun classify-result (text exit &optional signal)
+  "Segnali OS, compilazione e guasti fuori dai test non rilevano il mutante."
+  (cond (signal :worker-error)
+        ((or (search "compilation aborted" text :test #'char-equal)
              (search "COMPILE-FILE-ERROR" text :test #'char-equal)
              (search "COMPILE-FILE-WARNED" text :test #'char-equal)
              (search "non ammesso (COD-01)" text)) :compilation-failure)
+        ((and (integerp exit) (not (zerop exit))
+              (event-at-line-start-p text "decision-tests-complete ")) :worker-error)
         ((or (not (integerp exit))
              (not (event-at-line-start-p text "decision-test-start "))) :before-tests)
         ((not (zerop exit)) :detected)
@@ -175,17 +178,20 @@
         (write form :stream stream :pretty t) (terpri stream)))
     path))
 
+(defun execute-runner (directory)
+  "Conserva log, exit code e segnale OS del processo isolato già preparato."
+  (let* ((log (merge-pathnames "test.log" directory))
+         (process (uiop:launch-program
+                   '("sbcl" "--noinform" "--no-userinit" "--no-sysinit" "--script"
+                     "tools/decisions-radix-isolated-build.lisp")
+                   :directory directory :output log :error-output :output)))
+    (multiple-value-bind (exit signal) (uiop:wait-process process)
+      (values (classify-result (read-text log) exit signal) exit log signal))))
+
 (defun execute-tests (directory)
   "Ogni esito conserva test.log, incluso errore di compilazione o di avvio."
   (write-runner directory)
-  (let ((log (merge-pathnames "test.log" directory)))
-    (multiple-value-bind (out err exit)
-        (uiop:run-program '("sbcl" "--noinform" "--no-userinit" "--no-sysinit" "--script"
-                            "tools/decisions-radix-isolated-build.lisp")
-                          :directory directory :output log :error-output :output
-                          :ignore-error-status t)
-      (declare (ignore out err))
-      (values (classify-result (read-text log) exit) exit log))))
+  (execute-runner directory))
 
 (defun write-report (directory report)
   "Aggiorna il registro senza stampare ogni risultato; conserva l'ultima copia completa."
@@ -200,8 +206,8 @@
   "Restituisce anche il log della baseline riuscita; il chiamante persiste prima del gate."
   (let ((baseline (merge-pathnames "baseline/" directory)))
     (copy-test-system baseline)
-    (multiple-value-bind (result exit log) (execute-tests baseline)
-      (list :result result :exit-code exit :log (namestring log)))))
+    (multiple-value-bind (result exit log signal) (execute-tests baseline)
+      (list :result result :exit-code exit :signal signal :log (namestring log)))))
 
 (defun execute-mutation (mutant ordinal directory)
   "Una copia per mutante, mai modifiche al checkout chiamante."
@@ -210,8 +216,9 @@
     (with-open-file (stream (merge-pathnames (mutation-source (second mutant)) copy)
                             :direction :output :if-exists :supersede :external-format :utf-8)
       (write-string (mutated-source mutant) stream))
-    (multiple-value-bind (result exit log) (execute-tests copy)
-      (list :name (first mutant) :result result :exit-code exit :log (namestring log)))))
+    (multiple-value-bind (result exit log signal) (execute-tests copy)
+      (list :name (first mutant) :result result :exit-code exit :signal signal
+            :log (namestring log)))))
 
 (defun acquire-campaign-directory (path)
   "Acquisisce con MKDIR esclusivo 0700; una directory esistente non è mai sovrascritta."
@@ -227,11 +234,11 @@
   "Schema dichiarativo anche prima della baseline e durante una campagna interrotta."
   (list :schema-version 1 :kind :targeted-mutation :scope :decisions-radix
         :status :running :stage :validation :baseline :pending
-        :baseline-result nil :baseline-exit-code nil
+        :baseline-result nil :baseline-exit-code nil :baseline-signal nil
         :baseline-log (namestring (merge-pathnames "baseline/test.log" directory))
         :planned-mutants mutant-count :mutants nil :current-ordinal nil :current-mutant nil
         :current-log nil :diagnostic nil :detected 0 :survived 0
-        :compilation-failures 0 :before-tests 0
+        :compilation-failures 0 :before-tests 0 :worker-errors 0
         :limits '(:selected-mutants-only :strict-compilation :test-events-at-line-start
                   :partial-campaign-preserved :exclusive-directory :no-performance-claim)))
 
@@ -239,7 +246,8 @@
   "Aggiunge un esito in ordine fisico e aggiorna i conteggi prima della prossima copia."
   (setf (getf report :mutants) (append (getf report :mutants) (list result)))
   (dolist (pair '((:detected :detected) (:survived :survived)
-                  (:compilation-failures :compilation-failure) (:before-tests :before-tests)))
+                  (:compilation-failures :compilation-failure) (:before-tests :before-tests)
+                  (:worker-errors :worker-error)))
     (setf (getf report (first pair))
           (count (second pair) (getf report :mutants) :key (lambda (entry) (getf entry :result)))))
   report)
@@ -275,6 +283,7 @@
             (setf (getf report :baseline) (if passed :passed :failed)
                   (getf report :baseline-result) (getf baseline :result)
                   (getf report :baseline-exit-code) (getf baseline :exit-code)
+                  (getf report :baseline-signal) (getf baseline :signal)
                   (getf report :baseline-log) (getf baseline :log))
             (write-report directory report)
             (unless passed (error "COD-61: baseline DECISION/radix fallita; ~A" baseline)))
@@ -323,6 +332,47 @@
     (with-open-file (stream path :direction :output :if-exists :error)
       (write-line "evento sintetico del self-test" stream))
     (namestring path)))
+
+(defun self-test-process-signal ()
+  "Un worker fixture si termina con SIGKILL; trasporto e report conservano il segnale."
+  (let* ((directory (acquire-campaign-directory
+                    (format nil "spikes/out/~D-radix-signal-self-test-~D/"
+                            (get-universal-time) (sb-posix:getpid))))
+         (runner (merge-pathnames "tools/decisions-radix-isolated-build.lisp" directory))
+         (report (initial-report directory 1)))
+    (setf (getf report :kind) :process-signal-self-test (getf report :stage) :runner)
+    (write-report directory report)
+    (ensure-directories-exist runner)
+    (with-open-file (stream runner :direction :output :if-exists :error)
+      (dolist (form '((require :sb-posix)
+                      (format t "~&decision-test-start SIGNAL-FIXTURE~%")
+                      (finish-output)
+                      (sb-posix:kill (sb-posix:getpid) sb-posix:sigkill)))
+        (write form :stream stream :pretty t) (terpri stream)))
+    (multiple-value-bind (result exit log signal) (execute-runner directory)
+      (append-mutation-result report
+        (list :name "signal-fixture" :result result :exit-code exit
+              :signal signal :log (namestring log)))
+      (write-report directory report)
+      (assert-self-test (and (eq result :worker-error)
+                             (eql signal sb-posix:sigkill)
+                             (not (eql exit 0))
+                             (event-at-line-start-p (read-text log) "decision-test-start "))
+                        :signaled-process-never-detected)
+      (let* ((*read-eval* nil)
+             (saved (with-open-file (stream (merge-pathnames "report.lisp" directory))
+                      (read stream)))
+             (entry (first (getf saved :mutants))))
+        (assert-self-test (and (= 1 (getf saved :worker-errors))
+                               (zerop (getf saved :detected))
+                               (eql exit (getf entry :exit-code))
+                               (eql signal (getf entry :signal)))
+                          :signal-report-preserved)))
+    (setf (getf report :kind) :process-signal-self-test
+          (getf report :status) :passed (getf report :stage) :complete)
+    (write-report directory report)
+    (format t "~&DECISION/radix: self-test segnale OS superato; ~A~%"
+            (merge-pathnames "report.lisp" directory))))
 
 (defun self-test-campaign-registration ()
   "Rifiuta directory esistenti e conserva un primo esito prima di un guasto tardivo."
@@ -375,6 +425,20 @@
     (assert-self-test (eq :detected (classify-result start 1)) :detected)
     (assert-self-test (eq :survived (classify-result (format nil "~A~%~A~%" start complete) 0))
                       :complete-suite)
+    (assert-self-test (eq :worker-error
+                         (classify-result (format nil "~A~%~A~%" start complete) 1))
+                      :completed-suite-failure)
+    (assert-self-test (eq :worker-error (classify-result complete 1))
+                      :completed-marker-failure)
+    (assert-self-test (eq :detected
+                         (classify-result (format nil "~A~%Backtrace: ~A" start complete) 1))
+                      :quoted-completion-never-accepted)
+    (let ((report (initial-report "./" 1)))
+      (append-mutation-result report '(:name "fixture" :result :worker-error))
+      (assert-self-test (and (= 1 (getf report :worker-errors))
+                             (zerop (getf report :detected))
+                             (zerop (getf report :survived)))
+                        :worker-error-never-detected))
     (dolist (text (list "" "prefix decision-test-start TEST"
                         "(FORMAT T \"decision-test-start ~A\")"
                         "Backtrace: decision-test-start TEST"))
@@ -392,6 +456,7 @@
      (handler-case (progn (apply #'mutate-once (append case '("fixture"))) nil)
        (error () t)) :invalid-mutation))
   (validate-mutations (mutation-list))
+  (self-test-process-signal)
   (self-test-campaign-registration)
   (format t "~&DECISION/radix: self-test superato, nessuna campagna eseguita.~%")
   t)

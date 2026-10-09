@@ -8,4 +8,6 @@
   (:export #:coda-writer #:crea-coda-writer #:accoda-messaggio
            #:acquisisci-writer #:preleva-messaggi #:rilascia-writer
            #:writer-programmabile #:crea-writer-programmabile #:accoda-lavoro-writer
-           #:inizia-tratto-writer #:preleva-lavori-writer #:termina-tratto-writer))
+           #:inizia-tratto-writer #:preleva-lavori-writer #:termina-tratto-writer
+           #:lista-writer-pronti #:crea-lista-writer-pronti
+           #:pubblica-writer-pronto #:preleva-writer-pronto))

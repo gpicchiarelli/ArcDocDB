@@ -1,0 +1,5 @@
+(:SCHEMA-VERSION 1 :KIND :CSN-MUTATION-PROBE :STATUS :OK :PHASE :COMPLETE
+ :FAILED-TEST NIL :PASSED-TESTS
+ ("inflight-registration" "oldest-pinned-recycle" "high-carry"
+  "stale-slot-identity")
+ :DIAGNOSTIC NIL)

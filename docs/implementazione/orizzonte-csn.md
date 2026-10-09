@@ -136,7 +136,7 @@ si apre una Serie; questo è un obbligo del coordinatore di apertura.
 | REQ-AFF-004, INV-A8 | Errori tipizzati e budget finito, transizione interrotta fail-stop. | Iniezione di uscite non locali e gestione del guasto da parte dell'Archivio. |
 
 Questo incremento conserva la compilazione del solo prodotto e i controlli
-statici, con output originali nel [catalogo](../../spikes/results/2026-10-09-csn/catalogo.lisp).
+statici, con output originali nel [catalogo](../../spikes/results/2026-10-09-csn-origine/catalogo.lisp).
 Non aggiunge né esegue test funzionali o benchmark. La compilazione non prova la
 correttezza concorrente: i requisiti restano **progettati**, senza dichiarazioni
 di qualifica C1, copertura o prestazioni del motore.

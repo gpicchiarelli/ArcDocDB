@@ -25,6 +25,10 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 - Registro CSN per Archivio: prenotazioni preallocate, identità dei completamenti,
   orizzonte monotono e budget finito; esaurimento u64 senza wrap e fail-stop delle
   transizioni interrotte. La qualifica concorrente e gli snapshot completi restano aperti.
+- Ricostruzione in memoria del manifest dal prefisso sigillato di `control.log`:
+  ACTIVE, CLOSED con esiti, rimozioni esplicite e limite degli ID. Workspace
+  indipendenti per Serie; nessuna riconciliazione o scrittura dei file.
+
 - Validazione UTF-8 pura su span immutabili, con budget massimo di 16 MiB,
   conteggio dei valori scalari ed errori tipizzati con offset. Utilizzabile
   in parallelo dai worker prima del writer; il parser CBOR resta da integrare.

@@ -69,3 +69,8 @@ risvegli, arresto dei worker e controller adattivo richiedono integrazione;
 non viene provato il progresso se il chiamante abbandona il compito o la lease.
 Le primitive non creano thread né eseguono callback o I/O. Nessun requisito
 viene promosso e nessun gate del motore viene chiuso.
+
+La successiva [lista pronta a partizioni](writer-ready.md) implementa il
+trasporto di questi obblighi. Rifiuti full/busy conservano l'obbligo al
+chiamante; il prelievo lo trasferisce al worker. L'integrazione non aggiunge
+membership nel writer e mantiene il contratto locale di questa campagna.

@@ -1,0 +1,35 @@
+(require :asdf)
+(let ((*package* (find-package :cl-user)) (*read-eval* nil))
+ (with-open-file (s "/tmp/collect-cbor-header-evidence.lisp")
+  (loop with eof = (gensym) for f = (read s nil eof) until (eq f eof)
+    unless (and (consp f) (null (cdr f)) (symbolp (car f))
+                (string= (symbol-name (car f)) "MAIN")) do (eval f))))
+(in-package :writer-queue.evidence)
+(defun save-config (p datum)
+ (with-open-file (s p :direction :output :if-exists :error)
+  (let ((*print-readably* t)) (write datum :stream s :pretty t) (terpri s))))
+(load "tools/evidence-storage.lisp")
+(let* ((wrapper (read-data "spikes/out/4000520725-command-91680-0/report.lisp"))
+       (master-path "spikes/out/4000520781-check-94331-0/report.lisp")
+       (master (arcdocdb.evidence:read-evidence master-path)) (runs (getf master :runs)))
+ (assert (eq :ok (getf wrapper :status)))
+ (assert (zerop (getf wrapper :exit-code)))
+ (assert (eq :stable (getf wrapper :source-consistency)))
+ (assert (eq :complete (getf master :status)))
+ (assert (= 10 (length runs)))
+ (assert (every (lambda (run) (and (member (getf run :status) '(:ok :pass))
+                                  (zerop (getf run :exit-code))
+                                  (eq :stable (getf run :source-consistency)))) runs))
+ (save-config "/tmp/cbor-header-full-check-audit.lisp"
+  (list :schema-version 1 :kind :full-check-audit :formats nil :status :ok
+        :statement-source "root: lettura protetta wrapper e master compresso completo"
+        :wrapper "spikes/out/4000520725-command-91680-0/report.lisp"
+        :master master-path :resolved-master-status (getf master :status)
+        :module-tests '(26 17 17 34 44 18 62 19) :total-module-tests 237
+        :spikes (mapcar (lambda (run) (list :id (getf run :id) :status (getf run :status)
+                                         :exit-code (getf run :exit-code)
+                                         :source-consistency (getf run :source-consistency))) runs)
+        :master-original-bytes (getf (read-data master-path) :uncompressed-bytes)
+        :master-compressed-bytes (getf (read-data master-path) :compressed-bytes)
+        :limits '(:read-eval-disabled :single-form-eof :lossless-gzip-verified
+                  :runtime-only :no-engine-release-qualification))))
