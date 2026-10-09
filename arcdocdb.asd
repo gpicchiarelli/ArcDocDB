@@ -20,7 +20,10 @@
                              (:file "record") (:file "batch")))
                (:module "codec" :serial t
                 :components ((:file "package") (:file "utf8")
-                             (:file "cbor-package") (:file "cbor-header")))
+                             (:file "cbor-package") (:file "cbor-header")
+                             (:file "cbor-space") (:file "cbor-scan-input")
+                             (:file "cbor-scan-stack") (:file "cbor-scan-items")
+                             (:file "cbor-scan")))
                (:module "csn" :serial t
                 :components ((:file "package") (:file "registry")))
                (:module "execution" :serial t
@@ -64,7 +67,9 @@
                              (:file "record") (:file "batch")))
                (:module "codec" :serial t
                 :components ((:file "support") (:file "utf8") (:file "threads")
-                             (:file "cbor-support") (:file "cbor-header") (:file "cbor-threads")))
+                             (:file "cbor-support") (:file "cbor-header") (:file "cbor-threads")
+                             (:file "cbor-structure-support") (:file "cbor-structure")
+                             (:file "cbor-structure-threads")))
                (:module "csn" :serial t
                 :components ((:file "support") (:file "registry") (:file "threads")))
                (:module "execution" :serial t
@@ -91,6 +96,7 @@
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.utf8.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.cbor.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.cbor.structure.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.csn.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.execution.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)

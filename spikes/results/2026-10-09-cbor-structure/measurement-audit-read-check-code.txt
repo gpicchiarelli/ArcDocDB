@@ -1,0 +1,17 @@
+(let ((*read-eval* nil))
+  (with-open-file (s "/tmp/cbor-structure-measurement-audit.lisp" :external-format :utf-8)
+    (let ((data (read s nil :eof)))
+      (assert (and (eq :eof (read s nil :eof)) (= 1 (getf data :schema-version))
+                   (eq :ok (getf data :status))
+                   (= 30 (getf (getf data :benchmark) :samples))
+                   (= 10 (getf (getf data :mutations) :detected))))
+      (write (list :read-eval nil :single-form-eof t :status (getf data :status)
+                   :source-fingerprint-counts
+                   (mapcar (lambda (x) (getf (getf x :product-fingerprints) :count))
+                           (getf data :wrapper-audits))
+                   :post-campaign-nonfocus-change-paths
+                   (remove-duplicates
+                    (loop for wrapper in (getf data :wrapper-audits)
+                          append (mapcar (lambda (x) (getf x :path))
+                                         (getf wrapper :post-campaign-nonfocus-changes))) :test #'equal)))
+      (terpri))))

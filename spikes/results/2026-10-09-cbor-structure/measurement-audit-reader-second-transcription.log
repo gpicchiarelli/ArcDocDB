@@ -1,0 +1,3 @@
+(:STATUS :FAILED :DIAGNOSTIC
+ "Audit CBOR: blob corrente docs/implementazione/cbor-struttura.md"
+ :BENCHMARK-SAMPLES NIL :MUTATION-DETECTED NIL)

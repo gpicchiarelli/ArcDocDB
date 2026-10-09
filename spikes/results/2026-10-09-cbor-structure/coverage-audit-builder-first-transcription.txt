@@ -1,0 +1,44 @@
+NON-ORIGINAL TRANSCRIPTION OF THE VISIBLE TOOL RESULT (SELECTED EXCERPTS).
+The original full stdout/stderr was not saved to a local file. The result
+returned to the reviewer was truncated: original token count 2553, reported
+total output lines 64, tool output budget 2000 tokens. This transcript does
+not restore omitted text and is not claimed byte-identical to the original.
+
+Observed invocation:
+sbcl --noinform --disable-debugger --script /tmp/cbor-structure-coverage-audit-builder.lisp
+
+Selected visible result text:
+
+Warning: truncated output (original token count: 2553)
+Total output lines: 64
+
+; file: /tmp/cbor-structure-coverage-audit-builder.lisp
+; in:
+;      LET* ((RAW (CA-READ-ONE "/tmp/cbor-structure-coverage-extract.lisp"))
+;     (4718784 3145920)
+;
+; caught ERROR:
+;   illegal function call
+;
+; compilation unit finished
+;   Undefined functions:
+;     :ASSOCIATION-NOT-UNREACHABILITY-PROOF :DECLARATIVE-EXPRESSIONS :EXPRESSION-COVERED :MCDC :READ-EVAL :READER :SCAN-STACK :STATUS
+;   caught 1 ERROR condition
+Unhandled UNDEFINED-FUNCTION in thread #<SB-THREAD:THREAD tid=259 "main thread" RUNNING
+                                          {80052B0003}>:
+  The function :SCAN-STACK is undefined.
+
+Backtrace for: #<SB-THREAD:THREAD tid=259 "main thread" RUNNING {80052B0003}>
+0: ("undefined function" :SCAN-ITEMS)
+
+unhandled condition in --disable-debugger mode, quitting
+
+Cause observed in the writer code: eight literal data lists passed to LIST
+were missing quote. Lisp treated keyword-headed and integer-headed data as
+function calls. Correction added quote to those eight constant lists; input
+report reading remained READ-EVAL NIL with single-form/EOF checks. The final
+writer succeeded and reread the audit data. This was a utility writing data
+under /tmp, not a product build, test, benchmark, coverage or mutation run.
+No product source, frozen test, repository file or campaign was changed or
+rerun to correct this utility error. No exit code was retained in the visible
+transcription; the non-success compiler/runtime errors were directly visible.

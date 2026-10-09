@@ -1,0 +1,31 @@
+(:schema-version 1 :repo-root "/Users/gpicchiarelli/.codex/worktrees/cbor-structure/ArcDocDB/"
+ :date "2026-10-09" :path-base "spikes/results/2026-10-09-cbor-structure/"
+ :process-reports
+ ((:source "spikes/out/4000529069-command-81914-0/report.lisp" :artifact "preliminary.lisp" :role :verification)
+  (:source "spikes/out/4000529069-command-81913-0/report.lisp" :artifact "coverage-self-test.lisp" :role :verification)
+  (:source "spikes/out/4000529069-command-81915-0/report.lisp" :artifact "mutation-self-test.lisp" :role :verification)
+  (:source "spikes/out/4000529099-command-82288-0/report.lisp" :artifact "benchmark-self-test.lisp" :role :verification :embedded-report-artifact "benchmark-self-test-raw.lisp")
+  (:source "spikes/out/4000529113-command-82449-0/report.lisp" :artifact "benchmark.lisp" :role :verification :embedded-report-artifact "benchmark-raw.lisp")
+  (:source "spikes/out/4000529135-command-82764-0/report.lisp" :artifact "coverage.lisp" :role :verification)
+  (:source "spikes/out/4000529135-command-82763-0/report.lisp" :artifact "mutations.lisp" :role :verification))
+ :coverage-attempts ((:artifact "coverage-raw.lisp" :name "cbor-structure" :process-artifact "coverage.lisp" :directory "spikes/out/cbor-structure-coverage/"))
+ :mutation-attempts ((:artifact "mutations-raw.lisp" :name "cbor-structure-ten-targets" :process-artifact "mutations.lisp" :report-source "spikes/out/cbor-structure-mutations/report.lisp"))
+ :data-artifacts
+ ((:source "/tmp/cbor-structure-root-review.lisp" :artifact "c1-root-reading.lisp" :role :c1-review)
+  (:source "/tmp/cbor-structure-root-supplement-review.lisp" :artifact "c1-root-supplement.lisp" :role :supplement-review)
+  (:source "/tmp/cbor-structure-independent-review-before-supplement.lisp" :artifact "c1-independent-original.lisp" :role :original-c1-review)
+  (:source "/tmp/cbor-structure-independent-review.lisp" :artifact "c1-independent-reading.lisp" :role :c1-review)
+  (:source "/tmp/cbor-structure-driver-review.lisp" :artifact "c4-driver-reading.lisp" :role :c4-review)
+  (:source "/tmp/cbor-structure-tools-audit.lisp" :artifact "c4-tools-reading.lisp" :role :c4-review)
+  (:source "/tmp/cbor-structure-collector-self-test-first.lisp" :artifact "collector-guard-first.lisp" :role :failed-collector-guard)
+  (:source "/tmp/cbor-structure-collector-rejected-attempt.lisp" :artifact "collector-guard-rejected-target.lisp" :role :rejected-collector-guard)
+  (:source "/tmp/cbor-structure-collector-self-test-v2.lisp" :artifact "collector-guard.lisp" :role :collector-guard))
+ :raw-files
+ ((:source "/tmp/collect-cbor-structure-evidence.lisp" :artifact "collector-code.txt" :role :collector-code)
+  (:source "/tmp/cbor-structure-collector-guard-test.lisp" :artifact "collector-guard-code.txt" :role :collector-guard-code)
+  (:source "/tmp/cbor-structure-collector-guard-test-first.lisp" :artifact "collector-guard-first-code.txt" :role :failed-guard-code)
+  (:source "/tmp/cbor-structure-collector-self-test-first.log" :artifact "collector-guard-first.log" :role :raw-failed-guard-output)
+  (:source "/tmp/cbor-structure-collector-self-test-v2.log" :artifact "collector-guard.log" :role :raw-guard-output)
+  (:source "/tmp/cbor-structure-tests-original-before-read.lisp" :artifact "tests-original-before-read.txt" :role :original-frozen-test-code)
+  (:source "/tmp/cbor-structure-audit-lib.lisp" :artifact "audit-library-code.txt" :role :audit-code))
+ :pending (:raw-coverage-audit :measurement-audit :full-check :final-catalog-audit))

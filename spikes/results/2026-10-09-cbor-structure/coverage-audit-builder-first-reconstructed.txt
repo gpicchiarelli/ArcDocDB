@@ -1,0 +1,146 @@
+(defun ca-read-one (path)
+  (let ((*read-eval* nil))
+    (with-open-file (stream path)
+      (let ((value (read stream nil :eof)))
+        (when (eq value :eof) (error "Empty data file."))
+        (unless (eq (read stream nil :eof) :eof) (error "Trailing data."))
+        value))))
+(let* ((raw (ca-read-one "/tmp/cbor-structure-coverage-extract.lisp"))
+       (partitions
+         '((:path "src/codec/cbor-package.lisp" :html "d5dfe24b8e7ce80699dc58a809f5f2f7.html"
+            :decl-expr 1 :struct-expr 0 :struct-branch 0 :error-expr 0 :error-branch 0 :default-expr 0
+            :decl-lines (3) :error-sites nil)
+           (:path "src/codec/cbor-space.lisp" :html "9c78c917675d99a10c140b7febb42ee3.html"
+            :decl-expr 7 :struct-expr 8 :struct-branch 10 :error-expr 16 :error-branch 7 :default-expr 0
+            :decl-lines (4 5 8 10 12 33 49)
+            :struct-lines (19 20 21 22 23 24 25 26 27 28 29 30)
+            :struct-source-paths ((3 5) (4 5) (5 5) (6 5) (7 5) (8 5) (9 5) (10 5))
+            :error-sites ((:reason :cbor-workspace-capacity :line 42 :expr 4 :branch 2)
+                          (:reason :cbor-workspace-initial :line 45 :expr 4 :branch 3)
+                          (:reason :cbor-workspace-capacity :line 54 :expr 4 :branch 1)
+                          (:reason :cbor-workspace-capacity :line 56 :expr 4 :branch 1)))
+           (:path "src/codec/cbor-scan-input.lisp" :html "dd182fef492f215bec89dca5da795603.html"
+            :decl-expr 4 :struct-expr 0 :struct-branch 0 :error-expr 0 :error-branch 0 :default-expr 0
+            :decl-lines (2 3 6 20) :error-sites nil)
+           (:path "src/codec/cbor-scan-stack.lisp" :html "29072952df369aae8fc3dc7a771fe097.html"
+            :decl-expr 8 :struct-expr 0 :struct-branch 0 :error-expr 64 :error-branch 15 :default-expr 0
+            :decl-lines (2 3 6 18 32 51 72 88)
+            :error-sites ((:reason :cbor-stack-top :line 11 :expr 4 :branch 1)
+                          (:reason :cbor-stack-kind :line 14 :expr 4 :branch 2)
+                          (:reason :cbor-pop-root :line 24 :expr 4 :branch 1)
+                          (:reason :cbor-pop-depth :line 26 :expr 4 :branch 1)
+                          (:reason :cbor-stack-capacity :line 38 :expr 4 :branch 1)
+                          (:reason :cbor-stack-depth :line 40 :expr 4 :branch 1)
+                          (:reason :cbor-child-count :line 59 :expr 4 :branch 1)
+                          (:reason :cbor-child-empty :line 61 :expr 4 :branch 1)
+                          (:reason :cbor-map-phase :line 65 :expr 4 :branch 1)
+                          (:reason :cbor-child-kind :line 68 :expr 4 :branch 0)
+                          (:reason :cbor-root-state :line 77 :expr 4 :branch 1)
+                          (:reason :cbor-root-state :line 79 :expr 4 :branch 1)
+                          (:reason :cbor-root-tag :line 84 :expr 4 :branch 1)
+                          (:reason :cbor-stack-range :line 94 :expr 4 :branch 1)
+                          (:reason :cbor-drain-tag :line 104 :expr 4 :branch 1)
+                          (:reason :cbor-stack-drain :line 107 :expr 4 :branch 0)))
+           (:path "src/codec/cbor-scan-items.lisp" :html "7188e5bcde7bfb748a562937d6e9579a.html"
+            :decl-expr 8 :struct-expr 0 :struct-branch 0 :error-expr 52 :error-branch 12 :default-expr 0
+            :decl-lines (2 3 6 24 43 58 85 112)
+            :error-sites ((:reason :cbor-context-cursor :line 14 :expr 4 :branch 1)
+                          (:reason :cbor-context-form :line 16 :expr 4 :branch 1)
+                          (:reason :cbor-break-cursor :line 30 :expr 4 :branch 1)
+                          (:reason :cbor-node-cursor :line 49 :expr 4 :branch 1)
+                          (:reason :cbor-node-count :line 51 :expr 4 :branch 1)
+                          (:reason :cbor-container-range :line 66 :expr 4 :branch 1)
+                          (:reason :cbor-container-cursor :line 68 :expr 4 :branch 1)
+                          (:reason :cbor-string-range :line 93 :expr 4 :branch 1)
+                          (:reason :cbor-string-progress :line 95 :expr 4 :branch 1)
+                          (:reason :cbor-utf8-count :line 107 :expr 4 :branch 1)
+                          (:reason :cbor-item-range :line 120 :expr 4 :branch 1)
+                          (:reason :cbor-item-cursor :line 122 :expr 4 :branch 1)
+                          (:reason :cbor-item-major :line 131 :expr 4 :branch 0)))
+           (:path "src/codec/cbor-scan.lisp" :html "7094973643691432160466524c47eaf0.html"
+            :decl-expr 5 :struct-expr 0 :struct-branch 0 :error-expr 38 :error-branch 12 :default-expr 3
+            :decl-lines (4 5 8 31 47) :default-lines (50 51 52)
+            :default-source-paths ((5 2 7) (6 2 7) (7 2 7))
+            :error-sites ((:reason :cbor-step-range :line 17 :expr 4 :branch 1)
+                          (:reason :cbor-step-form :line 20 :expr 4 :branch 1)
+                          (:reason :cbor-step-progress :line 27 :expr 6 :branch 2)
+                          (:reason :cbor-result-range :line 37 :expr 4 :branch 1)
+                          (:reason :cbor-result-count :line 40 :expr 4 :branch 2)
+                          (:reason :cbor-result-state :line 43 :expr 4 :branch 3)
+                          (:reason :cbor-loop-span :line 63 :expr 4 :branch 1)
+                          (:reason :cbor-loop-bound :line 74 :expr 4 :branch 1)
+                          (:reason :cbor-empty-header :line 76 :expr 4 :branch 0)))))
+       (files (getf (getf raw :state) :selected)))
+  (dolist (file files)
+    (let ((part (find (getf file :path) partitions :key (lambda (p) (getf p :path)) :test #'equal)))
+      (unless (= (- (getf file :expression-total) (getf file :expression-covered))
+                 (+ (getf part :decl-expr) (getf part :struct-expr)
+                    (getf part :error-expr) (getf part :default-expr)))
+        (error "Expression partition differs: ~A" (getf file :path)))
+      (unless (= (- (getf file :branch-total) (getf file :branch-covered))
+                 (+ (getf part :struct-branch) (getf part :error-branch)))
+        (error "Branch partition differs: ~A" (getf file :path)))
+      (unless (and (= (getf part :error-expr)
+                      (reduce #'+ (getf part :error-sites) :key (lambda (s) (getf s :expr)) :initial-value 0))
+                   (= (getf part :error-branch)
+                      (reduce #'+ (getf part :error-sites) :key (lambda (s) (getf s :branch)) :initial-value 0)))
+        (error "Error-site partition differs: ~A" (getf file :path)))))
+  (with-open-file (out "/tmp/cbor-structure-coverage-audit.lisp" :direction :output :if-exists :supersede)
+    (let ((*print-pretty* t))
+      (write
+       (list :schema 1 :kind :coverage-audit :subject :cbor-structure
+             :recorded-at "2026-10-09 10:10:36 UTC" :reader :storage-commit-review
+             :statement-source :direct-read-of-recorded-data-html-and-frozen-source
+             :delegate (:reader :native-subagent-cbor-policy :scope (:scan-stack :scan-items)
+                        :no-product-runs t :no-edits t)
+             :worktree "/Users/gpicchiarelli/.codex/worktrees/cbor-structure/ArcDocDB"
+             :read-policy (:read-eval nil :single-form-and-eof-checked t
+                           :load-or-eval-of-reports nil :product-reruns nil)
+             :data-reader "/tmp/cbor-structure-coverage-reader.lisp"
+             :data-builder "/tmp/cbor-structure-coverage-audit-builder.lisp"
+             :extraction-data "/tmp/cbor-structure-coverage-extract.lisp"
+             :wrappers
+             (loop for wrapper in (getf raw :wrappers) collect
+               (loop for key in '(:path :status :exit :stable :before-after-equal :blob-count :selected-blobs)
+                     append (list key (getf wrapper key))))
+             :nine-final-blobs-match-both-wrappers-and-current-files t
+             :fingerprint-scope :six-product-and-three-test-files-only
+             :raw-state "spikes/out/cbor-structure-coverage/coverage-state.lisp"
+             :raw-index "spikes/out/cbor-structure-coverage/cover-index.html"
+             :saved-state-file-count (getf (getf raw :state) :saved-file-count)
+             :report-file-count 6 :html-file-count-including-index 7
+             :counts-and-missing-source-paths files :partition-by-file partitions
+             :totals (:expression-covered 742 :expression-total 956
+                      :branch-covered 144 :branch-total 200
+                      :missing-expressions 214 :missing-branch-outcomes 56)
+             :missing-partition
+             (:declarative-expressions 33 :defstruct-associated-expressions 8
+              :defstruct-associated-branch-outcomes 10
+              :internal-error-expressions 170 :internal-error-sites 42
+              :internal-guard-branch-outcomes 46 :unmarked-default-expressions 3
+              :identified-public-error-gaps-among-recorded-missing 0
+              :unclassified-source-attribution-expressions 0
+              :unclassified-source-attribution-branches 0)
+             :classification-limits
+             (:association-not-unreachability-proof t :denominator-retained-in-full t
+              :defstruct-generated-operation-and-runtime-cause :unclassified
+              :defstruct-association-basis :source-paths-inside-slot-initializers-and-types
+              :default-runtime-cause :unclassified
+              :default-options-omitted-in-recorded-passing-tests t
+              :no-claim-all-public-behavior-covered t
+              :no-exceptions-approved t :no-mcdc-claim t)
+             :recorded-runtime
+             (:status :pass :nominal-tests 24 :ast-cases 256 :ast-seed #x7394b21d
+              :lead-spans 512 :lead-accepted 41 :lead-rejected 471
+              :fuzz-cases 4096 :fuzz-seed #x49cba017 :fuzz-accepted 30 :fuzz-rejected 4066
+              :workers 2 :scans 48 :nodes 2359344 :bytes 5505168
+              :sinks (4718784 3145920) :overlap-ticks 212802 :ticks-per-second 1000000
+              :clock :get-internal-real-time :distinct-cores-or-cpu-time-claim nil)
+             :coverage-self-test (:status :pass :recorded-exact-marker "Copertura: self-test del ramo mancante superato.")
+             :open-functional-findings nil
+             :not-attested (:mcdc :full-engine-gate :human-approval :deterministic-cbor-profile
+                            :tag-semantics :writer-admission :series-faulted-controller))
+       :stream out)
+      (terpri out)))
+  (ca-read-one "/tmp/cbor-structure-coverage-audit.lisp")
+  (format t "Audit data written and reread with READ-EVAL NIL and EOF; partitions match all six raw files.~%"))

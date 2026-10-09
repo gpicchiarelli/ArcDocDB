@@ -1,0 +1,35 @@
+(:SCHEMA-VERSION 1 :KIND :CBOR-STRUCTURE-COLLECTOR-SELF-TEST :FORMATS NIL
+ :STATUS :FAILED :SOURCE "/tmp/collect-cbor-structure-evidence.lisp" :FIXTURES
+ #A((55) BASE-CHAR . "/tmp/cbor-structure-collector-fixture-4000528349-76110/")
+ :RECORDED-AT 4000528349 :PASSED
+ (:READER-DISABLED-EVAL :READER-EXTRA-EOF :MISSING-AND-DUPLICATED-TARGETS
+  :FRESH-TARGET-RETAINS-EXISTING-BYTES :BYTE-COPY-AND-CBOR-STRUCTURE-EMBEDDED
+  :NIL-AND-ABSENT-CHANNELS :MUTATION-ALL-LOG-STRINGS
+  :APPEND-PRIOR-BYTE-IDENTITY-AND-REPEATED-NAME
+  :MISMATCHED-CATALOG-DATA-AND-BYTES-BEFORE-WRITE
+  :CATALOG-TOP-ENTRIES-SCHEMA-ONE-BASENAMES)
+ :FAILED
+ ((:NAME :COVERAGE-EXACT-FOCAL-METADATA-AND-RAW-FILES :CONDITION
+   #A((33) BASE-CHAR . "Asserzione della guardia fallita.")))
+ :LOG-SOURCE "/tmp/cbor-structure-collector-self-test.log" :RAW-STDOUT
+ "ok :READER-DISABLED-EVAL
+ok :READER-EXTRA-EOF
+ok :MISSING-AND-DUPLICATED-TARGETS
+ok :FRESH-TARGET-RETAINS-EXISTING-BYTES
+Conservati 3 file, 148 byte, 1 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/byte-out/
+ok :BYTE-COPY-AND-CBOR-STRUCTURE-EMBEDDED
+ok :NIL-AND-ABSENT-CHANNELS
+Conservati 5 file, 2194 byte, 2 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/mut-out/
+ok :MUTATION-ALL-LOG-STRINGS
+Conservati 2 file, 200 byte, 0 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/append-out/
+ok :APPEND-PRIOR-BYTE-IDENTITY-AND-REPEATED-NAME
+ok :MISMATCHED-CATALOG-DATA-AND-BYTES-BEFORE-WRITE
+Conservati 4 file, 1468 byte, 1 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/coverage-out/
+FAILED :COVERAGE-EXACT-FOCAL-METADATA-AND-RAW-FILES: Asserzione della guardia fallita.
+Conservati 4 file, 920 byte, 1 entry. Cartella: /tmp/cbor-structure-collector-fixture-4000528349-76110/catalog-out/
+ok :CATALOG-TOP-ENTRIES-SCHEMA-ONE-BASENAMES
+Collector guard self-test: 10 passed, 1 failed.
+"
+ :LIMITS
+ (:COLLECTOR-GUARDS-ONLY :TRUSTED-COLLECTOR-CODE-LOADED-WITHOUT-MAIN
+  :NO-RAW-DATA-LOAD-OR-EVAL :NO-PRODUCT-CAMPAIGNS))
