@@ -30,7 +30,8 @@
                (:module "execution" :serial t
                 :components ((:file "package") (:file "queue") (:file "writer")
                              (:file "handoff") (:file "ready-types") (:file "ready")
-                             (:file "ready-recycle")))
+                             (:file "ready-recycle")
+                             (:file "worker-types") (:file "worker-boundary") (:file "worker-claim") (:file "worker-run")))
                (:module "storage"
                 :serial t
                 :components ((:file "package") (:file "formats") (:file "segment-header")
@@ -79,7 +80,7 @@
                 :components ((:file "support") (:file "registry") (:file "threads")))
                (:module "execution" :serial t
                 :components ((:file "support") (:file "queue") (:file "threads")
-                             (:file "handoff") (:file "ready") (:file "ready-recycle")))
+                             (:file "handoff") (:file "ready") (:file "ready-recycle") (:file "worker")))
                (:module "storage"
                 :serial t
                 :components ((:file "support") (:file "segment-header") (:file "log-header")

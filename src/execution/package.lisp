@@ -10,4 +10,9 @@
            #:writer-programmabile #:crea-writer-programmabile #:accoda-lavoro-writer
            #:inizia-tratto-writer #:preleva-lavori-writer #:termina-tratto-writer
            #:lista-writer-pronti #:crea-lista-writer-pronti
-           #:pubblica-writer-pronto #:preleva-writer-pronto #:ricircola-writer-pronto))
+           #:pubblica-writer-pronto #:preleva-writer-pronto #:ricircola-writer-pronto
+           #:contesto-worker-writer #:crea-contesto-worker-writer
+           #:stato-worker-writer #:writer-worker-writer #:errore-worker-writer #:prendi-writer-worker
+           #:inizia-tratto-worker #:preleva-lavori-worker #:conferma-lavori-worker
+           #:termina-tratto-worker #:ricircola-worker
+           #:adotta-writer-worker #:cede-writer-worker))

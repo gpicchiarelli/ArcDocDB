@@ -166,3 +166,17 @@ ha 81/86 espressioni e 8/8 esiti; le cinque forme non marcate sono package,
 declaim optimize e tre ftype top-level. Le lacune precedenti restano nel
 denominatore completo, compresi i due esiti CAS difensivi della lista pronta.
 Nessuna esclusione approvata, MC/DC completa o chiusura del gate C1 implicita.
+
+
+## Contesto worker dei writer — 2026-10-09
+
+La [campagna worker](../implementazione/writer-worker-decisioni.md) conserva
+1427/1660 espressioni e 199/230 esiti su tutti gli undici file execution.
+I quattro nuovi file hanno 498/600 espressioni e 65/76 esiti; le 102 forme
+e undici alternative nuove non marcate sono mappate nell'inventario,
+insieme alle 131 forme e venti alternative dei sette file precedenti.
+Native, HTML ed export corrispondono anche per ciascun missing path.
+Nessuna forma top-level, ramo difensivo o postcondizione è sottratta dal
+denominatore. Le fixture FI sono dichiarate e non autorizzano a violare
+ownership con thread attivi. Nessuna esclusione approvata, MC/DC completa
+o chiusura del gate C1 del motore è implicita.
