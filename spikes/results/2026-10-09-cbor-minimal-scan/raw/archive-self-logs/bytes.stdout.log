@@ -1,0 +1,2 @@
+(:SCHEMA-VERSION 1 :KIND :COMMAND-ARCHIVE-AUDIT :STATUS :FAILED :REASON :BYTES
+ :PATH "raw/data.bin" :DIAGNOSTIC "Dimensione diversa dall'indice.")

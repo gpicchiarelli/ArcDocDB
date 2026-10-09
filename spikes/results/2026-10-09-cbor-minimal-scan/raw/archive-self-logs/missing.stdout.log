@@ -1,0 +1,3 @@
+(:SCHEMA-VERSION 1 :KIND :COMMAND-ARCHIVE-AUDIT :STATUS :FAILED :REASON
+ :MISSING-FILE :PATH "raw/data.bin" :DIAGNOSTIC
+ "Componente assente o non accessibile.")

@@ -1,0 +1,16 @@
+Selected transcription of the complete visible tool response, not an original stdout/stderr file.
+The original command did not redirect its streams. The tool output was not truncated (1006 tokens; budget 1700).
+
+Command exit: 1
+Command: sbcl --noinform --disable-debugger --non-interactive --eval '(require :asdf)' --eval '(load "tools/evidence-storage.lisp")' --eval '(let ((*read-eval* nil)) (with-open-file (stream "tools/check-command-archive.lisp") (loop with count = 0 for form = (read stream nil :eof) until (eq form :eof) do (incf count) finally (format t "~D complete tool source forms read, not evaluated.~%" count))))'
+
+Unhandled SB-INT:SIMPLE-READER-ERROR:
+  unmatched close parenthesis
+  Line: 251, Column: 107, File-Position: 14829
+  Stream: tools/check-command-archive.lisp
+
+The source was READ with READ-EVAL NIL; none of its definitions or MAIN were evaluated.
+Only ASDF and the invariant evidence-storage dependency were loaded.
+No archive audit, checker self-test, product/test/benchmark/coverage/mutation campaign ran.
+Correction: remove one surplus closing parenthesis at the end of AUDIT-ARCHIVE.
+Original tool source retained byte-for-byte before correction as check-command-archive-source-read-attempt-1.lisp.

@@ -1,0 +1,2 @@
+(:SCHEMA-VERSION 1 :KIND :COMMAND-ARCHIVE-AUDIT :STATUS :FAILED :REASON
+ :INVENTORY :PATH ".unindexed" :DIAGNOSTIC "File effettivo non indicizzato.")

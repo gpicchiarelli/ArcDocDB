@@ -1,0 +1,3 @@
+(:SCHEMA-VERSION 1 :KIND :COMMAND-ARCHIVE-AUDIT :STATUS :FAILED :REASON
+ :RELATIVE-PATH :PATH "../positive/raw/data.bin" :DIAGNOSTIC
+ "Componenti vuote, assolute o di escape vietate.")

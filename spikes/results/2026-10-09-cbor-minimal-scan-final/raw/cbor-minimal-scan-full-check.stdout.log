@@ -1,0 +1,1353 @@
+sbcl --noinform --no-userinit --non-interactive --load tools/build.lisp
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/package-tmpGHU3ALSV.fasl
+; compilation finished in 0:00:00.002
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/package-tmpAAURSO1.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/conditions.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/conditions-tmp5GEXGEG5.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/binary.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/binary-tmpAR3FSGEY.fasl
+; compilation finished in 0:00:00.011
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/crc32c.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/crc32c-tmpJAIDFZTC.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/record.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/record-tmp8V3J6PE9.fasl
+; compilation finished in 0:00:00.110
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/batch.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/foundation/batch-tmp9V47YWQF.fasl
+; compilation finished in 0:00:00.038
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/package-tmp9BN22RMA.fasl
+; compilation finished in 0:00:00.002
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/utf8.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/utf8-tmp1CXFJSK9.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-package-tmpX4BRKI0R.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-header.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-header-tmpQ371UGST.fasl
+; compilation finished in 0:00:00.016
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-float-minimal.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-float-minimal-tmp2OWI3Q7U.fasl
+; compilation finished in 0:00:00.008
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-minimal.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-minimal-tmp9KKTJMYV.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-space.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-space-tmpJU0JWO19.fasl
+; compilation finished in 0:00:00.022
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-input.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-input-tmpZX2WN8N4.fasl
+; compilation finished in 0:00:00.004
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-stack.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-stack-tmpOU81XRV0.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-items.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-items-tmpY2ML9CFA.fasl
+; compilation finished in 0:00:00.023
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-tmpX2JYJDQE.fasl
+; compilation finished in 0:00:00.023
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-minimal.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-minimal-tmpOPCILR65.fasl
+; compilation finished in 0:00:00.007
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/csn/package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/csn/package-tmpRV9F8A9A.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/csn/registry.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/csn/registry-tmpK2ZAJT4I.fasl
+; compilation finished in 0:00:00.045
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/package-tmpUX5S4ADN.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/queue.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/queue-tmp10401X32.fasl
+; compilation finished in 0:00:00.023
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/writer.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/writer-tmpZ7CBRM0G.fasl
+; compilation finished in 0:00:00.011
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/handoff.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/handoff-tmp9OZEQ0G2.fasl
+; compilation finished in 0:00:00.013
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/ready-types.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/ready-types-tmpB2JTL1W9.fasl
+; compilation finished in 0:00:00.041
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/ready.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/ready-tmpP3BI68WQ.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/ready-recycle.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/execution/ready-recycle-tmpQDARA81Z.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/package-tmpYEMMM7SE.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/formats.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/formats-tmp73HU0RPK.fasl
+; compilation finished in 0:00:00.005
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/segment-header.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/segment-header-tmpIO5N7K88.fasl
+; compilation finished in 0:00:00.042
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/log-header.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/log-header-tmpCM21U60Z.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/compaction-scan.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/compaction-scan-tmp9DT7SEFG.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/control-payload.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/control-payload-tmp8065ESJT.fasl
+; compilation finished in 0:00:00.041
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/payload-record.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/payload-record-tmp7S8Z6FGF.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/payload-write.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/storage/payload-write-tmpSIT3QPKP.fasl
+; compilation finished in 0:00:00.048
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/package-tmpE0PA0714.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/types.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/types-tmpJRWHHVG0.fasl
+; compilation finished in 0:00:00.023
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/native.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/native-tmp4WZVROCX.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/lifecycle.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/lifecycle-tmpA0I3UKX8.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/transfer.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/transfer-tmp267Y2N80.fasl
+; compilation finished in 0:00:00.017
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/flush.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/io/flush-tmpOUPE5FSJ.fasl
+; compilation finished in 0:00:00.002
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/package-tmpIGHCU6ZA.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/types.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/types-tmpBO0TUGLK.fasl
+; compilation finished in 0:00:00.060
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/builder.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/builder-tmpIIXPIQNW.fasl
+; compilation finished in 0:00:00.025
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/group.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/group-tmpOHM494YR.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/executor.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/executor-tmpOVFB07XF.fasl
+; compilation finished in 0:00:00.013
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/csn.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/wal/csn-tmpG6VFGMYP.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/package-tmp4QIPRMOF.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/types.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/types-tmpGW0QV22K.fasl
+; compilation finished in 0:00:00.066
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/ownership.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/ownership-tmp2K9J0HSR.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/events.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/events-tmpP44I4E0Y.fasl
+; compilation finished in 0:00:00.016
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/io-events.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/io-events-tmp63LQ7EX6.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/publication.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/publication-tmp86F1A8FB.fasl
+; compilation finished in 0:00:00.007
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/query.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/query-tmpH7D4HL98.fasl
+; compilation finished in 0:00:00.008
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/retirement.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/series/retirement-tmpCDM7YXYI.fasl
+; compilation finished in 0:00:00.005
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/package-tmpLM57P5P.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/types.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/types-tmpZE69DN33.fasl
+; compilation finished in 0:00:00.016
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/core.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/core-tmpG8099TO3.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/validation.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/validation-tmpTASQCYAW.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/read.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/read-tmp35U57IV6.fasl
+; compilation finished in 0:00:00.018
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/write.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/write-tmpTZOONXRW.fasl
+; compilation finished in 0:00:00.033
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/relocate.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/relocate-tmpWN0UKDSV.fasl
+; compilation finished in 0:00:00.022
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-package-tmpBF3HHBTQ.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-types.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-types-tmpGYUNPZCY.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-core.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-core-tmpD68Q8WCA.fasl
+; compilation finished in 0:00:00.006
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-build.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-build-tmp7MK9KM9C.fasl
+; compilation finished in 0:00:00.033
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-probe.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-probe-tmpJJ71X849.fasl
+; compilation finished in 0:00:00.049
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-read.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-read-tmp1VUK6SR2.fasl
+; compilation finished in 0:00:00.011
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-write.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-write-tmpR2FIHSUG.fasl
+; compilation finished in 0:00:00.023
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-relocate.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-relocate-tmp8PYELRKX.fasl
+; compilation finished in 0:00:00.018
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-arena.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-arena-tmpEHTOKYT0.fasl
+; compilation finished in 0:00:00.011
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-directory.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/index/primary-directory-tmpS6U1VHI9.fasl
+; compilation finished in 0:00:00.016
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/package-tmpVTFK6ZJW.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/types.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/types-tmp75WVSJEW.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-types.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-types-tmpBU5UM3S4.fasl
+; compilation finished in 0:00:00.018
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-core.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-core-tmpOBHVA3CD.fasl
+; compilation finished in 0:00:00.013
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-csn.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-csn-tmpJ6ELVFLF.fasl
+; compilation finished in 0:00:00.011
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-register.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-register-tmpULDB0RG.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-lifecycle.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-lifecycle-tmpUTZ0UUTE.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-read.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/mvcc/snapshots-read-tmpOOSRA8PZ.fasl
+; compilation finished in 0:00:00.013
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/package-tmpDMIL0RVK.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/types.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/types-tmp8MR9IMIO.fasl
+; compilation finished in 0:00:00.030
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/core.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/core-tmpJQDKAVAY.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/read.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/read-tmp3I8CEEQY.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/retire.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/retire-tmpA3RHFLWZ.fasl
+; compilation finished in 0:00:00.011
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/reclaim.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/epochs/reclaim-tmpYZIB7VXO.fasl
+; compilation finished in 0:00:00.009
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/package.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/package-tmpR8PK79V8.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/types.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/types-tmpN1ZVB1HZ.fasl
+; compilation finished in 0:00:00.012
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/core.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/core-tmpZGRRPISB.fasl
+; compilation finished in 0:00:00.022
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/task.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/read/task-tmpFNKDE5XP.fasl
+; compilation finished in 0:00:00.019
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/package-tmpRJTU435C.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/scan.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/scan-tmpI9WG87JK.fasl
+; compilation finished in 0:00:00.043
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-package-tmpYDE6I9E6.fasl
+; compilation finished in 0:00:00.000
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-types.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-types-tmp319UV2V8.fasl
+; compilation finished in 0:00:00.008
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-sort.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-sort-tmpLYQINFYS.fasl
+; compilation finished in 0:00:00.035
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-radix.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-radix-tmpGA31XWNO.fasl
+; compilation finished in 0:00:00.032
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-build.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-build-tmp5HT23M6C.fasl
+; compilation finished in 0:00:00.039
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-query.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/decisions-query-tmpA60KLDKY.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-package.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-package-tmpD801X3GJ.fasl
+; compilation finished in 0:00:00.001
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-types.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-types-tmpGOW1GC70.fasl
+; compilation finished in 0:00:00.024
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-decode.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-decode-tmpPQ1X28TL.fasl
+; compilation finished in 0:00:00.024
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-fold.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-fold-tmpE92ECU7O.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-build.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-build-tmp8S0II570.fasl
+; compilation finished in 0:00:00.049
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-query.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/manifest-query-tmpJE88A12F.fasl
+; compilation finished in 0:00:00.005
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/inventory-types.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/inventory-types-tmpA5FNLPLT.fasl
+; compilation finished in 0:00:00.027
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/inventory-build.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/inventory-build-tmpHKCV9TP8.fasl
+; compilation finished in 0:00:00.037
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/inventory-query.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/recovery/inventory-query-tmpZ18MA7XE.fasl
+; compilation finished in 0:00:00.002
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/smoke.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/smoke-tmp6LQJ9T0C.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/support-tmpTX7OA81T.fasl
+; compilation finished in 0:00:00.020
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/binary.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/binary-tmpWOTC3PB7.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/record.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/record-tmpHQE95SAC.fasl
+; compilation finished in 0:00:00.065
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/batch.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/foundation/batch-tmpO87FP9NR.fasl
+; compilation finished in 0:00:00.027
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/support-tmpP6A3E92I.fasl
+; compilation finished in 0:00:00.027
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/utf8.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/utf8-tmpUSHT8RIL.fasl
+; compilation finished in 0:00:00.054
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/threads.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/threads-tmp7YCPD44Y.fasl
+; compilation finished in 0:00:00.019
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-support-tmpQXR7SNXD.fasl
+; compilation finished in 0:00:00.024
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-header.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-header-tmp6FLI1OC3.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-threads.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-threads-tmpWBK8JTS9.fasl
+; compilation finished in 0:00:00.015
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-support-tmpUVEUD2ZN.fasl
+; compilation finished in 0:00:00.060
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-tmpOWNJOEU.fasl
+; compilation finished in 0:00:00.029
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-threads.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-threads-tmpVT5BMTA5.fasl
+; compilation finished in 0:00:00.014
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-edges.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-edges-tmpN3CFVWZF.fasl
+; compilation finished in 0:00:00.003
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-structure-support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-structure-support-tmpNK27C0R1.fasl
+; compilation finished in 0:00:00.061
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-structure.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-structure-tmp3BPE71HR.fasl
+; compilation finished in 0:00:00.072
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-structure-threads.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-structure-threads-tmp758YUXMV.fasl
+; compilation finished in 0:00:00.029
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan-support.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan-support-tmpGMQXK1HK.fasl
+; compilation finished in 0:00:00.051
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan-tmp49Q238TW.fasl
+; compilation finished in 0:00:00.080
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan-threads.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan-threads-tmpMXPMJ5KG.fasl
+; compilation finished in 0:00:00.024
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/csn/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/csn/support-tmpB69313KI.fasl
+; compilation finished in 0:00:00.047
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/csn/registry.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/csn/registry-tmp9ZT99EEA.fasl
+; compilation finished in 0:00:00.052
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/csn/threads.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/csn/threads-tmpW045U8V2.fasl
+; compilation finished in 0:00:00.054
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/support-tmp6XOIRI3N.fasl
+; compilation finished in 0:00:00.020
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/queue.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/queue-tmp9ZHTLHSG.fasl
+; compilation finished in 0:00:00.045
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/threads.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/threads-tmpRW73Q691.fasl
+; compilation finished in 0:00:00.066
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/handoff.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/handoff-tmp4TM0ME1F.fasl
+; compilation finished in 0:00:00.130
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/ready.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/ready-tmpU2IL9N4.fasl
+; compilation finished in 0:00:00.139
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/ready-recycle.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/execution/ready-recycle-tmpOPW41KDL.fasl
+; compilation finished in 0:00:00.162
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/support-tmpIPVWLON2.fasl
+; compilation finished in 0:00:00.037
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/segment-header.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/segment-header-tmpO0LCOIDS.fasl
+; compilation finished in 0:00:00.017
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/log-header.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/log-header-tmpP264WQ6O.fasl
+; compilation finished in 0:00:00.087
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/compaction-scan.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/compaction-scan-tmpESC43OCR.fasl
+; compilation finished in 0:00:00.048
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/control-payload.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/storage/control-payload-tmpWCAM54ZJ.fasl
+; compilation finished in 0:00:00.060
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/io/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/io/support-tmpVTMW561L.fasl
+; compilation finished in 0:00:00.036
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/io/transfer.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/io/transfer-tmpUNNGT9CF.fasl
+; compilation finished in 0:00:00.040
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/io/native.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/io/native-tmp4L3W83SU.fasl
+; compilation finished in 0:00:00.038
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/support-tmpGE7QNNEE.fasl
+; compilation finished in 0:00:00.090
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/scan.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/scan-tmp9B0UZGT4.fasl
+; compilation finished in 0:00:00.077
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/corruption.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/corruption-tmpAJ5U325P.fasl
+; compilation finished in 0:00:00.037
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions-support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions-support-tmpAOF1CYAS.fasl
+; compilation finished in 0:00:00.078
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions-tmpIXCQTSHA.fasl
+; compilation finished in 0:00:00.098
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions-audit.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions-audit-tmp5E6VIEMS.fasl
+; compilation finished in 0:00:00.040
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions-radix.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/decisions-radix-tmpI0PODGVV.fasl
+; compilation finished in 0:00:00.146
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/manifest-support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/manifest-support-tmp1Z95I17K.fasl
+; compilation finished in 0:00:00.069
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/manifest.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/manifest-tmpCFVK1AC1.fasl
+; compilation finished in 0:00:00.053
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/manifest-audit.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/manifest-audit-tmpHHRR8E8N.fasl
+; compilation finished in 0:00:00.053
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/inventory-support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/inventory-support-tmpWWJ02E3I.fasl
+; compilation finished in 0:00:00.036
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/inventory.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/recovery/inventory-tmpONTOHUJ2.fasl
+; compilation finished in 0:00:00.104
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/support.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/support-tmpQT9APWMH.fasl
+; compilation finished in 0:00:00.026
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/builder.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/builder-tmp6LYQXY0L.fasl
+; compilation finished in 0:00:00.019
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/group.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/group-tmpNKVDR0J1.fasl
+; compilation finished in 0:00:00.023
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/fault.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/fault-tmp6F83SDCV.fasl
+; compilation finished in 0:00:00.031
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/native.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/native-tmpEJNPPMJY.fasl
+; compilation finished in 0:00:00.010
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/csn.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/csn-tmp31RWPSX2.fasl
+; compilation finished in 0:00:00.343
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/csn-threads.lisp" (written 09 OCT 2026 06:02:08 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/wal/csn-threads-tmp1HKLMSTH.fasl
+; compilation finished in 0:00:00.031
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/support.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/support-tmpEWG5XJ53.fasl
+; compilation finished in 0:00:00.472
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/controller.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/controller-tmpXHL60MUV.fasl
+; compilation finished in 0:00:00.159
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/boundaries.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/boundaries-tmpB7NPDQCW.fasl
+; compilation finished in 0:00:00.009
+; compiling file "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/threads.lisp" (written 09 OCT 2026 06:24:26 PM):
+
+; wrote /Users/gpicchiarelli/.cache/common-lisp/sbcl-2.6.9-macosx-arm64/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/series/threads-tmpGZ70QILE.fasl
+; compilation finished in 0:00:00.043
+ok    package ARCDOCDB presente
+ok    ARCDOCDB:*VERSION* è una stringa
+ok    TEST-REQ-AFF-004-TYPED-ERRORS-RENDERING
+ok    TEST-REQ-FOR-003-OUT-OF-LINE-READERS
+ok    TEST-REQ-FOR-003-LITTLE-ENDIAN
+ok    TEST-REQ-FOR-003-RANGES
+ok    TEST-REQ-FOR-003-CRC-KNOWN-VECTORS
+ok    TEST-REQ-FOR-003-CRC-DIFFERENTIAL-INCREMENTAL
+ok    TEST-REQ-FOR-003-WORD-ENCODING-INDEPENDENT-ORACLE
+ok    TEST-REQ-LIM-001-WORD-ENCODING-PREFLIGHT
+ok    TEST-REQ-FOR-003-INDEPENDENT-ENCODING-ORACLE
+ok    TEST-REQ-LIM-001-ROUNDTRIP-VERSIONS
+ok    TEST-REQ-LIM-003-KEY-BOUNDARIES
+ok    TEST-REQ-LIM-001-DOCUMENT-BOUNDARIES
+ok    TEST-REQ-FOR-003-EVERY-BYTE-CORRUPTION
+ok    TEST-REQ-FOR-003-EVERY-TRUNCATION
+ok    TEST-REQ-FOR-003-VALID-CRC-INVALID-FIELDS
+ok    TEST-REQ-LIM-001-PREFLIGHT-NO-PARTIAL-WRITE
+ok    TEST-REQ-AFF-002-INDEX-IDENTITY
+ok    TEST-REQ-FOR-004-PREPARED-OUTCOME
+ok    TEST-REQ-FOR-003-CONTROL-RECORD-SHAPES
+ok    TEST-REQ-LIM-001-SEMANTIC-BOUNDARIES
+ok    TEST-REQ-FOR-004-OUTCOME-PROVENANCE-FIELDS
+ok    TEST-REQ-FOR-004-U64-BOTH-WORDS
+ok    TEST-REQ-FOR-003-SEALED-BATCHES
+ok    TEST-REQ-FOR-003-BATCH-ALL-TRUNCATIONS
+ok    TEST-REQ-FOR-003-BATCH-SEAL-SEMANTIC-CORRUPTION
+ok    TEST-REQ-FOR-003-BATCH-STAMP-AND-TYPE
+ok    TEST-REQ-LIM-003-BATCH-BUDGETS
+ok    TEST-REQ-FOR-004-BATCH-TXID-INDEPENDENT-OF-SEAL-CSN
+28 test delle fondazioni superati.
+ok    TEST-REQ-AFF-004-UTF8-REFERENCE-IS-STRICT
+ok    TEST-REQ-AFF-004-UTF8-EMPTY-ASCII-AND-DEFAULT-BUDGET
+ok    TEST-REQ-AFF-004-UTF8-INVALID-RANGE-AND-BUFFER
+ok    TEST-REQ-AFF-008-UTF8-INVALID-BUDGET
+ok    TEST-REQ-AFF-008-UTF8-BYTE-BUDGET-PRECEDES-CONTENT
+ok    TEST-REQ-AFF-004-UTF8-ALL-256-SINGLE-BYTE-INPUTS
+  UTF-8 esaustivo: 65536 coppie, 18304 valide, 47232 rifiutate.
+ok    TEST-REQ-AFF-004-UTF8-ALL-65536-TWO-BYTE-INPUTS
+ok    TEST-REQ-AFF-004-UTF8-MANUAL-SCALAR-BOUNDARIES
+ok    TEST-REQ-AFF-004-UTF8-NUL-BOM-NONCHARACTERS-AND-NO-NORMALIZATION
+ok    TEST-REQ-AFF-004-UTF8-ILLEGAL-LEADING-OFFSET
+ok    TEST-REQ-AFF-004-UTF8-TRUNCATION-BEFORE-CONTENT
+ok    TEST-REQ-AFF-004-UTF8-CONTINUATION-OFFSET-AND-PRIORITY
+ok    TEST-REQ-AFF-004-UTF8-SCALAR-RESTRICTIONS-AFTER-CONTINUATIONS
+ok    TEST-REQ-AFF-004-UTF8-SEEDED-SCALAR-STREAM-AND-SLICES
+  UTF-8 fuzz: seed 3629A11F, 4096 input di 3..8 byte, 234 validi, 3862 rifiutati.
+ok    TEST-REQ-AFF-004-UTF8-DIFFERENTIAL-FUZZ-4096-INPUTS
+ok    TEST-REQ-LIM-001-UTF8-EXACT-SIXTEEN-MIB-AND-OVER-BUDGET
+  UTF-8 CPU: 2 worker, 83886080 byte, sink 16777216 ciascuno, overlap 273007 tick, 1000000 tick/s.
+ok    TEST-REQ-CON-005-UTF8-TWO-PRIVATE-BUFFERS-AND-REAL-CPU-OVERLAP
+17 test UTF-8 superati.
+ok    TEST-REQ-AFF-004-CBOR-ALL-256-COMPLETE-LEADING-BYTES
+ok    TEST-REQ-AFF-004-CBOR-ALL-256-ONE-BYTE-SPANS
+ok    TEST-REQ-AFF-004-CBOR-ALL-256-EXTENDED-SIMPLE-VALUES
+  CBOR BE: 65536 argomenti a 16 bit, compresi quelli non minimi.
+ok    TEST-REQ-AFF-004-CBOR-ALL-65536-BIG-ENDIAN-TWO-BYTE-ARGUMENTS
+ok    TEST-REQ-AFF-004-CBOR-IMMEDIATE-VALUES-WITHOUT-BODY-OR-TAG-CHILD
+ok    TEST-REQ-AFF-004-CBOR-RAW-WIDTHS-PRESERVE-NONMINIMAL-ARGUMENTS
+ok    TEST-REQ-AFF-004-CBOR-U64-EXTREMES-AND-ASYMMETRIC-WORDS
+ok    TEST-REQ-AFF-004-CBOR-FLOATING-BITS-ZERO-SIGN-INFINITY-AND-NAN
+ok    TEST-REQ-AFF-004-CBOR-INDEFINITE-AND-BREAK-ARE-CONTEXT-FREE-MARKERS
+ok    TEST-REQ-AFF-004-CBOR-RESERVED-AND-ILLEGAL-INDEFINITE-PRECEDE-ARGUMENTS
+ok    TEST-REQ-AFF-004-CBOR-EVERY-ARGUMENT-TRUNCATION-AND-DECLARED-END
+ok    TEST-REQ-AFF-004-CBOR-SIMPLE-CHECK-FOLLOWS-COMPLETE-HEAD
+ok    TEST-REQ-AFF-004-CBOR-INVALID-BUFFER-AND-RANGE-BEFORE-CONTENT
+ok    TEST-REQ-AFF-004-CBOR-EMPTY-VALID-SPANS-HAVE-END-OFFSET
+ok    TEST-REQ-AFF-004-CBOR-MISALIGNED-HEADS-IGNORE-TRAILING-BYTES
+  CBOR fuzz: seed 8949A11F, 4096 span di 1..9 byte, 3437 validi, 659 rifiutati.
+ok    TEST-REQ-AFF-004-CBOR-DIFFERENTIAL-FUZZ-4096-BOUNDED-SPANS
+  CBOR CPU: 2 worker, 2097152 header, 18874368 byte, sink 2401919800705024/2231683637051392, overlap 38292 tick, 1000000 tick/s.
+ok    TEST-REQ-CON-005-CBOR-TWO-PRIVATE-BUFFERS-AND-REAL-CPU-OVERLAP
+17 test degli header CBOR superati.
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-ALL-LEADING-BYTES-AND-SHORT-SPANS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-MAJOR-ZERO-TO-SIX-WIDTH-THRESHOLDS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-ALL-EXTENDED-SIMPLE-VALUES
+  CBOR minimo: 65536 half e 131072 espansioni esatte, inclusi NaN e segni.
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-ALL-HALF-AND-EXACT-EXPANSIONS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-IEEE-ORACLE-KNOWN-VALUES
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-RFC-NUMERIC-VECTORS-AND-ADJACENT-VALUES
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-FINITE-NORMAL-SUBNORMAL-BOUNDARIES
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SIGN-ZERO-INFINITY-AND-NAN-PAYLOAD
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-EVERY-TRUNCATED-HEAD-BEFORE-PREFERENCE
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SYNTAX-BEFORE-NONMINIMAL
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-INVALID-BUFFER-RANGE-AND-EMPTY-SPAN
+ok    TEST-REQ-LIM-002-CBOR-MINIMAL-HEADER-ONLY-AND-MISALIGNED-SENTINELS
+  CBOR minimo fuzz: seed4D494E43, 4096word32+4096word64+4096span0..9, 11223 accettati/1065 rifiutati/84 nonminimi.
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-FINITE-DIFFERENTIAL-FUZZ-SEED-4D494E43
+  CBOR minimo: 2worker, 524288header, 4718592byte, sink1406013828104192/5628138478764032, overlap tempo-reale 13664tick (1000000tick/s).
+ok    TEST-REQ-CON-005-CBOR-MINIMAL-TWO-PRIVATE-WORKERS-REAL-WORK-INTERVALS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-PUBLIC-SUBNORMAL-ALIGNMENT-PAIRS
+15 test delle testate CBOR minime superati.
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-RFC-DEFINITE-VECTORS
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-RFC-INDEFINITE-VECTORS
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-GENERIC-PROFILE-PERMISSIONS
+  CBOR structure AST: seed 7394B21D, 256 casi generati.
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-GENERATED-AST-CORPUS
+  CBOR structure lead: 512 span, 41 validi/471 rifiutati.
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-ALL-LEADS-TWO-BYTE-SPANS
+  CBOR structure fuzz: seed 49CBA017, 30 validi/4066 rifiutati.
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-SEEDED-FINITE-DIFFERENTIAL
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-TRUNCATION-AT-EVERY-BOUNDARY
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-EXACT-ROOT-AND-TRAILING-PRIORITY
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-BREAK-CONTEXT-AND-TAG-PRIORITY
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-TAGS-CHARGE-PARENT-ONCE
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-CHUNKS-SAME-TYPE-AND-HEADER-FIRST
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-VALID-UNICODE-AND-CHUNK-LOCALITY
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-INVALID-UNICODE-EXACT-OFFSETS
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-PAYLOAD-WIDTH-AND-HUGE-UNSIGNED-LENGTHS
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-CONTAINER-MINIMUM-REMAINING-BYTES
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-DEPTH-100-AND-MAP-KEYS
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-NODE-BOUNDARIES-CHUNKS-AND-BREAKS
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-HEADER-ERRORS-BEFORE-NODE-BUDGET
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-INVALID-RANGE-AND-TYPE-PRIORITY
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-WORKSPACE-ALIAS-AND-PREFLIGHT-IMMUTABILITY
+ok    TEST-REQ-AFF-004-CBOR-STRUCTURE-LIMIT-CONFIGURATION-AND-ORDER
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-BYTE-BUDGET-AND-EXACT-16-MIB
+ok    TEST-REQ-AFF-008-CBOR-STRUCTURE-REUSE-AFTER-RUNTIME-FAILURES
+  CBOR structure CPU: 2 worker, 48 scansioni, 2359344 nodi, 5505168 byte, sink 4718784/3145920, overlap 88047 tick, 1000000 tick/s.
+ok    TEST-REQ-CON-005-CBOR-STRUCTURE-TWO-PRIVATE-WORKSPACES-REAL-CPU-OVERLAP
+24 test della struttura CBOR superati.
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-ALL-MAJOR-TYPES-AND-GENERIC-PERMISSIONS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-INTEGER-AND-TAG-WIDTH-THRESHOLDS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-STRING-AND-CONTAINER-WIDTH-THRESHOLDS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-NONMINIMAL-WIDTHS-AT-EVERY-MAJOR
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-FLOATS-IN-ROOT-KEYS-VALUES-AND-TAGS
+  CBOR struttura minima: 768 casi lead, 84 accettati/684 rifiutati.
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-ALL-LEADING-BYTES-COLD-REFERENCE
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-HEADER-SYNTAX-BEFORE-LOCAL-PREFERENCE
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-PREFERENCE-BEFORE-BUDGETS-AND-PAYLOAD
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-NESTED-PREFERENCE-NOT-ONLY-ROOT
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-OPAQUE-BYTES-AND-CONTROL-TEXT-ARE-NOT-HEADERS
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-UTF8-ABSOLUTE-OFFSETS-AND-WHOLE-PAYLOAD
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-COMPLETED-ROOT-PRECEDES-TRAILING-CONTENT
+ok    TEST-REQ-AFF-008-CBOR-MINIMAL-SCAN-TAGS-COUNT-ONCE-IN-PARENT-AND-NODE-BOUNDS
+ok    TEST-REQ-LIM-002-CBOR-MINIMAL-SCAN-DEPTH-100-101-AND-MAP-KEYS
+ok    TEST-REQ-AFF-008-CBOR-MINIMAL-SCAN-HUGE-LENGTHS-AND-PARENT-ARITY-PRIORITY
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-INVALID-INPUT-PRIORITY-AND-COLD-IMMUTABILITY
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-WORKSPACE-ALIAS-AND-LIMIT-ORDER
+ok    TEST-REQ-LIM-001-CBOR-MINIMAL-SCAN-EXACT-SIXTEEN-MIB-AND-OVER-BUDGET
+ok    TEST-REQ-AFF-008-CBOR-MINIMAL-SCAN-RESET-AFTER-ERRORS-AND-ALTERNATING-MODES
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-MISALIGNMENT-DECLARED-SPAN-AND-TRUNCATIONS
+  CBOR struttura minima: 512 AST e fuzz4096 seed53434d31, 41 validi/4055 rifiutati.
+ok    TEST-REQ-AFF-004-CBOR-MINIMAL-SCAN-SEEDED-ASTS-AND-FINITE-DIFFERENTIAL-FUZZ
+  CBOR minimal scan: 2 worker, 48 scansioni, sink 4718784/9437376, overlap tempo reale 127206 tick, 1000000 tick/s; nessuna inferenza su core/scaling.
+ok    TEST-REQ-CON-005-CBOR-MINIMAL-SCAN-TWO-PRIVATE-WORKSPACES-REAL-TIME-OVERLAP
+22 test della struttura CBOR minima superati.
+ok    TEST-REQ-MVC-008-CSN-DEFAULT-CAPACITY-AND-VALID-BOUNDARIES
+ok    TEST-REQ-AFF-008-CSN-INVALID-CONFIGURATION-EACH-FIELD
+ok    TEST-REQ-MVC-008-CSN-RECOVERY-BASE-AND-FIRST-SUCCESSOR
+ok    TEST-REQ-MVC-008-CSN-FULL-REFUSAL-CREDIT-AND-EVERY-SLOT-REUSED
+ok    TEST-REQ-MVC-008-CSN-REVERSE-COMPLETION-AND-INTERIOR-GAP
+ok    TEST-REQ-MVC-008-CSN-ADR0046-MODULO-RING-COUNTEREXAMPLE
+ok    TEST-REQ-MVC-008-CSN-CARRY-U32-AND-HORIZON-BORROW
+ok    TEST-REQ-MVC-008-CSN-CROSSES-SBCL-FIXNUM-BOUNDARY
+ok    TEST-REQ-AFF-008-CSN-LAST-U64-AND-EXHAUSTION-DOES-NOT-WRAP
+ok    TEST-REQ-AFF-004-CSN-INVALID-TOKEN-SHAPES-AND-ZERO
+ok    TEST-REQ-AFF-004-CSN-EXACT-SLOT-HIGH-LOW-AND-REGISTRY-BINDING
+ok    TEST-REQ-AFF-004-CSN-DOUBLE-RESOLUTION-AND-STALE-REUSED-SLOT
+  CSN: K=2, 6 commit, 850 prefissi, 243 storie complete.
+  CSN: K=3, 6 commit, 7310 prefissi, 2403 storie complete.
+ok    TEST-REQ-MVC-008-CSN-EXHAUSTIVE-CAPACITY-2-3-THROUGH-SIX-COMMITS
+  CSN seed #x46C5A71B: 2993 presi, 2987 risolti, 2085 pieni, 964 letture, 971 stale.
+ok    TEST-REQ-MVC-008-CSN-DETERMINISTIC-TEN-THOUSAND-ACTIONS
+ok    TEST-REQ-AFF-004-CSN-PRIVATE-FI-SHAPE-BEFORE-PUBLIC-MUTATION
+ok    TEST-REQ-AFF-004-CSN-PRIVATE-FI-FRONTIERS-BEFORE-PUBLIC-MUTATION
+ok    TEST-REQ-AFF-004-CSN-PRIVATE-FI-LIVE-COUNT-TOKEN-AND-RESIDUAL-SCAN
+ok    TEST-REQ-CON-004-CSN-GUARD-MACRO-SINGLE-EVALUATION-VALUES-AND-CLEANUP
+ok    TEST-REQ-CON-004-CSN-HELD-WORKER-GUARD-BUSY-AND-INDEPENDENT-REGISTRY
+  CSN: 4 worker x 1000 assegnazioni, 4896 busy, 732 full, slot #(1340 1397 1263), H convergente.
+ok    TEST-REQ-MVC-008-CSN-FOUR-REAL-WORKERS-ONE-THOUSAND-ASSIGNMENTS-EACH
+20 test del registro CSN superati.
+ok    TEST-REQ-AFF-008-WRITER-CONFIGURATION
+ok    TEST-REQ-AFF-008-WRITER-DEFAULTS-AND-CONFIGURATION-BOUNDARIES
+ok    TEST-REQ-CON-001-WRITER-FIFO-RING-WRAP-AND-NIL
+ok    TEST-REQ-AFF-008-WRITER-FULL-REFUSAL-RETAINS-PAYLOAD
+ok    TEST-REQ-CON-004-WRITER-GUARD-BUSY-DOES-NOT-MUTATE
+ok    TEST-REQ-CON-001-WRITER-TARGET-SUBRANGE-AND-EMPTY
+ok    TEST-REQ-AFF-004-WRITER-INVALID-TARGET-PREFLIGHT
+ok    TEST-REQ-AFF-004-WRITER-PRIVATE-RING-ALIAS-REFUSED
+ok    TEST-REQ-CON-001-WRITER-LEASE-LIFECYCLE
+ok    TEST-REQ-CON-001-WRITER-STALE-LEASE-SAME-THREAD
+ok    TEST-REQ-AFF-008-WRITER-QUANTUM-IS-CUMULATIVE-PER-LEASE
+ok    TEST-REQ-AFF-008-WRITER-GENERATION-DOES-NOT-WRAP
+ok    TEST-REQ-CON-001-WRITER-SEEDED-LIST-ORACLE
+ok    TEST-REQ-CON-001-WRITER-FOREIGN-THREAD-CANNOT-USE-LEASE
+ok    TEST-REQ-CON-001-WRITER-CAS-HAS-ONE-OWNER
+  CPU due Serie: 1048576 byte, overlap 34774 tick, unita 1000000 tick/s.
+ok    TEST-REQ-CON-003-INDEPENDENT-SERIES-PROGRESS-AND-CPU-OVERLAP
+  wave 0: 144 messaggi, 3 producer, 2 consumer, 5 worker riusati, drain aperto.
+  wave 1: 144 messaggi, 3 producer, 2 consumer, 5 worker riusati, drain aperto.
+  wave 2: 144 messaggi, 3 producer, 2 consumer, 5 worker riusati, drain aperto.
+ok    TEST-REQ-CON-001-WRITER-REAL-PRODUCERS-CONSUMERS-AND-WORKER-REUSE
+ok    TEST-REQ-AFF-008-HANDOFF-CONFIGURATION-AND-LIMITS
+ok    TEST-REQ-CON-005-HANDOFF-SINGLE-OBLIGATION-AND-DUPLICATE-BEGIN
+ok    TEST-REQ-CON-005-HANDOFF-ENQUEUE-BEFORE-AND-AFTER-EMPTY-RELEASE
+ok    TEST-REQ-CON-004-HANDOFF-CUMULATIVE-QUANTUM-AND-SUCCESSIVE-SLICES
+ok    TEST-REQ-AFF-008-HANDOFF-FULL-READY-AND-RUNNING-RETAIN-STATE
+ok    TEST-REQ-CON-004-HANDOFF-BUSY-IDLE-AND-READY-PRESERVE-STATE
+ok    TEST-REQ-CON-005-HANDOFF-BUSY-RELEASE-RETAINS-LEASE-FOR-RETRY
+ok    TEST-REQ-CON-005-HANDOFF-EARLY-RELEASE-CONSERVES-ENTIRE-BACKLOG
+ok    TEST-REQ-AFF-004-HANDOFF-LEASE-VALIDATION-AND-STALE-GENERATION
+ok    TEST-REQ-AFF-004-HANDOFF-TARGET-PREFLIGHT-AND-PRIVATE-ALIAS
+ok    TEST-REQ-AFF-008-HANDOFF-GENERATION-EXHAUSTION-PRESERVES-READY
+ok    TEST-REQ-AFF-004-HANDOFF-REJECTS-INCONSISTENT-SCHEDULING-STATES
+ok    TEST-REQ-AFF-004-HANDOFF-HELPERS-REQUIRE-CURRENT-THREAD-GUARD
+ok    TEST-REQ-CON-001-HANDOFF-SEEDED-LIST-AND-SCHEDULING-ORACLE
+ok    TEST-REQ-CON-001-HANDOFF-FOREIGN-THREAD-CANNOT-USE-LEASE
+ok    TEST-REQ-CON-002-HANDOFF-TRANSFERS-SUCCESSIVE-SLICES-BETWEEN-REUSED-THREADS
+  Handoff: 4 thread riusati, 6 ondate, 36 messaggi, 2 Serie indipendenti.
+ok    TEST-REQ-CON-003-HANDOFF-REUSES-FOUR-WORKERS-ACROSS-INDEPENDENT-SERIES-WAVES
+ok    TEST-REQ-AFF-008-READY-CONFIGURATION-AND-LIMITS
+ok    TEST-REQ-AFF-004-READY-SHARD-AND-WRITER-PREFLIGHT
+ok    TEST-REQ-CON-001-READY-PER-SHARD-FIFO-WRAP-AND-PRIVATE-OPAQUE-RING
+ok    TEST-REQ-CON-004-READY-CURSOR-ROTATES-FIRST-CHOICE-AND-EMPTY-SCAN
+ok    TEST-REQ-CON-001-READY-SEEDED-INDEPENDENT-LISTS-AND-CURSORS
+ok    TEST-REQ-CON-005-READY-FULL-PRESERVES-SCHEDULING-OBLIGATION
+ok    TEST-REQ-CON-005-READY-DEQUEUED-REFERENCE-SURVIVES-BEGIN-BUSY
+ok    TEST-REQ-CON-004-READY-SKIPS-BUSY-HOME-AND-PRESERVES-LOCAL-RING
+ok    TEST-REQ-CON-004-READY-BUSY-OBSERVATIONS-AND-SCAN-ORDER-ORACLE
+ok    TEST-REQ-CON-005-READY-BUSY-PUBLICATION-RETAINS-OBLIGATION-AND-PAYLOAD
+ok    TEST-REQ-AFF-004-READY-REJECTS-INVALID-PRIVATE-RING-SHAPES
+ok    TEST-REQ-AFF-004-READY-REJECTS-INVALID-PRIVATE-PARTITION-ARRAYS
+ok    TEST-REQ-AFF-004-READY-REJECTS-INCONSISTENT-OCCUPIED-AND-FREE-SLOTS
+ok    TEST-REQ-AFF-004-READY-HELPERS-REJECT-MISSING-AND-FOREIGN-GUARD
+ok    TEST-REQ-CON-005-READY-HANDOFF-BEFORE-AFTER-RELEASE-AND-NEXT-WAVE
+  Ready: 4 thread riusati, 6 ondate, 36 payload, shard fermata e stealing.
+ok    TEST-REQ-CON-003-READY-REUSED-WORKERS-LIVE-PRODUCERS-AND-INDEPENDENT-SHARDS
+  Ready: 2 consumer riusati, 8 ondate, un riferimento estratto per ondata.
+ok    TEST-REQ-CON-002-READY-COMPETING-CONSUMERS-TAKE-ONE-REFERENCE-PER-WAVE
+ok    TEST-REQ-CON-001-RECYCLE-ROOM-PUBLISHES-AND-PRESERVES-FIFO
+ok    TEST-REQ-CON-005-RECYCLE-CAPACITY-ONE-TRANSFERS-OLD-AND-KEEPS-NEW
+ok    TEST-REQ-CON-001-RECYCLE-FULL-WRAP-PRESERVES-INDEPENDENT-LIST-ORDER
+ok    TEST-REQ-CON-001-RECYCLE-SEEDED-OBLIGATIONS-AND-PAYLOADS-EXACTLY-ONCE
+ok    TEST-REQ-CON-005-RECYCLE-ALL-CONSUMERS-RESCHEDULE-AFTER-PRODUCER-REFILLS-FULL
+ok    TEST-REQ-CON-005-RECYCLE-BUSY-RETAINS-OBLIGATION-AND-BOTH-RING-SHAPES
+ok    TEST-REQ-AFF-004-RECYCLE-SHARD-WRITER-PREFLIGHT-BEFORE-HELD-GUARD
+ok    TEST-REQ-AFF-004-RECYCLE-PRIVATE-RING-AND-PARTITION-SHAPES-PRE-MUTATION
+ok    TEST-REQ-AFF-004-RECYCLE-MALFORMED-FULL-HEAD-AND-FREE-TAIL-PRE-MUTATION
+ok    TEST-REQ-AFF-004-RECYCLE-HELPER-REJECTS-MISSING-AND-FOREIGN-GUARD
+ok    TEST-REQ-CON-001-RECYCLE-PRIVATE-OPAQUE-DUPLICATE-IS-OUTSIDE-HANDOFF-PROTOCOL
+ok    TEST-REQ-CON-005-RECYCLE-HANDOFF-BEFORE-RELEASE-AND-NEW-WAVE-WITHOUT-CLEANUP
+ok    TEST-REQ-CON-005-RECYCLE-RETURNED-OBLIGATION-SURVIVES-BEGIN-BUSY
+  Recycle: 3 thread riusati, 8 ondate, 48 payload, ready FULL e busy bounded.
+ok    TEST-REQ-CON-002-RECYCLE-TWO-COMPETING-CONSUMERS-AND-LIVE-PRODUCER-REUSED
+ok    TEST-REQ-CON-003-RECYCLE-OTHER-SHARD-PROGRESSES-WHILE-FIRST-GUARD-IS-HELD
+66 test delle code writer superati.
+ok    TEST-REQ-FOR-002-SEGMENT-HEADER-INDEPENDENT-ORACLE
+ok    TEST-REQ-FOR-001-SEGMENT-HEADER-ALL-TRUNCATIONS-AND-BIT-FLIPS
+ok    TEST-REQ-FOR-002-SEGMENT-HEADER-CRC-VALID-INVALID-FIELDS
+ok    TEST-REQ-AFF-002-SEGMENT-HEADER-IDENTITY
+ok    TEST-REQ-FOR-002-SEGMENT-HEADER-PREFLIGHT-PRESERVES-BUFFER
+ok    TEST-REQ-FOR-002-LOG-HEADER-INDEPENDENT-ORACLE
+ok    TEST-REQ-FOR-002-LOG-HEADER-DEFAULT-VERSION-IS-TWO
+ok    TEST-REQ-FOR-001-LOG-HEADER-ALL-TRUNCATIONS
+ok    TEST-REQ-FOR-001-LOG-HEADER-ALL-BIT-FLIPS
+ok    TEST-REQ-FOR-002-LOG-HEADER-EVERY-RESERVED-BYTE
+ok    TEST-REQ-FOR-002-LOG-HEADER-EVERY-IDENTITY-BYTE
+ok    TEST-REQ-FOR-002-LOG-HEADER-CRC-VALID-WRONG-MAGIC
+ok    TEST-REQ-FOR-002-LOG-HEADER-UNKNOWN-VERSION-WITH-VALID-CRC
+ok    TEST-REQ-FOR-001-LOG-HEADER-CRC-BEFORE-UNKNOWN-VERSION
+ok    TEST-REQ-FOR-002-LOG-HEADER-ENCODER-PREFLIGHT-PRESERVES-BUFFER
+ok    TEST-REQ-FOR-002-LOG-HEADER-READER-PREFLIGHT
+ok    TEST-REQ-FOR-002-COMPACTION-EMPTY-HEADERS
+ok    TEST-REQ-CMP-009-COMPACTION-RESOLVED-RECORDS-AND-COUNTS
+ok    TEST-REQ-FOR-002-COMPACTION-VERSION-FROM-FILE
+ok    TEST-REQ-FOR-003-COMPACTION-EVERY-CONTENT-TRUNCATION
+ok    TEST-REQ-FOR-001-COMPACTION-EVERY-BIT-CORRUPTION
+ok    TEST-REQ-FOR-002-COMPACTION-AUTHORITATIVE-IDENTITIES
+ok    TEST-REQ-FOR-002-COMPACTION-HEADER-FIELDS-AND-VERSION
+ok    TEST-REQ-CMP-009-COMPACTION-REJECTS-WRITER-ORIGIN
+ok    TEST-REQ-CMP-009-COMPACTION-REJECTS-PREPARED-RECORDS
+ok    TEST-REQ-CMP-009-COMPACTION-REJECTS-CONTROL-RECORDS
+ok    TEST-REQ-FOR-003-COMPACTION-CRC-VALID-INVALID-TYPE-AND-FLAGS
+ok    TEST-REQ-FOR-003-COMPACTION-CRC-VALID-INCONSISTENT-LENGTHS
+ok    TEST-REQ-FOR-001-COMPACTION-IGNORES-PHYSICAL-TAIL
+ok    TEST-REQ-AFF-008-COMPACTION-EXACT-AND-EXHAUSTED-BUDGETS
+ok    TEST-REQ-AFF-008-COMPACTION-INVALID-ARGUMENTS
+ok    TEST-REQ-FOR-003-EDIT-ENCODING-LAYOUT
+ok    TEST-REQ-FOR-003-EDIT-TRUNCATION-COUNTS-AND-LENGTHS
+ok    TEST-REQ-AFF-008-EDIT-BUDGET-BOUNDARIES
+ok    TEST-REQ-TXM-001-DECISION-ENCODING-LAYOUT
+ok    TEST-REQ-TXM-001-DECISION-TRUNCATION-AND-BUDGETS
+ok    TEST-REQ-FOR-003-CONTROL-RECORD-BOTH-VERSIONS
+ok    TEST-REQ-FOR-003-CONTROL-RECORD-INTEGRITY-BEFORE-COUNTS
+ok    TEST-REQ-AFF-008-ENCODER-PREFLIGHT-NO-PARTIAL-WRITE
+ok    TEST-REQ-AFF-008-EDIT-CUMULATIVE-BUDGET-AND-CORRUPT-HUGE-COUNTS
+ok    TEST-REQ-AFF-008-ENCODER-OVERFLOW-AND-UNUSED-SECTIONS
+ok    TEST-REQ-FOR-003-DECISION-RECORD-ALL-TRUNCATIONS-AND-BIT-FLIPS
+ok    TEST-REQ-AFF-008-BYTE-BUDGET-BEFORE-CRC-SCAN
+ok    TEST-REQ-AFF-008-INTERNAL-RANGE-GUARDS
+44 test dei metadati storage superati.
+ok    TEST-REQ-AFF-001-SHORT-APPEND-AND-GROUP-FLUSH
+ok    TEST-REQ-STO-003-SHORT-PREAD-POSITIONAL-NO-STATE-WRITE
+ok    TEST-REQ-AFF-001-WRITE-ERRORS-NEVER-RETRY
+ok    TEST-REQ-AFF-001-FLUSH-ERROR-PRESERVES-DURABLE-FRONTIER
+ok    TEST-REQ-AFF-002-READ-ERRORS-NO-RETRY-NO-SHARED-MUTATION
+ok    TEST-REQ-AFF-008-INVALID-PROGRESS-AND-EOF
+ok    TEST-REQ-AFF-008-PREFLIGHT-BUDGET-AND-ZERO-LENGTH
+ok    TEST-REQ-AFF-001-CLOSE-ONCE-EVEN-EINTR
+ok    TEST-REQ-AFF-001-DIRECTORY-FLUSH-DISPATCH-AND-INVALID-RETURN
+ok    TEST-REQ-STO-003-OPEN-PREFLIGHT-AND-ERRORS
+ok    TEST-REQ-AFF-001-DIRECTORY-FAILURE-AND-EMPTY-FILE-FLUSH
+ok    TEST-REQ-AFF-001-INVALID-CLOSE-RESULT-AND-CLOSED-READER
+ok    TEST-REQ-AFF-004-INVALID-PRIVATE-DESCRIPTOR-BEFORE-SYSCALL
+ok    TEST-REQ-STO-003-NATIVE-APPEND-FLUSH-AND-CHECKED-RECORD
+ok    TEST-REQ-STO-003-NATIVE-NO-FOLLOW-FILE-KINDS-AND-CLOEXEC
+ok    TEST-REQ-STO-003-CONCURRENT-PREAD-DISTINCT-BUFFERS
+ok    TEST-REQ-FOR-003-NATIVE-TWO-SEALED-BATCHES-ONE-FLUSH
+ok    TEST-REQ-AFF-004-NATIVE-ERRNO-AND-CLEANUP-PROVENANCE
+18 test I/O superati.
+ok    TEST-REQ-FOR-003-VALID-LOG-ORACLE-AND-DETERMINISM
+ok    TEST-REQ-FOR-003-EMPTY-LOG-AND-EMPTY-BATCHES
+ok    TEST-REQ-AFF-009-EVERY-LOG-TRUNCATION
+ok    TEST-REQ-AFF-009-FRONTIER-BOUNDARY-AND-FAILED-BATCH-START
+ok    TEST-REQ-AFF-009-DAMAGED-WITNESS-BATCH-REMAINS-EVIDENCE
+ok    TEST-REQ-AFF-009-INVALID-WITNESSES-ARE-IGNORED
+ok    TEST-REQ-AFF-009-CORRUPT-LENGTH-CANNOT-HIDE-WITNESS
+ok    TEST-REQ-AFF-009-BROKEN-HEADER-DOES-NOT-END-SEARCH
+ok    TEST-REQ-AFF-009-WITNESS-AT-EVERY-ALIGNMENT
+ok    TEST-REQ-AFF-009-NESTED-SEAL-AT-LAST-SEARCH-POSITION
+ok    TEST-REQ-AFF-008-LOG-AND-BATCH-BUDGETS
+ok    TEST-REQ-AFF-008-BATCH-BUDGET-CANNOT-CLASSIFY-UNCHECKED-TAIL
+ok    TEST-REQ-AFF-008-SEARCH-BUDGET-COUNTS-POSITIONS
+ok    TEST-REQ-AFF-008-EOF-IS-EXPLICIT-AND-COMPLETE
+ok    TEST-REQ-AFF-008-INVALID-CONFIGURATION-IS-NEVER-TAIL
+ok    TEST-REQ-AFF-009-U64-OFFSETS-AND-OVERFLOW
+13504 mutazioni bit prima del testimone durevole verificate.
+ok    TEST-REQ-AFF-009-EVERY-BIT-BEFORE-DURABLE-WITNESS
+6752 mutazioni bit nel lotto finale senza testimone verificate.
+ok    TEST-REQ-AFF-017-EVERY-BIT-IN-FINAL-UNWITNESSED-BATCH
+ok    TEST-REQ-AFF-009-OVERLAPPING-SEAL-AFTER-NONCOVERING-FRONTIER
+ok    TEST-REQ-TXM-005-DECISION-TABLE-ORDERED-UNORDERED-ORACLE
+ok    TEST-REQ-TXM-005-SEEDED-HISTORIES-AND-PERMUTED-DUPLICATES
+ok    TEST-REQ-TXM-001-ZERO-MAXIMUM-U64-AND-SHARED-CSN
+ok    TEST-REQ-TXM-005-TABLE-OWNS-PARTICIPANT-COPIES
+ok    TEST-REQ-TXM-001-PARTICIPANT-EXACT-BYTES-AND-QUERY-RANGES
+ok    TEST-REQ-TXM-005-CONFLICTING-CSN-SET-OR-COUNT
+ok    TEST-REQ-TXM-005-DUPLICATE-PARTICIPANTS-WITHIN-RECORD
+ok    TEST-REQ-TXM-005-EVERY-CUT-KEEPS-ONLY-SEALED-DECISIONS
+ok    TEST-REQ-TXM-005-PRESUMED-ABORT-AFTER-COMPLETE-TAIL-SEARCH
+ok    TEST-REQ-TXM-005-SCANS-LATER-CORRUPTION-BEFORE-PAYLOAD-OR-BUDGET
+ok    TEST-REQ-FOR-003-SEALED-INVALID-DECISION-PAYLOAD-IS-NOT-TAIL
+ok    TEST-REQ-AFF-008-EMPTY-DECISIONS-ZERO-AND-LARGE-BUDGETS
+ok    TEST-REQ-AFF-008-PHYSICAL-DUPLICATE-RECORD-BUDGETS
+ok    TEST-REQ-AFF-008-INVALID-DECISION-BUDGETS-EVEN-EMPTY
+ok    TEST-REQ-AFF-008-DECISION-SCANNER-BUDGETS-PROPAGATE
+ok    TEST-REQ-AFF-008-DECISION-EOF-AND-VERSION-ERRORS
+ok    TEST-REQ-TXM-005-HIGH-FILE-OFFSET-AND-CONFLICT-PROVENANCE
+ok    TEST-REQ-TXM-005-FIRST-PHYSICAL-DECISION-CONFLICT-ACROSS-TXID-GROUPS
+ok    TEST-REQ-TXM-001-PARTICIPANT-EVERY-BYTE-AND-EVERY-BIT
+ok    TEST-REQ-FOR-003-SEALED-TRAILING-DECISION-PAYLOAD
+ok    TEST-REQ-FOR-003-SHORT-DECISION-FRAME-REQUIRES-COVERING-WITNESS
+ok    TEST-REQ-TXM-005-UNSEALED-SEMANTIC-ERRORS-AND-COVERING-WITNESS
+ok    TEST-REQ-AFF-008-DECISION-BUDGET-OFFSETS-BEFORE-COALESCENCE
+ok    TEST-REQ-TXM-005-PUBLIC-DEFAULT-BUDGETS-AND-EXPLICIT-VERSION
+ok    TEST-REQ-TXM-001-MAXIMUM-U16-PARTICIPANT-COUNT
+ok    TEST-REQ-TXM-005-RADIX-PARTICIPANT-CARDINALITIES-AND-PATTERNS
+ok    TEST-REQ-TXM-001-RADIX-PARTICIPANT-EVERY-BYTE-AND-BIT
+ok    TEST-REQ-TXM-005-RADIX-DUPLICATE-PARTICIPANT-OFFSET
+ok    TEST-REQ-TXM-005-RADIX-PARTICIPANT-SHAPE-BEFORE-SORT
+ok    TEST-REQ-TXM-005-RADIX-ENTRY-CARDINALITIES-PATTERNS-AND-STABILITY
+ok    TEST-REQ-AFF-008-RADIX-ENTRY-65536-BUCKET-COUNTS
+ok    TEST-REQ-TXM-001-RADIX-ENTRY-EVERY-TXID-BIT
+ok    TEST-REQ-TXM-005-RADIX-ENTRY-SHAPE-BEFORE-SORT
+ok    TEST-REQ-TXM-005-CONCURRENT-IMMUTABLE-TABLE-QUERIES
+ok    TEST-REQ-AFF-008-RADIX-PREFIX-INVALID-TOTAL
+ok    TEST-REQ-AFF-008-RADIX-ENTRY-INVALID-OBJECT-BEFORE-SLOT-ACCESS
+ok    TEST-REQ-AFF-008-RADIX-INVALID-DIGIT-BEFORE-ACCESS
+ok    TEST-REQ-AFF-008-RADIX-SCATTER-INVALID-ARRAYS
+ok    TEST-REQ-AFF-008-RADIX-INVALID-FINAL-CURSORS
+ok    TEST-REQ-AFF-008-RADIX-SCATTER-INVALID-CURSORS
+ok    TEST-REQ-TXM-005-PUBLIC-PARTICIPANT-SORT-THRESHOLD-BOUNDARIES
+ok    TEST-REQ-TXM-005-PUBLIC-ENTRY-SORT-THRESHOLD-BOUNDARIES
+ok    TEST-REQ-TXM-005-PUBLIC-RADIX-FIRST-PHYSICAL-CONFLICT-ACROSS-GROUPS
+ok    TEST-REQ-AFF-017-MANIFEST-HISTORIES-V1-V2-AND-BATCH-LAYOUTS
+ok    TEST-REQ-FOR-003-MANIFEST-SNAPSHOT-SIZES-AND-PERMUTED-SECTIONS
+ok    TEST-REQ-AFF-018-MANIFEST-IDEMPOTENT-CLOSURES-REMOVALS-AND-OUTCOMES
+ok    TEST-REQ-FOR-003-MANIFEST-CONFLICTING-OUTCOME-AND-CLOSED-PROOF
+ok    TEST-REQ-AFF-018-MANIFEST-SECTION-OVERLAP-IS-INVALID
+ok    TEST-REQ-AFF-018-MANIFEST-INVALID-TRANSITIONS-NEVER-REACTIVATE
+ok    TEST-REQ-FOR-003-MANIFEST-SNAPSHOT-REQUIRED-AND-VALID
+ok    TEST-REQ-AFF-017-MANIFEST-EVERY-CUT-KEEPS-WHOLE-SEALED-PREFIX
+ok    TEST-REQ-AFF-017-MANIFEST-OWNS-CLOSURE-AND-OUTCOME-COPIES
+ok    TEST-REQ-FOR-003-MANIFEST-U64-BOUNDARIES-AND-ID-EXHAUSTION
+ok    TEST-REQ-FOR-003-MANIFEST-DIRECT-API-DEFAULTS-AND-REQUIRED-OPTIONS
+ok    TEST-REQ-AFF-018-MANIFEST-RESERVED-OLD-IDS-AND-UNCHANGED-ACTIVE
+ok    TEST-REQ-AFF-008-MANIFEST-PHYSICAL-DUPLICATE-BUDGETS
+ok    TEST-REQ-AFF-008-MANIFEST-ZERO-EMPTY-SECTIONS-AND-INVALID-BUDGETS
+ok    TEST-REQ-FOR-003-MANIFEST-SEMANTIC-CORRUPTION-IN-SEALED-PREFIX
+ok    TEST-REQ-AFF-009-MANIFEST-WITNESS-PRECEDES-SEMANTIC-ERRORS-AND-BUDGETS
+ok    TEST-REQ-AFF-017-MANIFEST-UNSEALED-INVALID-TRANSITION-IS-EXCLUDED
+ok    TEST-REQ-AFF-008-MANIFEST-SCANNER-AND-EOF-CONTRACTS
+ok    TEST-REQ-AFF-018-MANIFEST-HIGH-FILE-OFFSET-AND-ERROR-PROVENANCE
+ok    TEST-REQ-AFF-017-MANIFEST-FOUR-INDEPENDENT-SERIES-IN-PARALLEL
+ok    TEST-REQ-REC-001-INVENTORY-ADR-ACTION-TABLE
+ok    TEST-REQ-REC-001-INVENTORY-ZERO-CLOSED-AND-REMOVED
+ok    TEST-REQ-REC-002-INVENTORY-MISSING-LIVE-AND-HEALTH-PRIORITY
+ok    TEST-REQ-REC-002-INVENTORY-BOTH-NAMES-ALWAYS-CONSERVATIVE
+ok    TEST-REQ-REC-001-INVENTORY-EXHAUSTIVE-SMALL-MODEL-AND-INPUT-ORDERS
+ok    TEST-REQ-AFF-008-INVENTORY-DUPLICATES-AND-INVALID-ENTRIES
+ok    TEST-REQ-AFF-008-INVENTORY-PHYSICAL-AND-LIVE-BUDGETS
+ok    TEST-REQ-AFF-008-INVENTORY-BUDGET-COUNTS-LIVE-NOT-OUTPUT-ROWS
+ok    TEST-REQ-AFF-008-INVENTORY-INVALID-ARGUMENTS-AND-QUERY-RANGE
+ok    TEST-REQ-REC-001-INVENTORY-UNSIGNED-U64-ORDER-AND-EXACT-IDENTITIES
+ok    TEST-REQ-REC-001-INVENTORY-MAXIMUM-U64-ACTIVE
+ok    TEST-REQ-AFF-017-INVENTORY-PLAN-OWNS-DATA-AFTER-INPUT-REUSE
+ok    TEST-REQ-AFF-017-INVENTORY-FOUR-PRIVATE-SERIES-AND-SHARED-PLAN
+95 test recovery superati.
+ok    TEST-REQ-WAL-005-CODEC-V1-V2-AND-HIGH-U64
+ok    TEST-REQ-WAL-005-PRESERVE-PREPARED-OUTCOME-DECISION-TXID
+ok    TEST-REQ-WAL-005-EMPTY-AND-SEAL-EXACT-CAPACITY
+ok    TEST-REQ-AFF-008-BUILDER-PREFLIGHT-AND-SEALED-IMMUTABILITY
+ok    TEST-REQ-WAL-002-TWO-LOTS-ONE-FLUSH-AND-REUSE
+ok    TEST-REQ-AFF-008-GROUP-BUDGET-IDENTITY-AND-ORDER
+ok    TEST-REQ-AFF-008-FILE-BUDGET-BEFORE-ANY-WRITE
+ok    TEST-REQ-WAL-005-OFFSET-AND-DURABLE-WITNESS-BEFORE-WRITE
+ok    TEST-REQ-WAL-003-CONTROL-LOG-NEVER-ASYNC
+ok    TEST-REQ-AFF-008-CANCEL-UNSENT-GROUP-RELEASES-CAPACITY
+ok    TEST-REQ-AFF-001-WRITE-FAILURE-STOPS-LOG-AND-ALL-BATCHES
+ok    TEST-REQ-AFF-001-FLUSH-FAILURE-NEVER-ADVANCES-DURABILITY
+ok    TEST-REQ-WAL-005-CRASH-AT-EVERY-WRITTEN-BYTE-V1-V2
+ok    TEST-REQ-AFF-001-PRIVATE-OWNERSHIP-VIOLATION-STOPS-BEFORE-FLUSH
+ok    TEST-REQ-WAL-002-SECOND-GROUP-REJECTED-UNTIL-FLUSH
+ok    TEST-REQ-WAL-002-CONCURRENT-GROUPS-AT-MOST-ONE-WRITE
+ok    TEST-REQ-WAL-002-CONCURRENT-FLUSH-AT-MOST-ONE-SYSCALL
+ok    TEST-REQ-WAL-002-NATIVE-GROUP-AND-DURABLE-WITNESS-V1-V2
+ok    TEST-REQ-AFF-009-SUBSEQUENT-BATCH-WITNESS-DETECTS-OLD-CORRUPTION
+ok    TEST-REQ-MVC-008-WAL-CSN-FREE-ASSOCIATION-REJECTIONS
+ok    TEST-REQ-MVC-008-WAL-CSN-LIMB-BOUNDARIES-V1-V2
+ok    TEST-REQ-WAL-005-WAL-CSN-PREPARED-AND-ORDINARY-STAMPS
+ok    TEST-REQ-WAL-005-WAL-CSN-MANUAL-API-REMAINS-UNBOUND
+ok    TEST-REQ-MVC-008-WAL-CSN-EMPTY-AND-CONTROL-CONTENT-BEFORE-ASSIGNMENT
+ok    TEST-REQ-MVC-008-WAL-CSN-LOG-LAYOUT-BEFORE-ASSIGNMENT
+ok    TEST-REQ-AFF-008-WAL-CSN-OFFSETS-BEFORE-ASSIGNMENT
+ok    TEST-REQ-AFF-004-WAL-CSN-PRIVATE-SHAPE-AND-SEAL-BUDGET-BEFORE-ASSIGNMENT
+ok    TEST-REQ-AFF-001-WAL-CSN-FAULTED-LOG-BEFORE-ASSIGNMENT
+ok    TEST-REQ-AFF-008-WAL-CSN-FULL-BUSY-AND-EXHAUSTED-BEFORE-ASSIGNMENT
+ok    TEST-REQ-MVC-008-WAL-CSN-REPEAT-SEAL-BEFORE-ASSIGNMENT
+ok    TEST-REQ-WAL-006-WAL-CSN-FULL-WRITE-AND-PUBLICATION-LEVELS
+ok    TEST-REQ-WAL-006-WAL-CSN-ASYNC-BEFORE-FLUSH-CANNOT-REUSE
+ok    TEST-REQ-MVC-008-WAL-CSN-DURABLE-BEFORE-PUBLICATION-AND-REUSE
+ok    TEST-REQ-MVC-008-WAL-CSN-HORIZON-GAP-ACROSS-INDEPENDENT-LOGS
+ok    TEST-REQ-MVC-008-WAL-CSN-BUSY-PUBLICATION-KEEPS-TOKEN
+ok    TEST-REQ-MVC-008-WAL-CSN-DOUBLE-RESOLVER-AND-OWNED-REUSE
+ok    TEST-REQ-MVC-008-WAL-CSN-STALE-EVENT-AFTER-REUSE
+ok    TEST-REQ-MVC-008-WAL-CSN-WRONG-REGISTRY-AND-TOKEN-IDENTITY
+ok    TEST-REQ-MVC-008-WAL-CSN-NONLIVE-REGISTRY-TOKEN
+ok    TEST-REQ-WAL-006-WAL-CSN-HEALTHY-ANNULMENT-ALWAYS-REFUSED
+ok    TEST-REQ-AFF-001-WAL-CSN-PARTIAL-WRITE-FAULT-ANNULMENT
+ok    TEST-REQ-AFF-001-WAL-CSN-FLUSH-FAULT-BUSY-ANNULMENT
+ok    TEST-REQ-AFF-001-WAL-CSN-LATER-LOG-FAULT-REJECTS-OLD-PUBLICATION
+ok    TEST-REQ-MVC-008-WAL-CSN-BOUND-LOG-IDENTITY-BEFORE-OWNERSHIP
+ok    TEST-REQ-AFF-004-WAL-CSN-INCOMPLETE-ASSOCIATION-BEFORE-RESOLUTION
+ok    TEST-REQ-AFF-008-WAL-CSN-FILE-BUDGET-AND-AVAILABILITY-BEFORE-ASSIGNMENT
+ok    TEST-REQ-AFF-004-WAL-CSN-INVALID-RECORD-OFFSET-RETAINS-OBLIGATION
+  WAL/CSN: 4 Serie x 500 cicli, 1161 busy, 277 full, H convergente.
+ok    TEST-REQ-MVC-008-FOUR-SERIES-SHARED-CSN-WAL-LIFECYCLE
+48 test WAL superati.
+ok    TEST-REQ-AFF-008-SERIES-DEFAULT-AND-CAPACITY-BOUNDARIES
+ok    TEST-REQ-AFF-008-SERIES-INVALID-CONFIGURATION-PRESERVES-WAL
+ok    TEST-REQ-CON-001-SERIES-LEASE-BUSY-STALE-AND-SINGLE-RELEASE
+ok    TEST-REQ-WAL-005-SERIES-ADOPTS-SEALED-BEFORE-IO-AND-CAPTURES-TOKEN
+ok    TEST-REQ-WAL-005-SERIES-REFUSES-OPEN-UNBOUND-AND-POST-DISPATCH-LOTS
+ok    TEST-REQ-AFF-004-SERIES-REGISTRY-AND-LOG-BINDING-BEFORE-ADOPTION
+ok    TEST-REQ-WAL-005-SERIES-OFFSET-GAP-AND-DUPLICATE-PRESERVE-OBLIGATION
+ok    TEST-REQ-MVC-008-SERIES-CSN-STRICT-ORDER-EVEN-AT-CONTIGUOUS-OFFSETS
+ok    TEST-REQ-WAL-006-SERIES-PLANNED-ROOT-EQ-AND-NIL-ARE-DISTINCT-PRECONDITIONS
+ok    TEST-REQ-AFF-008-SERIES-FULL-KEEPS-SEALED-TOKEN-FOR-LATER-ADOPTION
+ok    TEST-REQ-WAL-006-SERIES-PUBLICATION-FIFO-UNRESOLVED-AND-RETURNED-H
+ok    TEST-REQ-WAL-006-SERIES-GROUP-STRONG-COVERAGE-BEFORE-ROOT-CAS
+ok    TEST-REQ-WAL-006-SERIES-ASYNC-SEPARATE-PUBLICATION-AND-RETIREMENT-CURSORS
+ok    TEST-REQ-AFF-004-SERIES-IO-BEGIN-ONCE-AND-WRITTEN-IS-NOT-COMPLETION
+ok    TEST-REQ-WAL-005-SERIES-RETIREMENT-FIFO-RESOLVED-DURABLE-UNOWNED
+ok    TEST-REQ-AFF-004-SERIES-FREE-AND-STALE-PREALLOCATED-EVENT-AFTER-WRAP
+ok    TEST-REQ-AFF-004-SERIES-FOREIGN-EVENT-SAME-GENERATION-AND-CSN
+ok    TEST-REQ-AFF-004-SERIES-FALSE-EVENT-AND-INVALID-GENERATION-BEFORE-MUTATION
+ok    TEST-REQ-MVC-008-SERIES-BUSY-AFTER-CAS-KEEPS-ROOT-ONCE-AND-CAPTURED-TOKEN
+ok    TEST-REQ-MVC-008-SERIES-HIGH-CSN-CARRY-AND-DELAYED-GLOBAL-HORIZON
+ok    TEST-REQ-AFF-001-SERIES-KNOWN-WRITE-AND-FLUSH-FAULT-DRAIN-AND-ANNUL
+ok    TEST-REQ-AFF-001-SERIES-TERMINAL-FAULT-AND-SCOPE-ONLY-UPGRADES
+ok    TEST-REQ-AFF-001-SERIES-ANNUL-REQUIRES-LOCAL-FAULT-AND-GLOBAL-QUIESCENCE
+ok    TEST-REQ-MVC-008-SERIES-ANNUL-FIFO-BUSY-PRESERVES-CAPTURED-OBLIGATION
+ok    TEST-REQ-AFF-001-SERIES-ARCHIVE-FAULT-REFUSES-AUTOMATIC-ANNUL
+ok    TEST-REQ-AFF-004-SERIES-CAPTURED-TOKEN-NEVER-RECONSTRUCTED-FROM-MUTATED-LOT
+ok    TEST-REQ-AFF-004-SERIES-REGISTRY-INVARIANT-AFTER-ROOT-CAS-FAULTS-ARCHIVE
+ok    TEST-REQ-AFF-001-SERIES-UNEXPECTED-ROOT-CAS-AND-NONLOCAL-EXIT-FAULT-ARCHIVE
+ok    TEST-REQ-AFF-008-SERIES-LEASE-AND-EVENT-GENERATIONS-EXHAUST-WITHOUT-WRAP
+ok    TEST-REQ-WAL-006-SERIES-INVALID-LEVEL-AND-PUBLICATION-REPLAY-PRESERVE-STATE
+ok    TEST-REQ-WAL-006-SERIES-REJECTED-DISPATCH-WITHDRAWS-WITHOUT-IO-AND-H-CONVERGES
+ok    TEST-REQ-AFF-004-SERIES-WITHDRAW-REFUSES-HEALTHY-OWNED-WRITTEN-STALE-AND-DOUBLE
+ok    TEST-REQ-AFF-004-SERIES-WAL-PREFLIGHT-INVARIANTS-FAULT-BEFORE-ADOPTION-OR-RELEASE
+ok    TEST-REQ-AFF-004-SERIES-UNCERTAIN-GETTER-FAULTS-ARCHIVE-BEFORE-AND-AFTER-CAS
+ok    TEST-REQ-AFF-008-SERIES-RING-INVALID-CAPACITY-BEFORE-INDEXING
+ok    TEST-REQ-CON-002-SERIES-RING-CURSORS-FAIL-SEPARATELY
+ok    TEST-REQ-CON-002-SERIES-RING-COUNTS-FAIL-SEPARATELY
+ok    TEST-REQ-MVC-008-SERIES-CSN-AFTER-EXPLICIT-TRUTH-PAIRS
+ok    TEST-REQ-CON-001-SERIES-FOREIGN-THREAD-LEASE-AND-RELEASE-REACQUIRE-TRANSFER
+ok    TEST-REQ-CON-002-SERIES-CAS-EIGHT-CONTENDERS-ONE-OWNER
+  Serie: 4 controller x 64 lotti, K=3, 7 busy, 12 full, H convergente.
+ok    TEST-REQ-CON-004-SERIES-FOUR-CONTROLLERS-SHARED-BOUNDED-CSN
+ok    TEST-REQ-CON-002-SERIES-IMMUTABLE-ROOT-PARALLEL-READER-AFTER-HANDOFF
+ok    TEST-REQ-WAL-006-SERIES-IO-FINISH-JOINED-BEFORE-DRAIN-AND-ANNUL
+ok    TEST-REQ-CON-004-SERIES-HELD-CSN-GUARD-PUBLISH-NEVER-WAITS
+44 test del controller Serie superati.
+build e test: nessun avviso, tutti i controlli superati
+sbcl --script tools/lint.lisp src
+108 file, 0 violazioni
+sbcl --script tools/lint.lisp --self-test
+ok    bad.lisp: COD-02 COD-03 COD-12 COD-20 COD-22 COD-34 COD-43 COD-50
+ok    good.lisp: nessuna violazione
+ok    keyword-barrier.lisp: nessuna violazione
+ok    qualified-reader.lisp: COD-34
+sbcl --script tools/check-trace.lisp
+114 requisiti, 65 invarianti, 13 scenari FI, 52 ADR: 0 errori
+sbcl --script tools/check-links.lisp .
+255 file, 2143 link controllati, 0 rotti
+sbcl --noinform --no-userinit --no-sysinit --script tools/check-evidence-storage.lisp
+(:SCHEMA-VERSION 1 :KIND :EVIDENCE-STORAGE-TESTS :STATUS :OK :CHECKS 123 :CASES ((:NAME :PUBLIC-API :STATUS :OK :CHECKS 5) (:NAME :PLAIN-MARKER-BUDGET :STATUS :OK :CHECKS 2) (:NAME :TINY-EXPANDED-BUDGET :STATUS :OK :CHECKS 3) (:NAME :PLAIN-AND-COMPRESSED-EQUIVALENT :STATUS :OK :CHECKS 9) (:NAME :PLAIN-ORIGINAL-BYTES :STATUS :OK :CHECKS 7) (:NAME :COMPRESSED-ORIGINAL-BYTES :STATUS :OK :CHECKS 7) (:NAME :COMPRESSED-CALLBACK-ERROR-CLEANUP :STATUS :OK :CHECKS 7) (:NAME :CALLBACK-PRESERVES-INPUT-FILES :STATUS :OK :CHECKS 3) (:NAME :FOREIGN-PACKAGE-FIXTURE :STATUS :OK :CHECKS 1) (:NAME :LEGACY-PLAIN-BYTE-CALLBACK :STATUS :OK :CHECKS 7) (:NAME :LEGACY-COMPRESSED-BYTE-CALLBACK :STATUS :OK :CHECKS 7) (:NAME :LEGACY-CALLBACK-ERROR-CLEANUP :STATUS :OK :CHECKS 7) (:NAME :MISSING-PAYLOAD-FIELD :STATUS :OK :CHECKS 2) (:NAME :MISSING-PAYLOAD-FILE :STATUS :OK :CHECKS 2) (:NAME :PARENT-PATH-ESCAPE :STATUS :OK :CHECKS 2) (:NAME :BACKSLASH-PATH-ESCAPE :STATUS :OK :CHECKS 2) (:NAME :ABSOLUTE-PATH-ESCAPE :STATUS :OK :CHECKS 2) (:NAME :SYMLINK-FIXTURE :STATUS :OK :CHECKS 1) (:NAME :SYMLINK-PATH-ESCAPE :STATUS :OK :CHECKS 2) (:NAME :UNCOMPRESSED-SHA256 :STATUS :OK :CHECKS 2) (:NAME :COMPRESSED-SHA256 :STATUS :OK :CHECKS 2) (:NAME :UNCOMPRESSED-BYTES-SHORT :STATUS :OK :CHECKS 2) (:NAME :UNCOMPRESSED-BYTES-LONG :STATUS :OK :CHECKS 2) (:NAME :COMPRESSED-BYTES-SHORT :STATUS :OK :CHECKS 2) (:NAME :COMPRESSED-BYTES-LONG :STATUS :OK :CHECKS 2) (:NAME :TAMPERED-COMPRESSED-BYTES :STATUS :OK :CHECKS 2) (:NAME :TAMPERED-ORIGINAL-BYTES :STATUS :OK :CHECKS 2) (:NAME :TRUNCATED-GZIP :STATUS :OK :CHECKS 2) (:NAME :PLAIN-MULTIPLE-FORMS :STATUS :OK :CHECKS 2) (:NAME :COMPRESSED-MULTIPLE-FORMS :STATUS :OK :CHECKS 2) (:NAME :PLAIN-READ-EVAL-LEADING :STATUS :OK :CHECKS 3) (:NAME :COMPRESSED-READ-EVAL-LEADING :STATUS :OK :CHECKS 3) (:NAME :PLAIN-READ-EVAL-TRAILING :STATUS :OK :CHECKS 3) (:NAME :COMPRESSED-READ-EVAL-TRAILING :STATUS :OK :CHECKS 3) (:NAME :NESTED-DESCRIPTOR :STATUS :OK :CHECKS 2) (:NAME :RECURSIVE-DESCRIPTOR-CHAIN :STATUS :OK :CHECKS 2) (:NAME :EXPANDED-BUDGET-TOO-SMALL :STATUS :OK :CHECKS 2) (:NAME :EXPANDED-BUDGET-UNDERDECLARED :STATUS :OK :CHECKS 2) (:NAME :CALLBACK-EXPANDED-BUDGET-TOO-SMALL :STATUS :OK :CHECKS 2) (:NAME :FIXTURE-CLEANUP :STATUS :OK :CHECKS 1)))
+sbcl --noinform --no-userinit --no-sysinit --script tools/check-evidence-publication.lisp
+(:SCHEMA-VERSION 1 :KIND :EVIDENCE-PUBLICATION-TESTS :STATUS :OK :CHECKS 2
+ :CASES
+ ((:FIXTURE "fuori-catalogo.lisp" :BYTES 1048577 :STATUS :OK
+   :OBSERVED-EXIT-CODE 1 :STDOUT "" :STDERR
+   "Unhandled SIMPLE-ERROR in thread #<SB-THREAD:THREAD tid=259 \"main thread\" RUNNING
+                                    {80086A04B3}>:
+  Artefatto /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/results/.budget-test-81119/fuori-catalogo.lisp: 1048577 byte, limite 1048576. Eseguire make compact-evidence.
+
+Backtrace for: #<SB-THREAD:THREAD tid=259 \"main thread\" RUNNING {80086A04B3}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SIMPLE-ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" {8006B15813}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK *INVOKE-DEBUGGER-HOOK* #<SIMPLE-ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" {8006B15813}>)
+2: (INVOKE-DEBUGGER #<SIMPLE-ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" {8006B15813}>)
+3: (ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" #P\"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/results/.budget-test-81119/fuori-catalogo.lisp\" 1048577 1048576)
+4: ((LABELS WALK :IN VERIFICA-DIMENSIONI) #P\"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/results/.budget-test-81119/\")
+5: ((LABELS WALK :IN VERIFICA-DIMENSIONI) #P\"spikes/results/\")
+6: (VERIFICA-DIMENSIONI #P\"spikes/results/\")
+7: ((LAMBDA NIL :IN \"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/check-evidence.lisp\"))
+8: (UIOP/FILESYSTEM:CALL-WITH-CURRENT-DIRECTORY #P\"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../\" #<FUNCTION (LAMBDA NIL :IN \"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/check-evidence.lisp\") {800536561B}>)
+9: (SB-INT:SIMPLE-EVAL-IN-LEXENV (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) #<NULL-LEXENV>)
+10: (EVAL-TLF (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) 7 NIL)
+11: ((LABELS SB-FASL::EVAL-FORM :IN SB-INT:LOAD-AS-SOURCE) (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) 7)
+12: ((LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) :CURRENT-INDEX 7)
+13: (SB-C::%DO-FORMS-FROM-INFO #<FUNCTION (LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) {106C90F1B}> #<SB-C::SOURCE-INFO {8008680423}> SB-C::INPUT-ERROR-IN-LOAD)
+14: (SB-INT:LOAD-AS-SOURCE #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> :VERBOSE NIL :PRINT NIL :CONTEXT \"loading\")
+15: ((LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> NIL)
+16: (SB-FASL::CALL-WITH-LOAD-BINDINGS #<FUNCTION (LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) {106C909EB}> #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> NIL #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}>)
+17: ((LABELS SB-FASL::LOAD-STREAM :IN LOAD) #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> NIL)
+18: (LOAD #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> :VERBOSE NIL :PRINT NIL :IF-DOES-NOT-EXIST :ERROR :EXTERNAL-FORMAT :DEFAULT)
+19: ((FLET SB-IMPL::LOAD-SCRIPT :IN SB-IMPL::PROCESS-SCRIPT) #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}>)
+20: ((FLET SB-UNIX::BODY :IN SB-IMPL::PROCESS-SCRIPT))
+21: ((FLET \"WITHOUT-INTERRUPTS-BODY-\" :IN SB-IMPL::PROCESS-SCRIPT))
+22: (SB-IMPL::PROCESS-SCRIPT \"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\")
+23: (SB-IMPL::TOPLEVEL-INIT)
+24: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+25: ((FLET \"WITHOUT-INTERRUPTS-BODY-3\" :IN SB-IMPL::START-LISP))
+26: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting
+")
+  (:FIXTURE "fuori-catalogo.gz" :BYTES 8388609 :STATUS :OK :OBSERVED-EXIT-CODE
+   1 :STDOUT "" :STDERR
+   "Unhandled SIMPLE-ERROR in thread #<SB-THREAD:THREAD tid=259 \"main thread\" RUNNING
+                                    {80086A04B3}>:
+  Artefatto /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/results/.budget-test-81119/fuori-catalogo.gz: 8388609 byte, limite 8388608. Eseguire make compact-evidence.
+
+Backtrace for: #<SB-THREAD:THREAD tid=259 \"main thread\" RUNNING {80086A04B3}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SIMPLE-ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" {8006B157E3}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK *INVOKE-DEBUGGER-HOOK* #<SIMPLE-ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" {8006B157E3}>)
+2: (INVOKE-DEBUGGER #<SIMPLE-ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" {8006B157E3}>)
+3: (ERROR \"Artefatto ~A: ~D byte, limite ~D. Eseguire make compact-evidence.\" #P\"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/results/.budget-test-81119/fuori-catalogo.gz\" 8388609 8388608)
+4: ((LABELS WALK :IN VERIFICA-DIMENSIONI) #P\"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/results/.budget-test-81119/\")
+5: ((LABELS WALK :IN VERIFICA-DIMENSIONI) #P\"spikes/results/\")
+6: (VERIFICA-DIMENSIONI #P\"spikes/results/\")
+7: ((LAMBDA NIL :IN \"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/check-evidence.lisp\"))
+8: (UIOP/FILESYSTEM:CALL-WITH-CURRENT-DIRECTORY #P\"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../\" #<FUNCTION (LAMBDA NIL :IN \"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/check-evidence.lisp\") {800536561B}>)
+9: (SB-INT:SIMPLE-EVAL-IN-LEXENV (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) #<NULL-LEXENV>)
+10: (EVAL-TLF (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) 7 NIL)
+11: ((LABELS SB-FASL::EVAL-FORM :IN SB-INT:LOAD-AS-SOURCE) (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) 7)
+12: ((LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) (UIOP/FILESYSTEM:WITH-CURRENT-DIRECTORY ((MERGE-PATHNAMES \"../\" (UIOP/PATHNAME:PATHNAME-DIRECTORY-PATHNAME *LOAD-TRUENAME*))) (LET ((CATALOGHI 0) (RECORD 0)) (MULTIPLE-VALUE-BIND (FILES BYTES) (VERIFICA-DIMENSIONI #P\"spikes/results/\") (DOLIST (PATH #) (LET* # # # #)) (UNLESS (PLUSP CATALOGHI) (ERROR # :PATH \"Nessun catalogo.\")) (WRITE (LIST :STATUS :OK :CATALOGS CATALOGHI :ARTIFACT-REFERENCES RECORD :STORED-FILES FILES :STORED-BYTES BYTES :LIMITS ...)) (TERPRI)))) :CURRENT-INDEX 7)
+13: (SB-C::%DO-FORMS-FROM-INFO #<FUNCTION (LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) {104E60F1B}> #<SB-C::SOURCE-INFO {8008680423}> SB-C::INPUT-ERROR-IN-LOAD)
+14: (SB-INT:LOAD-AS-SOURCE #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> :VERBOSE NIL :PRINT NIL :CONTEXT \"loading\")
+15: ((LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> NIL)
+16: (SB-FASL::CALL-WITH-LOAD-BINDINGS #<FUNCTION (LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) {104E609EB}> #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> NIL #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}>)
+17: ((LABELS SB-FASL::LOAD-STREAM :IN LOAD) #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> NIL)
+18: (LOAD #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}> :VERBOSE NIL :PRINT NIL :IF-DOES-NOT-EXIST :ERROR :EXTERNAL-FORMAT :DEFAULT)
+19: ((FLET SB-IMPL::LOAD-SCRIPT :IN SB-IMPL::PROCESS-SCRIPT) #<SB-SYS:FD-STREAM for \"file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\" {8008680043}>)
+20: ((FLET SB-UNIX::BODY :IN SB-IMPL::PROCESS-SCRIPT))
+21: ((FLET \"WITHOUT-INTERRUPTS-BODY-\" :IN SB-IMPL::PROCESS-SCRIPT))
+22: (SB-IMPL::PROCESS-SCRIPT \"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/../tools/check-evidence.lisp\")
+23: (SB-IMPL::TOPLEVEL-INIT)
+24: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+25: ((FLET \"WITHOUT-INTERRUPTS-BODY-3\" :IN SB-IMPL::START-LISP))
+26: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting
+")))
+sbcl --noinform --no-userinit --no-sysinit --script tools/check-evidence-normalize.lisp
+(:SCHEMA-VERSION 1 :KIND :NORMALIZER-COMPRESSION-TESTS :STATUS :OK :CHECKS 6
+ :CASES
+ ((:COMMAND
+   ("/opt/homebrew/Cellar/sbcl/2.6.9/libexec/bin/sbcl" "--noinform"
+    "--no-userinit" "--no-sysinit" "--script"
+    "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/normalize-spike-report.lisp"
+    "/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/normalize-evidence-xLQ96q/source.lisp"
+    "/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/normalize-evidence-xLQ96q/normalized-0.lisp")
+   :STDOUT "" :STDERR "" :EXIT-CODE 0 :RESULT
+   (:SCHEMA-VERSION 1 :KIND :LEGACY-IMPORT :SOURCE-REPORT
+    "/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/normalize-evidence-xLQ96q/source.lisp"
+    :ENVIRONMENT (:CPU "fixture") :MODE "--check" :METADATA-POLICY
+    :PRESERVED-WITHOUT-INFERRED-FIELDS :STATUS :IMPORTED :RUNS
+    ((:STATUS :PASS :RESULT (:STATUS :PASS :N 1) :ID "SPK-fixture" :STDOUT
+      "(:status :pass :n 1)"))))
+  (:COMMAND
+   ("/opt/homebrew/Cellar/sbcl/2.6.9/libexec/bin/sbcl" "--noinform"
+    "--no-userinit" "--no-sysinit" "--script"
+    "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/normalize-spike-report.lisp"
+    "/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/normalize-evidence-xLQ96q/compressed.lisp"
+    "/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/normalize-evidence-xLQ96q/normalized-1.lisp")
+   :STDOUT "" :STDERR "" :EXIT-CODE 0 :RESULT
+   (:SCHEMA-VERSION 1 :KIND :LEGACY-IMPORT :SOURCE-REPORT
+    "/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/normalize-evidence-xLQ96q/compressed.lisp"
+    :ENVIRONMENT (:CPU "fixture") :MODE "--check" :METADATA-POLICY
+    :PRESERVED-WITHOUT-INFERRED-FIELDS :STATUS :IMPORTED :RUNS
+    ((:STATUS :PASS :RESULT (:STATUS :PASS :N 1) :ID "SPK-fixture" :STDOUT
+      "(:status :pass :n 1)"))))))
+sbcl --noinform --no-userinit --no-sysinit --script tools/check-evidence.lisp
+(:STATUS :OK :CATALOGS 43 :ARTIFACT-REFERENCES 1448 :STORED-FILES 3722
+ :STORED-BYTES 162616412 :LIMITS
+ (:STRUCTURE-PRESENCE-SIZE-AND-COMPRESSED-INTEGRITY
+  :NO-RESULT-REINTERPRETATION))
+sbcl --noinform --no-userinit --script tools/run-spikes.lisp --check
+10 spike completati; risultati: /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/4000552955-check-82980-0/

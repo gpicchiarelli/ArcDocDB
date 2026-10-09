@@ -1,0 +1,1 @@
+:OK: sbcl --noinform --no-userinit --no-sysinit --disable-debugger --script spikes/out/cbor-minimal-scan-data-summary-reader.lisp; record: /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/4000553094-command-89492-0/report.lisp

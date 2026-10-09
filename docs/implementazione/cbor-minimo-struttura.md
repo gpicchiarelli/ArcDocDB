@@ -33,3 +33,5 @@ budget e preferenza locale delle testate.
 [Contratto e metodo](cbor-minimo-struttura-metodo.md),
 [prima lettura](cbor-minimo-struttura-lettura.md) e
 [inventario delle decisioni](cbor-minimo-struttura-decisioni.md).
+
+[Risultati, copertura e archivi originali](cbor-minimo-struttura-risultati.md).

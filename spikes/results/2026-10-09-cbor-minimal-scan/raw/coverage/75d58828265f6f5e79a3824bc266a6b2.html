@@ -1,0 +1,52 @@
+<html><head><style type='text/css'>
+*.state-0 { background-color: #eeeeee }
+*.state-1 { background-color: #aaffaa }
+*.state-5 { background-color: #44dd44 }
+*.state-2 { background-color: #ffaaaa }
+*.state-10 { background-color: #ee6666 }
+*.state-15 { color: #aaaaaa; background-color: #eeeeee }
+*.state-9,*.state-6 { background-color: #ffffaa }
+div.key { margin: 20px; width: 200px }
+div.source { width: 88ex; background-color: #eeeeee; padding-left: 5px;
+             /* border-style: solid none none none; border-width: 1px;
+             border-color: #dddddd */ }
+
+*.line-number { color: #666666; float: left; width: 6ex; text-align: right; margin-right: 1ex; }
+
+table.summary tr.head-row { background-color: #aaaaff }
+table.summary tr td.text-cell { text-align: left }
+table.summary tr td.main-head { text-align: center }
+table.summary tr td { text-align: right }
+table.summary tr.even { background-color: #eeeeff }
+table.summary tr.subheading { background-color: #aaaaff}
+table.summary tr.subheading td { text-align: left; font-weight: bold; padding-left: 5ex; }
+</style></head><body><h3>Coverage report: /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-minimal.lisp <br />
+</h3>
+<table class='summary'><tr class='head-row'><td width='80px'>Kind</td><td width='80px'>Covered</td><td width='80px'>All</td><td width='80px'>%</td><tr class='odd'><td>expression</td><td>10</td><td>16</td><td> 62.5</td></tr>
+<tr class='even'><td>branch</td><td>0</td><td>0</td><td>nil  </td></tr>
+</table><div class='key'><b>Key</b><br />
+<div class='state-0'>Not instrumented</div><div class='state-15'>Conditionalized out</div><div class='state-1'>Executed</div><div class='state-2'>Not executed</div><div>&#160;</div><div class='state-5'>Both branches taken</div><div class='state-6'>One branch taken</div><div class='state-10'>Neither branch taken</div></div><nobr><div><code>
+</code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>1</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#59;&#160;Un&#160;item&#160;strutturale&#47;UTF8&#160;con&#160;sole&#160;testate&#160;minime&#44;&#160;un&#160;solo&#160;attraversamento&#46;</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>2</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;OWNER&#58;&#160;buffer&#160;immutabile&#160;e&#160;scratch&#160;esclusivo&#160;del&#160;chiamante&#44;&#160;privato&#160;di&#160;ogni&#160;worker&#46;</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>3</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;SHARED&#58;&#160;nessuna&#160;scrittura&#44;&#160;attesa&#160;o&#160;I&#47;O&#160;tra&#160;Serie&#160;&#40;INV&#45;P6&#41;&#59;&#160;nessun&#160;thread&#160;creato&#46;</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>4</code></div><code>&#160;<span class='state-2'>&#40;in&#45;package&#160;&#35;&#58;arcdocdb&#46;cbor&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>5</code></div><code>&#160;<span class='state-2'>&#40;declaim&#160;&#40;optimize&#160;&#40;safety&#160;3&#41;&#160;&#40;speed&#160;2&#41;&#160;&#40;debug&#160;2&#41;&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>6</code></div><code>&#160;<span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>7</code></div><code>&#160;<span class='state-0'>&#59;&#59;&#59;&#160;REQ&#58;&#160;REQ&#45;LIM&#45;001&#160;REQ&#45;LIM&#45;002&#160;REQ&#45;AFF&#45;004&#160;REQ&#45;AFF&#45;008</span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>8</code></div><code>&#160;<span class='state-2'>&#40;declaim&#160;&#40;ftype&#160;&#40;function&#160;&#40;t&#160;t&#160;t&#160;t&#160;&#38;key&#160;&#40;&#58;max&#45;bytes&#160;t&#41;&#160;&#40;&#58;max&#45;nodes&#160;t&#41;&#160;&#40;&#58;max&#45;depth&#160;t&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>9</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#40;values&#160;index&#160;&#40;integer&#160;0&#160;100&#41;&#160;index&#160;&#38;optional&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>10</code></div><code>&#160;<span class='state-2'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;verifica&#45;struttura&#45;cbor&#45;minima&#41;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>11</code></div><code>&#160;<span class='state-1'>&#40;defun&#160;verifica&#45;struttura&#45;cbor&#45;minima&#160;&#40;buffer&#160;start&#160;end&#160;space</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>12</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#38;key&#160;</span><span class='state-2'>&#40;max&#45;bytes&#160;&#43;cbor&#45;scan&#45;max&#45;bytes&#43;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>13</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</span><span class='state-2'>&#40;max&#45;nodes&#160;&#43;cbor&#45;scan&#45;max&#45;bytes&#43;&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>14</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</span><span class='state-2'>&#40;max&#45;depth&#160;&#43;cbor&#45;scan&#45;max&#45;depth&#43;&#41;</span><span class='state-1'>&#41;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>15</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#34;Pre&#58;&#160;simple&#160;u8&#160;immutabile&#44;&#160;span&#160;half&#45;open&#44;&#160;scratch&#160;esclusivo&#160;e&#160;budget&#160;verificati&#46;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>16</code></div><code>&#160;<span class='state-1'>Post&#58;&#160;esattamente&#160;NODES&#44;&#160;picco&#160;soli&#160;array&#47;map&#44;&#160;END&#160;per&#160;un&#160;item&#160;esatto&#160;con&#160;header&#160;minimi&#46;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>17</code></div><code>&#160;<span class='state-1'>Propaga&#160;prima&#160;la&#160;sintassi&#160;header&#44;&#160;poi&#160;&#58;cbor&#45;nonminimal&#160;sul&#160;lead&#160;prima&#160;di&#160;contesto&#44;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>18</code></div><code>&#160;<span class='state-1'>nodi&#44;&#160;depth&#160;o&#160;payload&#47;UTF8&#59;&#160;radice&#160;conclusa&#160;controlla&#160;&#58;cbor&#45;trailing&#160;senza&#160;leggere&#160;coda&#46;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>19</code></div><code>&#160;<span class='state-1'>INVALID&#45;ARGUMENT&#47;RESOURCE&#45;EXHAUSTED&#160;di&#160;preflight&#160;senza&#160;mutare&#160;lo&#160;spazio&#59;&#160;reset&#160;prima</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>20</code></div><code>&#160;<span class='state-1'>del&#160;singolo&#160;attraversamento&#44;&#160;scratch&#160;riusabile&#160;dopo&#160;errore&#160;runtime&#46;&#160;Propaga&#160;anche</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>21</code></div><code>&#160;<span class='state-1'>CORRUPTION&#45;DETECTED&#160;e&#160;INVARIANT&#45;VIOLATION&#59;&#160;nessuna&#160;semantica&#160;tag&#44;&#160;ordine&#160;o&#160;deduplica&#160;mappe&#46;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>22</code></div><code>&#160;<span class='state-1'>Buffer&#160;immutabile&#44;&#160;float&#47;u64&#160;solo&#160;parole&#59;&#160;lavoro&#160;bounded&#44;&#160;nessuna&#160;attesa&#47;I&#47;O&#46;&#34;</span><span class='state-0'></span></code></div></nobr>
+<nobr><div class='source'><div class='line-number'><code>23</code></div><code>&#160;<span class='state-1'>&#160;&#160;&#40;verifica&#45;struttura&#45;cbor&#45;interna&#160;buffer&#160;start&#160;end&#160;space&#160;max&#45;bytes&#160;max&#45;nodes&#160;max&#45;depth&#160;t&#41;&#41;</code></div></body></html>

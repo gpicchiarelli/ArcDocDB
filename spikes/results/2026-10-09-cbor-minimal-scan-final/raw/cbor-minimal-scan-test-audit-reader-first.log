@@ -1,0 +1,42 @@
+While evaluating the form starting at line 5, column 0
+  of #P"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp":
+Unhandled SB-INT:SIMPLE-FILE-ERROR in thread #<SB-THREAD:THREAD tid=259 "main thread" RUNNING
+                                                {80086C0453}>:
+  Failed to find the TRUENAME of /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/../../cbor-minimal-scan-test-audit-reader.lisp:
+
+    No such file or directory
+
+Backtrace for: #<SB-THREAD:THREAD tid=259 "main thread" RUNNING {80086C0453}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SB-INT:SIMPLE-FILE-ERROR "Failed to find the ~A of ~A" {8006655843}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK *INVOKE-DEBUGGER-HOOK* #<SB-INT:SIMPLE-FILE-ERROR "Failed to find the ~A of ~A" {8006655843}>)
+2: (INVOKE-DEBUGGER #<SB-INT:SIMPLE-FILE-ERROR "Failed to find the ~A of ~A" {8006655843}>)
+3: (ERROR SB-INT:SIMPLE-FILE-ERROR :PATHNAME #P"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/../../cbor-minimal-scan-test-audit-reader.lisp" :MESSAGE "No such file or directory" :FORMAT-CONTROL "Failed to find the ~A of ~A" :FORMAT-ARGUMENTS (:TRUENAME #P"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/../../cbor-minimal-scan-test-audit-reader.lisp"))
+4: (SB-IMPL::FILE-PERROR #P"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/../../cbor-minimal-scan-test-audit-reader.lisp" 2 "Failed to find the ~A of ~A" :TRUENAME #P"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/../../cbor-minimal-scan-test-audit-reader.lisp")
+5: (SB-IMPL::QUERY-FILE-SYSTEM #P"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/../../cbor-minimal-scan-test-audit-reader.lisp" :TRUENAME T)
+6: (TRUENAME #P"/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/../../cbor-minimal-scan-test-audit-reader.lisp")
+7: (SB-INT:SIMPLE-EVAL-IN-LEXENV (TRUENAME (MERGE-PATHNAMES "../../" *LOAD-TRUENAME*)) #<NULL-LEXENV>)
+8: (SB-INT:SIMPLE-EVAL-IN-LEXENV (SB-IMPL::%DEFPARAMETER (QUOTE *AUDIT-ROOT*) (TRUENAME (MERGE-PATHNAMES "../../" *LOAD-TRUENAME*)) (SB-C:SOURCE-LOCATION)) #<NULL-LEXENV>)
+9: (SB-INT:SIMPLE-EVAL-IN-LEXENV (DEFPARAMETER *AUDIT-ROOT* (TRUENAME (MERGE-PATHNAMES "../../" *LOAD-TRUENAME*))) #<NULL-LEXENV>)
+10: (EVAL-TLF (DEFPARAMETER *AUDIT-ROOT* (TRUENAME (MERGE-PATHNAMES "../../" *LOAD-TRUENAME*))) 2 NIL)
+11: ((LABELS SB-FASL::EVAL-FORM :IN SB-INT:LOAD-AS-SOURCE) (DEFPARAMETER *AUDIT-ROOT* (TRUENAME (MERGE-PATHNAMES "../../" *LOAD-TRUENAME*))) 2)
+12: ((LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) (DEFPARAMETER *AUDIT-ROOT* (TRUENAME (MERGE-PATHNAMES "../../" *LOAD-TRUENAME*))) :CURRENT-INDEX 2)
+13: (SB-C::%DO-FORMS-FROM-INFO #<FUNCTION (LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) {1055610CB}> #<SB-C::SOURCE-INFO {80086905F3}> SB-C::INPUT-ERROR-IN-LOAD)
+14: (SB-INT:LOAD-AS-SOURCE #<SB-INT:FORM-TRACKING-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80086903A3}> :VERBOSE NIL :PRINT NIL :CONTEXT "loading")
+15: ((LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) #<SB-INT:FORM-TRACKING-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80086903A3}> NIL)
+16: (SB-FASL::CALL-WITH-LOAD-BINDINGS #<FUNCTION (LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) {105560B9B}> #<SB-INT:FORM-TRACKING-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80086903A3}> NIL #<SB-INT:FORM-TRACKING-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80086903A3}>)
+17: ((LABELS SB-FASL::LOAD-STREAM :IN LOAD) #<SB-INT:FORM-TRACKING-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80086903A3}> NIL)
+18: (LOAD "spikes/out/cbor-minimal-scan-test-audit-reader.lisp" :VERBOSE NIL :PRINT NIL :IF-DOES-NOT-EXIST :ERROR :EXTERNAL-FORMAT :DEFAULT)
+19: ("top level form") [toplevel]
+20: ((FLET "G" :IN SB-C::%COMPILE-IN-LEXENV))
+21: (SB-C::%COMPILE-IN-LEXENV (LET ((SB-KERNEL:*HANDLER-CLUSTERS* (CONS (LIST #) . #1=(SB-KERNEL:*HANDLER-CLUSTERS*)))) (DECLARE (DYNAMIC-EXTENT . #1#)) (PROGN (LOAD "spikes/out/cbor-minimal-scan-test-audit-reader.lisp"))) #<NULL-LEXENV> NIL NIL NIL NIL T T)
+22: (SB-C:EVAL-WITH-COMPILE-IN-LEXENV (LET ((SB-KERNEL:*HANDLER-CLUSTERS* (CONS (LIST #) . #1=(SB-KERNEL:*HANDLER-CLUSTERS*)))) (DECLARE (DYNAMIC-EXTENT . #1#)) (PROGN (LOAD "spikes/out/cbor-minimal-scan-test-audit-reader.lisp"))) #<NULL-LEXENV> NIL NIL NIL)
+23: (SB-IMPL::%SIMPLE-EVAL (LET ((SB-KERNEL:*HANDLER-CLUSTERS* (CONS (LIST #) . #1=(SB-KERNEL:*HANDLER-CLUSTERS*)))) (DECLARE (DYNAMIC-EXTENT . #1#)) (PROGN (LOAD "spikes/out/cbor-minimal-scan-test-audit-reader.lisp"))) #<NULL-LEXENV>)
+24: (SB-INT:SIMPLE-EVAL-IN-LEXENV (HANDLER-BIND ((WARNING (LAMBDA (CONDITION) (ERROR "Avviso del helper non ammesso: ~A" CONDITION)))) (LOAD "spikes/out/cbor-minimal-scan-test-audit-reader.lisp")) #<NULL-LEXENV>)
+25: (EVAL (HANDLER-BIND ((WARNING (LAMBDA (CONDITION) (ERROR "Avviso del helper non ammesso: ~A" CONDITION)))) (LOAD "spikes/out/cbor-minimal-scan-test-audit-reader.lisp")))
+26: (SB-IMPL::PROCESS-EVAL/LOAD-OPTIONS ((:EVAL . "(handler-bind ((warning (lambda (condition) (error \"Avviso del helper non ammesso: ~A\" condition)))) (load \"spikes/out/cbor-minimal-scan-test-audit-reader.lisp\"))") (:QUIT)))
+27: (SB-IMPL::TOPLEVEL-INIT)
+28: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+29: ((FLET "WITHOUT-INTERRUPTS-BODY-3" :IN SB-IMPL::START-LISP))
+30: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting

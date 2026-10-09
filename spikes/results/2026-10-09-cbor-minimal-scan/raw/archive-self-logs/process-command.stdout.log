@@ -1,0 +1,3 @@
+(:SCHEMA-VERSION 1 :KIND :COMMAND-ARCHIVE-AUDIT :STATUS :FAILED :REASON
+ :PROCESS-METADATA :PATH "processes/plain/report.lisp" :DIAGNOSTIC
+ "Campo :COMMAND diverso dal record.")

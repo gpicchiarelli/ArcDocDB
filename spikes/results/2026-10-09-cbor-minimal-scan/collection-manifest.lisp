@@ -1,0 +1,163 @@
+(:SCHEMA-VERSION 1 :PROCESSES
+ (("preliminary" "spikes/out/4000552268-command-64251-0/report.lisp")
+  ("coverage-self" "spikes/out/4000552284-command-64445-0/report.lisp")
+  ("legacy-mutator-self" "spikes/out/4000552284-command-64446-0/report.lisp")
+  ("archive-self" "spikes/out/4000552284-command-64447-0/report.lisp")
+  ("benchmark" "spikes/out/4000552318-command-65001-0/report.lisp")
+  ("coverage" "spikes/out/4000552339-command-65156-0/report.lisp")
+  ("old-final-audit" "spikes/out/4000552339-command-65157-0/report.lisp")
+  ("mutations" "spikes/out/4000552339-command-65155-0/report.lisp")
+  ("old-archive-audit" "spikes/out/4000552339-command-65158-0/report.lisp")
+  ("coverage-compaction" "spikes/out/4000552418-command-67182-0/report.lisp"))
+ :TREES
+ (("coverage" "spikes/out/cbor-minimal-scan-coverage-20261009/" :ALL)
+  ("archive-self-logs" "spikes/out/command-archive-check-self-20261009-a/logs/"
+   :ALL)
+  ("archive-self-cases"
+   "spikes/out/command-archive-check-self-20261009-a/cases/" :ALL))
+ :FILES
+ (("frozen/src/codec/cbor-package.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-package.lisp")
+  ("frozen/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan.lisp")
+  ("frozen/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/src/codec/cbor-scan-minimal.lisp")
+  ("frozen/tests/codec/cbor-minimal-scan-support.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan-support.lisp")
+  ("frozen/tests/codec/cbor-minimal-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan.lisp")
+  ("frozen/tests/codec/cbor-minimal-scan-threads.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tests/codec/cbor-minimal-scan-threads.lisp")
+  ("frozen/tools/cbor-minimal-scan-bench.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/cbor-minimal-scan-bench.lisp")
+  ("frozen/tools/cbor-minimal-mutation.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/cbor-minimal-mutation.lisp")
+  ("frozen/tools/foundation-coverage.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/foundation-coverage.lisp")
+  ("frozen/tools/check-command-archive.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/tools/check-command-archive.lisp")
+  ("pre-campaign/cbor-minimal-mutation-before-upstream.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-mutation-before-upstream.lisp")
+  ("pre-campaign/cbor-minimal-mutation-upstream-engine.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-mutation-upstream-engine.lisp")
+  ("pre-campaign/cbor-minimal-scan-bench-arity-finding.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-bench-arity-finding.lisp")
+  ("pre-campaign/cbor-minimal-scan-bench-before-arity.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-bench-before-arity.lisp")
+  ("pre-campaign/cbor-minimal-scan-build-manifest.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-build-manifest.lisp")
+  ("pre-campaign/cbor-minimal-scan-coverage-transcript.stderr.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-coverage-transcript.stderr.log")
+  ("pre-campaign/cbor-minimal-scan-coverage-transcript.stdout.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-coverage-transcript.stdout.log")
+  ("pre-campaign/cbor-minimal-scan-independent-review.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-independent-review.lisp")
+  ("pre-campaign/cbor-minimal-scan-preliminary.stderr.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-preliminary.stderr.log")
+  ("pre-campaign/cbor-minimal-scan-preliminary.stdout.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-preliminary.stdout.log")
+  ("pre-campaign/cbor-minimal-scan-read-command.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-read-command.lisp")
+  ("pre-campaign/check-command-archive-before-enumeration-note.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/check-command-archive-before-enumeration-note.lisp")
+  ("pre-campaign/check-command-archive-source-read-attempt-1-failed.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/check-command-archive-source-read-attempt-1-failed.lisp")
+  ("pre-campaign/check-command-archive-source-read-attempt-1-transcription.txt"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/check-command-archive-source-read-attempt-1-transcription.txt")
+  ("pre-campaign/check-command-archive-source-read-attempt-1.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/check-command-archive-source-read-attempt-1.lisp")
+  ("pre-campaign/check-command-archive-source-read-attempt-2.stderr.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/check-command-archive-source-read-attempt-2.stderr.log")
+  ("pre-campaign/check-command-archive-source-read-attempt-2.stdout.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/check-command-archive-source-read-attempt-2.stdout.log")
+  ("syntax/source-read.lisp" "/private/tmp/cbor-minimal-scan-source-read.lisp")
+  ("syntax/source-read-first.log"
+   "/private/tmp/cbor-minimal-scan-source-read-first.log")
+  ("syntax/source-read-final.log"
+   "/private/tmp/cbor-minimal-scan-source-read-final.log")
+  ("mutation/report.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/report.lisp")
+  ("mutation/baseline/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/baseline/test.log")
+  ("mutation/baseline/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/baseline/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/baseline/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/baseline/src/codec/cbor-scan.lisp")
+  ("mutation/baseline/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/baseline/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/0/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/0/test.log")
+  ("mutation/0/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/0/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/0/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/0/src/codec/cbor-scan.lisp")
+  ("mutation/0/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/0/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/1/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/1/test.log")
+  ("mutation/1/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/1/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/1/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/1/src/codec/cbor-scan.lisp")
+  ("mutation/1/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/1/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/2/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/2/test.log")
+  ("mutation/2/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/2/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/2/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/2/src/codec/cbor-scan.lisp")
+  ("mutation/2/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/2/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/3/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/3/test.log")
+  ("mutation/3/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/3/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/3/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/3/src/codec/cbor-scan.lisp")
+  ("mutation/3/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/3/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/4/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/4/test.log")
+  ("mutation/4/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/4/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/4/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/4/src/codec/cbor-scan.lisp")
+  ("mutation/4/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/4/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/5/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/5/test.log")
+  ("mutation/5/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/5/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/5/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/5/src/codec/cbor-scan.lisp")
+  ("mutation/5/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/5/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/6/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/6/test.log")
+  ("mutation/6/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/6/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/6/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/6/src/codec/cbor-scan.lisp")
+  ("mutation/6/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/6/src/codec/cbor-scan-minimal.lisp")
+  ("mutation/7/test.log"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/7/test.log")
+  ("mutation/7/tools/cbor-minimal-isolated-build.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/7/tools/cbor-minimal-isolated-build.lisp")
+  ("mutation/7/src/codec/cbor-scan.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/7/src/codec/cbor-scan.lisp")
+  ("mutation/7/src/codec/cbor-scan-minimal.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-mutations-20261009/7/src/codec/cbor-scan-minimal.lisp")
+  ("archive-self/report.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/command-archive-check-self-20261009-a/report.lisp")
+  ("coverage-self/c301e9def08d4ad8610af6fcad382479.html"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-coverage-self-20261009/c301e9def08d4ad8610af6fcad382479.html")
+  ("coverage-self/cover-index.html"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-coverage-self-20261009/cover-index.html")
+  ("coverage-self/coverage-fixture.lisp"
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-coverage-self-20261009/coverage-fixture.lisp"))
+ :LIMITS
+ (:FULL-MUTANT-COPIES-AND-FASL-RETAINED-LOCALLY
+  :FULL-NEGATIVE-FIXTURES-RETAINED-LOCALLY
+  :ONLY-TARGETS-AND-RUNNERS-AND-LOGS-IN-PUBLISHED-MUTATION-SUBSET))

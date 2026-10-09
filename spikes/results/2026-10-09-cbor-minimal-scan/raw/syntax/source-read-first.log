@@ -1,0 +1,3 @@
+tests/codec/cbor-minimal-scan-support.lisp: 20 form, 0 test nominali, EOF.
+tests/codec/cbor-minimal-scan.lisp: 22 form, 21 test nominali, EOF.
+tests/codec/cbor-minimal-scan-threads.lisp: 2 form, 1 test nominali, EOF.

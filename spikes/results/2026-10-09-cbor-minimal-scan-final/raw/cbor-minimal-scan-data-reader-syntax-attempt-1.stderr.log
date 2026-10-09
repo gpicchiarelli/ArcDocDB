@@ -1,0 +1,42 @@
+Unhandled SB-INT:SIMPLE-READER-PACKAGE-ERROR in thread #<SB-THREAD:THREAD tid=259 "main thread" RUNNING
+                                                          {80086B0453}>:
+  Package SB-MD5 does not exist.
+
+    Line: 72, Column: 58, File-Position: 3855
+
+    Stream: #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}>
+
+Backtrace for: #<SB-THREAD:THREAD tid=259 "main thread" RUNNING {80086B0453}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {8006692683}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK *INVOKE-DEBUGGER-HOOK* #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {8006692683}>)
+2: (INVOKE-DEBUGGER #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {8006692683}>)
+3: (ERROR #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {8006692683}>)
+4: (SB-KERNEL:WITH-SIMPLE-CONDITION-RESTARTS ERROR NIL SB-INT:SIMPLE-READER-PACKAGE-ERROR :PACKAGE "SB-MD5" :STREAM #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> :FORMAT-CONTROL "Package ~A does not exist." :FORMAT-ARGUMENTS ("SB-MD5"))
+5: (SB-IMPL::READER-FIND-PACKAGE "SB-MD5" #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> T)
+6: (SB-IMPL::READ-TOKEN #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #\s)
+7: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #\s)
+8: (SB-IMPL::READ-LIST #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #<unused argument>)
+9: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #\()
+10: (SB-IMPL::READ-LIST #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #<unused argument>)
+11: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #\()
+12: (SB-IMPL::READ-LIST #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #<unused argument>)
+13: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #\()
+14: (SB-IMPL::READ-LIST #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #<unused argument>)
+15: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> #\()
+16: (SB-IMPL::%READ-PRESERVING-WHITESPACE #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> NIL (NIL) T)
+17: (SB-IMPL::%READ-PRESERVING-WHITESPACE #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> NIL (NIL) NIL)
+18: (READ #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-data-reader.lisp" {8006690243}> NIL :EOF NIL)
+19: ("top level form") [toplevel]
+20: ((FLET "G" :IN SB-C::%COMPILE-IN-LEXENV))
+21: (SB-C::%COMPILE-IN-LEXENV (LET ((STREAM (OPEN "spikes/out/cbor-minimal-scan-data-reader.lisp" :AUTO-CLOSE . #1=(NIL))) (#2=#:G294 T)) (UNWIND-PROTECT (MULTIPLE-VALUE-PROG1 (PROGN (LET # #)) (SETQ #2# . #1#)) (WHEN STREAM (CLOSE STREAM :ABORT #2#)))) #<NULL-LEXENV> NIL NIL NIL NIL T T)
+22: (SB-C:EVAL-WITH-COMPILE-IN-LEXENV (LET ((STREAM (OPEN "spikes/out/cbor-minimal-scan-data-reader.lisp" :AUTO-CLOSE . #1=(NIL))) (#2=#:G294 T)) (UNWIND-PROTECT (MULTIPLE-VALUE-PROG1 (PROGN (LET # #)) (SETQ #2# . #1#)) (WHEN STREAM (CLOSE STREAM :ABORT #2#)))) #<NULL-LEXENV> NIL NIL NIL)
+23: (SB-IMPL::%SIMPLE-EVAL (LET ((STREAM (OPEN "spikes/out/cbor-minimal-scan-data-reader.lisp" :AUTO-CLOSE . #1=(NIL))) (#2=#:G294 T)) (UNWIND-PROTECT (MULTIPLE-VALUE-PROG1 (PROGN (LET # #)) (SETQ #2# . #1#)) (WHEN STREAM (CLOSE STREAM :ABORT #2#)))) #<NULL-LEXENV>)
+24: (SB-INT:SIMPLE-EVAL-IN-LEXENV (WITH-OPEN-FILE (STREAM "spikes/out/cbor-minimal-scan-data-reader.lisp") (LET ((*READ-EVAL* NIL)) (FORMAT T "Read ~D forms without evaluation.~%" (LOOP FOR FORM = (READ STREAM NIL :EOF) UNTIL (EQ FORM :EOF) COUNT T)))) #<NULL-LEXENV>)
+25: (EVAL (WITH-OPEN-FILE (STREAM "spikes/out/cbor-minimal-scan-data-reader.lisp") (LET ((*READ-EVAL* NIL)) (FORMAT T "Read ~D forms without evaluation.~%" (LOOP FOR FORM = (READ STREAM NIL :EOF) UNTIL (EQ FORM :EOF) COUNT T)))))
+26: (SB-IMPL::PROCESS-EVAL/LOAD-OPTIONS ((:EVAL . "(require :asdf)") (:EVAL . "(load \"tools/evidence-storage.lisp\")") (:EVAL . #<(SIMPLE-BASE-STRING 218) (with-open-file (stream "spikes/out/cbor-minimal-scan-data-reader.lisp") (let ((*read-eval* nil)) (format t "Read ~D forms without evaluation.~%" (loop for form = (read stream nil :eof) until (eq form... {8008801C3F}>) (:QUIT)))
+27: (SB-IMPL::TOPLEVEL-INIT)
+28: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+29: ((FLET "WITHOUT-INTERRUPTS-BODY-3" :IN SB-IMPL::START-LISP))
+30: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting

@@ -4,6 +4,17 @@ Il lettore locale di [testate minime](cbor-minimo.md) passa le campagne
 registrate nel [metodo](cbor-minimo-metodo.md). Il profilo documentale
 completo e la qualifica del motore restano successivi.
 
+Rettifica del metodo di conservazione: i due audit storici dell'inventario
+usavano un ausilio Python, contrario a INV-X3 anche per gli strumenti di
+verifica. Codice e risultati originali restano conservati come dati storici.
+Il nuovo checker interamente Common Lisp, letto indipendentemente e provato
+con 24 fixture, verifica entrambi gli archivi immutati: 1313/87 file e
+otto/sei processi. Le nuove verifiche originali sono nell'
+[archivio dello scanner minimo](../../spikes/results/2026-10-09-cbor-minimal-scan/archive-index.lisp);
+schema, inventario chiuso, bytes/SHA e metadati passano, senza inferenza
+sulle campagne del prodotto o sui gate. Limiti nella
+[lettura C4](archivi-comandi-lettura.md).
+
 ## Correttezza e concorrenza
 
 La build preliminare completa riporta **381 esiti `ok`**: 379 test delle

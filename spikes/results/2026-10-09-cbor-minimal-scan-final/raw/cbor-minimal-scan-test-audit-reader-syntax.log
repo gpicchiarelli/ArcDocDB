@@ -1,0 +1,40 @@
+Unhandled SB-INT:SIMPLE-READER-PACKAGE-ERROR in thread #<SB-THREAD:THREAD tid=259 "main thread" RUNNING
+                                                          {80052B0003}>:
+  Package UIOP does not exist.
+
+    Line: 29, Column: 28, File-Position: 1416
+
+    Stream: #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}>
+
+Backtrace for: #<SB-THREAD:THREAD tid=259 "main thread" RUNNING {80052B0003}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {80079A1E73}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK *INVOKE-DEBUGGER-HOOK* #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {80079A1E73}>)
+2: (INVOKE-DEBUGGER #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {80079A1E73}>)
+3: (ERROR #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "Package ~A does not exist." {80079A1E73}>)
+4: (SB-KERNEL:WITH-SIMPLE-CONDITION-RESTARTS ERROR NIL SB-INT:SIMPLE-READER-PACKAGE-ERROR :PACKAGE "UIOP" :STREAM #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> :FORMAT-CONTROL "Package ~A does not exist." :FORMAT-ARGUMENTS ("UIOP"))
+5: (SB-IMPL::READER-FIND-PACKAGE "UIOP" #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> T)
+6: (SB-IMPL::READ-TOKEN #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #\u)
+7: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #\u)
+8: (SB-IMPL::READ-LIST #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #<unused argument>)
+9: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #\()
+10: (SB-IMPL::READ-LIST #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #<unused argument>)
+11: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #\()
+12: (SB-IMPL::READ-LIST #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #<unused argument>)
+13: (SB-IMPL::READ-OBJECT? #<READTABLE {80031D47E3}> #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> #\()
+14: (SB-IMPL::%READ-PRESERVING-WHITESPACE #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> NIL (NIL) T)
+15: (SB-IMPL::%READ-PRESERVING-WHITESPACE #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> NIL (NIL) NIL)
+16: (READ #<SB-SYS:FD-STREAM for "file /Users/gpicchiarelli/.codex/worktrees/cbor-minimal-scan/ArcDocDB/spikes/out/cbor-minimal-scan-test-audit-reader.lisp" {80079A1183}> NIL #:G114 NIL)
+17: ("top level form") [toplevel]
+18: ((FLET "G" :IN SB-C::%COMPILE-IN-LEXENV))
+19: (SB-C::%COMPILE-IN-LEXENV (LET ((*READ-EVAL* NIL) (EOF (GENSYM)) (COUNT 0)) (WITH-OPEN-FILE (IN "spikes/out/cbor-minimal-scan-test-audit-reader.lisp") (LOOP FOR FORM = (READ IN NIL EOF) UNTIL (EQ FORM EOF) DO (INCF COUNT))) (FORMAT T "Helper: ~D forme lette come dati, EOF.~%" COUNT)) #<NULL-LEXENV> NIL NIL NIL NIL T T)
+20: (SB-C:EVAL-WITH-COMPILE-IN-LEXENV (LET ((*READ-EVAL* NIL) (EOF (GENSYM)) (COUNT 0)) (WITH-OPEN-FILE (IN "spikes/out/cbor-minimal-scan-test-audit-reader.lisp") (LOOP FOR FORM = (READ IN NIL EOF) UNTIL (EQ FORM EOF) DO (INCF COUNT))) (FORMAT T "Helper: ~D forme lette come dati, EOF.~%" COUNT)) #<NULL-LEXENV> NIL NIL NIL)
+21: (SB-IMPL::%SIMPLE-EVAL (LET ((*READ-EVAL* NIL) (EOF (GENSYM)) (COUNT 0)) (WITH-OPEN-FILE (IN "spikes/out/cbor-minimal-scan-test-audit-reader.lisp") (LOOP FOR FORM = (READ IN NIL EOF) UNTIL (EQ FORM EOF) DO (INCF COUNT))) (FORMAT T "Helper: ~D forme lette come dati, EOF.~%" COUNT)) #<NULL-LEXENV>)
+22: (SB-INT:SIMPLE-EVAL-IN-LEXENV (LET ((*READ-EVAL* NIL) (EOF (GENSYM)) (COUNT 0)) (WITH-OPEN-FILE (IN "spikes/out/cbor-minimal-scan-test-audit-reader.lisp") (LOOP FOR FORM = (READ IN NIL EOF) UNTIL (EQ FORM EOF) DO (INCF COUNT))) (FORMAT T "Helper: ~D forme lette come dati, EOF.~%" COUNT)) #<NULL-LEXENV>)
+23: (EVAL (LET ((*READ-EVAL* NIL) (EOF (GENSYM)) (COUNT 0)) (WITH-OPEN-FILE (IN "spikes/out/cbor-minimal-scan-test-audit-reader.lisp") (LOOP FOR FORM = (READ IN NIL EOF) UNTIL (EQ FORM EOF) DO (INCF COUNT))) (FORMAT T "Helper: ~D forme lette come dati, EOF.~%" COUNT)))
+24: (SB-IMPL::PROCESS-EVAL/LOAD-OPTIONS ((:EVAL . "(load \"tools/evidence-storage.lisp\")") (:EVAL . #<(SIMPLE-BASE-STRING 258) (let ((*read-eval* nil) (eof (gensym)) (count 0)) (with-open-file (in "spikes/out/cbor-minimal-scan-test-audit-reader.lisp") (loop for form = (read in nil eof) until (eq form eof) do (incf count))) (f... {80052A00EF}>) (:QUIT)))
+25: (SB-IMPL::TOPLEVEL-INIT)
+26: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+27: ((FLET "WITHOUT-INTERRUPTS-BODY-3" :IN SB-IMPL::START-LISP))
+28: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting
