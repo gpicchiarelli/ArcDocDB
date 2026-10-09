@@ -21,7 +21,7 @@
   '(
     (:name "ignore-event-generation" :file "src/series/events.lisp" :test "TEST-REQ-AFF-004-SERIES-FREE-AND-STALE-PREALLOCATED-EVENT-AFTER-WRAP"
      :before "               (= generation (commit-serie-generation event)))"
-     :after "               t))")
+     :after "               t)")
     (:name "ignore-publication-fifo" :file "src/series/events.lisp" :test "TEST-REQ-WAL-006-SERIES-PUBLICATION-FIFO-UNRESOLVED-AND-RETURNED-H"
      :before "  (unless (eq event (svref (controllore-serie-slots controller) (controllore-serie-publish-head controller)))
     (error 'invalid-argument :reason :serie-publish-order))"
