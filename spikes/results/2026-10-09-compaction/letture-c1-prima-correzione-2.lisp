@@ -1,0 +1,43 @@
+(:SCHEMA-VERSION 1 :KIND :C1-REVIEW :DATE "2026-10-09" :STATUS
+ :LOCAL-AGENT-READINGS :STATEMENT-SOURCE "/root" :FORMATS (1 2)
+ :SOURCE-ARTIFACT "mutazioni.lisp" :SOURCE-FINGERPRINTS
+ ((:PATH "src/storage/compaction-scan.lisp" :GIT-BLOB
+   "233556c366a99b7b263af1c7bc19b47ceaebf940")
+  (:PATH "tests/storage/compaction-scan.lisp" :GIT-BLOB
+   "16e5c9e5231883844ecd7956c7f790349acd2a05"))
+ :READINGS
+ ((:REVIEWER "/root/development_next" :READING 1 :PHASE :FINAL :POINTS
+   ("requisiti" "invarianti" "errori" "cicli" "allocazioni" "risultati"
+    "decisioni" "ownership" "integrazione" "standard" "parallelismo"
+    "durability")
+   :FINDINGS :NONE-RESIDUAL :CHECKED
+   (:VERSION :PREPARED :PHYSICAL-TAIL :BUDGETS :NO-U64-BOXING))
+  (:REVIEWER "/root/storage_commit_review" :READING 2 :PHASE :FINAL :POINTS
+   ("requisiti" "invarianti" "errori" "cicli" "allocazioni" "risultati"
+    "decisioni" "ownership" "integrazione" "standard" "parallelismo"
+    "durability")
+   :FINDINGS :NONE-RESIDUAL :CHECKED
+   (:VERSION :PREPARED :PHYSICAL-TAIL :BUDGETS :NO-U64-BOXING)))
+ :CORRECTED-FINDINGS
+ ((:REVIEWER "/root/storage_commit_review" :FINDING
+   :MISSING-FINAL-DEFUN-PARENTHESIS :SOURCE "src/storage/compaction-scan.lisp"
+   :STATUS :CORRECTED-BEFORE-BUILD)
+  (:REVIEWER "/root/storage_commit_review" :FINDING
+   :CONFIGURATION-TESTS-INCOMPLETE :CASES
+   (:NEGATIVE-VALID-BYTES :NEGATIVE-MAX-RECORDS :MAX-RECORDS-OVERFLOW
+    :IDENTITY-LENGTH-0 :IDENTITY-LENGTH-15 :IDENTITY-LENGTH-17)
+   :STATUS :ADDED-TO-15-NOMINAL-TESTS)
+  (:REVIEWER "/root/development_next" :FINDING :BACKTRACE-MARKER-CLASSIFICATION
+   :SOURCE "tools/compaction-mutation.lisp" :STATUS
+   :CORRECTED-BEFORE-CAMPAIGNS))
+ :DRIVER-REVIEW
+ (:REVIEWER "/root/development_next" :STANDARD :C4 :FINDINGS :NONE-RESIDUAL)
+ :RAW-COVERAGE-AUDIT
+ (:STATEMENT-SOURCE "/root" :EXPRESSIONS (202 234) :BRANCHES (30 36)
+  :UNCOVERED-DECLARATIONS 6 :UNCOVERED-FORMS-IN-FOUR-ERROR-GUARDS 24
+  :UNCOVERED-KEYWORD-DEFAULTS 2
+  :UNCOVERED-FALSE-BRANCHES-IN-THREE-DEFENSIVE-AND 6 :DENOMINATOR :COMPLETE
+  :APPROVED-EXCEPTIONS NIL)
+ :LIMITS
+ (:LOCAL-AGENT-READINGS :NOT-HUMAN-APPROVAL :NO-RELEASE-QUALIFICATION
+  :NO-DURABILITY-OR-ENGINE-QUALIFICATION))

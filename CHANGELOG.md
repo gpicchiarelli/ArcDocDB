@@ -7,6 +7,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Verifica in memoria dei segmenti compattati CLOSED v1/v2: identità, CRC,
+  soli PUT/TOMBSTONE ordinari, limite valido autorevole e budget byte/record.
+  Conteggi fisici restituiti dopo il controllo integrale; 15 test indipendenti,
+  otto mutanti rilevati e misure locali delle allocazioni conservate.
+
 - Tabella delle decisioni multiserie inclusa nella compilazione e nei test ordinari:
   ricostruzione dal prefisso sigillato, duplicati idempotenti o discordanti,
   budget finiti, query scalari e copie possedute dei partecipanti. Non applica
