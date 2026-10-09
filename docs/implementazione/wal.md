@@ -11,7 +11,8 @@ safety 3. [Metodo](wal-metodo.md), [decisioni](wal-decisioni.md),
 con il codec e riserva sempre spazio per SEAL; non assegna il CSN del lotto.
 `sigilla-lotto` riceve il CSN appena preso dal chiamante, la posizione pianificata
 e la frontiera durevole osservata tramite l'evento del precedente flush.
-Il servizio CSN dell'Archivio e la coda del writer non sono implementati qui.
+Il [registro CSN dell'Archivio](csn.md) e le [code del writer](code-writer.md)
+sono componenti distinti; il controller che li collega al lotto resta da integrare.
 
 La chiusura ristampa PUT/tombstone ordinari e EDIT, preserva TXID prepared,
 OUTCOME e DECISION, ricalcola CRC header e CRC aggregato, scrive SEAL. Il buffer
