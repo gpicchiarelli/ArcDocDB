@@ -7,6 +7,12 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Indice primario v2 in memoria: controlli Swiss a gruppi di 16, chiavi binarie
+  in arena, lookup con budget comune e conferma root anche sul miss, upsert e
+  cancellazione/rilocazione condizionale nel writer, crescita arena e piani monouso di pubblicazione
+  directory. Hashing, costruttore split/rebuild e GET integrato ancora aperti;
+  include contratti, tracciabilità ed evidenze statiche, qualifica C1 aperta.
+
 - Banco di slot v2 dell'indice: parole u64 contigue, lettura in buffer privato
   con otto tentativi, pubblicazione e rimozione sotto seqlock, rilocazione
   condizionale, credito di scrittura e congelamento permanente. Include

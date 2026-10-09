@@ -44,7 +44,11 @@
                              (:file "group") (:file "executor") (:file "csn")))
                (:module "index" :serial t
                 :components ((:file "package") (:file "types") (:file "core")
-                             (:file "validation") (:file "read") (:file "write") (:file "relocate")))
+                             (:file "validation") (:file "read") (:file "write") (:file "relocate")
+                             (:file "primary-package") (:file "primary-types") (:file "primary-core")
+                             (:file "primary-build") (:file "primary-probe") (:file "primary-read")
+                             (:file "primary-write") (:file "primary-relocate")
+                             (:file "primary-arena") (:file "primary-directory")))
                (:module "mvcc" :serial t
                 :components ((:file "package") (:file "types")
                              (:file "snapshots-types") (:file "snapshots-core") (:file "snapshots-csn")

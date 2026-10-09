@@ -13,8 +13,9 @@ Il componente implementa payload e seqlock, secondo
 [ADR-0032](../adr/0032-seqlock-a-64-bit.md),
 [ADR-0043](../adr/0043-primary-index-a-frammenti.md) e
 [ADR-0050](../adr/0050-pubblicazione-e-costi-della-directory.md).
-Mancano sondaggio, controllo Swiss, arena, directory e versioni trattenute
-ricercabili. Non è ancora la tabella dell'indice o un GET completo.
+Il [gestore dell'indice](indice-primario.md) aggiunge sondaggio, controllo
+Swiss, arena e pubblicazione della directory. Restano versioni trattenute
+ricercabili e GET completo; questo banco rimane la primitiva del payload.
 
 Classe C1: REQ-IDX-001, REQ-IDX-003, REQ-IDX-004, REQ-IDX-005,
 REQ-IDX-006, REQ-IDX-007, REQ-LIM-001, REQ-LIM-003, REQ-CON-004,
