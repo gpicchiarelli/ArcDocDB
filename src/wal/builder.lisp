@@ -103,13 +103,32 @@ INVALID-ARGUMENT prima di modificare; non registra o risolve il CSN del chiamant
   (sigilla-lotto-parole lotto (ldb (byte 32 32) stamp) (ldb (byte 32 0) stamp) file-start durable))
 
 ;;; REQ: REQ-WAL-005 REQ-AFF-008
+(declaim (ftype (function (lotto) null) verifica-ritiro-lotto))
+(defun verifica-ritiro-lotto (lotto)
+  "Pre: compito mai consegnato oppure ritirato con prova sincronizzata dal caller.
+Post: buffer sealed e nessun gruppo proprietario; INVALID-ARGUMENT altrimenti.
+Nessuna mutazione o attestazione autonoma sullo scheduler."
+  (esigi-lotto lotto :sealed)
+  (unless (null (lotto-owner lotto)) (error 'invalid-argument :reason :lotto-owned))
+  nil)
+
+;;; REQ: REQ-WAL-005 REQ-AFF-008
+(declaim (ftype (function (lotto) null) verifica-riuso-lotto))
+(defun verifica-riuso-lotto (lotto)
+  "Pre: writer osserva fine I/O e ritiro dal gruppo. Post: riuso ammissibile.
+INVALID-ARGUMENT per stato, CSN pendente o gruppo proprietario; nessuna mutazione.
+Non attesta il ritiro di riferimenti esterni, che rimane obbligo del controller."
+  (esigi-lotto lotto :durable)
+  (when (lotto-csn-pending lotto) (error 'invalid-argument :reason :lotto-csn-pending))
+  (unless (null (lotto-owner lotto)) (error 'invalid-argument :reason :lotto-owned))
+  nil)
+
+;;; REQ: REQ-WAL-005 REQ-AFF-008
 (declaim (ftype (function (lotto) null) riusa-lotto))
 (defun riusa-lotto (lotto)
   "Pre: durevole, rimosso dal gruppo e nessun consumatore/riferimento in volo.
 Post: stesso buffer aperto e vuoto. INVALID-ARGUMENT se non durevole; non attesta reclaim."
-  (esigi-lotto lotto :durable)
-  (when (lotto-csn-pending lotto) (error 'invalid-argument :reason :lotto-csn-pending))
-  (unless (null (lotto-owner lotto)) (error 'invalid-argument :reason :lotto-owned))
+  (verifica-riuso-lotto lotto)
   (setf (lotto-used lotto) 0 (lotto-count lotto) 0 (lotto-start lotto) 0 (lotto-state lotto) :open
         (lotto-csn-registry lotto) nil (lotto-csn-log lotto) nil (lotto-csn-pending lotto) nil
         (lotto-csn-slot lotto) 0 (lotto-csn-high lotto) 0 (lotto-csn-low lotto) 0)

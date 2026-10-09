@@ -16,6 +16,8 @@
   (:export #:lotto #:crea-lotto #:aggiungi-record #:sigilla-lotto #:riusa-lotto
            #:stato-lotto #:lunghezza-lotto #:inizio-lotto
            #:sigilla-lotto-con-csn #:stato-csn-lotto #:leggi-csn-lotto
+           #:verifica-token-lotto #:verifica-pubblicazione-lotto
+           #:verifica-riuso-lotto #:verifica-ritiro-lotto #:marca-log-faulted #:verifica-log-segmento
            #:risolvi-lotto-pubblicato #:annulla-csn-lotto
            #:log-io #:crea-log-io #:stato-log
            #:gruppo #:crea-gruppo #:aggiungi-lotto #:chiudi-gruppo #:riusa-gruppo #:annulla-gruppo

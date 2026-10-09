@@ -1,0 +1,3 @@
+SIMPLE-ERROR: Asserzione fallita: (EQ ARCDOCDB.SERIES.TESTS::REASON
+                                      (ARCDOCDB.CONDITIONS:ERROR-REASON
+                                       CONDITION))

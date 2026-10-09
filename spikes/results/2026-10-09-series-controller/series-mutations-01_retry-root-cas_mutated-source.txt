@@ -1,0 +1,108 @@
+;;; OWNER: writer locale pubblica una radice immutabile per lotto, mai per documento.
+;;; SHARED: CAS della radice con reader; registro CSN di Archivio solo alla risoluzione.
+(in-package #:arcdocdb.series)
+(declaim (optimize (safety 3) (speed 2) (debug 2)))
+
+;;; REQ: REQ-WAL-006 REQ-MVC-008 REQ-AFF-001
+(declaim (ftype (function (controllore-serie commit-serie) null) %check-publication))
+(defun %check-publication (controller event)
+  "Pre: evento corrente/FIFO, Serie sana. Post: token, copertura e radice PRIMA del CAS.
+Copertura mancante è rifiuto ordinario; token/root incoerenti sono fail-stop.
+Guasto del log => Serie FAULTED, mai nuova pubblicazione."
+  (%check-captured-token controller event)
+  (unless (member (commit-serie-io-state event) '(:active :retired))
+    (error 'invalid-argument :reason :serie-io-not-started))
+  (handler-case
+      (verifica-pubblicazione-lotto (the lotto (commit-serie-lotto event))
+       (controllore-serie-registry controller) (controllore-serie-log controller)
+       (commit-serie-slot event) (commit-serie-high event) (commit-serie-low event) (commit-serie-level event))
+    (io-fault (condition) (%mark-fault controller :serie) (error condition))
+    (invariant-violation (condition) (%mark-fault controller :archive) (error condition)))
+  (unless (eq (controllore-serie-root controller)
+              (if (eq (commit-serie-phase event) :preparato)
+                  (commit-serie-expected-root event) (commit-serie-root event)))
+    (%serie-invariant controller :serie-root-invariant))
+  nil)
+
+;;; REQ: REQ-WAL-006 REQ-MVC-008 REQ-CON-002
+(declaim (ftype (function (controllore-serie commit-serie) null) %publish-root))
+(defun %publish-root (controller event)
+  "Pre: effetto posseduto e preflight completa. Post: radice pubblicata una sola volta.
+Il CAS pubblica memoria, non è atomicità durevole: il SEAL scritto è il punto WAL.
+Invariante CAS/fase/radice => Archivio fail-stop, senza rollback o seconda pubblicazione."
+  (case (commit-serie-phase event)
+    (:preparato
+     (setf (commit-serie-phase event) :pubblicando)
+     (unless (eq (sb-ext:compare-and-swap (controllore-serie-root controller)
+                                        (commit-serie-expected-root event) (commit-serie-root event))
+                 (commit-serie-expected-root event))
+       (%serie-invariant controller :serie-root-cas))
+     (setf (commit-serie-phase event) :pubblicato))
+    (:pubblicato
+     (unless (eq (sb-ext:compare-and-swap (controllore-serie-root controller)
+                                        (commit-serie-expected-root event) (commit-serie-root event))
+                 (commit-serie-expected-root event))
+       (%serie-invariant controller :serie-root-cas)))
+    (otherwise (%serie-invariant controller :serie-event-state)))
+  (unless (eq (commit-serie-phase event) :pubblicato) (%serie-invariant controller :serie-event-state))
+  (unless (eq (controllore-serie-root controller) (commit-serie-root event))
+    (%serie-invariant controller :serie-root-invariant))
+  nil)
+
+;;; REQ: REQ-MVC-008 REQ-WAL-006
+(declaim (ftype (function (controllore-serie commit-serie) null) %advance-publication))
+(defun %advance-publication (controller event)
+  "Pre: effetto e risultato già risolto/annullato. Post: cursor dei pendenti avanzato.
+Invarianti di count/fase impediscono di superare un token ancora pendente."
+  (unless (plusp (controllore-serie-unresolved controller)) (%serie-invariant controller :serie-count))
+  (unless (member (commit-serie-phase event) '(:risolto :annullato))
+    (%serie-invariant controller :serie-event-state))
+  (decf (controllore-serie-unresolved controller))
+  (setf (controllore-serie-publish-head controller)
+        (%next-position controller (controllore-serie-publish-head controller)))
+  (%check-ring controller)
+  nil)
+
+;;; REQ: REQ-MVC-008 REQ-WAL-006
+(declaim (ftype (function (controllore-serie commit-serie)
+                         (values (member :risolto :pendente) u32 u32 &optional)) %resolve-publication))
+(defun %resolve-publication (controller event)
+  "Pre: root pubblicata, effetto posseduto. Post: risolto oppure pendente sul SOLO csn-busy.
+Risoluzione usa token catturato; busy non ripubblica e non avanza FIFO.
+Errori inattesi/interruzione registro-evento richiedono fail-stop Archivio."
+  (unless (eq (commit-serie-phase event) :pubblicato) (%serie-invariant controller :serie-event-state))
+  (handler-case
+      (multiple-value-bind (high low)
+          (risolvi-lotto-pubblicato (the lotto (commit-serie-lotto event))
+           (controllore-serie-registry controller) (commit-serie-slot event)
+           (commit-serie-high event) (commit-serie-low event) (commit-serie-level event))
+        (setf (commit-serie-phase event) :risolto)
+        (%advance-publication controller event)
+        (values :risolto high low))
+    (resource-exhausted (condition)
+      (unless (eq (error-reason condition) :csn-busy) (error condition))
+      (unless (eq (commit-serie-phase event) :pubblicato) (%serie-invariant controller :serie-event-state))
+      (values :pendente 0 0))))
+
+;;; REQ: REQ-WAL-006 REQ-MVC-008 REQ-CON-002 REQ-AFF-001
+(declaim (ftype (function (controllore-serie t t t)
+                         (values (member :risolto :pendente) u32 u32 &optional)) pubblica-commit-serie))
+(defun pubblica-commit-serie (controller lease event generation)
+  "Pre: evento sincronizzato; radice immutabile predisposta, ordine FIFO della Serie.
+Post: pubblicazione atomica seguita da risoluzione; :pendente conserva esito/obbligo.
+Nessuna conferma client; errore noto I/O => Serie faulted, esito incerto => Archivio.
+Cleanup rilascia l'effetto locale, preservando la causa e tutti i riferimenti pendenti."
+  (%check-owner controller lease) (%live-event controller event generation)
+  (%check-publish-head controller event) (%require-healthy controller)
+  (%check-publication controller event)
+  (let ((complete nil))
+    (%begin-effect controller)
+    (unwind-protect
+         (handler-case
+             (progn
+               (%publish-root controller event)
+               (multiple-value-bind (status high low) (%resolve-publication controller event)
+                 (setf complete t) (values status high low)))
+           (io-fault (condition)
+             (%mark-fault controller :serie) (setf complete t) (error condition)))
+      (%end-effect controller complete))))

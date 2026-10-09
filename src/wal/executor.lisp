@@ -3,6 +3,15 @@
 (in-package #:arcdocdb.wal)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 
+;;; REQ: REQ-AFF-001 REQ-WAL-006
+(declaim (ftype (function (log-io) null) marca-log-faulted))
+(defun marca-log-faulted (log)
+  "Pre: controller ha ritirato/completato tutti i compiti I/O del log, oppure
+il compito proprietario segnala il proprio guasto. Post: log terminale FAULTED.
+Non libera active né buffer, non riapre file, non esegue I/O o risolve CSN."
+  (setf (log-io-state log) :faulted)
+  nil)
+
 ;;; REQ: REQ-WAL-002 REQ-AFF-001
 (declaim (ftype (function (gruppo) null) acquisisci-gruppo))
 (defun acquisisci-gruppo (group)
@@ -44,7 +53,8 @@ RESOURCE-EXHAUSTED se occupato; INVALID-ARGUMENT per offset/frontiera prima di s
 (defun fault-gruppo (group)
   "Pre: guasto in volo. Post: log/gruppo/lotti FAULTED, proprietà non rilasciata.
 Nessun retry, nessuna ulteriore copertura; il worker propaga l'evento alla Serie/Archivio."
-  (setf (log-io-state (gruppo-log group)) :faulted (gruppo-state group) :faulted)
+  (marca-log-faulted (gruppo-log group))
+  (setf (gruppo-state group) :faulted)
   (dotimes (i (gruppo-count group))
     (setf (lotto-state (the lotto (svref (gruppo-slots group) i))) :faulted))
   nil)
