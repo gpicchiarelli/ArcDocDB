@@ -20,6 +20,16 @@ come kill solo se compila e fallisce una pertinente asserzione d'integrazione:
 un errore di compilazione rende la prova invalida, non un kill. Autoverifica,
 baseline, output grezzi, fallimenti e copertura restano evidenze separate.
 
+## Isolamento delle campagne e controlli del processo
+
+Copertura e mutanti mappano esplicitamente `**/*.*` dal checkout alla propria
+cache privata, dopo il caricamento dell’ASD. Un controllo verifica la destinazione
+prima di compilare. L’autoverifica della copertura controlla anche il percorso
+ricorsivo. Una mappatura della sola directory radice non garantiva l’isolamento:
+la campagna iniziale lo ha rilevato e conserva quel fallimento. Le campagne
+successive usano la mappatura verificata. I mutanti scoprono i sorgenti e test
+Lisp del checkout integrato; ogni processo riceve una copia completa separata.
+
 ## Contratto e ciclo osservato
 
 `sigilla-lotto-con-csn(lotto registro log file-start durable)` assegna un token
