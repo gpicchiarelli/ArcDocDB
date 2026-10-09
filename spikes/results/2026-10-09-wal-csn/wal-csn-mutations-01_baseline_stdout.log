@@ -1,0 +1,5 @@
+(:SCHEMA-VERSION 1 :KIND :WAL-CSN-MUTATION-PROBE :STATUS :FAILED :PHASE
+ :COMPILE-PROBES :FAILED-TEST NIL :PASSED-TESTS NIL :DIAGNOSTIC
+ #A((153) BASE-CHAR . "The path
+  #P\"/Users/gpicchiarelli/.codex/worktrees/chiusura-csn-wal/ArcDocDB/spikes/out/wal-csn-mutations-01/baseline/fasl/probes.fasl\" 
+does not exist."))

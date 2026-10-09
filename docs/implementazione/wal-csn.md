@@ -80,4 +80,5 @@ transazione completa o una prestazione del database.
 
 Il [metodo di verifica](wal-csn-metodo.md), la
 [matrice delle decisioni](wal-csn-decisioni.md) e la
-[revisione C1](wal-csn-revisione.md) conservano gli argomenti verificabili.
+[revisione C1](wal-csn-revisione.md) conservano gli argomenti verificabili. I [risultati locali](wal-csn-risultati.md)
+riportano prove, limiti e diagnostici della campagna.

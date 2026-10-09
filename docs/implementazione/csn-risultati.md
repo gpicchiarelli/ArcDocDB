@@ -96,3 +96,13 @@ verifica completa della consegna. Il catalogo conserva l'esito effettivo di
 `make check`; le prove isolate non sostituiscono tale controllo.
 WAL/controller, massimo globale del recovery, snapshot, parcheggi e fail-stop
 restano integrazioni successive. Nessun requisito completo viene promosso.
+
+## Addendum sulla cache dello strumento di copertura — 2026-10-09
+
+La [campagna WAL–CSN](wal-csn-risultati.md) ha rilevato che la precedente
+mappatura ASDF della sola radice non imponeva una cache privata per i file
+discendenti. Lo strumento è stato corretto con wildcard ricorsivi e una
+verifica della destinazione prima di compilare. I report CSN sopra restano
+osservazioni della loro campagna; l’isolamento dichiarato dalla vecchia
+configurazione non è attestato retroattivamente. Nessun dato storico è
+sostituito da risultati della campagna successiva.
