@@ -1,0 +1,15 @@
+ok :READER-DISABLED-EVAL
+ok :READER-EXTRA-EOF
+ok :MISSING-AND-DUPLICATED-TARGETS
+ok :FRESH-TARGET-RETAINS-EXISTING-BYTES
+Conservati 3 file, 148 byte, 1 entry. Cartella: /tmp/utf8-collector-fixture-4000512571-12176/byte-out/
+ok :BYTE-COPY-AND-UTF8-EMBEDDED
+ok :NIL-AND-ABSENT-CHANNELS
+Conservati 5 file, 2094 byte, 2 entry. Cartella: /tmp/utf8-collector-fixture-4000512571-12176/mut-out/
+ok :MUTATION-ALL-LOG-STRINGS
+Conservati 2 file, 200 byte, 0 entry. Cartella: /tmp/utf8-collector-fixture-4000512571-12176/append-out/
+ok :APPEND-PRIOR-BYTE-IDENTITY-AND-REPEATED-NAME
+ok :MISMATCHED-CATALOG-DATA-AND-BYTES-BEFORE-WRITE
+Conservati 4 file, 920 byte, 1 entry. Cartella: /tmp/utf8-collector-fixture-4000512571-12176/catalog-out/
+ok :CATALOG-TOP-ENTRIES-SCHEMA-ONE-BASENAMES
+Collector guard self-test: 10 passed, 0 failed.

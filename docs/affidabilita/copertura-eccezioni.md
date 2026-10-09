@@ -87,3 +87,14 @@ dalle 1121 espressioni o dai 122 rami pubblicati.
 La [tabella dei predicati composti](../implementazione/decisioni-multiserie-decisioni.md)
 collega le clausole pubbliche ai test e le guardie interne a questo inventario.
 Le eccezioni degli altri moduli non sono inventariate da questa misura.
+
+## Consegna locale dei writer — 2026-10-09
+
+La [campagna handoff](../implementazione/writer-handoff-decisioni.md#copertura-raw-osservata)
+conserva il denominatore completo dei quattro file execution: 505/593
+espressioni e 76/94 esiti. Il nuovo handoff ha 173/190 espressioni e 16/16
+esiti strumentati; le 17 forme non marcate (dichiarazioni, default e otherwise
+difensivo) sono inventariate nel documento. Il nuovo helper di accettazione
+non ha esiti strumentati scoperti. Le lacune legacy restano: 42 espressioni
+e dieci esiti in queue, 28 e otto in writer, una forma del package.
+Nessuna esclusione approvata, MC/DC completa o chiusura del gate C1 implicita.

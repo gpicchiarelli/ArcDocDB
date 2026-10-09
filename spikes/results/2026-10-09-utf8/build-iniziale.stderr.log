@@ -1,0 +1,441 @@
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/codec/utf8.lisp
+; in: DEFUN VERIFICA-UTF8
+;     (LOOP ARCDOCDB.UTF8::REPEAT ARCDOCDB.UTF8::SPAN
+;           DO (WHEN (= ARCDOCDB.UTF8::CURSOR ARCDOCDB.UTF8::LIMIT)
+;                (RETURN)) (SETF ARCDOCDB.UTF8::CURSOR
+;                                  (ARCDOCDB.UTF8::VERIFICA-CARATTERE-UTF8
+;                                   ARCDOCDB.UTF8::BYTES ARCDOCDB.UTF8::CURSOR
+;                                   ARCDOCDB.UTF8::LIMIT)) (INCF COUNT) (UNLESS
+;                                                                           (<=
+;                                                                            COUNT
+;                                                                            (-
+;                                                                             ARCDOCDB.UTF8::CURSOR
+;                                                                             ARCDOCDB.UTF8::BEGIN))
+;                                                                         (ERROR
+;                                                                          'ARCDOCDB.CONDITIONS:INVARIANT-VIOLATION
+;                                                                          :REASON
+;                                                                          :UTF8-COUNT
+;                                                                          :OFFSET
+;                                                                          ARCDOCDB.UTF8::CURSOR)))
+; --> LET TAGBODY IF DECF SETQ THE SB-IMPL::XSUBTRACT BLOCK 
+; ==>
+;   (- SB-IMPL::B SB-IMPL::A)
+; 
+; note: forced to do full call
+;       unable to do inline fixnum arithmetic (cost 2) because:
+;       The first argument is a (INTEGER 1), not a FIXNUM.
+;       The result is a (VALUES UNSIGNED-BYTE &OPTIONAL), not a (VALUES FIXNUM
+;                                                                       &OPTIONAL).
+;       unable to do inline (unsigned-byte 64) arithmetic (cost 5) because:
+;       The first argument is a (INTEGER 1), not a (UNSIGNED-BYTE 64).
+;       The result is a (VALUES UNSIGNED-BYTE &OPTIONAL), not a (VALUES
+;                                                                (UNSIGNED-BYTE
+;                                                                 64)
+;                                                                &OPTIONAL).
+;       etc.
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/io/native.lisp
+; in: SB-ALIEN:DEFINE-ALIEN-ROUTINE ("pread" %PREAD)
+;     (DEFINE-ALIEN-ROUTINE ("pread" ARCDOCDB.IO::%PREAD) LONG
+;                           (ARCDOCDB.IO::FD INT)
+;                           (ARCDOCDB.IO::BUFFER SYSTEM-AREA-POINTER)
+;                           (COUNT UNSIGNED-LONG) (ARCDOCDB.IO::OFFSET LONG))
+; --> DEFUN PROGN SB-IMPL::%DEFUN SB-IMPL::%DEFUN SB-INT:NAMED-LAMBDA 
+; ==>
+;   #'(SB-INT:NAMED-LAMBDA ARCDOCDB.IO::%PREAD
+;         (ARCDOCDB.IO::FD ARCDOCDB.IO::BUFFER COUNT ARCDOCDB.IO::OFFSET)
+;       (DECLARE (SB-C::TOP-LEVEL-FORM))
+;       (BLOCK ARCDOCDB.IO::%PREAD
+;         (WITH-ALIEN ((#:%PREAD # :EXTERN "pread"))
+;           (VALUES
+;            (ALIEN-FUNCALL #:%PREAD ARCDOCDB.IO::FD ARCDOCDB.IO::BUFFER COUNT
+;                           ARCDOCDB.IO::OFFSET)))))
+; 
+; note: doing signed word to integer coercion (cost 20) to "<return value>"
+
+; in: SB-ALIEN:DEFINE-ALIEN-ROUTINE ("write" %WRITE)
+;     (DEFINE-ALIEN-ROUTINE ("write" ARCDOCDB.IO::%WRITE) LONG
+;                           (ARCDOCDB.IO::FD INT)
+;                           (ARCDOCDB.IO::BUFFER SYSTEM-AREA-POINTER)
+;                           (COUNT UNSIGNED-LONG))
+; --> DEFUN PROGN SB-IMPL::%DEFUN SB-IMPL::%DEFUN SB-INT:NAMED-LAMBDA 
+; ==>
+;   #'(SB-INT:NAMED-LAMBDA ARCDOCDB.IO::%WRITE
+;         (ARCDOCDB.IO::FD ARCDOCDB.IO::BUFFER COUNT)
+;       (DECLARE (SB-C::TOP-LEVEL-FORM))
+;       (BLOCK ARCDOCDB.IO::%WRITE
+;         (WITH-ALIEN ((#:%WRITE # :EXTERN "write"))
+;           (VALUES
+;            (ALIEN-FUNCALL #:%WRITE ARCDOCDB.IO::FD ARCDOCDB.IO::BUFFER
+;                           COUNT)))))
+; 
+; note: doing signed word to integer coercion (cost 20) to "<return value>"
+
+; in: DEFUN NATIVE-OPEN
+;     (ERROR 'ARCDOCDB.CONDITIONS:UNSUPPORTED-FORMAT :REASON :IO-ABI)
+; 
+; note: deleting unreachable code
+
+;     (DEFUN ARCDOCDB.IO::NATIVE-OPEN (ARCDOCDB.IO::NAME ARCDOCDB.IO::MODE)
+;       "Pre: nome non vuoto/NUL-free. Post: FD CLOEXEC/NOFOLLOW e modo richiesto.
+;   SYSCALL-ERROR esplicito; ABI non 64 bit UNSUPPORTED-FORMAT, senza apertura."
+;       (UNLESS (= SB-VM:N-WORD-BITS 64)
+;         (ERROR 'ARCDOCDB.CONDITIONS:UNSUPPORTED-FORMAT :REASON :IO-ABI))
+;       (LET ((ARCDOCDB.IO::FD (SB-POSIX:OPEN ARCDOCDB.IO::NAME # 384)))
+;         (HANDLER-CASE
+;          (LET (#)
+;            (UNLESS # #)
+;            ARCDOCDB.IO::FD)
+;          (SB-POSIX:SYSCALL-ERROR (ARCDOCDB.IO::C)
+;                                  (ARCDOCDB.IO::CLEANUP-OPEN ARCDOCDB.IO::FD
+;                                   :IO-SYSCALL #))
+;          (ARCDOCDB.CONDITIONS:IO-FAULT (ARCDOCDB.IO::C)
+;           (ARCDOCDB.IO::CLEANUP-OPEN ARCDOCDB.IO::FD # #)))))
+; --> SB-IMPL::%DEFUN SB-IMPL::%DEFUN SB-INT:NAMED-LAMBDA 
+; ==>
+;   #'(SB-INT:NAMED-LAMBDA ARCDOCDB.IO::NATIVE-OPEN
+;         (ARCDOCDB.IO::NAME ARCDOCDB.IO::MODE)
+;       (DECLARE (SB-C::TOP-LEVEL-FORM))
+;       "Pre: nome non vuoto/NUL-free. Post: FD CLOEXEC/NOFOLLOW e modo richiesto.
+; SYSCALL-ERROR esplicito; ABI non 64 bit UNSUPPORTED-FORMAT, senza apertura."
+;       (BLOCK ARCDOCDB.IO::NATIVE-OPEN
+;         (UNLESS (= SB-VM:N-WORD-BITS 64)
+;           (ERROR 'ARCDOCDB.CONDITIONS:UNSUPPORTED-FORMAT :REASON :IO-ABI))
+;         (LET ((ARCDOCDB.IO::FD #))
+;           (HANDLER-CASE
+;            (LET #
+;              #
+;              ARCDOCDB.IO::FD)
+;            (SB-POSIX:SYSCALL-ERROR # #) (ARCDOCDB.CONDITIONS:IO-FAULT # #)))))
+; 
+; note: Type assertion too complex to check efficiently:
+; (VALUES (UNSIGNED-BYTE 31) &REST T).
+; It allows an unknown number of values, consider using
+; (VALUES (UNSIGNED-BYTE 31) &OPTIONAL).
+
+;     (ERROR 'ARCDOCDB.CONDITIONS:INVARIANT-VIOLATION :REASON :IO-OPEN-MODE)
+; 
+; note: deleting unreachable code
+
+;     (SB-POSIX:S-ISREG ARCDOCDB.IO::KIND)
+; --> BLOCK LET ALIEN-FUNCALL 
+; ==>
+;   1
+; 
+; note: doing unsigned word to integer coercion (cost 20), for:
+;       the first argument of IF-EQ
+
+;     (SB-POSIX:S-ISDIR ARCDOCDB.IO::KIND)
+; --> BLOCK LET ALIEN-FUNCALL 
+; ==>
+;   1
+; 
+; note: doing unsigned word to integer coercion (cost 20), for:
+;       the first argument of IF-EQ
+
+; in: DEFUN NATIVE-READ
+;     (LET ((ARCDOCDB.IO::N
+;            (ARCDOCDB.IO::%PREAD ARCDOCDB.IO::FD
+;             (SB-SYS:SAP+ # ARCDOCDB.IO::START) COUNT ARCDOCDB.IO::OFFSET)))
+;       (WHEN (= ARCDOCDB.IO::N -1)
+;         (ERROR 'SB-POSIX:SYSCALL-ERROR :ERRNO (GET-ERRNO) :NAME
+;                'ARCDOCDB.IO::PREAD))
+;       ARCDOCDB.IO::N)
+; 
+; note: doing signed word to integer coercion (cost 20) to N
+
+; in: DEFUN NATIVE-WRITE
+;     (LET ((ARCDOCDB.IO::N
+;            (ARCDOCDB.IO::%WRITE ARCDOCDB.IO::FD
+;             (SB-SYS:SAP+ # ARCDOCDB.IO::START) COUNT)))
+;       (WHEN (= ARCDOCDB.IO::N -1)
+;         (ERROR 'SB-POSIX:SYSCALL-ERROR :ERRNO (GET-ERRNO) :NAME 'WRITE))
+;       ARCDOCDB.IO::N)
+; 
+; note: doing signed word to integer coercion (cost 20) to N
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/io/lifecycle.lisp
+; in: DEFUN NOME-FILE
+;     (PATHNAME ARCDOCDB.IO::PATH)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a (OR STRING PATHNAME), not a PATHNAME.
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a (OR STRING PATHNAME), not a STRING.
+
+;     (LENGTH ARCDOCDB.IO::NAME)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a SEQUENCE, not a VECTOR.
+
+;     (FIND #\Nul ARCDOCDB.IO::NAME)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The second argument is a (OR CONS VECTOR
+;                                SB-KERNEL:EXTENDED-SEQUENCE), not a (OR LIST
+;                                                                        VECTOR).
+
+;     (FIND-IF (LAMBDA (ARCDOCDB.IO::C) (CHAR/= ARCDOCDB.IO::C #\/))
+;              ARCDOCDB.IO::NAME)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The second argument is a (OR CONS VECTOR
+;                                SB-KERNEL:EXTENDED-SEQUENCE), not a (OR LIST
+;                                                                        VECTOR).
+
+;     (STRING-RIGHT-TRIM "/" ARCDOCDB.IO::NAME)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The second argument is a STRING, not a SIMPLE-STRING.
+
+;     (LENGTH ARCDOCDB.IO::NAME)
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a (OR CONS VECTOR
+;                               SB-KERNEL:EXTENDED-SEQUENCE), not a VECTOR.
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a (OR CONS VECTOR
+;                               SB-KERNEL:EXTENDED-SEQUENCE), not a VECTOR.
+
+;     (STRING= ARCDOCDB.IO::NAME ".tmp" :START1 (- (LENGTH ARCDOCDB.IO::NAME) 4))
+; 
+; note: unable to
+;   optimize
+; due to type uncertainty:
+;   The first argument is a STRING, not a (SIMPLE-ARRAY CHARACTER (*)).
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/io/transfer.lisp
+; in: DEFUN LEGGI-ESATTO
+;     (LOOP ARCDOCDB.IO::REPEAT
+;           COUNT
+;           ARCDOCDB.IO::UNTIL (= ARCDOCDB.IO::DONE COUNT)
+;           DO (LET* ((ARCDOCDB.IO::REMAINING (- COUNT ARCDOCDB.IO::DONE))
+;                     (ARCDOCDB.IO::N
+;                      (IF ARCDOCDB.IO:BACKEND
+;                          #
+;                          #)))
+;                (INCF ARCDOCDB.IO::DONE
+;                      (ARCDOCDB.IO::PROGRESSO ARCDOCDB.IO::FILE ARCDOCDB.IO::N
+;                       ARCDOCDB.IO::REMAINING :READ ARCDOCDB.IO::DONE))))
+; --> LET TAGBODY IF DECF SETQ THE SB-IMPL::XSUBTRACT BLOCK 
+; ==>
+;   (- SB-IMPL::B SB-IMPL::A)
+; 
+; note: forced to do full call
+;       unable to do inline fixnum arithmetic (cost 2) because:
+;       The first argument is a (INTEGER 1), not a FIXNUM.
+;       The result is a (VALUES UNSIGNED-BYTE &OPTIONAL), not a (VALUES FIXNUM
+;                                                                       &OPTIONAL).
+;       unable to do inline (unsigned-byte 64) arithmetic (cost 5) because:
+;       The first argument is a (INTEGER 1), not a (UNSIGNED-BYTE 64).
+;       The result is a (VALUES UNSIGNED-BYTE &OPTIONAL), not a (VALUES
+;                                                                (UNSIGNED-BYTE
+;                                                                 64)
+;                                                                &OPTIONAL).
+;       etc.
+
+;     (LET* ((ARCDOCDB.IO::REMAINING (- COUNT ARCDOCDB.IO::DONE))
+;            (ARCDOCDB.IO::N
+;             (IF ARCDOCDB.IO:BACKEND
+;                 (FUNCALL # # ARCDOCDB.IO::BUFFER # ARCDOCDB.IO::REMAINING #)
+;                 (ARCDOCDB.IO::NATIVE-READ # ARCDOCDB.IO::BUFFER #
+;                                           ARCDOCDB.IO::REMAINING #))))
+;       (INCF ARCDOCDB.IO::DONE
+;             (ARCDOCDB.IO::PROGRESSO ARCDOCDB.IO::FILE ARCDOCDB.IO::N
+;              ARCDOCDB.IO::REMAINING :READ ARCDOCDB.IO::DONE)))
+; 
+; note: doing signed word to integer coercion (cost 20) to REMAINING
+
+;     (ARCDOCDB.IO::NATIVE-READ (ARCDOCDB.IO::FILE-FD ARCDOCDB.IO::FILE)
+;                               ARCDOCDB.IO::BUFFER
+;                               (+ ARCDOCDB.IO::START ARCDOCDB.IO::DONE)
+;                               ARCDOCDB.IO::REMAINING
+;                               (+ ARCDOCDB.IO::OFFSET ARCDOCDB.IO::DONE))
+; --> BLOCK SB-SYS:WITH-PINNED-OBJECTS LET 
+; ==>
+;   (LET ((ARCDOCDB.IO::N
+;          (ARCDOCDB.IO::%PREAD ARCDOCDB.IO::FD
+;                               (SB-SYS:SAP+ # ARCDOCDB.IO::START) COUNT
+;                               ARCDOCDB.IO::OFFSET)))
+;     (WHEN (= ARCDOCDB.IO::N -1)
+;       (ERROR 'SB-POSIX:SYSCALL-ERROR :ERRNO (GET-ERRNO) :NAME
+;              'ARCDOCDB.IO::PREAD))
+;     ARCDOCDB.IO::N)
+; 
+; note: doing signed word to integer coercion (cost 20) to N
+
+;     (INCF ARCDOCDB.IO::DONE
+;           (ARCDOCDB.IO::PROGRESSO ARCDOCDB.IO::FILE ARCDOCDB.IO::N
+;            ARCDOCDB.IO::REMAINING :READ ARCDOCDB.IO::DONE))
+; 
+; note: doing signed word to integer coercion (cost 20) to DONE
+
+;     (FUNCALL (ARCDOCDB.IO::BACKEND-READER ARCDOCDB.IO:BACKEND)
+;              (ARCDOCDB.IO::FILE-FD ARCDOCDB.IO::FILE) ARCDOCDB.IO::BUFFER
+;              (+ ARCDOCDB.IO::START ARCDOCDB.IO::DONE) ARCDOCDB.IO::REMAINING
+;              (+ ARCDOCDB.IO::OFFSET ARCDOCDB.IO::DONE))
+; 
+; note: doing unsigned word to integer coercion (cost 20)
+; 
+; note: doing unsigned word to integer coercion (cost 20)
+
+; in: DEFUN APPEND-ESATTO
+;     (LOOP ARCDOCDB.IO::REPEAT
+;           COUNT
+;           ARCDOCDB.IO::UNTIL (= ARCDOCDB.IO::DONE COUNT)
+;           DO (LET* ((ARCDOCDB.IO::REMAINING (- COUNT ARCDOCDB.IO::DONE))
+;                     (ARCDOCDB.IO::N
+;                      (IF ARCDOCDB.IO:BACKEND
+;                          #
+;                          #))
+;                     (ARCDOCDB.IO::PROGRESS
+;                      (ARCDOCDB.IO::PROGRESSO ARCDOCDB.IO::FILE ARCDOCDB.IO::N
+;                       ARCDOCDB.IO::REMAINING :WRITE ARCDOCDB.IO::DONE)))
+;                (INCF ARCDOCDB.IO::DONE ARCDOCDB.IO::PROGRESS)
+;                (INCF (ARCDOCDB.IO::FILE-WRITTEN ARCDOCDB.IO::FILE)
+;                      ARCDOCDB.IO::PROGRESS)))
+; --> LET TAGBODY IF DECF SETQ THE SB-IMPL::XSUBTRACT BLOCK 
+; ==>
+;   (- SB-IMPL::B SB-IMPL::A)
+; 
+; note: forced to do full call
+;       unable to do inline fixnum arithmetic (cost 2) because:
+;       The first argument is a (INTEGER 1), not a FIXNUM.
+;       The result is a (VALUES UNSIGNED-BYTE &OPTIONAL), not a (VALUES FIXNUM
+;                                                                       &OPTIONAL).
+;       unable to do inline (unsigned-byte 64) arithmetic (cost 5) because:
+;       The first argument is a (INTEGER 1), not a (UNSIGNED-BYTE 64).
+;       The result is a (VALUES UNSIGNED-BYTE &OPTIONAL), not a (VALUES
+;                                                                (UNSIGNED-BYTE
+;                                                                 64)
+;                                                                &OPTIONAL).
+;       etc.
+
+;     (LET* ((ARCDOCDB.IO::REMAINING (- COUNT ARCDOCDB.IO::DONE))
+;            (ARCDOCDB.IO::N
+;             (IF ARCDOCDB.IO:BACKEND
+;                 (FUNCALL # # ARCDOCDB.IO::BUFFER # ARCDOCDB.IO::REMAINING)
+;                 (ARCDOCDB.IO::NATIVE-WRITE # ARCDOCDB.IO::BUFFER #
+;                                            ARCDOCDB.IO::REMAINING)))
+;            (ARCDOCDB.IO::PROGRESS
+;             (ARCDOCDB.IO::PROGRESSO ARCDOCDB.IO::FILE ARCDOCDB.IO::N
+;              ARCDOCDB.IO::REMAINING :WRITE ARCDOCDB.IO::DONE)))
+;       (INCF ARCDOCDB.IO::DONE ARCDOCDB.IO::PROGRESS)
+;       (INCF (ARCDOCDB.IO::FILE-WRITTEN ARCDOCDB.IO::FILE) ARCDOCDB.IO::PROGRESS))
+; 
+; note: doing signed word to integer coercion (cost 20) to REMAINING
+
+;     (ARCDOCDB.IO::NATIVE-WRITE (ARCDOCDB.IO::FILE-FD ARCDOCDB.IO::FILE)
+;                                ARCDOCDB.IO::BUFFER
+;                                (+ ARCDOCDB.IO::START ARCDOCDB.IO::DONE)
+;                                ARCDOCDB.IO::REMAINING)
+; --> BLOCK SB-SYS:WITH-PINNED-OBJECTS LET 
+; ==>
+;   (LET ((ARCDOCDB.IO::N
+;          (ARCDOCDB.IO::%WRITE ARCDOCDB.IO::FD
+;                               (SB-SYS:SAP+ # ARCDOCDB.IO::START) COUNT)))
+;     (WHEN (= ARCDOCDB.IO::N -1)
+;       (ERROR 'SB-POSIX:SYSCALL-ERROR :ERRNO (GET-ERRNO) :NAME 'WRITE))
+;     ARCDOCDB.IO::N)
+; 
+; note: doing signed word to integer coercion (cost 20) to N
+
+;     (INCF ARCDOCDB.IO::DONE ARCDOCDB.IO::PROGRESS)
+; 
+; note: doing signed word to integer coercion (cost 20) to DONE
+
+;     (FUNCALL (ARCDOCDB.IO::BACKEND-WRITER ARCDOCDB.IO:BACKEND)
+;              (ARCDOCDB.IO::FILE-FD ARCDOCDB.IO::FILE) ARCDOCDB.IO::BUFFER
+;              (+ ARCDOCDB.IO::START ARCDOCDB.IO::DONE) ARCDOCDB.IO::REMAINING)
+; 
+; note: doing unsigned word to integer coercion (cost 20)
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/wal/types.lisp
+; in: DEFSTRUCT LOTTO
+;     (ARCDOCDB.WAL::FILE-ID 0 :TYPE ARCDOCDB.BINARY:U64 :READ-ONLY T)
+; --> SB-INT:NAMED-LAMBDA 
+; ==>
+;   #'(SB-INT:NAMED-LAMBDA ARCDOCDB.WAL::LOTTO-FILE-ID
+;         (SB-KERNEL:INSTANCE)
+;       (DECLARE (SB-C::TOP-LEVEL-FORM))
+;       (BLOCK ARCDOCDB.WAL::LOTTO-FILE-ID
+;         (SB-KERNEL:THE* (ARCDOCDB.BINARY:U64 :DERIVE-TYPE-ONLY T)
+;                         (SB-KERNEL:%RAW-INSTANCE-REF/WORD
+;                          (THE ARCDOCDB.WAL:LOTTO SB-KERNEL:INSTANCE) 2))))
+; 
+; note: doing unsigned word to integer coercion (cost 20) to "<return value>"
+
+; in: DEFSTRUCT LOG-IO
+;     (ARCDOCDB.WAL::FILE-ID 0 :TYPE ARCDOCDB.BINARY:U64 :READ-ONLY T)
+; --> SB-INT:NAMED-LAMBDA 
+; ==>
+;   #'(SB-INT:NAMED-LAMBDA ARCDOCDB.WAL::LOG-IO-FILE-ID
+;         (SB-KERNEL:INSTANCE)
+;       (DECLARE (SB-C::TOP-LEVEL-FORM))
+;       (BLOCK ARCDOCDB.WAL::LOG-IO-FILE-ID
+;         (SB-KERNEL:THE* (ARCDOCDB.BINARY:U64 :DERIVE-TYPE-ONLY T)
+;                         (SB-KERNEL:%RAW-INSTANCE-REF/WORD
+;                          (THE ARCDOCDB.WAL:LOG-IO SB-KERNEL:INSTANCE) 3))))
+; 
+; note: doing unsigned word to integer coercion (cost 20) to "<return value>"
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/wal/group.lisp
+; in: DEFUN AGGIUNGI-LOTTO
+;     (= (ARCDOCDB.WAL::LOTTO-START ARCDOCDB.WAL:LOTTO)
+;        (+ (ARCDOCDB.WAL::GRUPPO-START ARCDOCDB.WAL::GROUP)
+;           (ARCDOCDB.WAL::GRUPPO-BYTES ARCDOCDB.WAL::GROUP)))
+; 
+; note: doing signed word to integer coercion (cost 20), for:
+;       the first argument of IF-EQ
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/wal/executor.lisp
+; in: DEFUN SCRIVI-GRUPPO
+;     (= ARCDOCDB.WAL::END
+;        (+ (ARCDOCDB.WAL::LOTTO-START ARCDOCDB.WAL:LOTTO)
+;           (ARCDOCDB.WAL::LOTTO-USED ARCDOCDB.WAL:LOTTO)))
+; 
+; note: doing signed word to integer coercion (cost 20), for:
+;       the first argument of IF-EQ
+
+; in: DEFUN SINCRONIZZA-GRUPPO
+;     (= ARCDOCDB.WAL::END
+;        (+ (ARCDOCDB.WAL::GRUPPO-START ARCDOCDB.WAL::GROUP)
+;           (ARCDOCDB.WAL::GRUPPO-BYTES ARCDOCDB.WAL::GROUP)))
+; 
+; note: doing signed word to integer coercion (cost 20), for:
+;       the first argument of IF-EQ
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/recovery/decisions-radix.lisp
+; in: DEFUN RADIX-ENTRY-STARTS
+;     (ERROR 'ARCDOCDB.CONDITIONS:INVARIANT-VIOLATION :REASON :DECISION-RADIX-COUNT)
+; 
+; note: deleting unreachable code
+
+; file: /Users/gpicchiarelli/.codex/worktrees/utf8-validation/ArcDocDB/src/recovery/decisions-query.lisp
+; in: DEFUN PARTICIPANT-PRESENT-P
+;     (ERROR 'ARCDOCDB.CONDITIONS:INVARIANT-VIOLATION :REASON
+;            :DECISION-PARTICIPANT-ORDER)
+; 
+; note: deleting unreachable code
+; 
+; compilation unit finished
+;   printed 37 notes

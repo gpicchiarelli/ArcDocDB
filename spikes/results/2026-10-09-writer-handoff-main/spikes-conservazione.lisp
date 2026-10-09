@@ -1,0 +1,40 @@
+(:FINISHED-AT-UNIVERSAL-TIME 4000514141 :STATUS :OK :STDERR "" :STDOUT
+ "(:SCHEMA-VERSION 1 :KIND :EVIDENCE-COMPACTION :STATUS :OK :ROOT
+ #A((126) BASE-CHAR
+    . \"/private/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/arcdocdb-handoff-verify-0795g4qt/spikes/out/4000514107-check-43554-0/\")
+ :JOBS 4 :MINIMUM-AGE-SECONDS 0 :FILES 2 :WALL-SECONDS 1.891723d0
+ :CLOCK-UNITS-PER-SECOND 1000000 :ORIGINAL-BYTES 57107171 :STORED-BYTES 878322
+ :RESULTS
+ ((:PATH
+   #A((137) BASE-CHAR
+      . \"/private/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/arcdocdb-handoff-verify-0795g4qt/spikes/out/4000514107-check-43554-0/SPK-07.lisp\")
+   :STATUS :OK :ORIGINAL-BYTES 28144119 :STORED-BYTES 410943 :DESCRIPTOR
+   (:SCHEMA-VERSION 1 :KIND :COMPRESSED-EVIDENCE :CODEC :GZIP :PAYLOAD
+    \"SPK-07.lisp.gz\" :UNCOMPRESSED-BYTES 28144119 :UNCOMPRESSED-SHA256
+    \"82b775637410472a0c0b04e992c41634a0fbf39053dfd8f50d58a7433fbd7e21\"
+    :COMPRESSED-BYTES 410625 :COMPRESSED-SHA256
+    \"ec36b365c43b7044cebeb0cde325755bd0b7238f79770062ce4f6a9145a90458\"))
+  (:PATH
+   #A((137) BASE-CHAR
+      . \"/private/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/arcdocdb-handoff-verify-0795g4qt/spikes/out/4000514107-check-43554-0/report.lisp\")
+   :STATUS :OK :ORIGINAL-BYTES 28963052 :STORED-BYTES 467379 :DESCRIPTOR
+   (:SCHEMA-VERSION 1 :KIND :COMPRESSED-EVIDENCE :CODEC :GZIP :PAYLOAD
+    \"report.lisp.gz\" :UNCOMPRESSED-BYTES 28963052 :UNCOMPRESSED-SHA256
+    \"1c648e5e52e78fb43fad1eb4f50851b6d3e3f9219f9bae11be17cc89f250fb35\"
+    :COMPRESSED-BYTES 467061 :COMPRESSED-SHA256
+    \"75773038cc196581c0a8aab0c488e1dddac63fa259064fcf0b77dafe78fb353d\")))
+ :LIMITS
+ (:LOSSLESS-BYTE-VERIFICATION :NO-GIT-HISTORY-REWRITE
+  :REQUIRES-IMMUTABLE-INPUT-FILES :NO-POWER-LOSS-DURABILITY-CLAIM))
+"
+ :EXIT-CODE 0 :SCHEMA-VERSION 1 :KIND :EVIDENCE-FINALIZATION :COMMAND
+ (#A((48) BASE-CHAR . "/opt/homebrew/Cellar/sbcl/2.6.9/libexec/bin/sbcl")
+  "--dynamic-space-size" "2048" "--noinform" "--no-userinit" "--no-sysinit"
+  "--script"
+  #A((117) BASE-CHAR
+     . "/private/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/arcdocdb-handoff-verify-0795g4qt/tools/compact-evidence.lisp")
+  "--root"
+  #A((126) BASE-CHAR
+     . "/private/var/folders/07/57bk4fl91n9_9gk_j124c_q80000gn/T/arcdocdb-handoff-verify-0795g4qt/spikes/out/4000514107-check-43554-0/")
+  "--jobs" "4" "--finished-owner-pid" #A((5) BASE-CHAR . "43554"))
+ :STARTED-AT-UNIVERSAL-TIME 4000514139)

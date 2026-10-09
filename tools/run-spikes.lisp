@@ -2,6 +2,7 @@
 ;;; REQ: REQ-VAL-001 REQ-AFF-003 REQ-AFF-012
 (require :asdf)
 (require :sb-posix)
+(load (merge-pathnames "finish-evidence.lisp" *load-truename*))
 (declaim (optimize (safety 3) (debug 3)))
 
 (define-condition spike-harness-error (error)
@@ -96,7 +97,9 @@
         :source-blobs
         (source-blobs
          (remove-duplicates
-          (append '("spikes/SPK-01-primary-index/profile.lisp")
+          (append '("spikes/SPK-01-primary-index/profile.lisp"
+                    "tools/finish-evidence.lisp" "tools/compact-evidence.lisp"
+                    "tools/evidence-storage.lisp")
                   (loop for entry in *spike-runners* append (spike-sources entry "--check")))
           :test #'string=))
         :dynamic-space-mib 4096 :date-universal-time (get-universal-time)))
@@ -224,9 +227,12 @@
             (setf (getf report :status) :failed
                   (getf report :diagnostic) (princ-to-string condition))
             (save-report report (merge-pathnames "report.lisp" out))
+            (compact-finished-directory out)
             (error condition)))
         (setf (getf report :status) :complete)
         (save-report report (merge-pathnames "report.lisp" out))
+        (unless (compact-finished-directory out)
+          (fail-harness "Compattazione fallita; registri originali conservati: ~A." out))
         (format t "~&~D spike completati; risultati: ~A~%" (length (getf report :runs)) out)))))
 
 (uiop:with-current-directory
