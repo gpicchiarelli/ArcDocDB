@@ -18,6 +18,8 @@
                 :components ((:file "package") (:file "conditions")
                              (:file "binary") (:file "crc32c")
                              (:file "record") (:file "batch")))
+               (:module "execution" :serial t
+                :components ((:file "package") (:file "queue") (:file "writer")))
                (:module "storage"
                 :serial t
                 :components ((:file "package") (:file "formats") (:file "segment-header")
@@ -39,7 +41,7 @@
                 :serial t
                 :components ((:file "package") (:file "scan")
                              (:file "decisions-package") (:file "decisions-types")
-                             (:file "decisions-sort") (:file "decisions-build")
+                             (:file "decisions-sort") (:file "decisions-radix") (:file "decisions-build")
                              (:file "decisions-query"))))
   :in-order-to ((test-op (test-op "arcdocdb/tests"))))
 
@@ -55,6 +57,8 @@
                 :serial t
                 :components ((:file "support") (:file "binary")
                              (:file "record") (:file "batch")))
+               (:module "execution" :serial t
+                :components ((:file "support") (:file "queue") (:file "threads")))
                (:module "storage"
                 :serial t
                 :components ((:file "support") (:file "segment-header") (:file "log-header")
@@ -66,13 +70,14 @@
                 :serial t
                 :components ((:file "support") (:file "scan") (:file "corruption")
                              (:file "decisions-support") (:file "decisions")
-                             (:file "decisions-audit")))
+                             (:file "decisions-audit") (:file "decisions-radix")))
                (:module "wal" :serial t
                 :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
                              (:file "native"))))
   :perform (test-op (o c)
              (uiop:symbol-call '#:arcdocdb.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.foundation.tests '#:run)
+             (uiop:symbol-call '#:arcdocdb.execution.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.storage.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.io.tests '#:run)
              (uiop:symbol-call '#:arcdocdb.recovery.tests '#:run)

@@ -92,7 +92,7 @@ Propaga errori tipizzati; consumo incoerente segnala INVARIANT-VIOLATION."
             (setf (aref entries i)
                   (%make-decision-entry (leggi-u64 buffer (+ pos +stamp-offset+))
                                         (leggi-u64 buffer csn) participants
-                                        (sort-participants copy participants offset) offset)))
+                                        (sort-recovery-participants copy participants offset) offset)))
           (incf i)
           (incf participants-read participants))
         (setf pos next)))
@@ -187,4 +187,4 @@ Percorso di apertura con allocazioni ammesse; TXID/CSN sono u64 opachi anche zer
                                        max-participants-per-decision file-offset))
            (entries (decode-decisions buffer start prefix version frames count total
                                       max-participants-per-decision file-offset)))
-      (values (collapse-decisions (sort-entries entries)) prefix status))))
+      (values (collapse-decisions (sort-recovery-entries entries)) prefix status))))

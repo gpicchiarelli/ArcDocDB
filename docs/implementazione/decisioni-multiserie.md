@@ -60,6 +60,12 @@ Dopo la costruzione il chiamante può riusare il buffer senza cambiare
 le query. La tabella non contiene stato globale o scritture condivise
 fra Serie; le consultazioni sono in sola lettura.
 
+Il recovery seleziona un ordinamento LSD radix stabile da 1.024 ID16 per
+decisione e da 256 DECISION fisiche; sotto soglia usa merge bottom-up.
+La [scelta misurata](decisioni-radix-risultati.md) mantiene l'ordine fisico
+dei TXID uguali necessario alla diagnostica dei conflitti. Le query sulla
+tabella immutabile sono verificate anche con sei lettori concorrenti.
+
 ## Budget e confini
 
 > **Proposta** — Budget della tabella: 65.536 DECISION fisiche, 65.536
@@ -86,11 +92,13 @@ Le fixture bytewise e i CRC bitwise sono indipendenti dai codec del
 prodotto; l'oracolo interpreta storie logiche dichiarate come dati.
 Le prove coprono duplicati coerenti/discordanti, troncamenti e corruzioni,
 budget, valori estremi, identificativi quasi uguali e ownership.
-La suite comprende 25 prove dedicate (44 insieme allo scanner), tra cui
+La suite comprende 43 prove dedicate (62 insieme allo scanner), tra cui
 identità su tutti i 128 bit degli ID16 e il limite valido di 65.535
 partecipanti nelle versioni v1 e v2.
+Le 18 prove aggiunte con radix comprendono oracoli indipendenti, guardie
+interne, confini delle due soglie pubbliche e lettori concorrenti.
 
-I cinque sorgenti `decisions-*` e i tre file di fixture, test e seconda
+I sei sorgenti `decisions-*` e i quattro file di fixture, test e seconda
 lettura sono componenti di `arcdocdb.asd`: `make test` e `make check`
 compilano il modulo senza avvisi e ne eseguono le prove insieme a quelle
 della scansione recovery. La campagna `decisions` di mutazione seleziona
@@ -113,7 +121,7 @@ Le [evidenze del 2026-10-09](../../spikes/results/2026-10-09-decisions-verifica/
 conservano self-test, comandi, ambiente, hash prima/dopo, output delle
 mutazioni e stato grezzo di `sb-cover`. La campagna rileva sette mutanti
 su sette dopo l'avvio dei test dedicati, senza errori di compilazione o
-fallimenti precedenti ai test. Per i soli cinque file `decisions-*`, la
+fallimenti precedenti ai test. Per i soli cinque file `decisions-*` di quella versione, la
 copertura grezza osservata è 935 forme su 1.121 e 82 rami su 122.
 Definizioni e guardie difensive restano nei totali; nessuna eccezione alla
 copertura viene approvata o sottratta in questa integrazione. Il catalogo
