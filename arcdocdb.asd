@@ -42,6 +42,9 @@
                (:module "wal" :serial t
                 :components ((:file "package") (:file "types") (:file "builder")
                              (:file "group") (:file "executor") (:file "csn")))
+               (:module "index" :serial t
+                :components ((:file "package") (:file "types") (:file "core")
+                             (:file "validation") (:file "read") (:file "write") (:file "relocate")))
                (:module "mvcc" :serial t
                 :components ((:file "package") (:file "types")
                              (:file "snapshots-types") (:file "snapshots-core") (:file "snapshots-csn")

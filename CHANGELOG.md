@@ -7,6 +7,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Banco di slot v2 dell'indice: parole u64 contigue, lettura in buffer privato
+  con otto tentativi, pubblicazione e rimozione sotto seqlock, rilocazione
+  condizionale, credito di scrittura e congelamento permanente. Include
+  contratti, decisioni da coprire ed evidenze statiche; qualifica C1 aperta.
+
 - Contesto di lettura preallocato per worker: ingresso EBR a tentativo singolo,
   snapshot controllato prima e dopo il lookup, anche sul miss, e cleanup del
   pin prima della migrazione. Collegato ai registri CSN/snapshot/epoche;
