@@ -1,0 +1,165 @@
+;;;; ADR0040§3: un piano completo, conservativo per collisioni fra i due nomi.
+;;; OWNER: workspace EQL e vettore delle decisioni esclusivi della singola chiamata.
+;;; SHARED: nessuna scrittura su manifest/inventario; piani indipendenti fra Serie.
+(in-package #:arcdocdb.recovery.manifest)
+(declaim (optimize (safety 3) (debug 2)))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008 REQ-AFF-018
+(declaim (ftype (function (manifest simple-vector integer integer) (values index &optional))
+                check-inventory-budgets))
+(defun check-inventory-budgets (manifest files max-files max-segments)
+  "Pre: manifest completo e inventario stabile. Post: budget fisici e bound del workspace.
+INVALID-ARGUMENT per budget non index; RESOURCE-EXHAUSTED prima di ogni coalescenza."
+  (unless (typep max-files 'index)
+    (error 'invalid-argument :reason :inventory-budget))
+  (unless (typep max-segments 'index)
+    (error 'invalid-argument :reason :inventory-budget))
+  (when (> (length files) max-files)
+    (error 'resource-exhausted :reason :inventory-file-budget))
+  (let ((live (1+ (numero-segmenti-chiusi manifest))))
+    (when (> live max-segments)
+      (error 'resource-exhausted :reason :inventory-segment-budget))
+    (unless (typep (+ live (length files)) 'index)
+      (error 'resource-exhausted :reason :inventory-plan-budget))
+    (+ live (length files))))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008 REQ-AFF-018
+(declaim (ftype (function (simple-vector) (values hash-table &optional)) inventory-presence))
+(defun inventory-presence (files)
+  "Pre: inventario stabile entro il budget fisico. Post: mappa EQL privata ID→maschera1/2/3.
+INVALID-ARGUMENT per descrittore invalido o nome ripetuto; nessuna entry parziale esportata.
+Il ciclo ha length(FILES) passi; entrambi i nomi per ID restano distinguibili."
+  (let ((presence (make-hash-table :test 'eql)))
+    (dotimes (i (length files))
+      (let ((file (aref files i)))
+        (unless (typep file 'segment-file)
+          (error 'invalid-argument :reason :inventory-entry :offset i))
+        (let* ((bit (case (%file-form file)
+                      (:temporary 1) (:final 2)
+                      (otherwise (error 'invariant-violation :reason :inventory-form))))
+               (old (gethash (%file-id file) presence 0)))
+          (unless (zerop (logand bit old))
+            (error 'invalid-argument :reason :inventory-duplicate :offset i))
+          (setf (gethash (%file-id file) presence) (logior bit old)))))
+    (unless (<= (hash-table-count presence) (length files))
+      (error 'invariant-violation :reason :inventory-count))
+    presence))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008 REQ-AFF-018
+(declaim (ftype (function (manifest hash-table index) (values list &optional)) inventory-ids))
+(defun inventory-ids (manifest presence bound)
+  "Pre: mappa privata e bound=nomi fisici+1+CLOSED. Post: union ID u64 distinti ordinati.
+INVARIANT-VIOLATION per incoerenza interna; cicli sulle cardinalità già limitate.
+SORT modifica soltanto la lista privata; nessun hash del manifest viene modificato."
+  (unless (plusp (segmento-attivo manifest))
+    (error 'invariant-violation :reason :inventory-active))
+  (setf (gethash (segmento-attivo manifest) presence)
+        (gethash (segmento-attivo manifest) presence 0))
+  (maphash (lambda (id entry)
+             (unless (typep entry 'manifest-closed)
+               (error 'invariant-violation :reason :inventory-closed))
+             (setf (gethash id presence) (gethash id presence 0)))
+           (%manifest-closed manifest))
+  (unless (<= (hash-table-count presence) bound)
+    (error 'invariant-violation :reason :inventory-count))
+  (let ((ids nil))
+    (maphash (lambda (id mask)
+               (unless (typep mask '(integer 0 3))
+                 (error 'invariant-violation :reason :inventory-presence))
+               (push id ids)) presence)
+    (sort ids #'<)))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-018
+(declaim (ftype (function ((member :active :closed :removed :unknown)
+                          (member :temporary :final) (member :use :rename :delete :anomaly)) null)
+                check-single-file-action))
+(defun check-single-file-action (state form action)
+  "Pre: stato, forma e azione nei tipi dichiarati, controllati con safety3.
+Post: nessuna rimozione senza prova e nessuna rinomina di un ID non vivo.
+INVARIANT-VIOLATION per implicazioni incoerenti; nessuna mutazione o I/O."
+  (when (eq action :delete)
+    (unless (or (eq state :removed) (and (eq state :unknown) (eq form :temporary)))
+      (error 'invariant-violation :reason :inventory-delete-proof)))
+  (when (eq action :rename)
+    (unless (member state '(:active :closed))
+      (error 'invariant-violation :reason :inventory-rename-proof)))
+  nil)
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-018
+(declaim (ftype (function ((member :active :closed :removed :unknown) (member :temporary :final))
+                         (values (member :use :rename :delete :anomaly) &optional))
+                single-file-action))
+(defun single-file-action (state form)
+  "Pre: stato autorevole e un solo nome. Post: azione ADR0040§3, senza effetti durevoli.
+INVARIANT-VIOLATION per stato inatteso; unknown final non viene mai eliminato."
+  (let ((action (case state
+                  ((:active :closed) (if (eq form :temporary) :rename :use))
+                  (:removed :delete)
+                  (:unknown (if (eq form :final) :delete :anomaly))
+                  (otherwise (error 'invariant-violation :reason :inventory-state)))))
+    (check-single-file-action state form action)
+    action))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008 REQ-AFF-018
+(declaim (ftype (function (manifest u64 (integer 0 3))
+                         (values reconciliation-entry &optional)) inventory-entry))
+(defun inventory-entry (manifest id mask)
+  "Pre: ID dell'union limitata, maschera privata verificata. Post: una entry immutabile.
+INVARIANT-VIOLATION per assenza di ID non vivo; conflitto domina ogni azione su file singolo."
+  (let* ((state (trova-segmento manifest id))
+         (entry
+           (case mask
+             (0 (unless (member state '(:active :closed))
+                  (error 'invariant-violation :reason :inventory-missing-state))
+                (%make-reconciliation-entry id :absent :missing state))
+             (1 (%make-reconciliation-entry id :temporary (single-file-action state :temporary) state))
+             (2 (%make-reconciliation-entry id :final (single-file-action state :final) state))
+             (3 (%make-reconciliation-entry id :both :conflict state))
+             (otherwise (error 'invariant-violation :reason :inventory-presence)))))
+    (unless (and (= (%re-id entry) id) (eq (%re-state entry) state)
+                 (eq (%re-form entry) (aref #(:absent :temporary :final :both) mask)))
+      (error 'invariant-violation :reason :inventory-entry-proof))
+    entry))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008
+(declaim (ftype (function (reconciliation-entry) (values (integer 0 2) &optional)) entry-severity))
+(defun entry-severity (entry)
+  "Pre: entry costruita dal planner. Post:0nomi disponibili,1CLOSED perso,2ACTIVE perso.
+INVARIANT-VIOLATION per stato inatteso; anomaly/conflict unknown non attestano contenuti."
+  (when (eq (%re-action entry) :missing)
+    (unless (member (%re-state entry) '(:active :closed))
+      (error 'invariant-violation :reason :inventory-missing-state)))
+  (let ((severity (if (member (%re-action entry) '(:missing :conflict))
+                      (case (%re-state entry)
+                        (:active 2) (:closed 1) ((:removed :unknown) 0)
+                        (otherwise (error 'invariant-violation :reason :inventory-state)))
+                      0)))
+    (when (plusp severity)
+      (unless (member (%re-action entry) '(:missing :conflict))
+        (error 'invariant-violation :reason :inventory-severity-proof)))
+    severity))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-REC-004 REQ-AFF-008 REQ-AFF-017 REQ-AFF-018
+(declaim (ftype (function (manifest simple-vector &key (:max-files integer) (:max-segmenti integer))
+                         (values reconciliation-plan &optional)) pianifica-riconciliazione))
+(defun pianifica-riconciliazione (manifest files &key (max-files 65536) (max-segmenti 65536))
+  "Pre: manifest completo, inventario completo/stabile di nomi interpretati dal chiamante.
+Post: piano posseduto in ordine ID u64, stato della disponibilità dei soli nomi richiesti.
+Propaga errori tipizzati; nessun piano su errore, nessun I/O, alias o mutazione degli input.
+Non verifica header/CRC/identità fisica né attesta che la Serie sia apribile al traffico.
+Percorso di apertura con allocazioni, cicli limitati da budget e cardinalità verificate."
+  (let* ((bound (check-inventory-budgets manifest files max-files max-segmenti))
+         (presence (inventory-presence files))
+         (ids (inventory-ids manifest presence bound))
+         (entries (make-array (length ids) :element-type t))
+         (severity 0) (pos 0))
+    (dolist (id ids)
+      (let ((entry (inventory-entry manifest id (gethash id presence))))
+        (setf (aref entries pos) entry severity (max severity (entry-severity entry))))
+      (incf pos))
+    (unless (= pos (hash-table-count presence))
+      (error 'invariant-violation :reason :inventory-count))
+    (%make-reconciliation-plan entries
+                              (case severity
+                                (0 :ready) (1 :degraded) (2 :faulted)
+                                (otherwise (error 'invariant-violation :reason :inventory-health))))))
