@@ -1,4 +1,5 @@
 SBCL ?= sbcl
+EVIDENCE_DYNAMIC_SPACE_SIZE ?= 2048
 
 .PHONY: build test lint lint-selftest links trace trace-write evidence evidence-selftest compact-evidence check check-core spikes-check spikes-bench
 build test:  ## compila senza avvisi (COD-01) ed esegue gli smoke test
@@ -20,7 +21,7 @@ trace-write:  ## rigenera docs/tracciabilita/matrice.md da requisiti.lisp
 	$(SBCL) --script tools/check-trace.lisp --write
 
 evidence:  ## verifica struttura e presenza degli artefatti conservati nel catalogo
-	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/check-evidence.lisp
+	$(SBCL) --dynamic-space-size $(EVIDENCE_DYNAMIC_SPACE_SIZE) --noinform --no-userinit --no-sysinit --script tools/check-evidence.lisp
 
 evidence-selftest:  ## controlli negativi e positivi della conservazione compressa
 	$(SBCL) --noinform --no-userinit --no-sysinit --script tools/check-evidence-storage.lisp

@@ -125,3 +125,45 @@ minimo e gli audit indipendenti dei risultati. Il controllo finale di
 evidenze, tracciabilità e link viene registrato dopo questa pubblicazione.
 La fotografia precedente da 377 test resta nel suo catalogo originale;
 non si aggiungono misure di copertura, benchmark o qualifiche del motore.
+
+## Metodo dell'integrazione con controller Series e WAL
+
+Il main `1cb968d` viene integrato dopo la pubblicazione `bffbdd0`. Il
+[metodo preregistrato](../../spikes/results/2026-10-09-cbor-mutation-signals-series-integration/metodo.lisp)
+prevede soltanto un nuovo `make check-core`, il controllo finale
+`make evidence trace links` dopo la conservazione delle prove e la CI
+sull'esatto commit pubblicato. Un confronto indipendente deve confermare
+che i tre runner CBOR e i codec bersaglio siano invariati.
+
+I risultati attesi sono exit zero e hash dei sorgenti stabili; il nuovo
+numero di test verrà ricavato dall'output effettivo. Sono attese da
+verificare, non risultati già osservati. Sorgenti, documentazione e indice
+restano congelati durante ciascun comando registrato.
+
+Il nuovo catalogo conserva in una cartella datata soltanto nomi LEAF:
+registri e conservazione del core e del controllo finale, dieci spike,
+report globale con payload originali, metodo, riepilogo, confronto
+d'impatto e audit dei byte nativi. Le fotografie precedenti da 377 e
+392 test, comprese le 27 mutazioni CBOR già osservate sul main `e07d772`,
+restano originali. Questo passaggio non ripete campagne di mutazione,
+fixture, copertura o benchmark e non aggiunge qualifiche del motore.
+
+## Integrazione delle Serie e memoria del checker
+
+La base `1cb968d` aggiunge il controller delle Serie e modifiche al WAL.
+La verifica completa registrata supera 436 test più smoke e dieci spike.
+Le ancore, i test e i tre runner CBOR sono invariati; il copier include
+tutti i nuovi componenti. Le 27 mutazioni restano prove della fotografia
+`e07d772`, conservata nel precedente catalogo.
+
+La CI Linux del commit `bffbdd0` completa anch'essa i 436 test, poi esaurisce
+l'heap leggendo un archivio storico nel checker delle evidenze. Il suo
+registro conserva lo stato `:failed`. Il [metodo aggiuntivo](../../spikes/results/2026-10-09-cbor-mutation-signals-series-integration/heap-method.lisp)
+registra la correzione prima della verifica: la sola recipe `evidence`
+usa 2048 MiB, configurabili con `EVIDENCE_DYNAMIC_SPACE_SIZE`. Il prodotto,
+il parser e i limiti dei file sono invariati. La verifica registrata e la
+CI sul nuovo commit devono confermare il risultato della configurazione.
+
+Il [catalogo delle prove integrate](../../spikes/results/2026-10-09-cbor-mutation-signals-series-integration/catalogo.lisp)
+conserva i registri originali, compreso il fallimento Linux, e il confronto
+dei byte. Non vengono ripetuti benchmark, copertura o campagne CBOR.
