@@ -32,7 +32,10 @@
                              (:file "group") (:file "executor")))
                (:module "recovery"
                 :serial t
-                :components ((:file "package") (:file "scan"))))
+                :components ((:file "package") (:file "scan")
+                             (:file "decisions-package") (:file "decisions-types")
+                             (:file "decisions-sort") (:file "decisions-build")
+                             (:file "decisions-query"))))
   :in-order-to ((test-op (test-op "arcdocdb/tests"))))
 
 (defsystem "arcdocdb/tests"
@@ -55,7 +58,9 @@
                 :components ((:file "support") (:file "transfer") (:file "native")))
                (:module "recovery"
                 :serial t
-                :components ((:file "support") (:file "scan") (:file "corruption")))
+                :components ((:file "support") (:file "scan") (:file "corruption")
+                             (:file "decisions-support") (:file "decisions")
+                             (:file "decisions-audit")))
                (:module "wal" :serial t
                 :components ((:file "support") (:file "builder") (:file "group") (:file "fault")
                              (:file "native"))))

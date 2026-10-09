@@ -11,8 +11,11 @@ Il modulo non applica record, non modifica log e non decide lo stato del catalog
   restituire qualsiasi tabella. Solo una tabella costruita con successo
   permette di interpretare un TXID assente come presumed abort.
 - Il prefisso contiene solo lotti completi; una coda incompleta non aggiunge
-  decisioni. Un payload DECISION malformato dentro un lotto sigillato è
-  corruzione semantica, non una nuova coda da ignorare.
+  decisioni. Un payload DECISION malformato nel prefisso che ha superato la
+  verifica delle cornici e dei SEAL è corruzione semantica, non una nuova
+  coda da ignorare. Una cornice sotto la lunghezza minima è invece un errore
+  dello scanner: coda senza testimone successivo, corruzione con un SEAL
+  successivo la cui frontiera durevole copre l'inizio del lotto invalido.
 - Ogni decisione contiene almeno due partecipanti distinti. Ripetere uno
   stesso TXID con CSN e insieme dei partecipanti identici è idempotente;
   cambiamenti di CSN o insieme sono un conflitto dichiarato. L'ordine dei

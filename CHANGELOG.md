@@ -7,6 +7,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Tabella delle decisioni multiserie inclusa nella compilazione e nei test ordinari:
+  ricostruzione dal prefisso sigillato, duplicati idempotenti o discordanti,
+  budget finiti, query scalari e copie possedute dei partecipanti. Non applica
+  i prepared e non realizza il recovery completo del database.
+
 - SPK-08 bitmap: kernel scalari byte/u64 equivalenti, oracoli indipendenti,
   90 campioni locali e disassemblati conservati. Packing escluso e nessuna
   promozione a ottimizzazione del motore.

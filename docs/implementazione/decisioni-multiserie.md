@@ -48,6 +48,12 @@ con motivo `:decision-conflict`. Un partecipante ripetuto nella stessa
 DECISION produce `:decision-duplicate-participant`. Questi errori semantici
 in un lotto sigillato non sono trattati come una coda incompleta.
 
+La lunghezza minima della cornice è verificata dallo scanner prima che un
+lotto entri nel prefisso. Una cornice DECISION troppo corta segue quindi
+la classificazione coda/testimone della [scansione](scansione-log.md), anche
+se la fixture contiene CRC e un SEAL integri. I controlli semantici di
+questa tabella si applicano soltanto al prefisso con cornici già verificate.
+
 La tabella ordina i TXID e gli ID di Serie e possiede copie dei dati. Non
 restituisce i vettori interni e non conserva span nel buffer sorgente.
 Dopo la costruzione il chiamante può riusare il buffer senza cambiare
@@ -80,6 +86,43 @@ Le fixture bytewise e i CRC bitwise sono indipendenti dai codec del
 prodotto; l'oracolo interpreta storie logiche dichiarate come dati.
 Le prove coprono duplicati coerenti/discordanti, troncamenti e corruzioni,
 budget, valori estremi, identificativi quasi uguali e ownership.
+La suite comprende 25 prove dedicate (44 insieme allo scanner), tra cui
+identità su tutti i 128 bit degli ID16 e il limite valido di 65.535
+partecipanti nelle versioni v1 e v2.
+
+I cinque sorgenti `decisions-*` e i tre file di fixture, test e seconda
+lettura sono componenti di `arcdocdb.asd`: `make test` e `make check`
+compilano il modulo senza avvisi e ne eseguono le prove insieme a quelle
+della scansione recovery. La campagna `decisions` di mutazione seleziona
+le definizioni dei test dedicati, verifica che siano effettivamente avviati
+e distingue un difetto rilevato da un errore precedente all'esecuzione.
+
+```sh
+make check
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-mutation.lisp --self-test
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-mutation.lisp --run spikes/out/decisions-mutants/ decisions
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-coverage.lisp --self-test spikes/out/decisions-coverage-self-test/
+sbcl --noinform --no-userinit --no-sysinit --script tools/foundation-coverage.lisp --report spikes/out/decisions-coverage/ recovery
+```
+
+La directory dei mutanti deve essere nuova. La copertura `recovery`
+comprende scanner e tabella; il rapporto separa i file e conserva il
+denominatore grezzo. Non equivale a copertura MC/DC o a qualifica del motore.
+
+Le [evidenze conservate](../../spikes/results/2026-10-09-decisions-verifica/catalogo.lisp)
+comprendono comandi, ambiente, hash dei sorgenti prima/dopo, output grezzi,
+due letture del prodotto, sette mutanti rilevati e nove mutanti di regressione
+dello scanner. Restano conservati anche i fallimenti della fixture iniziale
+e le verifiche precedenti alla correzione del classificatore dei mutanti.
+
+Le [evidenze del 2026-10-09](../../spikes/results/2026-10-09-decisions-verifica/catalogo.lisp)
+conservano self-test, comandi, ambiente, hash prima/dopo, output delle
+mutazioni e stato grezzo di `sb-cover`. La campagna rileva sette mutanti
+su sette dopo l'avvio dei test dedicati, senza errori di compilazione o
+fallimenti precedenti ai test. Per i soli cinque file `decisions-*`, la
+copertura grezza osservata è 935 forme su 1.121 e 82 rami su 122.
+Definizioni e guardie difensive restano nei totali; nessuna eccezione alla
+copertura viene approvata o sottratta in questa integrazione.
 
 Requisiti: REQ-TXM-001/005, REQ-FOR-003, REQ-AFF-008/009/017, REQ-VAL-001.
 Invarianti interessati: INV-F1/F2/F3, INV-A7/A8/A9, INV-T4, INV-P6, INV-X3.
@@ -87,3 +130,10 @@ Il modulo non verifica il catalogo, non applica i prepared, non scrive
 esiti nel manifest e non compatta `multiserie.log`. Non realizza il
 coordinatore 2PC né l'apertura completa del database; nessun gate del
 motore è chiuso sulla sola evidenza di questa tabella.
+
+
+La copertura grezza dei soli cinque sorgenti della tabella misura
+**935/1121 espressioni (83,41%) e 82/122 rami (67,21%)**. Le guardie
+interne e le forme dichiarative restano incluse; l'
+[inventario delle forme mancanti](../affidabilita/copertura-eccezioni.md)
+riporta motivazioni e limiti senza escluderle o approvare eccezioni.
