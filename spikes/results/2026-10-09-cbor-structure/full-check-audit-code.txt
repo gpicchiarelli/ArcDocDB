@@ -1,0 +1,55 @@
+(load "/tmp/cbor-structure-audit-lib.lisp")
+(let* ((wrapper-path "spikes/out/4000529415-command-85463-0/report.lisp")
+       (master-path "spikes/out/4000529486-check-86824-0/report.lisp")
+       (wrapper (cs-data wrapper-path)) (master (cs-data master-path))
+       (before (getf wrapper :source-blobs-before)) (after (getf wrapper :source-blobs-after))
+       (stdout (getf wrapper :stdout))
+       (marker "build e test: nessun avviso, tutti i controlli superati")
+       (position (search marker stdout))
+       (test-lines (and position (uiop:split-string (subseq stdout 0 position)
+                                                  :separator '(#\Newline))))
+       (count (count-if (lambda (s) (uiop:string-prefix-p "ok    " s)) test-lines))
+       (runs (getf master :runs))
+       (frozen '(("src/codec/cbor-package.lisp" "411212b04f96be32516425aa2a7ac53aac5b921d")
+                 ("src/codec/cbor-space.lisp" "a8330e50a77b52a6b9044ebbb48f62bb4b3222a3")
+                 ("src/codec/cbor-scan-input.lisp" "57ffc48cc688a4de8ebec5cb14c1e69c4209704a")
+                 ("src/codec/cbor-scan-stack.lisp" "c574e87af5e195ddf3f596a4ae527e69c7a3c6a6")
+                 ("src/codec/cbor-scan-items.lisp" "70272936e323b3e0cb05173c9fb68cb2b614c355")
+                 ("src/codec/cbor-scan.lisp" "1f89112b43a39d98cf25dc6dfb34e412428ba843")
+                 ("tests/codec/cbor-structure-support.lisp" "e9cc8a08917903cab7b7f5617225884b7d89e6c4")
+                 ("tests/codec/cbor-structure.lisp" "7e9b7a518bc3a260d721e85d62ff986553bb06de")
+                 ("tests/codec/cbor-structure-threads.lisp" "3624e1dde5f5a484a117f4c783d4e6b88027cc89"))))
+  (cs-assure (and (eq :ok (getf wrapper :status)) (eql 0 (getf wrapper :exit-code))
+                  (eq :stable (getf wrapper :source-consistency)) (equal before after)) :wrapper)
+  (cs-assure (= count 320) :nominal-tests count)
+  (cs-assure (search "24 test della struttura CBOR superati." stdout) :cbor-suite)
+  (cs-assure (and (eq :complete (getf master :status)) (= 10 (length runs))) :master)
+  (cs-assure (equal (sort (mapcar (lambda (r) (getf r :id)) runs) #'string<)
+                    '("SPK-01" "SPK-02" "SPK-03" "SPK-04" "SPK-05" "SPK-06"
+                      "SPK-07" "SPK-08" "SPK-09" "SPK-10")) :spike-ids)
+  (dolist (run runs)
+    (cs-assure (and (member (getf run :status) '(:ok :pass)) (eql 0 (getf run :exit-code)))
+               :spike (getf run :id)))
+  (dolist (file frozen)
+    (dolist (snapshot (list before after))
+      (cs-assure (string= (second file)
+                         (getf (find (first file) snapshot :key (lambda (r) (getf r :path))
+                                     :test #'string=) :git-blob)) :blob-in-snapshot file))
+    (cs-assure (string= (second file)
+                       (string-trim '(#\Newline #\Return #\Space)
+                                    (uiop:run-program (list "git" "hash-object" (first file))
+                                                      :output :string))) :current-blob file))
+  (cs-save "/tmp/cbor-structure-full-check-audit.lisp"
+           (list :schema-version 1 :kind :cbor-structure-full-check-audit :status :ok
+                 :statement-source "root: lettura protetta del wrapper make check e master compresso validato"
+                 :recorded-at (get-universal-time) :data-read-eval nil :data-eof-checked t
+                 :raw-data-loaded-or-evaluated nil :product-rerun-by-audit nil
+                 :wrapper wrapper-path :source-consistency :stable :snapshot-count (length before)
+                 :before-after-equal t :frozen-nine-blobs-match-before-after-current t :sources frozen
+                 :tests 320 :cbor-structure-tests 24 :spikes 10 :master master-path
+                 :master-status :complete :runs
+                 (mapcar (lambda (r) (list :id (getf r :id) :status (getf r :status)
+                                           :exit-code (getf r :exit-code))) runs)
+                 :limits '(:runtime-local-only :not-full-cbor-semantic-profile
+                           :not-human-approval :not-engine-release-qualification)))
+  (format t "Full check verificato: ~D test, ~D spike, nove blob invariati.~%" count (length runs)))

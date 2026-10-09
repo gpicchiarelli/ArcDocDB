@@ -1,0 +1,7 @@
+sbcl --script tools/check-links.lisp .
+206 file, 1930 link controllati, 0 rotti
+sbcl --noinform --no-userinit --no-sysinit --script tools/check-evidence.lisp
+(:STATUS :OK :CATALOGS 26 :ARTIFACT-REFERENCES 941 :STORED-FILES 1208
+ :STORED-BYTES 95858079 :LIMITS
+ (:STRUCTURE-PRESENCE-SIZE-AND-COMPRESSED-INTEGRITY
+  :NO-RESULT-REINTERPRETATION))

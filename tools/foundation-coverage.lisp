@@ -1,5 +1,5 @@
 ;;;; Copertura con contrib SBCL; processo e cache separati dai benchmark.
-;;;; Uso: --report directory/ [foundation|codec|cbor|csn|execution|storage|recovery|io|wal] oppure --self-test directory/
+;;;; Uso: --report directory/ [foundation|codec|cbor|cbor-structure|csn|execution|storage|recovery|io|wal] oppure --self-test directory/
 ;;;; REQ: REQ-FOR-003 REQ-AFF-002 REQ-LIM-001 REQ-VAL-001
 (require :asdf)
 (require :sb-cover)
@@ -12,13 +12,20 @@
   (uiop:read-file-string pathname :external-format :utf-8))
 
 (defun scope-path-p (scope path)
-  "CBOR comprende i suoi due file nel codec; gli altri scope comprendono il modulo intero."
-  (if (string= scope "cbor")
-      (some (lambda (suffix)
-              (let ((pos (search suffix path :from-end t)))
-                (and pos (= (+ pos (length suffix)) (length path)))))
-            '("/src/codec/cbor-package.lisp" "/src/codec/cbor-header.lisp"))
-      (search (format nil "/src/~A/" scope) path)))
+  "Gli scope CBOR selezionano file esatti; gli altri il modulo intero."
+  (let ((suffixes
+          (cond ((string= scope "cbor")
+                 '("/src/codec/cbor-package.lisp" "/src/codec/cbor-header.lisp"))
+                ((string= scope "cbor-structure")
+                 '("/src/codec/cbor-package.lisp" "/src/codec/cbor-space.lisp"
+                   "/src/codec/cbor-scan-input.lisp" "/src/codec/cbor-scan-stack.lisp"
+                   "/src/codec/cbor-scan-items.lisp" "/src/codec/cbor-scan.lisp")))))
+    (if suffixes
+        (some (lambda (suffix)
+                (let ((pos (search suffix path :from-end t)))
+                  (and pos (= (+ pos (length suffix)) (length path)))))
+              suffixes)
+        (search (format nil "/src/~A/" scope) path))))
 
 (defun isolate-output (root directory)
   "Mappa esplicitamente ogni file del checkout; rifiuta una destinazione fuori dalla cache privata."
@@ -42,7 +49,16 @@
                (not (scope-path-p "cbor" "/repo/src/codec/cbor-header.lisp.fake"))
                (not (scope-path-p "cbor" "/repo/src/codec/cbor-package.lisp/child"))
                (not (scope-path-p "cbor" "/repo/tests/codec/cbor-header.lisp"))
-               (scope-path-p "codec" "/repo/src/codec/utf8.lisp"))
+               (scope-path-p "codec" "/repo/src/codec/utf8.lisp")
+               (every (lambda (name)
+                        (scope-path-p "cbor-structure" (format nil "/repo/src/codec/~A.lisp" name)))
+                      '("cbor-package" "cbor-space" "cbor-scan-input" "cbor-scan-stack"
+                        "cbor-scan-items" "cbor-scan"))
+               (every (lambda (path) (not (scope-path-p "cbor-structure" path)))
+                      '("/repo/src/codec/cbor-header.lisp" "/repo/src/codec/utf8.lisp"
+                        "/repo/tests/codec/cbor-scan.lisp"
+                        "/repo/src/codec/cbor-scan.lisp.fake"
+                        "/repo/src/codec/cbor-space.lisp/child")))
     (error "foundation-coverage.lisp: COD-60, scope CBOR errato."))
   (let* ((source (merge-pathnames "coverage-fixture.lisp" directory))
          (fasl (merge-pathnames "coverage-fixture.fasl" directory)))
@@ -66,6 +82,7 @@
       (asdf:load-system "arcdocdb" :force t)
       (asdf:load-system "arcdocdb/tests" :force t)
       (uiop:symbol-call (cond ((string= scope "cbor") '#:arcdocdb.cbor.tests)
+                             ((string= scope "cbor-structure") '#:arcdocdb.cbor.structure.tests)
                              ((string= scope "codec") '#:arcdocdb.utf8.tests)
                              ((string= scope "csn") '#:arcdocdb.csn.tests)
                              ((string= scope "execution") '#:arcdocdb.execution.tests)
@@ -75,7 +92,8 @@
                              ((string= scope "wal") '#:arcdocdb.wal.tests)
                              (t '#:arcdocdb.foundation.tests)) '#:run)
       (when (string= scope "codec")
-        (uiop:symbol-call '#:arcdocdb.cbor.tests '#:run)))
+        (uiop:symbol-call '#:arcdocdb.cbor.tests '#:run)
+        (uiop:symbol-call '#:arcdocdb.cbor.structure.tests '#:run)))
     (sb-cover:save-coverage-in-file (merge-pathnames "coverage-state.lisp" directory))
     (let ((report (sb-cover:report directory :if-matches
                                   (lambda (path) (scope-path-p scope path)))))
@@ -87,8 +105,8 @@
   (unless (and (<= 2 (length args) 3) (member (first args) '("--report" "--self-test")
                                             :test #'string=)
                (or (= (length args) 2)
-                   (member (third args) '("foundation" "codec" "cbor" "csn" "execution" "storage" "recovery" "io" "wal") :test #'string=)))
-    (error "foundation-coverage.lisp: usare --report directory/ [foundation|codec|cbor|csn|execution|storage|recovery|io|wal] o --self-test directory/."))
+                   (member (third args) '("foundation" "codec" "cbor" "cbor-structure" "csn" "execution" "storage" "recovery" "io" "wal") :test #'string=)))
+    (error "foundation-coverage.lisp: usare --report directory/ [foundation|codec|cbor|cbor-structure|csn|execution|storage|recovery|io|wal] o --self-test directory/."))
   (let ((directory (merge-pathnames (uiop:ensure-directory-pathname (second args))
                                    (truename "./")))
         (scope (or (third args) "foundation")))

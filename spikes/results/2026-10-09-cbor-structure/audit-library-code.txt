@@ -1,0 +1,20 @@
+(require :asdf)
+(load "/Users/gpicchiarelli/.codex/worktrees/cbor-structure/ArcDocDB/tools/evidence-storage.lisp")
+(defun cs-data (path) (arcdocdb.evidence:read-evidence path))
+(defun cs-assure (value &rest message)
+  (unless value (error "Audit fallito: ~S" message)) t)
+(defun cs-save (path data)
+  (with-open-file (stream path :direction :output :if-exists :error :external-format :utf-8)
+    (let ((*print-readably* t)) (write data :stream stream :pretty t) (terpri stream))))
+(defun cs-bytes (path)
+  (with-open-file (stream path :element-type '(unsigned-byte 8))
+    (let ((bytes (make-array (file-length stream) :element-type '(unsigned-byte 8))))
+      (cs-assure (= (length bytes) (read-sequence bytes stream)) :short-read path)
+      (cs-assure (eq :eof (read-byte stream nil :eof)) :eof path) bytes)))
+(defun cs-plain-copy (source target)
+  (arcdocdb.evidence:call-with-evidence-bytes
+   source
+   (lambda (plain)
+     (with-open-file (stream target :direction :output :if-exists :error
+                                   :element-type '(unsigned-byte 8))
+       (write-sequence (cs-bytes plain) stream)))))
