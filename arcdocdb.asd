@@ -37,6 +37,9 @@
                              (:file "snapshots-types") (:file "snapshots-core")
                              (:file "snapshots-register") (:file "snapshots-lifecycle")
                              (:file "snapshots-read")))
+               (:module "epochs" :serial t
+                :components ((:file "package") (:file "types") (:file "core")
+                             (:file "read") (:file "retire") (:file "reclaim")))
                (:module "recovery"
                 :serial t
                 :components ((:file "package") (:file "scan")

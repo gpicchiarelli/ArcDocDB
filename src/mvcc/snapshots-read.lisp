@@ -11,7 +11,7 @@ Percorso di errore soltanto; nessuna lettura riuscita prende il mutex."
   (sb-thread:with-mutex ((registro-snapshot-mutex registry))
     (guasto-snapshot registry reason)))
 
-;;; REQ: REQ-MVC-004 REQ-MVC-005 REQ-MVC-007 REQ-AFF-017
+;;; REQ: REQ-MVC-004 REQ-MVC-005 REQ-MVC-007 REQ-CMP-007
 (declaim (inline verifica-snapshot))
 (declaim (ftype (function (contesto-snapshot u64 u64) u64) verifica-snapshot))
 (defun verifica-snapshot (context expected-generation now)

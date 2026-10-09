@@ -7,6 +7,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Dominio EBR per Archivio: annunci dei worker distanti 128 byte, ingresso
+  senza mutex a tentativo singolo, ticket preallocati e crediti di epoca prima
+  dello swap. Frontiera condivisa da più ritiri e claim esclusivo del reclaim;
+  integrazione con segmenti/pool e qualifica concorrente restano aperte.
+
 - Registro snapshot per Archivio: soglia annunciata prima della cattura del CSN,
   contesti preallocati con generazione, controlli di lettura senza mutex,
   deadline e scadenze con budget. Interfaccia in buffer per i reader;

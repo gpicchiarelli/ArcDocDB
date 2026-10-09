@@ -34,7 +34,7 @@ NIL se ancora in attesa; RESOURCE-EXHAUSTED per timeout iniziale, SNAPSHOT-TOO-O
            (error 'snapshot-too-old :reason :snapshot-ended))
           (t (guasto-snapshot registry :snapshot-slot-state)))))))
 
-;;; REQ: REQ-MVC-003 REQ-MVC-004 REQ-MVC-007 REQ-AFF-017
+;;; REQ: REQ-MVC-003 REQ-MVC-004 REQ-MVC-007 REQ-CMP-007
 (declaim (ftype (function (contesto-snapshot u64) null) termina-snapshot))
 (defun termina-snapshot (context expected-generation)
   "Pre: evento originale; stop a nuove letture, reader già ammessi protetti da EBR.

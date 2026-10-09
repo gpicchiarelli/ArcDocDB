@@ -127,7 +127,9 @@ La validazione rifiuta un contesto scaduto per tempo anche se il timer non lo ha
 ancora visitato; fino a quella visita il pin è conservativo. Terminazione e
 scadenza **non liberano i riferimenti fisici** dei reader già ammessi:
 [EBR](../adr/0016-epoch-based-reclamation.md) deve proteggerli fino al termine
-del compito. Il contesto si riusa solo quando tutti i vecchi consumatori sono
+del compito: le [primitive di epoca](epoche-e-reclaim.md) ora espongono ingresso,
+uscita e frontiera per i segmenti, mentre il collegamento dei compiti resta da
+completare. Il contesto si riusa solo quando tutti i vecchi consumatori sono
 terminati. Questo modulo non elimina segmenti o strutture dell'indice.
 
 ## Guasti e stato della qualifica
@@ -144,7 +146,7 @@ volatili non sopravvivono al riavvio.
 | REQ-MVC-004 | Deadline, errore `snapshot-too-old`, timer con budget. | Confini del tempo, scadenza durante il lookup, controller e timer reali. |
 | REQ-MVC-005 | Annuncio, cattura di `s`, attivazione solo con `H >= s`. | Writer/index/versioni trattenute integrati, FI-11/FI-12. |
 | REQ-MVC-007 | Soglia annunciata prima della cattura, ricalcolo e guardie di riuso. | Ordini concorrenti reali x86-64/ARM64, saturazione e generazioni u64. |
-| REQ-MVC-003, REQ-AFF-017 | Pin logici distinti dalle epoche dei reader. | EBR, potatura, compaction e reclaim integrati. |
+| REQ-MVC-003, REQ-CMP-007 | Pin logici distinti dalle epoche dei reader. | EBR, potatura, compaction e reclaim integrati. |
 | REQ-AFF-008 | `K`, deadline, generazioni e passi del timer limitati. | Carico, cadenza del timer e costi sotto mutex. |
 
 Il [catalogo delle evidenze](../../spikes/results/2026-10-09-snapshot/catalogo.lisp)
