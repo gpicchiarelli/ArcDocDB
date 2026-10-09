@@ -12,6 +12,14 @@ nuova contiene 14 test con oracolo cieco più un supplemento dichiarato
 dopo la lettura: [seconda revisione](cbor-minimo-revisione.md).
 I tre file originali conservano il loro blob congelato.
 
+La verifica finale `make check`, dopo l'integrazione dell'inventario recovery
+da `e2f7a75`, passa **394 esiti della build**: 392 test e due smoke.
+I due marker aggiuntivi di lint-selftest portano il totale delle righe `ok`
+del comando completo a 396; sono distinti dai test della build. Lint,
+tracciabilità, link, conservazione e tutti i dieci spike passano; il record
+ha exit zero e snapshot stabile. Le campagne congelate precedenti conservano
+la loro base e i loro conteggi originali.
+
 Sono verificati tutti i 65536 binary16 e 131072 espansioni esatte a
 binary32/64, compresi segni e payload NaN. Il fuzz con seme `4D494E43`
 esamina 12288 input: 11223 accettati, 1065 rifiutati, inclusi 84 nonminimi.
@@ -69,6 +77,19 @@ Gli alberi raw conservano copertura, copie sorgenti/log delle mutazioni,
 codice e dati delle revisioni; i FASL restano nella copia locale archiviata.
 Il collector confronta sorgente prima/dopo e destinazione; non riscrive
 i rapporti originali o inferisce requisiti dai loro risultati.
+
+L'audit indipendente dell'archivio iniziale passa **6673 controlli** su
+1313 file indicizzati e otto processi, senza rilievi. L'indice iniziale rimane
+immutato. Il [secondo archivio](../../spikes/results/2026-10-09-cbor-minimal-final/archive-index.lisp)
+conserva i comandi di raccolta e verifica finale, i dieci risultati originali
+degli spike e codice, inventari e log dell'audit di pubblicazione. Gli audit
+successivi e i wrapper conclusivi sono aggiunte dichiarate al secondo indice
+derivato; i loro record originali rimangono invariati.
+La seconda lettura passa 306 controlli su 53 file e due processi; conferma
+il conteggio della build e la presenza dei dieci spike. Il supplemento
+dell'indice riceve prima dell'uso due correzioni statiche: imporre la CLI
+di audit prima del caricamento e richiedere il referto oltre ai file helper.
+Codice precedente e attribuzione sono conservati; nessun difetto del prodotto.
 
 Una lettura C4 ha rilevato e corretto prima della raccolta il filtro che
 ometteva i payload `.gz` nei tree. Il sorgente precedente è ricostruito
