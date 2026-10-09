@@ -22,9 +22,8 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   deadline e scadenze con budget. Interfaccia in buffer per i reader;
   qualifica concorrente, controller ed EBR restano da integrare.
 
-- Registro CSN per Archivio: prenotazioni preallocate, identità dei completamenti,
-  orizzonte monotono e budget finito; esaurimento u64 senza wrap e fail-stop delle
-  transizioni interrotte. La qualifica concorrente e gli snapshot completi restano aperti.
+- Registro CSN per Archivio con orizzonte monotono e budget finito;
+  l’implementazione attiva è `arcdocdb.csn`, con token slot/high/low.
 - Ricostruzione in memoria del manifest dal prefisso sigillato di `control.log`:
   ACTIVE, CLOSED con esiti, rimozioni esplicite e limite degli ID. Workspace
   indipendenti per Serie; nessuna riconciliazione o scrittura dei file.
@@ -126,6 +125,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   A9…A12), 107 requisiti, 27 modi di guasto, rischio residuo RES-05.
 
 ### Cambiato
+
+- Snapshot collegati all'unico registro `arcdocdb.csn` dell'Archivio; rimosso
+  l'allocatore CSN duplicato del ramo. Coordinamento snapshot senza attese,
+  revoca della soglia provvisoria su `:csn-busy` e invalidazione terminale
+  al guasto. API del registro canonico e sue evidenze conservate.
 
 - Guide del repository consolidate, note degli esperimenti uniformate al metodo
   tecnico e specifica originale rinominata; requisiti ed evidenze conservati (ADR-0051).

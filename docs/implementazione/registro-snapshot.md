@@ -5,7 +5,8 @@ validazione e scadenza dei contesti di snapshot secondo
 [ADR-0038](../adr/0038-orizzonte-di-visibilita.md),
 [ADR-0020](../adr/0020-csn-snapshot-isolamento.md) e
 [ADR-0045](../adr/0045-modello-di-esecuzione.md).
-Usa l'[orizzonte CSN](orizzonte-csn.md) del proprio Archivio.
+Usa il [registro CSN canonico](csn.md) del proprio Archivio attraverso il
+[collegamento pubblico](snapshot-csn.md). Non assegna altri CSN.
 
 ## Ambito e risorse
 
@@ -15,7 +16,8 @@ Il registro conserva CSN, generazione, scadenza, limite dell'attesa e stato per
 slot. Non copia documenti e non detiene riferimenti fisici ai segmenti.
 
 `crea-registro-snapshot(csns, K, lifetime-ticks, wait-ticks)` richiede durate
-esplicite, positive, con `wait-ticks <= lifetime-ticks`. Il controller traduce
+esplicite, positive, con `wait-ticks <= lifetime-ticks`; `csns` è il medesimo
+`arcdocdb.csn:registro-csn` usato dai writer dell'Archivio. Il controller traduce
 la configurazione in queste unità; il default architetturale della durata resta
 un'ora. Tutti i valori `now` provengono dalla **stessa base di tempo monotona**
 dell'ambiente, sono `u64` e devono essere campionati nuovamente per ciascuna
@@ -42,6 +44,13 @@ generazione `u64` è un rifiuto esplicito, senza wrap.
 | `scadi-snapshot(registry, now, max-slots)` | Visita al più il budget configurato, restituisce visite e scadenze e avanza un cursore circolare. |
 | `soglia-snapshot`, `deve-trattenere-p` | Letture acquire senza mutex per retention e potatura logica delle versioni. |
 | `leggi-registro-snapshot` | Contatori coerenti sotto mutex, per osservabilità. |
+| `invalida-registro-snapshot` | Stato terminale `FAULTED`, senza attesa; il confine dell'Archivio lo usa dopo guasti CSN. Non libera pin o reader. |
+
+Le API di coordinamento tentano il mutex snapshot una volta con `:wait-p nil`.
+`:snapshot-busy` e `:csn-busy` richiedono di conservare il compito e riprogrammarlo
+entro i suoi budget, con tempo nuovo. La terminazione occupata conserva il pin
+e l'obbligo di terminarlo; un timer occupato non avanza il cursore. Le verifiche
+dei reader non acquisiscono alcun mutex.
 
 Una **generazione** è l'identità del contesto; il **CSN** è l'identità della
 vista. Due snapshot possono avere lo stesso CSN, incluso zero su Archivio vuoto.
@@ -54,9 +63,11 @@ Ordine delle operazioni, sotto il mutex degli snapshot:
 
 1. Verificare contesto, capacità, generazione e deadline, senza mutazioni.
 2. Campionare `H` dal registro CSN.
-3. Invalidare con generazione zero il contesto e lo slot da riusare; barriera completa.
-4. Pubblicare `soglia = min(soglia, H)`; **barriera completa**.
-5. Campionare `s = ultimo CSN assegnato` e il nuovo `H`.
+3. Pubblicare `soglia = min(soglia, H)`; **barriera completa**.
+4. Campionare `s = ultimo CSN assegnato` e il nuovo `H` nello stesso campione coerente.
+   Su `:csn-busy` ripristinare la sola soglia precedente: nessun pin o identità
+   è stato modificato e nessuna generazione è stata consumata.
+5. Invalidare con generazione zero il contesto e lo slot da riusare; barriera completa.
 6. Scrivere metadati e stato; pubblicare prima la generazione dello slot e poi
    quella del contesto, con barriere di scrittura.
 
@@ -90,8 +101,8 @@ Il CSN dello slot è confrontato con la copia posseduta dal contesto. Qualsiasi
 riuso che attraversi la lettura invalida la generazione prima di cambiare i campi:
 il reader rifiuta la risposta, senza retry o accesso alla nuova incarnazione.
 
-I reader riusciti non prendono mutex. Solo il percorso che scopre metadati
-interni incoerenti prende il mutex per pubblicare `FAULTED`. La lettura della
+I reader non prendono mutex, anche quando scoprono metadati interni incoerenti:
+pubblicano solo lo stato terminale `FAULTED` e propagano l'errore. La lettura della
 soglia può essere conservativa e trattenere più versioni; non introduce per
 questo un risultato scorretto.
 
@@ -137,9 +148,12 @@ terminati. Questo modulo non elimina segmenti o strutture dell'indice.
 
 Le transizioni composte usano cleanup fail-stop: un'uscita non locale dopo
 l'inizio della mutazione marca il registro `FAULTED`; non si tenta un rollback
-parziale. Un'incoerenza di conteggio, soglia, stato o copia del CSN produce un
-errore tipizzato. I registri snapshot e CSN guasti interrompono le letture di
-visibilità. Il proprietario isola l'Archivio e ripete il recovery; gli snapshot
+parziale dei metadati. La revoca della soglia provvisoria su normale `:csn-busy`
+avviene prima di modificare identità, slot o conteggio. Un'incoerenza di conteggio,
+soglia, stato o copia del CSN produce un errore tipizzato. I guasti CSN osservati
+dall'adattatore invalidano gli snapshot; quelli osservati dal writer/coordinatore
+devono chiamare `invalida-registro-snapshot` al confine dell'Archivio. Il proprietario
+isola l'Archivio e ripete il recovery; gli snapshot
 volatili non sopravvivono al riavvio.
 
 | Requisito | Realizzazione introdotta | Qualifica ancora necessaria |
@@ -161,3 +175,4 @@ I requisiti restano **progettati**. Non si dichiara qualifica C1, copertura,
 assenza di allocazioni misurata o completamento di MVCC. L'interfaccia in buffer
 evita il ritorno di un intero Lisp per il CSN sul percorso previsto del reader;
 scalabilità, costo delle barriere e allocazioni vanno ancora misurati.
+L'integrazione con il registro unico ha [evidenze separate](snapshot-csn.md#evidenze-e-qualifica).

@@ -1,5 +1,5 @@
 ;;; OWNER: mutazioni del registro sotto mutex snapshot; ordine dei lock: snapshot poi CSN.
-;;; SHARED: soglia e identità pubblicate con barriere; nessuna callback sotto lock.
+;;; SHARED: soglia e identità sotto mutex; salute monotona verso FAULTED anche dal confine Archivio.
 (in-package #:arcdocdb.mvcc)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 
@@ -14,20 +14,39 @@
 (declaim (inline esigi-snapshot-sano))
 (declaim (ftype (function (registro-snapshot) null) esigi-snapshot-sano))
 (defun esigi-snapshot-sano (registry)
-  "Pre: registro esistente. Post: salute snapshot/CSN campionata con barriera acquire.
-INVARIANT-VIOLATION dopo FAULTED; non legge contatori CSN in mutazione e non prende mutex."
+  "Pre: registro esistente. Post: salute snapshot campionata con barriera acquire.
+INVARIANT-VIOLATION dopo FAULTED; nessun accesso ai campi privati del registro CSN."
   (sb-thread:barrier (:read)
-    (unless (and (eq (registro-snapshot-health registry) :open)
-                 (eq (registro-csn-state (registro-snapshot-csns registry)) :open))
+    (unless (eq (registro-snapshot-health registry) :open)
       (error 'invariant-violation :reason :snapshot-registry-faulted)))
+  nil)
+
+;;; REQ: REQ-MVC-005 REQ-AFF-004 REQ-CON-004
+(declaim (ftype (function (registro-snapshot) null) invalida-registro-snapshot))
+(defun invalida-registro-snapshot (registry)
+  "Pre: confine fidato dell'Archivio dopo un guasto, oppure mutazione snapshot interrotta.
+Post: salute FAULTED pubblicata, idempotente e senza mutex; mai reset o rilascio di pin/EBR.
+Unica scrittura esterna: stato terminale monotono. Il controller deve isolare l'Archivio."
+  (sb-thread:barrier (:write))
+  (setf (registro-snapshot-health registry) :faulted)
+  nil)
+
+;;; REQ: REQ-CON-004 REQ-AFF-008
+(declaim (inline esigi-ingresso-snapshot))
+(declaim (ftype (function (registro-snapshot) null) esigi-ingresso-snapshot))
+(defun esigi-ingresso-snapshot (registry)
+  "Pre: coordinamento nel worker, prima di WITH-MUTEX :WAIT-P NIL.
+Post: niente acquisizione ricorsiva; RESOURCE-EXHAUSTED :SNAPSHOT-BUSY per proprietario corrente.
+La contesa con altri worker si decide nel tentativo del mutex, non da questa osservazione."
+  (when (eq (sb-thread:mutex-owner (registro-snapshot-mutex registry)) sb-thread:*current-thread*)
+    (error 'resource-exhausted :reason :snapshot-busy))
   nil)
 
 ;;; REQ: REQ-MVC-007 REQ-AFF-004
 (declaim (ftype (function (registro-snapshot keyword) nil) guasto-snapshot))
 (defun guasto-snapshot (registry reason)
   "Pre: mutex snapshot posseduto. Post: FAULTED pubblicato, errore tipizzato, nessun rollback."
-  (sb-thread:barrier (:write))
-  (setf (registro-snapshot-health registry) :faulted)
+  (invalida-registro-snapshot registry)
   (error 'invariant-violation :reason reason))
 
 ;;; REQ: REQ-MVC-007 REQ-AFF-008
@@ -116,7 +135,5 @@ Uscita non locale durante mutazione marca FAULTED; non cancella record né rifer
            (decf (registro-snapshot-count registry))
            (ricalcola-soglia-snapshot registry)
            (setf complete t))
-      (unless complete
-        (sb-thread:barrier (:write))
-        (setf (registro-snapshot-health registry) :faulted))))
+      (unless complete (invalida-registro-snapshot registry))))
   nil)

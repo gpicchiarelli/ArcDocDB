@@ -1,5 +1,5 @@
 ;;; OWNER: un registro snapshot per Archivio, legato al suo unico registro CSN.
-;;; SHARED: scritture sotto mutex snapshot; word/u8 allineati e barriere sui reader SBCL a 64 bit.
+;;; SHARED: metadati sotto mutex; salute solo verso FAULTED, anche dal confine Archivio senza attesa.
 (in-package #:arcdocdb.mvcc)
 (declaim (optimize (safety 3) (speed 2) (debug 2)))
 

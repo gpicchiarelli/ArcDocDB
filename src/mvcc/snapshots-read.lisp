@@ -11,13 +11,13 @@
 Non verifica stato, generazione o scadenza e non autorizza la lettura dello snapshot."
   (eq (contesto-snapshot-registry context) registry))
 
-;;; REQ: REQ-MVC-007 REQ-AFF-004
+;;; REQ: REQ-MVC-007 REQ-AFF-004 REQ-CON-004
 (declaim (ftype (function (registro-snapshot keyword) nil) guasto-lettura-snapshot))
 (defun guasto-lettura-snapshot (registry reason)
-  "Pre: incoerenza interna osservata con identità stabile. Post: fail-stop sotto mutex.
-Percorso di errore soltanto; nessuna lettura riuscita prende il mutex."
-  (sb-thread:with-mutex ((registro-snapshot-mutex registry))
-    (guasto-snapshot registry reason)))
+  "Pre: incoerenza interna osservata con identità stabile. Post: stato terminale FAULTED.
+Nessun mutex o attesa anche al guasto; condizione tipizzata propagata al confine del worker."
+  (invalida-registro-snapshot registry)
+  (error 'invariant-violation :reason reason))
 
 ;;; REQ: REQ-MVC-004 REQ-MVC-005 REQ-MVC-007 REQ-CMP-007
 (declaim (inline verifica-snapshot))
@@ -99,9 +99,14 @@ INVALID-ARGUMENT per zero. Per potare, confrontare fine validità <= soglia e ri
 (declaim (ftype (function (registro-snapshot) (values (integer 0 65536) u64 u64 &optional))
                 leggi-registro-snapshot))
 (defun leggi-registro-snapshot (registry)
-  "Pre: registro sano. Post: numero di pin, soglia e ultima generazione coerenti sotto mutex.
+  "Pre: registro sano. Post: pin, soglia e generazione coerenti; SNAPSHOT-BUSY senza attesa.
 Osservabilità soltanto; non registra snapshot e non determina lo stato di un vecchio contesto."
-  (sb-thread:with-mutex ((registro-snapshot-mutex registry))
-    (verifica-contatori-snapshot registry)
-    (values (registro-snapshot-count registry) (aref (registro-snapshot-words registry) 1)
-            (aref (registro-snapshot-words registry) 0))))
+  (esigi-ingresso-snapshot registry)
+  (let ((acquired nil))
+    (multiple-value-prog1
+        (sb-thread:with-mutex ((registro-snapshot-mutex registry) :wait-p nil)
+          (setf acquired t)
+          (verifica-contatori-snapshot registry)
+          (values (registro-snapshot-count registry) (aref (registro-snapshot-words registry) 1)
+                  (aref (registro-snapshot-words registry) 0)))
+      (unless acquired (error 'resource-exhausted :reason :snapshot-busy)))))

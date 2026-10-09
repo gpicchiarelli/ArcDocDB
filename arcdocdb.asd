@@ -39,8 +39,8 @@
                 :components ((:file "package") (:file "types") (:file "builder")
                              (:file "group") (:file "executor")))
                (:module "mvcc" :serial t
-                :components ((:file "package") (:file "types") (:file "horizon")
-                             (:file "snapshots-types") (:file "snapshots-core")
+                :components ((:file "package") (:file "types")
+                             (:file "snapshots-types") (:file "snapshots-core") (:file "snapshots-csn")
                              (:file "snapshots-register") (:file "snapshots-lifecycle")
                              (:file "snapshots-read")))
                (:module "epochs" :serial t
