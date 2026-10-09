@@ -30,7 +30,9 @@ partizioni o una garanzia di starvation temporale.
    segnala busy, il worker conserva il riferimento fino al retry riuscito.
    Not-ready segnala un compito non eleggibile o duplicato; non è un retry cieco.
 4. Il worker elabora il tratto e lo termina. Un nuovo `:schedule` viene
-   pubblicato; `:idle` non richiede alcuna pulizia dello stato scheduler.
+   pubblicato, anche tramite il [ricircolo atomico](writer-recycle.md) se il
+   worker può prendere una nuova testa a ring pieno; `:idle` non richiede
+   alcuna pulizia dello stato scheduler.
 
 La partizione di una Serie è una scelta del chiamante, fissata prima del
 percorso caldo. Indice, struttura e capacità sono privati della lista; i
@@ -63,3 +65,10 @@ componenti da integrare, senza qualificazione del motore completo.
 Il [metodo preregistrato](writer-ready-metodo.md), l'
 [inventario](writer-ready-decisioni.md) e i [risultati](writer-ready-risultati.md)
 delimitano le prove di correttezza, contesa e allocazione osservata.
+
+Il [ricircolo atomico](writer-recycle.md) integra il trasporto degli obblighi
+per un consumer capace di prendere un altro writer. A ring pieno inserisce
+il nuovo riferimento e restituisce la vecchia testa nella stessa sezione,
+con count invariato. La pubblicazione semplice conserva il proprio
+contratto full/busy; un pool che ne ritenta soltanto l'inserimento da tutti
+i consumer deve gestire il rischio di blocco per saturazione.

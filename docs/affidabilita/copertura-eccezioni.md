@@ -156,3 +156,13 @@ sono la postcondizione della proprietà acquisita e il vecchio valore del
 CAS di rilascio; non vengono provocati violando la proprietà con thread
 attivi. Le lacune dei quattro file precedenti rimangono nel denominatore.
 Nessuna esclusione approvata, MC/DC completa o chiusura del gate C1 implicita.
+
+
+## Ricircolo dei writer pronti — 2026-10-09
+
+La [campagna recycle](../implementazione/writer-recycle-decisioni.md) mantiene
+929/1060 espressioni e 134/154 esiti su sette file execution. Il nuovo file
+ha 81/86 espressioni e 8/8 esiti; le cinque forme non marcate sono package,
+declaim optimize e tre ftype top-level. Le lacune precedenti restano nel
+denominatore completo, compresi i due esiti CAS difensivi della lista pronta.
+Nessuna esclusione approvata, MC/DC completa o chiusura del gate C1 implicita.

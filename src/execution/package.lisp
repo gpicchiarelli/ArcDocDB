@@ -10,4 +10,4 @@
            #:writer-programmabile #:crea-writer-programmabile #:accoda-lavoro-writer
            #:inizia-tratto-writer #:preleva-lavori-writer #:termina-tratto-writer
            #:lista-writer-pronti #:crea-lista-writer-pronti
-           #:pubblica-writer-pronto #:preleva-writer-pronto))
+           #:pubblica-writer-pronto #:preleva-writer-pronto #:ricircola-writer-pronto))
