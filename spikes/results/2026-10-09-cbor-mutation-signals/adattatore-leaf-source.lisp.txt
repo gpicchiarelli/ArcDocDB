@@ -1,0 +1,121 @@
+(require :asdf)
+(load "tools/evidence-storage.lisp")
+(defparameter *base* (truename #p"spikes/results/2026-10-09-cbor-mutation-signals/"))
+(defun path (name) (merge-pathnames name *base*))
+(defun proof (name) (arcdocdb.evidence:read-evidence (path name)))
+(defun save-proof (name data)
+  (with-open-file (out (path name) :direction :output :if-exists :supersede
+                       :if-does-not-exist :create :external-format :utf-8)
+    (let ((*print-readably* t)) (write data :stream out :pretty t) (terpri out))))
+(defun blob (file)
+  (string-right-trim '(#\Newline #\Return)
+    (uiop:run-program (list "git" "hash-object" (namestring file)) :output :string)))
+(defun fingerprint (file)
+  (list :bytes (arcdocdb.evidence:file-bytes file)
+        :sha256 (arcdocdb.evidence:file-sha256 file) :git-blob (blob file)))
+(defun copy-exact (source target)
+  (if (probe-file target)
+      (unless (equal (fingerprint source) (fingerprint target))
+        (error "Existing target differs: ~A" target))
+      (uiop:copy-file source target))
+  (unless (equal (fingerprint source) (fingerprint target))
+    (error "Copy differs: ~A" target)))
+(defun remap (data moves)
+  (cond ((stringp data) (or (second (assoc data moves :test #'string=)) data))
+        ((consp data) (cons (remap (car data) moves) (remap (cdr data) moves)))
+        (t data)))
+(let* ((summary (proof "riepilogo.lisp")) (publication (proof "pubblicazione.lisp"))
+       (moves (append
+                (loop for i from 0 to 6 append
+                  (list (list (format nil "commands/~D/report.lisp" i) (format nil "command-~D.lisp" i))
+                        (list (format nil "commands/~D/conservazione.lisp" i)
+                              (format nil "command-~D-conservazione.lisp" i))))
+                (loop for i from 1 to 10 for leaf = (format nil "SPK-~2,'0D.lisp" i)
+                      collect (list (concatenate 'string "spikes/0/" leaf) leaf))
+                '(("spikes/0/SPK-07.lisp.gz" "SPK-07.lisp.gz")
+                  ("spikes/0/report.lisp" "spikes-report.lisp")
+                  ("spikes/0/report.lisp.gz" "report.lisp.gz")
+                  ("spikes/0/conservazione.lisp" "spikes-conservazione.lisp"))))
+       (move-proofs nil) (wrappers nil)
+       (failed-source #p"spikes/out/4000548060-command-40857-0/report.lisp")
+       (failed (arcdocdb.evidence:read-evidence failed-source)))
+  (unless (and (eq :failed (getf failed :status)) (eql 2 (getf failed :exit-code))
+               (eq :stable (getf failed :source-consistency)))
+    (error "Unexpected preliminary final-check record."))
+  ;; Validate every destination before moving or changing any derived metadata.
+  (dolist (move moves)
+    (destructuring-bind (old new) move
+      (unless (and (probe-file (path old)) (not (probe-file (path new))))
+        (error "Move is not exclusive: ~S" move))
+      (push (list :from old :to new :original (fingerprint (path old))) move-proofs)))
+  (dolist (name '("fixture-0.lisp" "fixture-1.lisp" "fixture-2.lisp" "fixture-3.lisp"
+                  "header-mutazioni.lisp" "struttura-mutazioni.lisp" "audit-conservazione.lisp"))
+    (push (list :file name :original (fingerprint (path name))) wrappers))
+  (copy-exact (path "catalogo.lisp") (path "catalogo-annidato.lisp.txt"))
+  (copy-exact (path "riepilogo.lisp") (path "riepilogo-annidato.lisp.txt"))
+  (dolist (move moves)
+    (destructuring-bind (old new) move (rename-file (path old) (path new))))
+  (dolist (row move-proofs)
+    (unless (equal (getf row :original) (fingerprint (path (getf row :to))))
+      (error "Moved native bytes differ: ~A" (getf row :to))))
+  (copy-exact failed-source (path "verifica-finale-preliminare.lisp"))
+  (copy-exact (merge-pathnames "conservazione.lisp" failed-source)
+              (path "verifica-finale-preliminare-conservazione.lisp"))
+  (copy-exact *load-truename* (path "adattatore-leaf-source.lisp.txt"))
+  (setf summary (remap summary moves))
+  (let ((observation (list :artifact "verifica-finale-preliminare.lisp"
+                           :conservation-artifact "verifica-finale-preliminare-conservazione.lisp"
+                           :command (getf failed :command) :status :failed :exit-code 2
+                           :source-consistency :stable :cause :nested-catalog-artifact-names
+                           :result-promotion nil)))
+    (setf (getf summary :preliminary-final-check) observation
+          (getf summary :leaf-publication-correction)
+          '(:diagnostic "correzione-leaf.lisp" :historical-metadata
+            ("catalogo-annidato.lisp.txt" "riepilogo-annidato.lisp.txt")
+            :raw-native-bytes :unchanged :raw-wrapper-bytes :unchanged
+            :new-final-recorded-verification :pending-root))
+    (setf (getf publication :leaf-publication-correction)
+          (list :artifact "correzione-leaf.lisp" :adapter "adattatore-leaf-source.lisp.txt"
+                :native-moves 28 :original-payload-names :preserved
+                :preliminary-final-check observation :verification :pending-root-recorded-run)))
+  (save-proof "riepilogo.lisp" summary)
+  (save-proof "pubblicazione.lisp" publication)
+  (dolist (row wrappers)
+    (unless (equal (getf row :original) (fingerprint (path (getf row :file))))
+      (error "Raw wrapper or audit changed: ~A" (getf row :file))))
+  (save-proof "correzione-leaf.lisp"
+    (list :schema-version 1 :kind :publication-diagnostic :scope :derived-catalog-layout
+          :status :metadata-repaired :cause :checker-requires-leaf-artifact-names
+          :prior-check-artifact "verifica-finale-preliminare.lisp" :prior-check-status :failed
+          :prior-check-exit-code 2 :new-recorded-check :pending-root
+          :historical-metadata '("catalogo-annidato.lisp.txt" "riepilogo-annidato.lisp.txt")
+          :adapter-source "adattatore-leaf-source.lisp.txt"
+          :native-moves (nreverse move-proofs) :native-bytes-and-git-blobs :identical
+          :raw-wrappers-and-retention-audit :unchanged
+          :payload-names '("SPK-07.lisp.gz" "report.lisp.gz")
+          :limits '(:metadata-and-layout-only :historical-statuses-preserved
+                    :no-product-test-tool-or-doc-change :no-product-or-make-execution
+                    :no-gate-promotion)))
+  (let ((entries nil) (associated nil))
+    (dolist (file (sort (uiop:directory-files *base*) #'string< :key #'file-namestring))
+      (let ((name (file-namestring file)))
+        (unless (string= name "catalogo.lisp")
+          (if (equal "lisp" (pathname-type file))
+              (let ((data (arcdocdb.evidence:read-evidence file)))
+                (unless (eql 1 (or (getf data :schema-version) (getf data :schema)))
+                  (error "Leaf artifact without schema 1: ~A" file))
+                (push (list :artifact name :kind (getf data :kind) :status (getf data :status)) entries))
+              (push (append (list :file name) (fingerprint file)) associated)))))
+    (save-proof "catalogo.lisp"
+      (list :schema-version 1 :kind :evidence-catalog :date "2026-10-09"
+            :scope :cbor-mutation-processes
+            :path-base "spikes/results/2026-10-09-cbor-mutation-signals/"
+            :entries (nreverse entries) :associated-raw-files (nreverse associated)
+            :limits '(:leaf-artifact-names :structure-presence-size-and-compressed-integrity
+                      :original-native-and-wrapper-bytes-preserved
+                      :original-statuses-preserved :no-automatic-gate-promotion))))
+  (let ((catalog (proof "catalogo.lisp")))
+    (write (list :status :assembled :native-moves (length moves)
+                 :catalog-entries (length (getf catalog :entries))
+                 :associated-files (length (getf catalog :associated-raw-files))
+                 :prior-final-check :failed :new-final-check :pending-root)) (terpri)))

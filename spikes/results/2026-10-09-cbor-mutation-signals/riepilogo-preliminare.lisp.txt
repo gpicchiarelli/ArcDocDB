@@ -1,0 +1,72 @@
+(:SCHEMA-VERSION 1 :KIND :CBOR-PROCESS-VERIFICATION-SUMMARY :DATE "2026-10-09"
+ :STATUS :OK :SCOPE :VERIFICATION-TOOLS-ONLY :OBSERVED-COMMANDS
+ ((:ARTIFACT
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-mutation-signals/ArcDocDB/spikes/results/2026-10-09-cbor-mutation-signals/commands/0/report.lisp"
+   :COMMAND
+   (#A((4) BASE-CHAR . "sbcl") #A((10) BASE-CHAR . "--noinform")
+    #A((13) BASE-CHAR . "--no-userinit") #A((12) BASE-CHAR . "--no-sysinit")
+    #A((8) BASE-CHAR . "--script")
+    #A((31) BASE-CHAR . "tools/cbor-header-mutation.lisp")
+    #A((11) BASE-CHAR . "--self-test"))
+   :STATUS :OK :EXIT-CODE 0 :SOURCE-CONSISTENCY :STABLE :NEGATIVE-CONTROL NIL)
+  (:ARTIFACT
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-mutation-signals/ArcDocDB/spikes/results/2026-10-09-cbor-mutation-signals/commands/1/report.lisp"
+   :COMMAND
+   (#A((4) BASE-CHAR . "sbcl") #A((10) BASE-CHAR . "--noinform")
+    #A((13) BASE-CHAR . "--no-userinit") #A((12) BASE-CHAR . "--no-sysinit")
+    #A((8) BASE-CHAR . "--script")
+    #A((34) BASE-CHAR . "tools/cbor-structure-mutation.lisp")
+    #A((11) BASE-CHAR . "--self-test"))
+   :STATUS :OK :EXIT-CODE 0 :SOURCE-CONSISTENCY :STABLE :NEGATIVE-CONTROL NIL)
+  (:ARTIFACT
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-mutation-signals/ArcDocDB/spikes/results/2026-10-09-cbor-mutation-signals/commands/2/report.lisp"
+   :COMMAND (#A((4) BASE-CHAR . "make") #A((10) BASE-CHAR . "check-core"))
+   :STATUS :OK :EXIT-CODE 0 :SOURCE-CONSISTENCY :STABLE :NEGATIVE-CONTROL NIL)
+  (:ARTIFACT
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-mutation-signals/ArcDocDB/spikes/results/2026-10-09-cbor-mutation-signals/commands/3/report.lisp"
+   :COMMAND
+   (#A((4) BASE-CHAR . "sbcl") #A((10) BASE-CHAR . "--noinform")
+    #A((13) BASE-CHAR . "--no-userinit") #A((12) BASE-CHAR . "--no-sysinit")
+    #A((8) BASE-CHAR . "--script")
+    #A((31) BASE-CHAR . "tools/cbor-header-mutation.lisp")
+    #A((9) BASE-CHAR . "--invalid"))
+   :STATUS :FAILED :EXIT-CODE 1 :SOURCE-CONSISTENCY :STABLE :NEGATIVE-CONTROL
+   T)
+  (:ARTIFACT
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-mutation-signals/ArcDocDB/spikes/results/2026-10-09-cbor-mutation-signals/commands/4/report.lisp"
+   :COMMAND
+   (#A((4) BASE-CHAR . "sbcl") #A((10) BASE-CHAR . "--noinform")
+    #A((13) BASE-CHAR . "--no-userinit") #A((12) BASE-CHAR . "--no-sysinit")
+    #A((8) BASE-CHAR . "--script")
+    #A((34) BASE-CHAR . "tools/cbor-structure-mutation.lisp")
+    #A((9) BASE-CHAR . "--invalid"))
+   :STATUS :FAILED :EXIT-CODE 1 :SOURCE-CONSISTENCY :STABLE :NEGATIVE-CONTROL
+   T)
+  (:ARTIFACT
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-mutation-signals/ArcDocDB/spikes/results/2026-10-09-cbor-mutation-signals/commands/5/report.lisp"
+   :COMMAND
+   (#A((4) BASE-CHAR . "sbcl") #A((10) BASE-CHAR . "--noinform")
+    #A((13) BASE-CHAR . "--no-userinit") #A((12) BASE-CHAR . "--no-sysinit")
+    #A((8) BASE-CHAR . "--script")
+    #A((31) BASE-CHAR . "tools/cbor-header-mutation.lisp")
+    #A((5) BASE-CHAR . "--run")
+    #A((31) BASE-CHAR . "spikes/out/cbor-header-signals/"))
+   :STATUS :OK :EXIT-CODE 0 :SOURCE-CONSISTENCY :STABLE :NEGATIVE-CONTROL NIL)
+  (:ARTIFACT
+   "/Users/gpicchiarelli/.codex/worktrees/cbor-mutation-signals/ArcDocDB/spikes/results/2026-10-09-cbor-mutation-signals/commands/6/report.lisp"
+   :COMMAND
+   (#A((4) BASE-CHAR . "sbcl") #A((10) BASE-CHAR . "--noinform")
+    #A((13) BASE-CHAR . "--no-userinit") #A((12) BASE-CHAR . "--no-sysinit")
+    #A((8) BASE-CHAR . "--script")
+    #A((34) BASE-CHAR . "tools/cbor-structure-mutation.lisp")
+    #A((5) BASE-CHAR . "--run")
+    #A((34) BASE-CHAR . "spikes/out/cbor-structure-signals/"))
+   :STATUS :OK :EXIT-CODE 0 :SOURCE-CONSISTENCY :STABLE :NEGATIVE-CONTROL NIL))
+ :TEST-MODULES (28 17 17 24 20 66 44 18 95 48) :TOTAL-TESTS 377 :SMOKE :PASSED
+ :SPIKES 10 :HEADER-MUTANTS 9 :STRUCTURE-MUTANTS 10 :CAMPAIGN-WORKER-ERRORS 0
+ :FIXTURE-EXECUTIONS 4 :FIXTURE-OBSERVATIONS
+ ((:EXIT-CODE 137 :SIGNAL 9 :RESULT :WORKER-ERROR)
+  (:EXIT-CODE 7 :SIGNAL NIL :RESULT :WORKER-ERROR))
+ :STRUCTURE-INJECTED-BASELINE-ERRORS (:COPY :TRANSPORT) :LIMITS
+ (:RAW-REPORTS-ARE-AUTHORITATIVE :NEGATIVE-STATUSES-PRESERVED
+  :NO-PRODUCT-CHANGE :NO-COVERAGE-REPEAT :NO-MCDC-OR-ENGINE-QUALIFICATION))
