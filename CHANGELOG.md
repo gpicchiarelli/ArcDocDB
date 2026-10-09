@@ -7,6 +7,34 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
 
 ### Aggiunto
 
+- Indice primario v2 in memoria: controlli Swiss a gruppi di 16, chiavi binarie
+  in arena, lookup con budget comune e conferma root anche sul miss, upsert e
+  cancellazione/rilocazione condizionale nel writer, crescita arena e piani monouso di pubblicazione
+  directory. Hashing, costruttore split/rebuild e GET integrato ancora aperti;
+  include contratti, tracciabilità ed evidenze statiche, qualifica C1 aperta.
+
+- Banco di slot v2 dell'indice: parole u64 contigue, lettura in buffer privato
+  con otto tentativi, pubblicazione e rimozione sotto seqlock, rilocazione
+  condizionale, credito di scrittura e congelamento permanente. Include
+  contratti, decisioni da coprire ed evidenze statiche; qualifica C1 aperta.
+
+- Contesto di lettura preallocato per worker: ingresso EBR a tentativo singolo,
+  snapshot controllato prima e dopo il lookup, anche sul miss, e cleanup del
+  pin prima della migrazione. Collegato ai registri CSN/snapshot/epoche;
+  indice, cache e pool restano da integrare, qualifica concorrente aperta.
+
+- Dominio EBR per Archivio: annunci dei worker distanti 128 byte, ingresso
+  senza mutex a tentativo singolo, ticket preallocati e crediti di epoca prima
+  dello swap. Frontiera condivisa da più ritiri e claim esclusivo del reclaim;
+  integrazione con segmenti/pool e qualifica concorrente restano aperte.
+
+- Registro snapshot per Archivio: soglia annunciata prima della cattura del CSN,
+  contesti preallocati con generazione, controlli di lettura senza mutex,
+  deadline e scadenze con budget. Interfaccia in buffer per i reader;
+  qualifica concorrente, controller ed EBR restano da integrare.
+
+- Registro CSN per Archivio con orizzonte monotono e budget finito;
+  l’implementazione attiva è `arcdocdb.csn`, con token slot/high/low.
 - Ricostruzione in memoria del manifest dal prefisso sigillato di `control.log`:
   ACTIVE, CLOSED con esiti, rimozioni esplicite e limite degli ID. Workspace
   indipendenti per Serie; nessuna riconciliazione o scrittura dei file.
@@ -108,6 +136,11 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   A9…A12), 107 requisiti, 27 modi di guasto, rischio residuo RES-05.
 
 ### Cambiato
+
+- Snapshot collegati all'unico registro `arcdocdb.csn` dell'Archivio; rimosso
+  l'allocatore CSN duplicato del ramo. Coordinamento snapshot senza attese,
+  revoca della soglia provvisoria su `:csn-busy` e invalidazione terminale
+  al guasto. API del registro canonico e sue evidenze conservate.
 
 - Guide del repository consolidate, note degli esperimenti uniformate al metodo
   tecnico e specifica originale rinominata; requisiti ed evidenze conservati (ADR-0051).

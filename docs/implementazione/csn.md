@@ -35,9 +35,10 @@ fra ultimo e H non consuma crediti.
 
 La lettura delle frontiere usa lo stesso tentativo di mutex: è coerente anche
 attraverso il carry fra le parole. I GET senza snapshot non la chiamano.
-Lettura atomica di H senza lock, registrazione e risveglio degli snapshot non
-sono esposti da questo blocco. Un snapshot futuro dovrà coordinare sotto lo
-stesso protocollo la propria soglia e il CSN di nascita.
+Lettura atomica di H senza lock e risveglio degli snapshot non sono esposti da
+questo blocco. Il [registro snapshot](snapshot-csn.md) usa questa API pubblica
+per annunciare la soglia prima della cattura del CSN, senza un secondo allocatore.
+Il collegamento ha evidenze e qualifica separate da quelle del componente CSN.
 
 ## Condizioni e responsabilità
 

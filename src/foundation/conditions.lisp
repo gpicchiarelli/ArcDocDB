@@ -28,6 +28,10 @@
 (define-condition invariant-violation (arcdocdb-error) ()
   (:documentation "Invariante interna violata; il proprietario applica fail-stop."))
 
+;;; REQ: REQ-MVC-004 REQ-AFF-004
+(define-condition snapshot-too-old (arcdocdb-error) ()
+  (:documentation "Snapshot scaduto, terminato o identità riusata; nessun risultato restituito."))
+
 ;;; REQ: REQ-AFF-001 REQ-AFF-004
 (define-condition io-fault (arcdocdb-error)
   ((operation :initarg :operation :reader error-operation :type keyword)
