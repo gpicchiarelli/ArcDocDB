@@ -18,7 +18,7 @@ Non elimina dati, non risolve token e non riapre log; nessun errore ordinario."
   nil)
 
 ;;; REQ: REQ-AFF-001 REQ-AFF-004
-(declaim (ftype (function (controllore-serie keyword) null) %serie-invariant))
+(declaim (ftype (function (controllore-serie keyword) nil) %serie-invariant))
 (defun %serie-invariant (controller reason)
   "Pre: invariante interna falsa. Post: Serie FAULTED, ambito Archivio, condizione propagata.
 Non promette rollback; il coordinatore deve fermare l'Archivio e conservare il contesto."
