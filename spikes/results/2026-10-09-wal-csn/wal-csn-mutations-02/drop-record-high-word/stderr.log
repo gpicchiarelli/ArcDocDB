@@ -1,0 +1,5 @@
+SIMPLE-ERROR: Asserzione fallita: (=
+                                   (LDB (BYTE 8 (* BYTE 8))
+                                        ARCDOCDB.WAL.TESTS::STAMP)
+                                   (AREF ARCDOCDB.WAL.TESTS::DATA
+                                         (+ ARCDOCDB.WAL.TESTS::POS 16 BYTE)))

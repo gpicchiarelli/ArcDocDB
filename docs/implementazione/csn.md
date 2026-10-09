@@ -59,7 +59,8 @@ dei byte durevoli. Il controller non deve confermare un commit dalla sola risolu
 
 Il recovery deve raccogliere il massimo CSN validato dell'intero Archivio prima
 di costruire il registro e ammettere scritture. La base non si può cambiare dopo
-la costruzione. Apertura tardiva di Serie, WAL e lifecycle richiedono integrazione;
+la costruzione. Il [ponte WAL](wal-csn.md) conserva ora i token dei lotti di segmento.
+Apertura tardiva di Serie, controller e lifecycle richiedono integrazione;
 questa API non autorizza importazioni concorrenti con CSN superiori alla base.
 
 Il [metodo preregistrato](csn-metodo.md) descrive oracoli, mutanti e misure.

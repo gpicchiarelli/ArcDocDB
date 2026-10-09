@@ -1,0 +1,72 @@
+(defun audit-read-one (path)
+  (let ((*read-eval* nil))
+    (with-open-file (stream path)
+      (let ((value (read stream nil :eof)))
+        (when (eq value :eof) (error "Empty data file."))
+        (unless (eq (read stream nil :eof) :eof) (error "Trailing data forms."))
+        value))))
+(defparameter *audit-base* "/Users/gpicchiarelli/.codex/worktrees/cbor-structure/ArcDocDB/")
+(defparameter *audit-files*
+  '("src/codec/cbor-package.lisp" "src/codec/cbor-space.lisp"
+    "src/codec/cbor-scan-input.lisp" "src/codec/cbor-scan-stack.lisp"
+    "src/codec/cbor-scan-items.lisp" "src/codec/cbor-scan.lisp"
+    "tests/codec/cbor-structure-support.lisp" "tests/codec/cbor-structure.lisp"
+    "tests/codec/cbor-structure-threads.lisp"))
+(defparameter *audit-wrappers*
+  '("spikes/out/4000529135-command-82764-0/report.lisp"
+    "spikes/out/4000529069-command-81913-0/report.lisp"))
+(with-open-file (output "/tmp/cbor-structure-coverage-extract.lisp" :direction :output
+                        :if-exists :supersede)
+  (let ((*print-pretty* t))
+    (write
+     (list :wrappers
+           (loop for path in *audit-wrappers*
+                 for data = (audit-read-one (concatenate 'string *audit-base* path))
+                 collect
+                 (list :path path :status (getf data :status) :exit (getf data :exit-code)
+                       :stable (getf data :source-consistency)
+                       :before-after-equal (equal (getf data :source-blobs-before)
+                                                  (getf data :source-blobs-after))
+                       :blob-count (length (getf data :source-blobs-before))
+                       :selected-blobs
+                       (loop for file in *audit-files* collect
+                         (list :path file
+                               :before (getf (find file (getf data :source-blobs-before)
+                                                  :key (lambda (entry) (getf entry :path))
+                                                  :test #'equal) :git-blob)
+                               :after (getf (find file (getf data :source-blobs-after)
+                                                 :key (lambda (entry) (getf entry :path))
+                                                 :test #'equal) :git-blob)))
+                       :stdout (getf data :stdout) :stderr (getf data :stderr)))
+           :state
+           (let ((state (audit-read-one
+                         (concatenate 'string *audit-base*
+                                      "spikes/out/cbor-structure-coverage/coverage-state.lisp"))))
+             (list :saved-file-count (length state)
+                   :selected
+                   (loop for file in (subseq *audit-files* 0 6)
+                         for entry = (find (concatenate 'string *audit-base* file) state
+                                           :key #'first :test #'equal)
+                         collect
+                         (let ((paths (second entry)) (bits (cddr entry)))
+                           (unless (= (length paths) (length bits)) (error "State lengths differ."))
+                           (list :path file :entries (length paths)
+                                 :expression-covered
+                                 (loop for path across paths for bit across bits
+                                       count (and (numberp (first path)) (= bit 1)))
+                                 :expression-total
+                                 (loop for path across paths count (numberp (first path)))
+                                 :branch-covered
+                                 (loop for path across paths for bit across bits
+                                       count (and (keywordp (first path)) (= bit 1)))
+                                 :branch-total
+                                 (loop for path across paths count (keywordp (first path)))
+                                 :missing-expressions
+                                 (loop for path across paths for bit across bits
+                                       when (and (numberp (first path)) (= bit 0)) collect path)
+                                 :missing-branches
+                                 (loop for path across paths for bit across bits
+                                       when (and (keywordp (first path)) (= bit 0)) collect path)))))))
+     :stream output)
+    (terpri output)))
+(format t "Safe READ-only extraction complete; data file /tmp/cbor-structure-coverage-extract.lisp.~%")

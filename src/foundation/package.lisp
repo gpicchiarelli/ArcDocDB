@@ -25,5 +25,5 @@
   (:export #:+header-bytes+ #:+max-document-bytes+ #:+max-key-bytes+
            #:+max-record-bytes+ #:+put+ #:+tombstone+ #:+seal+ #:+outcome+
            #:+edit+ #:+decision+ #:+prepared+
-           #:scrivi-record #:verifica-cornice #:u64-equal-p
+           #:scrivi-record #:scrivi-record-parole #:verifica-cornice #:u64-equal-p
            #:verifica-record #:verifica-put #:verifica-lotto))
