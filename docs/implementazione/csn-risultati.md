@@ -91,7 +91,7 @@ campagne, i tentativi di lettura falliti e i sorgenti dei due helper diagnostici
 Questi errori erano negli strumenti di raccolta; nessun fallimento del prodotto
 CSN è stato osservato nelle campagne descritte.
 
-Il manifest aggiunto nel frattempo su `main` viene integrato prima della
+Il manifest e gli header CBOR aggiunti nel frattempo su `main` sono integrati prima della
 verifica completa della consegna. Il catalogo conserva l'esito effettivo di
 `make check`; le prove isolate non sostituiscono tale controllo.
 WAL/controller, massimo globale del recovery, snapshot, parcheggi e fail-stop
