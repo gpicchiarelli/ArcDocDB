@@ -60,7 +60,7 @@
   "Record completo prima della misura, aggiornato anche in caso di errore."
   (list :status :running :iterations iterations :warmup-iterations warmup
         :completed-iterations 0 :heap-bytes nil :raw-ticks nil :seconds nil
-        :time-quality :pending :sink nil
+        :time-quality :pending :sink nil :pairs-per-second nil
         :expected-sink (+ (* iterations token) (truncate (* iterations (1- iterations)) 2))
         :diagnostic nil))
 
@@ -118,6 +118,10 @@
 
 (defun self-test (report)
   "Funzione costante heap zero e controllo positivo con array deliberatamente vivi."
+  (let* ((record (window-record 1 0 0)) (stored record))
+    (setf (getf record :pairs-per-second) 17d0)
+    (unless (and (eq record stored) (= (getf stored :pairs-per-second) 17d0))
+      (error "Il campo throughput non resta nel record condiviso.")))
   (let ((baseline (list :status :running :attempts nil :measurement nil))
         (positive (window-record 16 0 1048576)) (probe nil))
     (setf (getf report :self-test)
@@ -191,7 +195,10 @@
         (adaptive-sample cycle 1 sample)
         (let* ((measurement (getf sample :measurement)) (seconds (getf measurement :seconds)))
           (require-valid-time (getf measurement :raw-ticks))
-          (setf (getf measurement :pairs-per-second) (/ (getf measurement :iterations) seconds)))))
+          (setf (getf measurement :pairs-per-second) (/ (getf measurement :iterations) seconds))
+          (unless (and (eq measurement (getf sample :measurement))
+                       (realp (getf (getf sample :measurement) :pairs-per-second)))
+            (error "Il record conserva tempo/lavoro ma ha perso il throughput.")))))
     (setf (getf progress :final) (funcall finish) (getf progress :status) :ok))
   progress)
 
