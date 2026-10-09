@@ -85,8 +85,12 @@ difensive. Le prove non chiudono il gate del recovery completo.
 
 La campagna del 2026-10-09 è conservata nel
 [catalogo dell'inventario](../../spikes/results/2026-10-09-inventory/catalogo.lisp):
-13 test dedicati, 95 recovery e 307 complessivi più smoke nella fotografia
-integrata. Il modello confronta 6.144 piani (1.024 inventari × due versioni
+13 test dedicati, 95 recovery e 307 complessivi più smoke nella prima fotografia.
+La successiva [integrazione con WAL-CSN, struttura CBOR e ricircolo writer](../../spikes/results/2026-10-09-inventory-integration/catalogo.lisp)
+conserva `make check-core` riuscito con 377 test più smoke e dieci spike completi,
+con hash dei sorgenti stabili. I sorgenti e i test inventory sono invariati;
+copertura e denominatori restano quelli della campagna precedente. Il modello
+confronta 6.144 piani (1.024 inventari × due versioni
 × tre ordini) e altre 1.440 permutazioni (720 × due versioni).
 Quattro thread costruiscono 32 piani privati e consultano un piano
 comune dopo il riuso degli input. Questa prova non misura prestazioni.
@@ -97,6 +101,11 @@ errori di compilazione, pre-test o worker. Il self-test verifica le copie
 ASDF, ora comprensive di CSN, e conserva il segnale SIGKILL di un figlio
 come errore del worker. Questa classificazione riguarda lo strumento
 `foundation-mutation.lisp`; non qualifica gli altri runner del progetto.
+Nella fotografia integrata la baseline ripete i 13 test e gli otto mutanti
+sono nuovamente rilevati con quattro processi: zero sopravvissuti, errori di
+compilazione, pre-test o worker. Il nuovo self-test conserva 112 sorgenti ASDF
+verificati, l'omissione rifiutata, i log e la fixture SIGKILL con segnale 9.
+I runner di queste campagne non impongono un timeout automatico.
 
 | File | Forme osservate / totali | Rami osservati / totali |
 |---|---|---|

@@ -1,0 +1,21 @@
+(REQUIRE :SB-POSIX)
+(LET* ((ARGS (REST SB-EXT:*POSIX-ARGV*))
+       (MODE (FIRST ARGS))
+       (RELEASE (MERGE-PATHNAMES "release" (SECOND ARGS))))
+  (COND
+   ((STRING= MODE "waiting")
+    (LOOP REPEAT 500
+          UNTIL (PROBE-FILE RELEASE)
+          DO (SLEEP 0.01))
+    (SB-EXT:EXIT :CODE
+                 (IF (PROBE-FILE RELEASE)
+                     0
+                     11)))
+   ((STRING= MODE "failing")
+    (WITH-OPEN-FILE (OUTPUT RELEASE :DIRECTION :OUTPUT :IF-EXISTS :ERROR)
+      (WRITE-LINE "rilasciato" OUTPUT))
+    (FORMAT T "worker-fixture-failure~%") (SB-EXT:EXIT :CODE 7))
+   ((STRING= MODE "signaled")
+    (FORMAT T "inventory-test-start SIGNAL-FIXTURE~%") (FINISH-OUTPUT)
+    (SB-POSIX:KILL (SB-POSIX:GETPID) SB-POSIX:SIGKILL))
+   (T (SB-EXT:EXIT :CODE 0))))
