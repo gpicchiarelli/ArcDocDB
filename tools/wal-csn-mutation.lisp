@@ -148,13 +148,20 @@
     (handler-case
         (let ((*standard-output* *error-output*))
           (handler-bind ((warning (lambda (condition) (error condition))))
-            (asdf:initialize-output-translations
-             `(:output-translations (,(truename \"./\") ,(merge-pathnames \"fasl/\" (truename \"./\")))
-                                    :ignore-inherited-configuration))
             (asdf:load-asd (merge-pathnames \"arcdocdb.asd\" (truename \"./\")))
+            (let* ((root (truename \"./\")) (destination (merge-pathnames \"fasl/\" root)))
+              (asdf:initialize-output-translations
+               `(:output-translations
+                 (,(merge-pathnames \"**/*.*\" root) ,(merge-pathnames \"**/*.*\" destination))
+                 :ignore-inherited-configuration))
+              (unless (uiop:subpathp
+                       (asdf:apply-output-translations (merge-pathnames \"src/foundation/record.fasl\" root))
+                       destination)
+                (error \"Cache della copia non isolata.\")))
             (asdf:load-system \"arcdocdb\" :force t)
             (setf phase :compile-probes)
             (asdf:load-system \"arcdocdb/tests\" :force t)
+            (ensure-directories-exist \"fasl/probes.fasl\")
             (load (compile-file \"probes.lisp\" :output-file \"fasl/probes.fasl\"))
             (setf phase :tests)
             (funcall (find-symbol \"RUN-PROBES\" \"ARCDOCDB.WAL-CSN.MUTATION.PROBES\")

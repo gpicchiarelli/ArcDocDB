@@ -20,7 +20,22 @@
             '("/src/codec/cbor-package.lisp" "/src/codec/cbor-header.lisp"))
       (search (format nil "/src/~A/" scope) path)))
 
+(defun isolate-output (root directory)
+  "Mappa esplicitamente ogni file del checkout; rifiuta una destinazione fuori dalla cache privata."
+  (let ((destination (merge-pathnames "fasl/" directory)))
+    (asdf:initialize-output-translations
+     `(:output-translations
+       (,(merge-pathnames "**/*.*" root) ,(merge-pathnames "**/*.*" destination))
+       :ignore-inherited-configuration))
+    (let ((actual (asdf:apply-output-translations (merge-pathnames "src/foundation/record.fasl" root))))
+      (unless (uiop:subpathp actual destination)
+        (error "foundation-coverage.lisp COD-60: cache non isolata: ~A." actual))
+      actual)))
+
 (defun self-test (directory)
+  (let ((actual (isolate-output (truename "./") directory)))
+    (unless (search "/fasl/src/foundation/record.fasl" (namestring actual))
+      (error "foundation-coverage.lisp COD-60: mapping ricorsivo della cache errato.")))
   (unless (and (scope-path-p "cbor" "/repo/src/codec/cbor-package.lisp")
                (scope-path-p "cbor" "/repo/src/codec/cbor-header.lisp")
                (not (scope-path-p "cbor" "/repo/src/codec/utf8.lisp"))
@@ -44,12 +59,10 @@
 
 (defun coverage (directory scope)
   (let ((root (truename "./")))
-    (asdf:initialize-output-translations
-     `(:output-translations (,root ,(merge-pathnames "fasl/" directory))
-                            :ignore-inherited-configuration))
     (proclaim '(optimize (sb-cover:store-coverage-data 3)))
     (handler-bind ((warning (lambda (condition) (error condition))))
       (asdf:load-asd (merge-pathnames "arcdocdb.asd" root))
+      (isolate-output root directory)
       (asdf:load-system "arcdocdb" :force t)
       (asdf:load-system "arcdocdb/tests" :force t)
       (uiop:symbol-call (cond ((string= scope "cbor") '#:arcdocdb.cbor.tests)
