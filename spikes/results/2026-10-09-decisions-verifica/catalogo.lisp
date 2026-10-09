@@ -1,0 +1,31 @@
+(:FINAL-ARTIFACTS
+ ("verifica-evidenze-finale.lisp" "verifica-completa.lisp"
+  "copertura-finale-dati.lisp" "mutazioni-finali-dati.lisp" "letture-c1.lisp")
+ :SCHEMA-VERSION 1 :KIND :EVIDENCE-CATALOG :SCOPE :RECOVERY-DECISIONS :ENTRIES
+ ((:ARTIFACT "verifica-evidenze-finale.lisp")
+  (:ARTIFACT "verifica-evidenze-intermedia.lisp")
+  (:ARTIFACT "verifica-iniziale-fallita.lisp")
+  (:ARTIFACT "mutazione-selftest-iniziale.lisp")
+  (:ARTIFACT "mutazione-baseline-fallita.lisp")
+  (:ARTIFACT "mutazioni-scanner-processo.lisp")
+  (:ARTIFACT "copertura-selftest-processo.lisp")
+  (:ARTIFACT "copertura-iniziale-fallita.lisp")
+  (:ARTIFACT "verifica-test-lint.lisp") (:ARTIFACT "copertura-processo.lisp")
+  (:ARTIFACT "mutazione-selftest-processo.lisp")
+  (:ARTIFACT "mutazione-processo.lisp")
+  (:ARTIFACT "copertura-selftest-precedente.lisp")
+  (:ARTIFACT "copertura-precedente.lisp")
+  (:ARTIFACT "mutazione-runner-precedente.lisp")
+  (:ARTIFACT "fixture-fallita-dati.lisp") (:ARTIFACT "mutazioni-dati.lisp")
+  (:ARTIFACT "mutazioni-scanner-dati.lisp") (:ARTIFACT "copertura-dati.lisp")
+  (:ARTIFACT "letture-c1.lisp") (:ARTIFACT "verifica-default-parziale.lisp")
+  (:ARTIFACT "copertura-default-parziale.lisp")
+  (:ARTIFACT "mutazioni-default-parziale.lisp")
+  (:ARTIFACT "verifica-completa.lisp")
+  (:ARTIFACT "copertura-finale-processo.lisp")
+  (:ARTIFACT "mutazioni-finali-processo.lisp")
+  (:ARTIFACT "mutazioni-finali-dati.lisp")
+  (:ARTIFACT "copertura-finale-dati.lisp"))
+ :LIMITS
+ (:MODULE-ONLY :FAILED-ATTEMPTS-PRESERVED :HISTORICAL-RUNNER-EVIDENCE-NOT-FINAL
+  :NO-MCDC-OR-ENGINE-QUALIFICATION))

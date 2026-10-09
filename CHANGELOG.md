@@ -11,6 +11,16 @@ non ha ancora rilasci; le versioni seguiranno la [roadmap](docs/roadmap.md).
   orizzonte monotono e budget finito; esaurimento u64 senza wrap e fail-stop delle
   transizioni interrotte. La qualifica concorrente e gli snapshot completi restano aperti.
 
+- Verifica in memoria dei segmenti compattati CLOSED v1/v2: identità, CRC,
+  soli PUT/TOMBSTONE ordinari, limite valido autorevole e budget byte/record.
+  Conteggi fisici restituiti dopo il controllo integrale; 15 test indipendenti,
+  otto mutanti rilevati e misure locali delle allocazioni conservate.
+
+- Tabella delle decisioni multiserie inclusa nella compilazione e nei test ordinari:
+  ricostruzione dal prefisso sigillato, duplicati idempotenti o discordanti,
+  budget finiti, query scalari e copie possedute dei partecipanti. Non applica
+  i prepared e non realizza il recovery completo del database.
+
 - SPK-08 bitmap: kernel scalari byte/u64 equivalenti, oracoli indipendenti,
   90 campioni locali e disassemblati conservati. Packing escluso e nessuna
   promozione a ottimizzazione del motore.
