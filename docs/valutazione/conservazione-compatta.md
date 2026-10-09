@@ -134,3 +134,10 @@ tutti i controlli del repository e la
 L'[importazione inizialmente fallita](../../spikes/results/2026-10-09-conservazione/importazione-fallita.lisp)
 e il [controllo dopo la correzione](../../spikes/results/2026-10-09-conservazione/importazione-verificata.lisp)
 conservano anche la regressione della testa della plist.
+
+La [verifica del merge finale con il recovery radix](../../spikes/results/2026-10-09-conservazione/verifica-main.lisp)
+passa sul commit `4fa8df2`, con sorgenti stabili: 186 test del motore e tutti
+i controlli precedenti, inclusa la
+[campagna finale](../../spikes/results/2026-10-09-conservazione/spikes-main.lisp).
+Sono compattati anche i nuovi registri del radix e i run locali terminati
+durante lo sviluppo parallelo; i rispettivi rapporti sono nel catalogo.

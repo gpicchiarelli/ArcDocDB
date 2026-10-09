@@ -132,4 +132,41 @@
       . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511373-command-81388-0/report.lisp"))
   (:ARTIFACT "4000511433-command-81880-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
    #A((111) BASE-CHAR
-      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511433-command-81880-0/report.lisp"))))
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511433-command-81880-0/report.lisp"))
+  (:ARTIFACT #A((24) BASE-CHAR . "compattazione-radix.lisp") :VARIANT
+   #A((24) BASE-CHAR . "compattazione-radix.lisp") :SOURCE
+   #A((49) BASE-CHAR . "spikes/out/4000511915-command-98469-0/report.lisp"))
+  (:ARTIFACT #A((18) BASE-CHAR . "verifica-main.lisp") :VARIANT
+   #A((18) BASE-CHAR . "verifica-main.lisp") :SOURCE
+   #A((49) BASE-CHAR . "spikes/out/4000511972-command-99285-0/report.lisp"))
+  (:ARTIFACT #A((34) BASE-CHAR . "compattazione-locali-chiusura.lisp") :VARIANT
+   #A((34) BASE-CHAR . "compattazione-locali-chiusura.lisp") :SOURCE
+   #A((48) BASE-CHAR . "spikes/out/4000512050-command-1359-0/report.lisp"))
+  (:ARTIFACT #A((16) BASE-CHAR . "spikes-main.lisp") :VARIANT
+   #A((16) BASE-CHAR . "spikes-main.lisp") :SOURCE
+   #A((56) BASE-CHAR
+      . "spikes/results/2026-10-09-conservazione/spikes-main.lisp"))
+  (:ARTIFACT #A((30) BASE-CHAR . "conservazione-spikes-main.lisp") :VARIANT
+   #A((30) BASE-CHAR . "conservazione-spikes-main.lisp") :SOURCE
+   #A((52) BASE-CHAR . "spikes/out/4000512027-check-586-0/conservazione.lisp"))
+  (:ARTIFACT "4000511657-command-91026-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511657-command-91026-0/report.lisp"))
+  (:ARTIFACT "4000511717-command-93640-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((111) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000511717-command-93640-0/report.lisp"))
+  (:ARTIFACT "4000512146-command-2563-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((110) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000512146-command-2563-0/report.lisp"))
+  (:ARTIFACT "4000512227-command-3929-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((110) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000512227-command-3929-0/report.lisp"))
+  (:ARTIFACT "4000512286-command-6682-0.lisp" :VARIANT :COMMAND-LEDGER :SOURCE
+   #A((110) BASE-CHAR
+      . "/Users/gpicchiarelli/.codex/worktrees/prove-compatte/ArcDocDB/spikes/out/4000512286-command-6682-0/report.lisp"))
+  (:ARTIFACT #A((22) BASE-CHAR . "verifica-chiusura.lisp") :VARIANT
+   #A((22) BASE-CHAR . "verifica-chiusura.lisp") :SOURCE
+   #A((48) BASE-CHAR . "spikes/out/4000512414-command-9813-0/report.lisp"))
+  (:ARTIFACT #A((20) BASE-CHAR . "chiusura-ledger.lisp") :VARIANT
+   #A((20) BASE-CHAR . "chiusura-ledger.lisp") :SOURCE
+   #A((48) BASE-CHAR . "spikes/out/4000512352-command-8955-0/report.lisp"))))
