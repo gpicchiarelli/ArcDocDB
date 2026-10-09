@@ -98,3 +98,6 @@ e [seconda lettura](controller-serie-revisione.md) definiscono l'ambito delle
 prove locali. Pool, notifiche/scheduling, conferme client, indice concreto,
 registrazione degli snapshot e coordinatore multiserie restano integrazioni
 distinte. Nessun requisito dell'intero motore viene promosso con questo blocco.
+
+[Risultati locali](controller-serie-risultati.md): check integrato, condizioni,
+copertura, mutazioni, misure seriali/parallele e diagnostiche conservate.
