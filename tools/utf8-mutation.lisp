@@ -91,17 +91,24 @@
   "Esito smoke su riga esatta; una citazione nel backtrace non costituisce smoke."
   (line-present-p text "ok    ARCDOCDB:*VERSION* è una stringa"))
 
-(defun classify-result (text exit)
-  "Solo errore runtime dopo smoke rileva il mutante; gli altri guasti sono INVALID."
-  (cond ((compilation-failure-p text) (values :invalid :compilation-failure))
+(defun build-completed-p (text)
+  "Richiede la riga esatta di completamento della build rigorosa."
+  (line-present-p text "build e test: nessun avviso, tutti i controlli superati"))
+
+(defun classify-result (text exit &optional signal)
+  "Segnali e guasti dopo completamento sono WORKER-ERROR, mai rilevamenti runtime."
+  (cond (signal (values :worker-error :process-signal))
+        ((and (integerp exit) (not (zerop exit)) (build-completed-p text))
+         (values :worker-error :after-build-completion))
+        ((compilation-failure-p text) (values :invalid :compilation-failure))
         ((or (not (integerp exit)) (not (smoke-started-p text)))
          (values :invalid :before-smoke))
         ((zerop exit) (values :survived nil))
         (t (values :detected nil))))
 
-(defun detected-p (text exit)
-  "Rilevato solo con exit nonzero dopo smoke; compilazione fallita non conta."
-  (eq :detected (classify-result text exit)))
+(defun detected-p (text exit &optional signal)
+  "Compilazione, guasti dopo completamento e segnali OS non rilevano il mutante."
+  (eq :detected (classify-result text exit signal)))
 
 (defun esigi-target-invalido (funzione motivo)
   "Verifica il self-test dei bersagli, distinguendo assenza e ambiguità."
@@ -112,9 +119,13 @@
         (setf rilevato t)))
     (unless rilevato (error "Self-test: bersaglio invalido non rilevato."))))
 
+(declaim (ftype (function () (values string &optional)) self-test-process-signal))
+
 (defun self-test ()
-  "Verifica prima sostituzione, classificazioni e applicabilità al codec congelato."
+  "Verifica sostituzione, classificazioni, segnale reale e codec congelato."
   (let* ((smoke "ok    ARCDOCDB:*VERSION* è una stringa")
+         (complete "build e test: nessun avviso, tutti i controlli superati")
+         (finished (format nil "~A~%~A~%" smoke complete))
          (backtrace (format nil "0: (SEARCH ~S TEST-LOG)" smoke)))
     (unless (and (string= "xAxB" (substitute-first "xBxB" "B" "A"))
                  (detected-p smoke 1) (not (detected-p smoke 0))
@@ -123,8 +134,23 @@
                  (not (detected-p backtrace 1))
                  (not (detected-p (concatenate 'string "  " smoke) 1))
                  (not (detected-p (concatenate 'string smoke " citato") 1))
-                 (line-present-p "build e test: nessun avviso, tutti i controlli superati"
-                                 "build e test: nessun avviso, tutti i controlli superati")
+                 (eq :survived (classify-result finished 0))
+                 (equal '(:worker-error :after-build-completion)
+                        (multiple-value-list (classify-result finished 1)))
+                 (eq :worker-error (classify-result complete 1))
+                 (eq :worker-error (classify-result (format nil "~A~%" finished) 1))
+                 (eq :worker-error (classify-result (format nil "~A~%COMPILE-FILE-ERROR" finished) 1))
+                 (eq :worker-error (classify-result (format nil "~A~C~%~A~C~%"
+                                                              smoke #\Return complete #\Return) 1))
+                 (eq :detected (classify-result (format nil "~A~%0: (SEARCH ~S LOG)" smoke complete) 1))
+                 (eq :detected (classify-result (format nil "~A~%  ~A" smoke complete) 1))
+                 (eq :detected (classify-result (format nil "~A~%~A citato" smoke complete) 1))
+                 (equal '(:worker-error :process-signal)
+                        (multiple-value-list (classify-result smoke 1 sb-posix:sigkill)))
+                 (not (detected-p smoke 1 sb-posix:sigkill))
+                 (eq :worker-error (classify-result "compilation aborted" 1 sb-posix:sigkill))
+                 (eq :worker-error (classify-result finished 0 sb-posix:sigkill))
+                 (eq :invalid (classify-result smoke nil))
                  (eq :invalid (classify-result backtrace 1))
                  (eq :invalid (classify-result "compilation aborted" 1))
                  (eq :invalid (classify-result "runtime prima dello smoke" 1)))
@@ -137,6 +163,8 @@
         :backtrace-marker :invalid
         :invalid-targets '(:missing :ambiguous) :compilation-failure :invalid
         :baseline-completion :exact-build-end-line
+        :after-completion-failure :worker-error :os-signal :worker-error
+        :signal-fixture-report (self-test-process-signal)
         :applicable-mutants 9))
 
 (defun new-directory (name)
@@ -169,27 +197,29 @@
       (write '(load "tools/build.lisp") :stream stream) (terpri stream))
     runner))
 
+(defun execute-runner (directory)
+  "Conserva log, exit code e segnale OS del runner preparato, compresa la fixture."
+  (let* ((log (merge-pathnames "test.log" directory))
+         (process (uiop:launch-program
+                    '("sbcl" "--noinform" "--no-userinit" "--no-sysinit"
+                      "--disable-debugger" "--script" "tools/utf8-isolated-build.lisp")
+                    :directory directory :output log :error-output :output)))
+    (multiple-value-bind (exit signal) (uiop:wait-process process)
+      (values (read-text log) exit log signal))))
+
 (defun execute-copy (directory)
   "Esegue la build rigorosa della copia con cache locale e log conservato."
-  (let ((log (merge-pathnames "test.log" directory)))
-    (isolated-runner directory)
-    (multiple-value-bind (out err exit)
-        (uiop:run-program '("sbcl" "--noinform" "--no-userinit" "--no-sysinit"
-                            "--disable-debugger" "--script" "tools/utf8-isolated-build.lisp")
-                          :directory directory :output log :error-output :output
-                          :ignore-error-status t)
-      (declare (ignore out err))
-      (values (read-text log) exit log))))
+  (isolated-runner directory)
+  (execute-runner directory))
 
 (defun run-baseline (directory)
   "La copia invariata deve completare smoke e test con exit zero prima dei mutanti."
   (copy-test-system directory)
-  (multiple-value-bind (text exit log) (execute-copy directory)
-    (let ((passed (and (integerp exit) (zerop exit) (not (compilation-failure-p text))
-                       (smoke-started-p text)
-                       (line-present-p text "build e test: nessun avviso, tutti i controlli superati"))))
-      (list :status (if passed :ok :invalid) :exit-code exit :log (namestring log)
-            :diagnostic (unless passed :baseline-failed)))))
+  (multiple-value-bind (text exit log signal) (execute-copy directory)
+    (multiple-value-bind (result diagnostic) (classify-result text exit signal)
+      (let ((passed (and (eq result :survived) (build-completed-p text))))
+        (list :status (if passed :ok :invalid) :result result :exit-code exit :signal signal
+              :log (namestring log) :diagnostic (unless passed (or diagnostic :baseline-failed)))))))
 
 (defun preserve-setup-error (log condition)
   "Conserva anche la diagnostica di setup, senza troncare un log eventualmente già scritto."
@@ -209,13 +239,13 @@
               (with-open-file (stream source :direction :output :if-exists :supersede
                                             :external-format :utf-8)
                 (write-string (substitute-first text before after) stream)))
-            (multiple-value-bind (text exit path-log) (execute-copy directory)
-              (multiple-value-bind (result diagnostic) (classify-result text exit)
+            (multiple-value-bind (text exit path-log signal) (execute-copy directory)
+              (multiple-value-bind (result diagnostic) (classify-result text exit signal)
                 (list :name name :source-file path :detected (eq result :detected) :exit-code exit
-                      :result result :diagnostic diagnostic :log (namestring path-log)))))
+                      :signal signal :result result :diagnostic diagnostic :log (namestring path-log)))))
         (error (condizione)
           (preserve-setup-error log condizione)
-          (list :name name :source-file path :detected nil :exit-code nil :result :invalid
+          (list :name name :source-file path :detected nil :exit-code nil :signal nil :result :worker-error
                 :diagnostic :infrastructure-error :detail (princ-to-string condizione)
                 :log (namestring log)))))))
 
@@ -226,10 +256,69 @@
                            :direction :output :if-exists :supersede :if-does-not-exist :create)
       (let ((*print-readably* t)) (write report :stream stream :pretty t) (terpri stream)))))
 
+(defun append-mutation-result (report result)
+  "Registra il risultato e conta i guasti worker separatamente dai mutanti rilevati."
+  (setf (getf report :mutants) (append (getf report :mutants) (list result)))
+  (when (eq :worker-error (getf result :result))
+    (incf (getf report :worker-errors 0)))
+  report)
+
+(defun self-test-process-signal ()
+  "Solo il processo figlio fixture si termina con SIGKILL sul trasporto della campagna."
+  (let* ((directory (new-directory
+                     (format nil "spikes/out/~D-utf8-signal-self-test-~D/"
+                             (get-universal-time) (sb-posix:getpid))))
+         (runner (merge-pathnames "tools/utf8-isolated-build.lisp" directory))
+         (report (list :schema-version 1 :kind :process-signal-self-test :scope :utf8
+                       :status :running :worker-errors 0 :mutants nil :runner (namestring runner))))
+    (save-report report directory)
+    (handler-case
+        (progn
+          (ensure-directories-exist runner)
+          (with-open-file (output runner :direction :output :if-exists :error :external-format :utf-8)
+            (dolist (form '((require :sb-posix)
+                            (format t "ok    ARCDOCDB:*VERSION* è una stringa~%")
+                            (finish-output)
+                            (sb-posix:kill (sb-posix:getpid) sb-posix:sigkill)))
+              (write form :stream output :pretty t) (terpri output)))
+          (multiple-value-bind (text exit log signal) (execute-runner directory)
+            (multiple-value-bind (result diagnostic) (classify-result text exit signal)
+              (setf report
+                    (append-mutation-result report
+                      (list :name "signal-fixture" :result result :detected (eq result :detected)
+                            :exit-code exit :signal signal :diagnostic diagnostic :log (namestring log))))
+              (save-report report directory)
+              (unless (and (eq result :worker-error) (eql signal sb-posix:sigkill)
+                           (not (eql exit 0)) (smoke-started-p text))
+                (error "Self-test UTF-8: segnale OS trattato come rilevamento o perduto."))))
+          (let* ((*read-eval* nil)
+                 (saved (with-open-file (input (merge-pathnames "report.lisp" directory)
+                                               :external-format :utf-8)
+                          (let ((data (read input)))
+                            (unless (eq :eof (read input nil :eof))
+                              (error "Self-test UTF-8: forme aggiuntive nel report."))
+                            data)))
+                 (entry (first (getf saved :mutants)))
+                 (observed (first (getf report :mutants))))
+            (unless (and (= 1 (getf saved :worker-errors))
+                         (eq :worker-error (getf entry :result)) (not (getf entry :detected))
+                         (eql (getf observed :exit-code) (getf entry :exit-code))
+                         (eql sb-posix:sigkill (getf entry :signal)))
+              (error "Self-test UTF-8: esito, segnale o contatore worker non conservato.")))
+          (setf (getf report :status) :passed)
+          (save-report report directory))
+      (error (condition)
+        (setf (getf report :status) :failed (getf report :diagnostic) (princ-to-string condition))
+        (save-report report directory)
+        (error condition)))
+    (format t "~&UTF-8: self-test segnale OS superato; ~A~%" (merge-pathnames "report.lisp" directory))
+    (namestring (merge-pathnames "report.lisp" directory))))
+
 (defun main ()
   "Self-test o nove copie nuove; plist finale e exit nonzero per campagna non valida."
   (let* ((args (rest sb-ext:*posix-argv*)) (before (fingerprints)) (directory nil)
          (report (list :schema-version 1 :kind :utf8-mutations :status :running
+                       :worker-errors 0 :mutants nil
                        :recorded-at (get-universal-time) :sbcl (lisp-implementation-version)
                        :source-fingerprints-before before
                        :targets (loop for (path name old new) in *mutants*
@@ -254,7 +343,7 @@
             (loop for mutant in *mutants* for i from 0
                   do (let* ((child (new-directory (merge-pathnames (format nil "~D/" i) directory)))
                             (result (run-mutant mutant child)))
-                       (setf (getf report :mutants) (append (getf report :mutants) (list result)))
+                       (setf report (append-mutation-result report result))
                        (save-report report directory)))
             (unless (and (= 9 (length (getf report :mutants)))
                          (every (lambda (result) (getf result :detected)) (getf report :mutants)))

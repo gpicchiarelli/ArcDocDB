@@ -4,8 +4,10 @@
 
 **Fase 0: definizione architetturale e valutazione.** La definizione è completa (51 ADR,
 [architettura](architettura.md), [formati](formati-su-disco.md)) ed è passata da
-un'[analisi progettuale](analisi-progettuale.md) (ADR 0036–0045); non si scrive
-codice di produzione. ADR-0028 e ADR-0030 sono confermati dall'autore (2026-10-08).
+un'[analisi progettuale](analisi-progettuale.md) (ADR 0036–0045). L'autore ha
+autorizzato le [fondazioni implementative](implementazione/README.md) il
+2026-10-08; restano aperti i gate e la qualifica del motore completo.
+ADR-0028 e ADR-0030 sono confermati dall'autore (2026-10-08).
 Restano le campagne complete degli [spike](valutazione/piano-spike.md),
 compreso il gate v2 di SPK-10,
 aggiornando la [valutazione](valutazione/README.md). Vedi la [roadmap](roadmap.md).

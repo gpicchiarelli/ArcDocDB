@@ -4,7 +4,10 @@
 
 ## Stato attuale
 
-**Fase 0 — Definizione architetturale e valutazione.** Nessun codice di produzione.
+**Fase 0 — Definizione architetturale e valutazione, con fondazioni in implementazione.**
+L'autore ha autorizzato la scrittura delle fondazioni il 2026-10-08:
+[moduli e contratti](implementazione/README.md). Questa attività non chiude
+i gate sperimentali e non qualifica il motore completo.
 
 Al 2026-10-03 la parte di **definizione è completa**: le 26 questioni aperte sono chiuse dagli
 ADR 0013–0030, il progetto è consolidato in [architettura.md](architettura.md) e i formati in

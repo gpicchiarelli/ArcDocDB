@@ -1,0 +1,81 @@
+(:SCHEMA-VERSION 1 :KIND :COPIER-SELF-TEST-OUTPUT :PROCESS-ARTIFACT
+ "integrazione-self-test-foundation.lisp" :ORIGINAL-DIRECTORY
+ "spikes/out/4000512283-mutation-copy-self-test-6606/" :ORIGINAL-REPORT
+ (:KIND :COPIER-SELF-TEST :STATUS :PASSED :SOURCE-FILES
+  ("src/package.lisp" "src/foundation/package.lisp"
+   "src/foundation/conditions.lisp" "src/foundation/binary.lisp"
+   "src/foundation/crc32c.lisp" "src/foundation/record.lisp"
+   "src/foundation/batch.lisp" "src/execution/package.lisp"
+   "src/execution/queue.lisp" "src/execution/writer.lisp"
+   "src/storage/package.lisp" "src/storage/formats.lisp"
+   "src/storage/segment-header.lisp" "src/storage/log-header.lisp"
+   "src/storage/compaction-scan.lisp" "src/storage/control-payload.lisp"
+   "src/storage/payload-record.lisp" "src/storage/payload-write.lisp"
+   "src/io/package.lisp" "src/io/types.lisp" "src/io/native.lisp"
+   "src/io/lifecycle.lisp" "src/io/transfer.lisp" "src/io/flush.lisp"
+   "src/wal/package.lisp" "src/wal/types.lisp" "src/wal/builder.lisp"
+   "src/wal/group.lisp" "src/wal/executor.lisp" "src/recovery/package.lisp"
+   "src/recovery/scan.lisp" "src/recovery/decisions-package.lisp"
+   "src/recovery/decisions-types.lisp" "src/recovery/decisions-sort.lisp"
+   "src/recovery/decisions-radix.lisp" "src/recovery/decisions-build.lisp"
+   "src/recovery/decisions-query.lisp" "src/recovery/manifest-package.lisp"
+   "src/recovery/manifest-types.lisp" "src/recovery/manifest-decode.lisp"
+   "src/recovery/manifest-fold.lisp" "src/recovery/manifest-build.lisp"
+   "src/recovery/manifest-query.lisp" "tests/smoke.lisp"
+   "tests/foundation/support.lisp" "tests/foundation/binary.lisp"
+   "tests/foundation/record.lisp" "tests/foundation/batch.lisp"
+   "tests/execution/support.lisp" "tests/execution/queue.lisp"
+   "tests/execution/threads.lisp" "tests/storage/support.lisp"
+   "tests/storage/segment-header.lisp" "tests/storage/log-header.lisp"
+   "tests/storage/compaction-scan.lisp" "tests/storage/control-payload.lisp"
+   "tests/io/support.lisp" "tests/io/transfer.lisp" "tests/io/native.lisp"
+   "tests/recovery/support.lisp" "tests/recovery/scan.lisp"
+   "tests/recovery/corruption.lisp" "tests/recovery/decisions-support.lisp"
+   "tests/recovery/decisions.lisp" "tests/recovery/decisions-audit.lisp"
+   "tests/recovery/decisions-radix.lisp" "tests/recovery/manifest-support.lisp"
+   "tests/recovery/manifest.lisp" "tests/recovery/manifest-audit.lisp"
+   "tests/wal/support.lisp" "tests/wal/builder.lisp" "tests/wal/group.lisp"
+   "tests/wal/fault.lisp" "tests/wal/native.lisp")
+  :MISSING-SOURCE-REJECTED T)
+ :RAW-FILES
+ ((:PATH "report.lisp" :BYTE-COUNT 2355 :GIT-BLOB
+   "83345ff84e1b297f1db2cfd35e716a57e728ab7d" :CONTENT
+   "(:KIND :COPIER-SELF-TEST :STATUS :PASSED :SOURCE-FILES
+ (\"src/package.lisp\" \"src/foundation/package.lisp\"
+  \"src/foundation/conditions.lisp\" \"src/foundation/binary.lisp\"
+  \"src/foundation/crc32c.lisp\" \"src/foundation/record.lisp\"
+  \"src/foundation/batch.lisp\" \"src/execution/package.lisp\"
+  \"src/execution/queue.lisp\" \"src/execution/writer.lisp\"
+  \"src/storage/package.lisp\" \"src/storage/formats.lisp\"
+  \"src/storage/segment-header.lisp\" \"src/storage/log-header.lisp\"
+  \"src/storage/compaction-scan.lisp\" \"src/storage/control-payload.lisp\"
+  \"src/storage/payload-record.lisp\" \"src/storage/payload-write.lisp\"
+  \"src/io/package.lisp\" \"src/io/types.lisp\" \"src/io/native.lisp\"
+  \"src/io/lifecycle.lisp\" \"src/io/transfer.lisp\" \"src/io/flush.lisp\"
+  \"src/wal/package.lisp\" \"src/wal/types.lisp\" \"src/wal/builder.lisp\"
+  \"src/wal/group.lisp\" \"src/wal/executor.lisp\" \"src/recovery/package.lisp\"
+  \"src/recovery/scan.lisp\" \"src/recovery/decisions-package.lisp\"
+  \"src/recovery/decisions-types.lisp\" \"src/recovery/decisions-sort.lisp\"
+  \"src/recovery/decisions-radix.lisp\" \"src/recovery/decisions-build.lisp\"
+  \"src/recovery/decisions-query.lisp\" \"src/recovery/manifest-package.lisp\"
+  \"src/recovery/manifest-types.lisp\" \"src/recovery/manifest-decode.lisp\"
+  \"src/recovery/manifest-fold.lisp\" \"src/recovery/manifest-build.lisp\"
+  \"src/recovery/manifest-query.lisp\" \"tests/smoke.lisp\"
+  \"tests/foundation/support.lisp\" \"tests/foundation/binary.lisp\"
+  \"tests/foundation/record.lisp\" \"tests/foundation/batch.lisp\"
+  \"tests/execution/support.lisp\" \"tests/execution/queue.lisp\"
+  \"tests/execution/threads.lisp\" \"tests/storage/support.lisp\"
+  \"tests/storage/segment-header.lisp\" \"tests/storage/log-header.lisp\"
+  \"tests/storage/compaction-scan.lisp\" \"tests/storage/control-payload.lisp\"
+  \"tests/io/support.lisp\" \"tests/io/transfer.lisp\" \"tests/io/native.lisp\"
+  \"tests/recovery/support.lisp\" \"tests/recovery/scan.lisp\"
+  \"tests/recovery/corruption.lisp\" \"tests/recovery/decisions-support.lisp\"
+  \"tests/recovery/decisions.lisp\" \"tests/recovery/decisions-audit.lisp\"
+  \"tests/recovery/decisions-radix.lisp\" \"tests/recovery/manifest-support.lisp\"
+  \"tests/recovery/manifest.lisp\" \"tests/recovery/manifest-audit.lisp\"
+  \"tests/wal/support.lisp\" \"tests/wal/builder.lisp\" \"tests/wal/group.lisp\"
+  \"tests/wal/fault.lisp\" \"tests/wal/native.lisp\")
+ :MISSING-SOURCE-REJECTED T)
+"))
+ :MISSING-FILES
+ ((:PATH "src/package.lisp" :REASON :INTENTIONAL-SELF-TEST-REMOVAL)))

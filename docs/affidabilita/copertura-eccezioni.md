@@ -88,6 +88,51 @@ La [tabella dei predicati composti](../implementazione/decisioni-multiserie-deci
 collega le clausole pubbliche ai test e le guardie interne a questo inventario.
 Le eccezioni degli altri moduli non sono inventariate da questa misura.
 
+## Inventario locale del manifest
+
+Misura del 2026-10-09 sui sei file `manifest-*`: 888/1067 espressioni e
+114/146 rami, con 20 test dedicati nella suite recovery iniziale di 64 test. I 32
+rami non osservati comprendono 28 alternative di guardie interne e quattro
+alternative non marcate nelle specifiche di tipo `NEXT-ID` dei due
+`defstruct`. Lo stato e gli HTML originali sono nel
+[catalogo](../../spikes/results/2026-10-09-manifest/catalogo.lisp).
+Le due letture C1 verificano l'inventario insieme ai
+[predicati composti](../implementazione/manifest-control-log-decisioni.md).
+
+| ID | Sorgente, funzione e riga | Alternative non osservate | Motivazione / verifica sostitutiva |
+|---|---|---|---|
+| COV-031 | `manifest-build.lisp`, `manifest-frame`, 28 | 1: posizione prima della fine | Lo scanner conta solo cornici intere; troncamenti a ogni byte e ispezione dei passaggi |
+| COV-032 | `manifest-build.lisp`, `manifest-frame`, 32 | 3: avanzamento, confine e predicato composto | Cornice di controllo già verificata nel prefisso stabile; scanner e oracoli v1/v2 |
+| COV-033 | `manifest-build.lisp`, `manifest-frame`, 36 | 1: flags SEAL nonzero | Lo scanner rifiuta flags non ammessi prima della rilettura |
+| COV-034 | `manifest-build.lisp`, `manifest-frame`, 39 | 1: fallback fuori da EDIT/SEAL | Lo scanner del control log ammette soltanto questi record |
+| COV-035 | `manifest-build.lisp`, `manifest-frame`, 45 | 1: span payload non ordinati | Il codec attesta gli span; lunghezze e consumo corrotti sono verificati dall'API |
+| COV-036 | `manifest-build.lisp`, `preflight-manifest`, 61 | 1: conteggi non coerenti con i byte | Conteggi autorevoli dello scanner, con almeno un header per cornice |
+| COV-037 | `manifest-build.lisp`, `preflight-manifest`, 80 | 2: posizione finale e predicato composto | Rilettura delle stesse cornici su input stabile; conteggio fisico provato prima della coalescenza |
+| COV-038 | `manifest-build.lisp`, `decode-manifest`, 92 | 1: conteggi non coerenti con i byte | Scanner e preflight hanno già fissato questi valori |
+| COV-039 | `manifest-build.lisp`, `decode-manifest`, 107 | 3: posizione, numero EDIT e predicato composto | Fold e preflight consumano gli stessi span; copia posseduta e input invariato |
+| COV-040 | `manifest-decode.lisp`, `check-closed-shape`, 12 | 1: lunghezza fuori formato | Codec già verificato; test pubblici su 0, 63, 64, u32 massimo e valori superiori |
+| COV-041 | `manifest-decode.lisp`, `check-closed-shape`, 14 | 1: mappa non EQL | Ogni mappa privata è creata con EQL; ispezione delle costruzioni |
+| COV-042 | `manifest-decode.lisp`, `decode-closure-outcomes`, 39 | 1: coppie oltre byte disponibili | Span e count già verificati dal codec; test budget e payload corrotti |
+| COV-043 | `manifest-decode.lisp`, `decode-closure-outcomes`, 50 | 2: consumo e predicato composto | Una coppia letta per passo; coalescenza può solo ridurre la cardinalità |
+| COV-044 | `manifest-decode.lisp`, `decode-edit-closed`, 67 | 1: entry fissa oltre confine | Codec e span CLOSED già verificati |
+| COV-045 | `manifest-decode.lisp`, `decode-edit-closed`, 80 | 2: consumo e predicato composto | Un passo per CLOSED fisico; duplicati coerenti/discordanti verificati |
+| COV-046 | `manifest-decode.lisp`, `decode-edit-removed`, 92 | 1: span diverso da count × 8 | Misura già verificata dal codec; rimozioni ultime e duplicate provate |
+| COV-047 | `manifest-decode.lisp`, `decode-edit-removed`, 97 | 1: cardinalità oltre conteggio | Un inserimento per menzione fisica, con duplicati coalescenti |
+| COV-048 | `manifest-fold.lisp`, `apply-manifest-delta`, 81 | 1: alias delle mappe | Decodifica crea mappe nuove per ogni EDIT; prove di ownership e quattro worker |
+| COV-049 | `manifest-fold.lisp`, `apply-manifest-delta`, 91 | 3: ACTIVE zero, sua negazione e predicato composto | Snapshot nonzero, OPEN zero conserva ACTIVE, limite aggiornato con MAX; storie e u64 esaurito |
+| COV-050 | `manifest-types.lisp`, `manifest-state`, 52 | 2: specifica di tipo NEXT-ID non marcata | Dato grezzo su `(integer 1 18446744073709551616)`, non un ramo applicativo; tipi e limite esaurito verificati |
+| COV-051 | `manifest-types.lisp`, `manifest`, 62 | 2: specifica di tipo NEXT-ID non marcata | Stessa specifica del workspace; nessuna sottrazione dal denominatore |
+
+I contatori di `sb-cover` non equivalgono a un ramo per ogni operando Lisp.
+Le 179 espressioni non marcate includono segnalazioni difensive e forme
+dichiarative, slot e inizializzatori dei keyword. I default sono
+raggiungibili e verificati dal test diretto
+`direct-api-defaults-and-required-options`; non diventano invarianti
+irraggiungibili per il solo fatto che la strumentazione non li marca.
+Nessuna forma o alternativa è esclusa dalle 1067 espressioni e dai 146
+rami pubblicati. Nessuna eccezione è approvata e il gate C1 del motore
+resta aperto.
+
 ## Consegna locale dei writer — 2026-10-09
 
 La [campagna handoff](../implementazione/writer-handoff-decisioni.md#copertura-raw-osservata)
