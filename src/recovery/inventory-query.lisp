@@ -1,0 +1,35 @@
+;;;; Query scalari sul piano completo: non eseguono le azioni suggerite.
+;;; OWNER: piano immutabile del chiamante, entry private non esportate.
+;;; SHARED: letture concorrenti senza cache, lock o scritture condivise fra Serie.
+(in-package #:arcdocdb.recovery.manifest)
+(declaim (optimize (safety 3) (debug 2)))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008
+(declaim (ftype (function (reconciliation-plan)
+                         (values (member :ready :degraded :faulted) &optional)) stato-riconciliazione))
+(defun stato-riconciliazione (plan)
+  "Pre: piano completato. Post: disponibilità dei nomi richiesti, non stato del motore.
+TYPE-ERROR per tipi invalidi con safety3; nessuna modifica o autorizzazione al traffico."
+  (%plan-health plan))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008
+(declaim (ftype (function (reconciliation-plan) (values index &optional))
+                numero-azioni-riconciliazione))
+(defun numero-azioni-riconciliazione (plan)
+  "Pre: piano completato. Post: numero di ID distinti, incluse anomalie e mancanti.
+TYPE-ERROR per tipi invalidi con safety3; nessun contenitore privato restituito."
+  (length (%plan-entries plan)))
+
+;;; REQ: REQ-REC-001 REQ-REC-002 REQ-AFF-008 REQ-AFF-018
+(declaim (ftype (function (reconciliation-plan integer)
+                         (values u64 (member :temporary :final :absent :both)
+                                 (member :use :rename :delete :anomaly :missing :conflict)
+                                 (member :active :closed :removed :unknown) &optional))
+                azione-riconciliazione))
+(defun azione-riconciliazione (plan position)
+  "Pre: piano completato e indice intero. Post: ID, forma, azione, stato del manifest scalari.
+INVALID-ARGUMENT per indice fuori range; TYPE-ERROR per tipi invalidi, nessun alias esposto."
+  (unless (<= 0 position (1- (numero-azioni-riconciliazione plan)))
+    (error 'invalid-argument :reason :reconciliation-index))
+  (let ((entry (the reconciliation-entry (aref (%plan-entries plan) position))))
+    (values (%re-id entry) (%re-form entry) (%re-action entry) (%re-state entry))))

@@ -1,0 +1,65 @@
+name: CI results
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: ID del run CI da pubblicare (intero positivo).
+        required: true
+        type: string
+      run_attempt:
+        description: Attempt esatto da pubblicare (intero positivo).
+        required: true
+        type: string
+      dry_run:
+        description: Valida e prepara senza push.
+        type: boolean
+        default: true
+  schedule:
+    - cron: '23 */6 * * *'
+
+permissions: {}
+
+# Ogni run resta in coda: i conflitti Git e i retry appartengono alla CLI.
+jobs:
+  publisher:
+    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      checks: read
+      pull-requests: read
+      contents: write
+    env:
+      ARCDOCDB_CI_TOOLCHAIN_LOCK: .github/ci-toolchain.lock.lisp
+    steps:
+      - name: Checkout fresco del main fidato
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ${{ github.repository }}
+          ref: refs/heads/main
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-sbcl
+      - name: Pubblica l'attempt richiesto
+        if: github.event_name != 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_PUBLISH_RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.run_id }}
+          CI_PUBLISH_RUN_ATTEMPT: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.run_attempt || inputs.run_attempt }}
+          CI_PUBLISH_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          if [ "$CI_PUBLISH_DRY_RUN" = true ]; then
+            sbcl --script tools/ci.lisp publish --run-id "$CI_PUBLISH_RUN_ID" --attempt "$CI_PUBLISH_RUN_ATTEMPT" --dry-run
+          else
+            sbcl --script tools/ci.lisp publish --run-id "$CI_PUBLISH_RUN_ID" --attempt "$CI_PUBLISH_RUN_ATTEMPT"
+          fi
+      - name: Riconcilia gli attempt terminali
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: sbcl --script tools/ci.lisp reconcile --limit 100

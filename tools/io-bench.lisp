@@ -1,0 +1,112 @@
+;;;; I/O locale e costo dei controlli. Non misura transazioni o storage sostenuto.
+;;;; Uso: --self-test oppure --bench; file reali soltanto in una directory temporanea propria.
+;;; REQ: REQ-AFF-001 REQ-AFF-008 REQ-VAL-001
+(require :asdf)
+(require :sb-md5)
+(asdf:load-asd (merge-pathnames "arcdocdb.asd" (truename "./")))
+(asdf:load-system "arcdocdb")
+(defpackage #:arcdocdb.io.bench (:use #:cl))
+(in-package #:arcdocdb.io.bench)
+(declaim (optimize (safety 3) (speed 2) (debug 2)))
+
+(defun octets (n) (make-array n :element-type '(unsigned-byte 8) :initial-element 42))
+(defun sample (function iterations bytes)
+  (dotimes (i (min iterations 1024)) (funcall function))
+  (sb-ext:gc :full t)
+  (let* ((start (get-internal-real-time)) (before (sb-ext:get-bytes-consed)) (sink 0))
+    (declare (type fixnum sink))
+    (dotimes (i iterations) (setf sink (logxor sink (the fixnum (funcall function)))))
+    (let* ((allocated (- (sb-ext:get-bytes-consed) before))
+           (seconds (/ (- (get-internal-real-time) start)
+                       (float internal-time-units-per-second 1d0))))
+      (list :iterations iterations :bytes-per-operation bytes :seconds seconds :heap-bytes allocated
+            :sink sink :operations-per-second (if (plusp seconds) (/ iterations seconds) nil)
+            :seconds-per-operation (if (plusp seconds) (/ seconds iterations) nil)))))
+(defun campaign (name function iterations bytes)
+  (list :name name :samples (loop repeat 5 collect (sample function iterations bytes))))
+(defun fingerprints ()
+  (loop for path in (append '(#p"arcdocdb.asd" #p"tools/io-bench.lisp")
+                           (sort (append (directory "src/foundation/*.lisp")
+                                         (directory "src/io/*.lisp")) #'string< :key #'namestring))
+        collect (list :file (enough-namestring path)
+                      :md5 (format nil "~(~{~2,'0X~}~)" (coerce (sb-md5:md5sum-file path) 'list)))))
+(defun self-test ()
+  (let ((plain (sample (lambda () 42) 4096 0)) (probe nil))
+    (unless (zerop (getf plain :heap-bytes)) (error "COD-60: baseline del contatore non zero."))
+    (let ((report (sample (lambda () (setf probe (octets 64)) (length probe)) 4096 64)))
+      (unless (and (= 64 (length probe)) (plusp (getf report :heap-bytes)))
+        (error "COD-60: allocazioni deliberate non rilevate."))))
+  (format t "(:self-test :ok)~%"))
+(defun succeeds (fd) (declare (ignore fd)) 0)
+(defun open-simulation (name mode) (declare (ignore name mode)) 7)
+(defun unused-call (&rest args) (error "Chiamata inattesa nel benchmark: ~S" args))
+(defun writer-simulation (fd buffer start count) (declare (ignore fd buffer start)) count)
+(defun simulated-campaigns (input output)
+  (let* ((backend (arcdocdb.io:make-backend
+                   #'open-simulation
+                   (lambda (fd buffer start count offset)
+                     (declare (ignore fd))
+                     (replace buffer input :start1 start :end1 (+ start count)
+                                           :start2 offset :end2 (+ offset count)) count)
+                   #'writer-simulation #'succeeds #'unused-call #'succeeds))
+         (reader (arcdocdb.io:apri-lettura "simulation" :backend backend))
+         (writer (arcdocdb.io:crea-temporaneo "simulation.tmp" :backend backend)))
+    (unwind-protect
+         (list (campaign :simulated-read-copy-2k
+                         (lambda () (arcdocdb.io:leggi-esatto reader output 0 2048 0)) 131072 2048)
+               (campaign :simulated-append-2k
+                         (lambda () (arcdocdb.io:append-esatto writer input 0 2048)) 131072 2048))
+      (arcdocdb.io:chiudi reader) (arcdocdb.io:chiudi writer))))
+(defun fresh-directory ()
+  (loop for attempt below 1000
+        for path = (merge-pathnames (format nil "arcdocdb-io-bench-~D-~D-~D/"
+                                           (get-universal-time) (sb-posix:getpid) attempt)
+                                    (uiop:temporary-directory))
+        do (handler-case (progn (sb-posix:mkdir path #o700) (return-from fresh-directory path))
+             (sb-posix:syscall-error (c)
+               (unless (= sb-posix:eexist (sb-posix:syscall-errno c)) (error c)))))
+  (error "Directory esclusiva del benchmark non disponibile."))
+(defun native-campaigns (directory input output)
+  (let ((path (merge-pathnames "fixture.tmp" directory)))
+    (let ((writer (arcdocdb.io:crea-temporaneo path)))
+      (unwind-protect (progn (arcdocdb.io:append-esatto writer input 0 2048)
+                             (arcdocdb.io:durable-flush writer))
+        (arcdocdb.io:chiudi writer)))
+    (let ((reader (arcdocdb.io:apri-lettura path))
+          (writer (arcdocdb.io:crea-temporaneo (merge-pathnames "append.tmp" directory)))
+          (flusher (arcdocdb.io:crea-temporaneo (merge-pathnames "groups.tmp" directory)))
+          (group (octets 65536)))
+      (unwind-protect
+           (list (campaign :native-pread-os-cache-2k
+                           (lambda () (arcdocdb.io:leggi-esatto reader output 0 2048 0)) 32768 2048)
+                 (campaign :native-append-no-per-operation-flush-2k
+                           (lambda () (arcdocdb.io:append-esatto writer input 0 2048)) 8192 2048)
+                 (campaign :native-append-and-durable-flush-64k
+                           (lambda () (arcdocdb.io:append-esatto flusher group 0 65536)
+                             (arcdocdb.io:durable-flush flusher)) 32 65536))
+        (arcdocdb.io:chiudi reader) (arcdocdb.io:chiudi writer) (arcdocdb.io:chiudi flusher)))))
+(defun benchmark ()
+  (let ((directory (fresh-directory)) (input (octets 2048)) (output (octets 2048)))
+    (unwind-protect
+         (let ((campaigns (append (simulated-campaigns input output)
+                                  (native-campaigns directory input output))))
+           (let ((*print-pretty* t) (*print-readably* t))
+             (write (list :scope :io-microbench :workers 1 :safety 3 :recorded-at (get-universal-time)
+                          :sbcl (lisp-implementation-version) :cpu (machine-version)
+                          :os (software-type) :os-version (software-version)
+                          :timer-units-per-second internal-time-units-per-second
+                          :source-fingerprints (fingerprints) :campaigns campaigns
+                          :limits '(:os-cache-warm :external-load-uncontrolled :not-sustained-nvme
+                                    :no-transaction-protocol :no-index-publication :not-request-latency)))
+             (terpri))
+           (unless (every (lambda (campaign)
+                            (every (lambda (sample) (zerop (getf sample :heap-bytes)))
+                                   (getf campaign :samples))) campaigns)
+             (error "COD-30: allocazioni rilevate in un percorso riuscito; risultati stampati.")))
+      ;; C4: tutte le foglie della directory esclusiva 0700 sono fixture di questa campagna.
+      (dolist (path (uiop:directory-files directory)) (sb-posix:unlink (namestring path)))
+      (sb-posix:rmdir (namestring directory)))))
+(let ((args (rest sb-ext:*posix-argv*)))
+  (cond ((equal args '("--self-test")) (self-test))
+        ((equal args '("--bench")) (benchmark))
+        (t (error "Usare --self-test o --bench."))))

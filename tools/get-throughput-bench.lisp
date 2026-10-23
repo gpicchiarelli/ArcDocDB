@@ -1,0 +1,161 @@
+;;;; C4 --self-test|--bench|--negative-fixture DIRECTORY-NUOVA; solo GET reale seriale.
+;;; OWNER: main possiede fixture/output; binding del kernel privato, nessun altro thread.
+;;; REQ: REQ-FOR-003 REQ-IDX-003 REQ-CCH-002 REQ-VAL-001
+(require :asdf)
+(let ((*features* (cons :arcdocdb-get-bench-library *features*)))
+  (load (merge-pathnames "get-performance-bench.lisp" *load-truename*)))
+(uiop:symbol-call '#:arcdocdb.get-performance.bench '#:load-product)
+(defpackage #:arcdocdb.get-throughput.bench
+  (:use #:cl) (:local-nicknames (#:g #:arcdocdb.get-performance.bench) (#:b #:arcdocdb.binary)))
+(in-package #:arcdocdb.get-throughput.bench)
+(declaim (optimize (safety 3) (speed 2) (debug 2)))
+;;; OWNER: main esclusivo, nessuna formattazione/persistenza dentro le finestre.
+(defvar *report* nil)
+(defvar *directory* nil)
+(defparameter *selected-kernel* b::+crc32c-kernel+)
+(defparameter *selected-backend* (b:backend-crc32c))
+(defstruct raw (completed 0 :type fixnum) (sink 0 :type fixnum) failure)
+
+(defun fail (control &rest arguments)
+  (error "tools/get-throughput-bench.lisp COD-61: ~A" (apply #'format nil control arguments)))
+
+(defun save-report ()
+  (let ((path (merge-pathnames "report.lisp" *directory*)))
+    (with-open-file (s path :direction :output :if-exists :supersede :if-does-not-exist :create)
+      (write *report* :stream s :pretty t :readably t) (terpri s))
+    (with-open-file (s path)
+      (let ((*read-eval* nil) (eof (gensym)))
+        (unless (equalp *report* (read s nil eof)) (fail "rilettura diversa"))
+        (unless (eq eof (read s nil eof)) (fail "forme ulteriori"))))))
+
+(defun throughput-cycle (fixture scenario)
+  "Stesso GET del riferimento, senza oracolo/fill del driver nella finestra."
+  (let* ((worker (svref (g::fixture-workers fixture) 0)) (context (g::worker-context worker))
+         (output (g::worker-output worker)) (size (g::fixture-size fixture))
+         (miss (eq scenario :absent)) (cached (eq scenario :cache-hit))
+         (keys (if miss (g::fixture-absent fixture) (g::fixture-keys fixture))) (cursor 0)
+         (view (if cached (g::fixture-cache-view fixture) (g::fixture-segment-view fixture)))
+         (segment (if cached (g::fixture-cache-segment fixture) (g::fixture-segment fixture)))
+         (valid (g::fixture-valid-bytes fixture))
+         (start (g::api "ARCDOCDB.GET" "AVVIA-GET")) (probe (g::api "ARCDOCDB.GET" "SONDA-CACHE-GET"))
+         (read-record (g::api "ARCDOCDB.GET" "LEGGI-RECORD-GET"))
+         (copy-value (g::api "ARCDOCDB.GET" "COPIA-VALORE-GET"))
+         (finish (g::api "ARCDOCDB.GET" "CONCLUDI-GET")) (abandon (g::api "ARCDOCDB.GET" "ABBANDONA-GET")))
+    (declare (type fixnum size cursor valid))
+    (lambda ()
+      (unwind-protect
+           (progn
+             (unless (eq (funcall start context view (svref keys cursor) nil 0 (get-internal-real-time))
+                         (if miss :absent :candidate)) (fail "avvio inatteso"))
+             (unless miss
+               (unless (eq (funcall probe context segment valid 0) (if cached :hit :disabled))
+                 (fail "sonda inattesa"))
+               (unless cached
+                 (multiple-value-bind (source cache insertion evicted scan)
+                     (funcall read-record context segment valid 0)
+                   (unless (and (eq source :segment) (eq cache :disabled)
+                                (eq insertion :not-attempted) (null evicted) (null scan))
+                     (fail "fonte segmento inattesa"))))
+               (unless (= (funcall copy-value context output 1) (1+ size)) (fail "range copia errato")))
+             (multiple-value-bind (result length) (funcall finish context (get-internal-real-time))
+               (unless (and (eq result (if miss :absent :found)) (= length (if miss 0 size)))
+                 (fail "conclusione inattesa"))))
+        (funcall abandon context))
+      (setf cursor (logand (1+ cursor) 7))
+      1)))
+
+(defun verify-fixture (fixture scenario)
+  "Otto GET col ciclo originale: ogni chiave, tutti i byte e ownership EBR."
+  (let ((cycle (g::make-cycle fixture (svref (g::fixture-workers fixture) 0) scenario)) (sum 0))
+    (dotimes (i 8) (incf sum (funcall cycle)))
+    (unless (= sum (g::cycle-total fixture scenario)) (fail "oracolo prima/dopo errato"))))
+
+(defun run-loop (cycle count output)
+  (declare (type fixnum count) (type raw output) (optimize (speed 3) (safety 3)))
+  (handler-case
+      (dotimes (i count)
+        (incf (raw-sink output) (the fixnum (funcall cycle))) (incf (raw-completed output)))
+    (error (condition) (setf (raw-failure output) (princ-to-string condition)))))
+
+(defun check-row (row expected)
+  (unless (and (null (getf row :diagnostic)) (= (getf row :iterations) (getf row :completed))
+               (= expected (getf row :sink)) (<= 0 (getf row :heap-bytes) most-positive-fixnum))
+    (fail "finestra incompleta/sink errato ~S" row)))
+
+(defun window (fixture scenario variant method replica count warmup suite &optional negative)
+  (let* ((b::+crc32c-kernel+ (ecase method (:software #'b::crc32c-lisp) (:selected *selected-kernel*)))
+         (cycle (ecase variant (:exact (g::make-cycle fixture (svref (g::fixture-workers fixture) 0) scenario))
+                               (:throughput (throughput-cycle fixture scenario))))
+         (raw (make-raw)) (ticks 0) (heap 0) (cpu 0)
+         (expected (+ (if (eq variant :exact) (* (/ count 8) (g::cycle-total fixture scenario)) count)
+                      (if negative 1 0))))
+    (verify-fixture fixture scenario)
+    (sb-ext:gc :full t)
+    (dotimes (i warmup) (funcall cycle))
+    (setf cpu (get-internal-run-time) ticks (get-internal-real-time) heap (sb-ext:get-bytes-consed))
+    (handler-case (sb-ext:with-timeout 60 (run-loop cycle count raw))
+      (error (condition) (setf (raw-failure raw) (princ-to-string condition))))
+    (setf heap (- (sb-ext:get-bytes-consed) heap) ticks (- (get-internal-real-time) ticks)
+          cpu (- (get-internal-run-time) cpu))
+    (let ((row (list :suite suite :size (g::fixture-size fixture) :csn (g::fixture-csn fixture)
+                     :scenario scenario :variant variant :kernel method :replica replica
+                     :status (if (raw-failure raw) :failed :ok) :iterations count
+                     :completed (raw-completed raw) :sink (raw-sink raw) :expected-sink expected
+                     :ticks ticks :cpu-ticks cpu :heap-bytes heap :diagnostic (raw-failure raw)
+                     :cpu-ns-per-get (/ (* cpu 1d9) internal-time-units-per-second count)
+                     :ns-per-get (when (plusp ticks) (/ (* ticks 1d9) internal-time-units-per-second count)))))
+      (when negative (setf (getf row :status) :failed (getf row :diagnostic) "atteso alterato"))
+      (push row (getf *report* :windows)) (save-report) (check-row row expected))
+    (verify-fixture fixture scenario)))
+
+(defun campaign (suite count warmup replicas)
+  (dolist (size '(16 256 4096))
+    (dolist (csn '(7 #xffffffffffffffff))
+      (let ((fixture (g::make-input-fixture size csn *directory*)))
+        (unwind-protect
+             (dolist (scenario '(:cache-hit :segment :absent))
+               (dolist (variant '(:exact :throughput))
+                 (dotimes (replica replicas)
+                   (dolist (method (if (evenp replica) '(:software :selected) '(:selected :software)))
+                     (window fixture scenario variant method replica count warmup suite)))))
+          (g::dispose-fixture fixture))))))
+
+(defun sensor ()
+  (let* ((before (sb-ext:get-bytes-consed))
+         (live (make-array (* 4 1024 1024) :element-type '(unsigned-byte 8) :initial-element 41))
+         (observed (- (sb-ext:get-bytes-consed) before)))
+    (unless (and (= (aref live 0) 41) (>= observed (* 4 1024 1024))) (fail "sensore insensibile"))
+    (setf (getf *report* :sensor-positive-bytes) observed))
+  (let ((raw (make-raw)) (cycle (lambda () 1)) (before 0))
+    (setf before (sb-ext:get-bytes-consed)) (run-loop cycle 20000 raw)
+    (let ((observed (- (sb-ext:get-bytes-consed) before)))
+      (unless (and (zerop observed) (= (raw-completed raw) (raw-sink raw) 20000)) (fail "baseline nulla errata"))
+      (setf (getf *report* :sensor-empty-bytes) observed))))
+
+(defun main ()
+  (let* ((args (uiop:command-line-arguments)) (mode (first args)) (directory (second args)))
+    (unless (and (= (length args) 2)
+                 (member mode '("--self-test" "--bench" "--negative-fixture") :test #'string=))
+      (fail "modo e directory nuova richiesti"))
+    (setf *directory* (merge-pathnames (uiop:ensure-directory-pathname directory) (truename "./")))
+    (when (probe-file *directory*) (fail "directory esistente"))
+    (ensure-directories-exist (merge-pathnames "report.lisp" *directory*))
+    (setf *report* (list :schema-version 1 :kind :get-throughput-bench :status :running
+                        :selected-backend *selected-backend* :timer-units internal-time-units-per-second
+                        :mode mode :windows nil :diagnostic nil))
+    (handler-case
+        (sb-ext:with-timeout 900
+          (if (string= mode "--negative-fixture")
+              (let ((fixture (g::make-input-fixture 16 7 *directory*)))
+                (unwind-protect (window fixture :cache-hit :throughput :selected 0 8 8 :negative t)
+                  (g::dispose-fixture fixture)))
+              (progn (sensor) (campaign :self-test 8 8 1)
+                     (when (string= mode "--bench") (campaign :bench 20000 1000 5))))
+          (setf (getf *report* :status) :ok) (save-report))
+      (error (condition)
+        (setf (getf *report* :status) :failed (getf *report* :diagnostic) (princ-to-string condition))
+        (save-report) (format *error-output* "get-throughput-bench.lisp COD-61: ~A~%" condition)
+        (uiop:quit 1)))
+    (format t "GET throughput: ~A, ~D finestre.~%" (getf *report* :status) (length (getf *report* :windows)))))
+
+(unless (member :arcdocdb-get-throughput-library *features*) (main))

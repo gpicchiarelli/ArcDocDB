@@ -1,0 +1,57 @@
+;;; OWNER: formato ADR-0058, costanti immutabili.
+;;; SHARED: sole letture fra Serie.
+(in-package #:arcdocdb.index.page)
+(declaim (optimize (safety 3) (speed 2) (debug 2)))
+
+;;; REQ: REQ-IDX-009
+(defconstant +page-header+ 96)
+(defconstant +page-magic-low+ #x49435241)
+(defconstant +page-magic-high+ #x31304750)
+(defconstant +off-magic-high+ 4)
+(defconstant +page-version+ 1)
+(defconstant +off-version+ 8)
+(defconstant +off-kind+ 10)
+(defconstant +off-size+ 11)
+(defconstant +off-flags+ 12)
+(defconstant +off-series+ 16)
+(defconstant +off-image+ 32)
+(defconstant +off-page+ 40)
+(defconstant +off-generation+ 48)
+(defconstant +off-used+ 56)
+(defconstant +off-count+ 60)
+(defconstant +off-next+ 64)
+(defconstant +off-next-generation+ 72)
+(defconstant +off-parameter+ 80)
+(defconstant +off-reserved+ 84)
+(defconstant +off-header-crc+ 88)
+(defconstant +off-body-crc+ 92)
+(defconstant +page-identity-bytes+ 16)
+(defconstant +page-id-max+ #.(1- (ash 1 60)))
+(defconstant +entry-bytes+ 64)
+(defconstant +entry-csn+ 8)
+(defconstant +entry-location+ 16)
+(defconstant +entry-length+ 24)
+(defconstant +entry-key-length+ 28)
+(defconstant +entry-flags+ 30)
+(defconstant +entry-key-offset+ 32)
+(defconstant +entry-reserved+ 36)
+(defconstant +entry-key-page+ 40)
+(defconstant +entry-key-generation+ 48)
+(defconstant +entry-tail+ 56)
+(defconstant +page-group+ 16)
+(defconstant +page-empty+ 255)
+(defconstant +reference-bytes+ 16)
+(defconstant +reference-generation+ 8)
+
+;;; REQ: REQ-IDX-009
+(deftype page-number () '(integer 0 #.+page-id-max+))
+(deftype page-kind () '(member :bucket :directory :chiave))
+(deftype page-error () '(member invalid-argument corruption-detected))
+
+;;; REQ: REQ-IDX-009
+(declaim (ftype (function (index) (values fixnum fixnum fixnum &optional)) geometria-pagina))
+(defun geometria-pagina (size)
+  "Pre: dimensione intera. Post: codice, capacita' bucket, massimo radix; zero se ignota.
+Nessuna mutazione, allocazione o errore; nessuna taglia preferita implicitamente."
+  (case size (4096 (values 12 32 7)) (16384 (values 14 128 9))
+        (65536 (values 16 512 11)) (otherwise (values 0 0 0))))

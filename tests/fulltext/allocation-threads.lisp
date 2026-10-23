@@ -1,0 +1,52 @@
+(in-package #:arcdocdb.fulltext.analysis.tests)
+
+(deftest req-sec-008-framing-allocation
+  (multiple-value-bind (buffer start end identity lengths)
+      (arcdocdb.fulltext.format.tests::fixture :segment-id 1)
+    (dotimes (i 200)
+      (arcdocdb.fulltext.format:scrivi-cornice-indice-full-text buffer start end identity 1 lengths)
+      (arcdocdb.fulltext.format:verifica-cornice-indice-full-text buffer start end identity 1))
+    (sb-ext:gc :full t)
+    (let ((before (sb-ext:get-bytes-consed)))
+      (dotimes (i 1000)
+        (arcdocdb.fulltext.format:scrivi-cornice-indice-full-text buffer start end identity 1 lengths)
+        (arcdocdb.fulltext.format:verifica-cornice-indice-full-text buffer start end identity 1))
+      (let ((allocated (- (sb-ext:get-bytes-consed) before)))
+        (format t "Cornice: ~D byte consed per 1000 scritture + verifiche.~%" allocated)
+        (is (zerop allocated))))))
+
+(defun analyze-hot (space input)
+  (inizia-analisi-full-text space input 0 (length input) :max-tokens 128)
+  (complete space)
+  (risultati-analisi-full-text space))
+
+(deftest req-sec-010-hot-path-allocation
+  (let* ((run (arcdocdb.fulltext.index:crea-indice-posizionale)) (space (small-space))
+         (query (small-space)) (input (bytes "CAFFÈ Straße uno due uno uno")))
+    (append-field run space 0 1 "CAFFÈ Straße uno due uno uno") (seal run)
+    (dotimes (i 200) (analyze-hot query input) (is (matches run 0 1 query :phrase)))
+    (sb-ext:gc :full t)
+    (let ((before (sb-ext:get-bytes-consed)))
+      (dotimes (i 1000) (analyze-hot query input) (is (matches run 0 1 query :phrase)))
+      (let ((allocated (- (sb-ext:get-bytes-consed) before)))
+        (format t "Analisi + query: ~D byte consed per 1000 operazioni.~%" allocated)
+        (is (zerop allocated))))))
+
+(deftest req-sec-007-analysis-concurrent-readers
+  (let ((run (arcdocdb.fulltext.index:crea-indice-posizionale)) (space (small-space))
+        (threads (make-array 4)) (failures (make-array 4 :initial-element nil)))
+    (append-field run space 0 1 "CAFFÈ Straße uno due uno uno") (seal run)
+    (dotimes (i 4)
+      (let ((worker i))
+        (setf (aref threads i)
+              (sb-thread:make-thread
+               (lambda ()
+                 (handler-case
+                     (let ((query (small-space)))
+                       (dotimes (j 80)
+                         (is (equal '("caffè" "strasse") (analyzed "CAFFÈ Straße" :space query :quantum (1+ worker))))
+                         (is (matches run 0 1 query :phrase))))
+                   (error (c) (setf (aref failures worker) c))))))))
+    (dotimes (i 4)
+      (is (not (eq :timeout (sb-thread:join-thread (aref threads i) :timeout 30 :default :timeout))))
+      (is (null (aref failures i))))))

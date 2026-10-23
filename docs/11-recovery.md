@@ -1,0 +1,114 @@
+# 11 — Recovery
+
+> **Fonte:** «Recovery» della [specifica](specifica/specifica-originale.md); riferimenti da
+> «Transazioni multiserie», «Segment metadata», «Workflow Clean/Merge».
+> **Moduli:** M12 Recovery Manager.
+> **Decisioni:** la sequenza definitiva è in [architettura.md](architettura.md#recovery);
+> meccanismi in [ADR-0036](adr/0036-leggi-di-progetto.md) (un punto di atomicità, recovery non
+> distruttivo), [ADR-0037](adr/0037-lotto-sigillato.md) (coda o corruzione),
+> [ADR-0040](adr/0040-manifest-a-record-unico.md) (manifest, riconciliazione),
+> [ADR-0041](adr/0041-multiserie-segmenti-autosufficienti.md) (esiti delle multiserie),
+> [ADR-0022](adr/0022-registri-come-serie-catalogo.md) (bootstrap).
+
+## Compito
+
+Il Recovery Manager DEVE essere in grado di ricostruire il sistema dopo un crash. Verifica:
+
+- WAL;
+- segment metadata;
+- index metadata;
+- atomic swap;
+- stato dei segmenti;
+- stato delle transazioni;
+- `multiserie.log`.
+
+## Che cosa fa dopo un crash
+
+- recupera i WAL delle singole Serie;
+- ricostruisce o verifica gli indici;
+- identifica i segmenti `ACTIVE` / `CLOSED` / `OBSOLETE`;
+- completa o annulla le operazioni di compaction incomplete;
+- processa `multiserie.log`;
+- completa le transazioni multiserie preparate.
+
+## Requisiti di crash-safety
+
+- Le operazioni di compaction DEVONO essere crash-safe.
+- Un segmento nuovo NON DEVE diventare visibile come definitivo prima che i suoi dati siano
+  durevoli (INV-C7).
+- Un atomic swap incompleto DEVE poter essere riconosciuto durante il recovery.
+- I segment metadata sono dati derivati: il recovery li verifica e, se necessario, li
+  ricostruisce da WAL, dati e indice (INV-S6).
+
+## Sequenza
+
+> **Deciso ([architettura](architettura.md#recovery))** — La specifica elenca le attività ma non
+> l'ordine. L'ordine seguente rispetta le dipendenze tra le attività; il recovery è idempotente
+> (INV-A7) e **non distruttivo** (INV-A9): non tronca e non modifica alcun segmento. Per ogni
+> Serie il passo 5 legge l'`ACTIVE` lotto per lotto, e l'unico effetto durevole è la rinomina
+> di un control log compattato che chiude il vecchio `ACTIVE` alla sua lunghezza valida e ne
+> apre uno nuovo. Il passo 7 non scrive nei segmenti: gli esiti COMMIT ricavati da
+> `multiserie.log` sono registrati in quello stesso record di chiusura.
+
+| # | Passo | Perché in questo punto |
+|---|---|---|
+| 1 | Recupero del catalogo in `Registri/` | senza catalogo non si conoscono le Serie da aprire |
+| 2 | Lettura di `multiserie.log` → tabella delle decisioni | serve per interpretare i PREPARE nei WAL delle Serie |
+| 3 | Per ogni Serie (**in parallelo**): inventario dei segmenti e loro stato | identifica ACTIVE/CLOSED/OBSOLETE e file di compaction incompleti |
+| 4 | Per ogni Serie: risoluzione delle compaction interrotte | scartare l'output non ancora visibile, oppure completare lo swap |
+| 5 | Per ogni Serie: replay del WAL | ricostruisce lo stato; le transazioni PREPARED si risolvono con la tabella del passo 2 |
+| 6 | Per ogni Serie: ricostruzione o verifica di indici e segment metadata | dati derivati |
+| 7 | Completamento delle transazioni multiserie preparate | COMMIT se la decisione è durevole, altrimenti ABORT |
+| 8 | Apertura al traffico | — |
+
+Le Serie sono fisicamente indipendenti, quindi i passi 3–6 si prestano al recovery parallelo
+per Serie: il tempo di riavvio è dominato dalla Serie più lenta, non dalla somma.
+
+## Casi di compaction interrotta
+
+Con riferimento ai passi del [workflow](07-compaction.md#workflow):
+
+| Crash… | Stato trovato | Azione |
+|---|---|---|
+| durante la copia (passi 4–6) | file di output parziale, non referenziato | scartare l'output; il sorgente è intatto; l'operazione è ripetibile |
+| dopo `fsync`, prima dello swap (7–8) | output completo ma non visibile | scartare (o riutilizzare) l'output; sorgente intatto |
+| durante lo swap (9) | swap parziale | DEVE essere riconoscibile; completare o annullare |
+| dopo lo swap, prima di OBSOLETE (10) | output visibile, sorgente ancora `CLOSED` | segnare il sorgente `OBSOLETE` |
+| durante il reclaim (11–13) | sorgente `OBSOLETE`/`RECLAIMABLE`, eventualmente file già rimosso | dopo un riavvio non esistono reader né snapshot precedenti: il reclaim può essere completato |
+
+> **Deciso (QA-04 → [ADR-0018](adr/0018-control-log-manifest-swap.md), [ADR-0040](adr/0040-manifest-a-record-unico.md))** — Per riconoscere uno swap incompleto serve una registrazione autorevole e
+> atomica dell'insieme dei segmenti validi di una Serie (un *manifest*, oppure record dedicati
+> nel WAL della Serie). È la decisione che rende deterministica tutta la tabella qui sopra:
+> lo swap è **un record EDIT**. Prima dell'EDIT l'output è un `.tmp` e si elimina; dopo, il
+> recovery completa rinomina ed eliminazione dei sorgenti. Uno «swap parziale» non esiste. Un
+> file con nome definitivo che il manifest non conosce non viene eliminato: è un'anomalia
+> segnalata (INV-A10).
+
+## Recovery degli indici full text
+
+Secondo [ADR-0053](adr/0053-ricerca-full-text-indici-invertiti.md), il
+contratto autorevole e i documenti committed permettono di ricostruire
+file e delta full text. Il recovery verifica identità, CRC, profilo,
+generazione e copertura; un file mancante o corrotto non significa
+assenza di documenti corrispondenti alla query.
+
+Finché il rebuild non copre completamente la vista richiesta, la query
+riceve un errore esplicito di indice non disponibile. Un eventuale ripiego
+su scansione conserva semantica e budget del contratto. Anche il restore
+deve ricostruire e verificare questi derivati. Le prove verticali attuali
+di una Serie non verificano ancora questo percorso della fase 8.
+
+## Questioni decise e rischi
+
+- **QA-04** ([ADR-0018](adr/0018-control-log-manifest-swap.md)) — Manifest dei segmenti e meccanismo dello swap.
+- **QA-03** ([ADR-0015](adr/0015-primary-index-swiss-table-swmr.md)) — Ricostruire l'indice da zero richiede di rileggere tutti i segmenti; senza
+  checkpoint il tempo di riavvio cresce con la dimensione dei dati (RSK-07).
+- **QA-10** ([ADR-0022](adr/0022-registri-come-serie-catalogo.md)) — Bootstrap di Registri/catalogo (RSK-15).
+- **QA-08** ([ADR-0021](adr/0021-2pc-intenti-outcome.md)) — Fino a quando una decisione resta in `multiserie.log`.
+- Ogni riga delle tabelle sopra corrisponde a uno scenario di
+  [fault injection](14-fault-injection.md).
+
+## Metriche
+
+Tempo di recovery complessivo e per Serie, tempo di rebuild degli indici, numero di transazioni
+multiserie risolte, numero di compaction ripetute o completate.

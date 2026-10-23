@@ -1,0 +1,68 @@
+(in-package #:arcdocdb.wal.tests)
+
+(deftest test-REQ-WAL-005-codec-v1-v2-and-high-u64
+  (dolist (version '(1 2))
+    (dolist (stamp '(0 19 #xffffffffffffffff))
+      (let ((lotto (crea-lotto :segment #xffffffffffffffff :version version :capacity 512)))
+        (aggiungi-record lotto 1 (bytes 17) (bytes 21) :txid 7)
+        (aggiungi-record lotto 2 (bytes 18) (bytes))
+        (sigilla-lotto lotto stamp 64 64)
+        (multiple-value-bind (end actual durable count)
+            (arcdocdb.record:verifica-lotto (arcdocdb.wal::lotto-buffer lotto) 0
+                                          (lunghezza-lotto lotto) #xffffffffffffffff
+                                          :file-offset 64 :version version)
+          (is (= end (lunghezza-lotto lotto))) (is (= actual stamp))
+          (is (= durable 64)) (is (= count 2)))
+        (is (eq :sealed (stato-lotto lotto)))))))
+
+(deftest test-REQ-WAL-005-preserve-prepared-outcome-decision-txid
+  (let ((lotto (crea-lotto :segment 31 :capacity 512)) (outcome (buffer 8)))
+    (arcdocdb.binary:scrivi-u64 outcome 0 19)
+    (aggiungi-record lotto 1 (bytes 17) (bytes 21) :flags 1 :txid #xffffffffffffffff)
+    (aggiungi-record lotto 4 (bytes) outcome :txid #xffffffffffffffff)
+    (sigilla-lotto lotto 19 0 0)
+    (let ((data (arcdocdb.wal::lotto-buffer lotto)))
+      (is (= #xffffffffffffffff (arcdocdb.binary:leggi-u64 data 16)))
+      (is (= #xffffffffffffffff (arcdocdb.binary:leggi-u64 data (+ 26 16))))
+      (is (= (lunghezza-lotto lotto)
+             (arcdocdb.record:verifica-lotto data 0 (lunghezza-lotto lotto) 31)))))
+  (dolist (entry '((:control 5 24) (:multiserie 6 26)))
+    (destructuring-bind (kind record-kind length) entry
+      (let ((lotto (crea-lotto kind 0 :capacity 512)))
+        (aggiungi-record lotto record-kind (bytes) (buffer length) :txid #xffffffffffffffff)
+        (sigilla-lotto lotto 19 0 0)
+        (is (= (if (eq kind :control) 19 #xffffffffffffffff)
+               (arcdocdb.binary:leggi-u64 (arcdocdb.wal::lotto-buffer lotto) 16)))
+        (is (= (lunghezza-lotto lotto)
+               (arcdocdb.record:verifica-lotto (arcdocdb.wal::lotto-buffer lotto) 0
+                                             (lunghezza-lotto lotto) 0 :log-kind kind)))))))
+
+(deftest test-REQ-WAL-005-empty-and-seal-exact-capacity
+  (let ((lotto (crea-lotto :segment 31 :capacity 56)))
+    (signals resource-exhausted (aggiungi-record lotto 1 (bytes 17) (bytes 21)))
+    (is (zerop (lunghezza-lotto lotto)))
+    (is (= 56 (sigilla-lotto lotto 19 0 0)))
+    (multiple-value-bind (end stamp durable count)
+        (arcdocdb.record:verifica-lotto (arcdocdb.wal::lotto-buffer lotto) 0 56 31)
+      (is (= end 56)) (is (= stamp 19)) (is (zerop durable)) (is (zerop count))))
+  (let ((lotto (crea-lotto :segment 31 :capacity 82 :max-records 1)))
+    (is (= 26 (aggiungi-record lotto 1 (bytes 17) (bytes 21))))
+    (signals resource-exhausted (aggiungi-record lotto 1 (bytes 18) (bytes 22)))
+    (is (= 82 (sigilla-lotto lotto 19 0 0)))))
+
+(deftest test-REQ-AFF-008-builder-preflight-and-sealed-immutability
+  (dolist (args '((:capacity 55) (:capacity 67108865) (:max-records 0) (:max-records 65537)))
+    (signals invalid-argument (apply #'crea-lotto :segment 31 args)))
+  (signals invalid-argument (crea-lotto :control 31))
+  (let* ((lotto (crea-lotto :segment 31 :capacity 128)) (data (arcdocdb.wal::lotto-buffer lotto)))
+    (signals invalid-argument (aggiungi-record lotto 3 (bytes) (buffer 32)))
+    (signals corruption-detected (aggiungi-record lotto 1 (bytes) (bytes 21)))
+    (signals invalid-argument (sigilla-lotto lotto 19 0 1))
+    (signals invalid-argument (sigilla-lotto lotto 19 most-positive-fixnum 0))
+    (is (every #'zerop data))
+    (sigilla-lotto lotto 19 0 0)
+    (let ((copy (copy-seq data)))
+      (signals invalid-argument (aggiungi-record lotto 1 (bytes 17) (bytes 21)))
+      (signals invalid-argument (sigilla-lotto lotto 20 0 0))
+      (signals invalid-argument (riusa-lotto lotto))
+      (is (equalp copy data)))))

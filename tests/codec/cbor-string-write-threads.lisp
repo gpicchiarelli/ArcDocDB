@@ -1,0 +1,63 @@
+(in-package #:arcdocdb.cbor.string.write.tests)
+
+;;; REQ: REQ-CBR-002 REQ-AFF-004 REQ-AFF-008
+(deftest test-REQ-CBR-002-string-write-two-reused-workers-shared-immutable-source
+  (multiple-value-bind (source ss se) (cws-shared-worker-source)
+    (let* ((source-before (copy-seq source)) (rounds 8192) (buffers (make-array 2))
+           (expecteds (make-array 2)) (limits (vector 0 0)) (nexts (vector 0 0))
+           (tokens (vector 0 0))
+           (ready (vector (sb-thread:make-semaphore) (sb-thread:make-semaphore)))
+           (go (vector (sb-thread:make-semaphore) (sb-thread:make-semaphore)))
+           (done (vector (sb-thread:make-semaphore) (sb-thread:make-semaphore)))
+           (starts (make-array '(2 2) :initial-element 0))
+           (firsts (make-array '(2 2) :initial-element 0))
+           (ends (make-array '(2 2) :initial-element 0))
+           (sinks (make-array '(2 2) :initial-element 0)) (threads nil))
+      (is (= (* 2 2 rounds) 32768))
+      (dotimes (index 2)
+        (let* ((major (+ 2 index)) (header (cws-header major (- se ss))))
+          (multiple-value-bind (buffer start end) (cws-destination (+ 8 (- se ss)))
+            (let ((expected (copy-seq buffer)) (next (+ start (length header) (- se ss))))
+              (is (= start 3)) (replace expected header :start1 start)
+              (replace expected source :start1 (+ start (length header)) :start2 ss :end2 se)
+              (setf (svref buffers index) buffer (svref expecteds index) expected
+                    (svref limits index) end (svref nexts index) next
+                    (svref tokens index) (+ next (first header) (aref source (1- se))))))))
+      (is (not (eq source (svref buffers 0)))) (is (not (eq source (svref buffers 1))))
+      (is (not (eq (svref buffers 0) (svref buffers 1))))
+      (unwind-protect
+           (progn
+             (dotimes (i 2)
+               (let ((index i))
+                 (push (sb-thread:make-thread
+                        (lambda ()
+                          (cws-worker index (+ 2 index) (svref buffers index) 3 (svref limits index)
+                                      source ss se (svref expecteds index) (svref nexts index)
+                                      (svref tokens index) rounds ready go done starts firsts ends sinks))
+                        :name "CBOR string write shared-source private-destination worker") threads)))
+             (dotimes (wave 2)
+               ;; READY attesta il primo item controllato di entrambi prima del lavoro restante.
+               (dotimes (i 2) (cbor-wait (svref ready wave)))
+               (sb-thread:signal-semaphore (svref go wave) 2)
+               (dotimes (i 2) (cbor-wait (svref done wave)))
+               (let ((overlap (- (min (aref ends 0 wave) (aref ends 1 wave))
+                                 (max (aref starts 0 wave) (aref starts 1 wave)))))
+                 ;; Clock e sink reali conservati anche se un guard temporale successivo fallisce.
+                 (format t "  CBOR string write: onda ~D, 2 worker riusati, ~D item; WALL fixture con rendezvous/controlli: worker 0 start/first/end ~D/~D/~D, sink ~D; worker 1 start/first/end ~D/~D/~D, sink ~D; overlap ~D tick (~D tick/s); nessuna inferenza su tempo puro encoder, CPU o scaling.~%"
+                         wave (* 2 rounds)
+                         (aref starts 0 wave) (aref firsts 0 wave) (aref ends 0 wave) (aref sinks 0 wave)
+                         (aref starts 1 wave) (aref firsts 1 wave) (aref ends 1 wave) (aref sinks 1 wave)
+                         overlap internal-time-units-per-second)
+                 (force-output)
+                 (dotimes (index 2)
+                   (is (= (* rounds (svref tokens index)) (aref sinks index wave)))
+                   (is (> (aref ends index wave) (aref starts index wave)))
+                   (is (<= (aref starts index wave) (aref firsts index wave) (aref ends index wave))))
+                 (is (<= (max (aref firsts 0 wave) (aref firsts 1 wave))
+                         (min (aref ends 0 wave) (aref ends 1 wave))))
+                 (is (plusp overlap))))
+             (dolist (thread threads) (cbor-join thread))
+             (is (equalp source source-before))
+             (dotimes (index 2) (is (equalp (svref buffers index) (svref expecteds index)))))
+        (dotimes (wave 2) (sb-thread:signal-semaphore (svref go wave) 2))
+        (cbor-stop-workers threads)))))

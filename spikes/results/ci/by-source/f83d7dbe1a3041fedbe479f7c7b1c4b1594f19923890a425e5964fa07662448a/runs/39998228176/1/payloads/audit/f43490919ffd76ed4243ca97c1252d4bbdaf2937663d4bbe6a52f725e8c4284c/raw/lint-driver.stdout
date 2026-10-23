@@ -1,0 +1,1 @@
+:OK: /home/runner/work/_temp/arcdocdb-sbcl.wdC9oMcs/installed/bin/sbcl --noinform --no-userinit --no-sysinit --script tools/lint.lisp src --report /home/runner/work/ArcDocDB/ArcDocDB/spikes/out/ci/audit/work/lint.lisp; record: /home/runner/work/ArcDocDB/ArcDocDB/spikes/out/ci/audit/work/commands/lint/report.lisp

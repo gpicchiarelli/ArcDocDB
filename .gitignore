@@ -1,0 +1,18 @@
+# SBCL / ASDF
+*.fasl
+*.core
+
+# Sottoprodotti delle prove: non pubblicare con git add -f.
+spikes/results/**/*.tmp
+spikes/results/**/*.bytes
+
+# Dati e risultati locali degli spike
+spikes/**/data/
+spikes/**/out/
+
+# Sistema operativo ed editor
+.DS_Store
+*~
+*.swp
+.vscode/
+.idea/

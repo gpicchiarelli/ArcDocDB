@@ -1,0 +1,100 @@
+name: SBCL verificato
+description: SBCL 2.6.9 con archivi ufficiali, digest e bootstrap fissati nel lock.
+outputs:
+  prefix:
+    description: Prefisso privato installato sotto RUNNER_TEMP.
+    value: ${{ steps.install.outputs.prefix }}
+  record:
+    description: Record wire dell'installazione, disponibile anche nell'ambiente.
+    value: ${{ steps.install.outputs.record }}
+runs:
+  using: composite
+  steps:
+    - name: Installa la distribuzione fissata
+      id: install
+      shell: bash
+      env:
+        TASK_SBCL_LINUX_URL: https://downloads.sourceforge.net/project/sbcl/sbcl/2.6.9/sbcl-2.6.9-x86-64-linux-binary.tar.bz2
+        TASK_SBCL_LINUX_SHA256: 39fac28407405841003e4c2abfbe0d96abd93b7701e8b61cdd35e713943b46d6
+        TASK_SBCL_SOURCE_URL: https://downloads.sourceforge.net/project/sbcl/sbcl/2.6.9/sbcl-2.6.9-source.tar.bz2
+        TASK_SBCL_SOURCE_SHA256: c6fd1d735570eb4ff34caf9609988ca77ed0bd12b55d09a4fed075be890da513
+        TASK_SBCL_BOOTSTRAP_URL: https://downloads.sourceforge.net/project/sbcl/sbcl/2.4.0/sbcl-2.4.0-arm64-darwin-binary.tar.bz2
+        TASK_SBCL_BOOTSTRAP_SHA256: 1d01fac2d9748f769c9246a0a11a2c011d7843337f8f06ca144f5a500e10c117
+      run: |
+        set -euo pipefail
+        export LC_ALL=C
+        unset SBCL_HOME SBCL_CORE SBCL_XC_HOST SBCL_MAKE_TARGET_2_OPTIONS
+        task_sbcl_work="$(mktemp -d "$RUNNER_TEMP/arcdocdb-sbcl.XXXXXXXX")"
+        task_sbcl_prefix="$task_sbcl_work/installed"
+        task_sbcl_arch="$(uname -m)"
+        task_sbcl_compiler_record=NIL
+        task_sbcl_bootstrap_record=NIL
+
+        task_sbcl_download() {
+          curl --fail --location --proto '=https' --proto-redir '=https' \
+            --connect-timeout 20 --max-time 180 --retry 2 --retry-max-time 420 \
+            --max-filesize 67108864 --output "$2" "$1"
+          printf '%s  %s\n' "$3" "$2" | shasum -a 256 --check
+        }
+
+        case "$RUNNER_OS/$task_sbcl_arch" in
+          Linux/x86_64)
+            task_sbcl_recipe=sbcl-2.6.9-linux-binary-v1
+            task_sbcl_distribution="$TASK_SBCL_LINUX_SHA256"
+            task_sbcl_download "$TASK_SBCL_LINUX_URL" "$task_sbcl_work/linux.tar.bz2" "$TASK_SBCL_LINUX_SHA256"
+            tar -xjf "$task_sbcl_work/linux.tar.bz2" -C "$task_sbcl_work"
+            cd "$task_sbcl_work/sbcl-2.6.9-x86-64-linux"
+            sh install.sh --prefix="$task_sbcl_prefix"
+            ;;
+          macOS/arm64)
+            task_sbcl_recipe=sbcl-2.6.9-darwin-source-v1
+            task_sbcl_distribution="$TASK_SBCL_SOURCE_SHA256"
+            task_sbcl_bootstrap_record="\"$TASK_SBCL_BOOTSTRAP_SHA256\""
+            task_sbcl_download "$TASK_SBCL_BOOTSTRAP_URL" "$task_sbcl_work/bootstrap.tar.bz2" "$TASK_SBCL_BOOTSTRAP_SHA256"
+            task_sbcl_download "$TASK_SBCL_SOURCE_URL" "$task_sbcl_work/source.tar.bz2" "$TASK_SBCL_SOURCE_SHA256"
+            tar -xjf "$task_sbcl_work/bootstrap.tar.bz2" -C "$task_sbcl_work"
+            tar -xjf "$task_sbcl_work/source.tar.bz2" -C "$task_sbcl_work"
+            task_sbcl_bootstrap="$task_sbcl_work/bootstrap"
+            cd "$task_sbcl_work/sbcl-2.4.0-arm64-darwin"
+            sh install.sh --prefix="$task_sbcl_bootstrap"
+            export PATH="$task_sbcl_bootstrap/bin:$PATH"
+            export SBCL_HOME="$task_sbcl_bootstrap/lib/sbcl"
+            test "$(sbcl --version)" = 'SBCL 2.4.0'
+            export CC=clang
+            export SBCL_MACOSX_VERSION_MIN=15.0
+            export SBCL_MAKE_JOBS=-j2
+            export SBCL_CONTRIB_BLOCKLIST=''
+            clang --version > "$task_sbcl_work/compiler.txt"
+            task_sbcl_compiler_digest="$(shasum -a 256 "$task_sbcl_work/compiler.txt")"
+            task_sbcl_compiler_record="\"${task_sbcl_compiler_digest%% *}\""
+            cd "$task_sbcl_work/sbcl-2.6.9"
+            sh make.sh --prefix="$task_sbcl_prefix" --arch=arm64 \
+              --xc-host='sbcl --dynamic-space-size 2048 --noinform --no-sysinit --no-userinit --disable-debugger' \
+              --dynamic-space-size=2048 --with-sb-thread --without-sb-core-compression
+            unset SBCL_HOME
+            sh install.sh --prefix="$task_sbcl_prefix"
+            ;;
+          *)
+            printf 'Toolchain non prevista: %s/%s\n' "$RUNNER_OS" "$task_sbcl_arch" >&2
+            exit 1
+            ;;
+        esac
+
+        export SBCL_HOME="$task_sbcl_prefix/lib/sbcl"
+        test "$("$task_sbcl_prefix/bin/sbcl" --version)" = 'SBCL 2.6.9'
+        task_sbcl_runtime_digest="$(shasum -a 256 "$task_sbcl_prefix/bin/sbcl")"
+        task_sbcl_core_digest="$(shasum -a 256 "$SBCL_HOME/sbcl.core")"
+        task_sbcl_record="$task_sbcl_work/installation.lisp"
+        # Le interpolazioni wire sono soltanto enum chiusi e digest esadecimali.
+        cat > "$task_sbcl_record" <<EOF
+        (:schema-version 1 :kind :ci-toolchain-installation
+         :sbcl-version "2.6.9" :runner-os "$RUNNER_OS" :architecture "$task_sbcl_arch"
+         :recipe-id "$task_sbcl_recipe" :distribution-sha256 "$task_sbcl_distribution"
+         :bootstrap-sha256 $task_sbcl_bootstrap_record
+         :runtime-sha256 "${task_sbcl_runtime_digest%% *}" :core-sha256 "${task_sbcl_core_digest%% *}"
+         :compiler-provenance-sha256 $task_sbcl_compiler_record)
+        EOF
+        printf '%s\n' "$task_sbcl_prefix/bin" >> "$GITHUB_PATH"
+        printf 'SBCL_HOME=%s\n' "$SBCL_HOME" >> "$GITHUB_ENV"
+        printf 'ARCDOCDB_CI_TOOLCHAIN_RECORD=%s\n' "$task_sbcl_record" >> "$GITHUB_ENV"
+        printf 'prefix=%s\nrecord=%s\n' "$task_sbcl_prefix" "$task_sbcl_record" >> "$GITHUB_OUTPUT"

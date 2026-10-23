@@ -1,0 +1,467 @@
+;;;; Fase0, layout v1. Nessuna esecuzione al caricamento.
+;;;; Preregistrazione: metodo-bench-lettura-buffer.md.
+;;;; REQ: REQ-VAL-001 REQ-BEN-001
+(defpackage #:arcdocdb.spk01.bench-lettura-buffer
+  (:use #:cl)
+  (:export #:bench))
+(in-package #:arcdocdb.spk01.bench-lettura-buffer)
+(declaim (optimize (safety 3) (speed 3) (debug 1)))
+
+(deftype u64 () '(unsigned-byte 64))
+(deftype octets () '(simple-array (unsigned-byte 8) (*)))
+(deftype words () '(simple-array (unsigned-byte 64) (*)))
+(deftype destination () '(simple-array (unsigned-byte 64) (4)))
+(defconstant +u64-max+ #xffffffffffffffff)
+(defconstant +checksum-mask+ #x0fffffffffffffff)
+(defconstant +positive-elements+ 262144)
+(defvar *consed-positive-control* nil)
+
+;; Proclamazione della sola dipendenza; nessuna implementazione del reader.
+(declaim (ftype (function (arcdocdb.spk01::indice octets destination
+                          &key (:attempts integer)
+                          (:after-fragment (or null function))
+                          (:after-fields (or null function)))
+                         (values keyword fixnum &optional))
+                arcdocdb.spk01.lettura-buffer:leggi))
+
+(define-condition budget-error (error)
+  ((reason :initarg :reason :reader budget-reason))
+  (:report (lambda (condition stream)
+             (format stream "BENCH lettura buffer: ~A" (budget-reason condition)))))
+
+(defstruct (cell (:constructor %cell))
+  (number 0 :type fixnum :read-only t)
+  (width 4 :type fixnum :read-only t)
+  (profile :fields-fixnum :type keyword :read-only t)
+  (workload :hit-only :type keyword :read-only t)
+  (index (arcdocdb.spk01:make-indice) :type arcdocdb.spk01::indice :read-only t)
+  (queries #() :type simple-vector :read-only t)
+  (oracle (make-array 0 :element-type '(unsigned-byte 64)) :type words :read-only t)
+  (expected (make-array 0 :element-type '(unsigned-byte 8)) :type octets :read-only t)
+  ;; Privato a questa cella e al singolo chiamante; mai condiviso fra worker.
+  (output (make-array 4 :element-type '(unsigned-byte 64))
+          :type destination :read-only t))
+
+(declaim (ftype (function (t integer integer keyword) integer) %bounded))
+(defun %bounded (value low high reason)
+  (unless (and (integerp value) (<= low value high))
+    (error 'budget-error :reason reason))
+  value)
+
+(declaim (ftype (function (fixnum integer integer integer) null) %guard))
+(defun %guard (deadline consed-start consed-limit heap-limit)
+  (declare (type fixnum deadline)
+           (type integer consed-start consed-limit heap-limit))
+  (when (>= (get-internal-real-time) deadline)
+    (error 'budget-error :reason :deadline))
+  (let ((used (- (sb-ext:get-bytes-consed) consed-start)))
+    (when (or (minusp used) (> used consed-limit))
+      (error 'budget-error :reason :consed)))
+  (when (> (sb-kernel:dynamic-usage) heap-limit)
+    (error 'budget-error :reason :dynamic-heap))
+  nil)
+
+(declaim (inline %fold %verify-and-fold))
+(declaim (ftype (function (fixnum u64) fixnum) %fold))
+(defun %fold (checksum value)
+  (declare (type fixnum checksum) (type u64 value))
+  ;; La rotazione resta sotto 2^61; entrambe le parti dell'u64 sono fixnum.
+  (logxor (logand +checksum-mask+ (ash checksum 1)) (ash checksum -59)
+          (logand +checksum-mask+ value) (ash value -60)))
+
+(declaim (ftype (function (keyword fixnum (unsigned-byte 8) words fixnum
+                           u64 u64 u64 u64 fixnum) fixnum) %verify-and-fold))
+(defun %verify-and-fold (status retry expected oracle offset csn location length end checksum)
+  (declare (type keyword status) (type fixnum retry offset checksum)
+           (type (unsigned-byte 8) expected) (type words oracle)
+           (type u64 csn location length end))
+  (unless (and (if (= expected 1) (eq status :hit) (eq status :miss))
+               (zerop retry))
+    (error 'budget-error :reason :status-or-retries))
+  (unless (and (= csn (aref oracle offset))
+               (= location (aref oracle (+ offset 1)))
+               (= length (aref oracle (+ offset 2)))
+               (= end (aref oracle (+ offset 3))))
+    (error 'budget-error :reason :oracle-payload))
+  (logxor (%fold (%fold (%fold (%fold checksum csn) location) length) end)
+          expected retry))
+
+;; Due chiamate dirette in espansioni distinte, consumatore identico.
+;; La macro alloca solo durante la compilazione; nessun cons nel ciclo.
+(macrolet ((%define-consumer (name method)
+  (let ((lookup
+          (ecase method
+            (:baseline
+             '(multiple-value-bind (read-csn read-location read-length read-end state discarded)
+                  (arcdocdb.spk01:leggi index key :attempts attempts)
+                (declare (type u64 read-csn read-location read-end)
+                         (type (unsigned-byte 24) read-length)
+                         (type keyword state) (type fixnum discarded))
+                (setf status state retry discarded)
+                (when (eq state :hit)
+                  (setf csn read-csn location read-location
+                        payload-length read-length end read-end))))
+            (:buffer
+             '(multiple-value-bind (state discarded)
+                  (arcdocdb.spk01.lettura-buffer:leggi index key output :attempts attempts)
+                (declare (type keyword state) (type fixnum discarded))
+                (setf status state retry discarded
+                      csn (aref output 0) location (aref output 1)
+                      payload-length (aref output 2) end (aref output 3)))))))
+    `(progn
+       (declaim (ftype (function (cell fixnum fixnum fixnum integer integer integer)
+                                (values fixnum fixnum fixnum fixnum fixnum)) ,name))
+       (defun ,name (fixture operations attempts deadline consed-start consed-limit heap-limit)
+         (declare (type cell fixture) (type fixnum operations attempts deadline)
+                  (type integer consed-start consed-limit heap-limit))
+         (let* ((index (cell-index fixture)) (queries (cell-queries fixture))
+                (oracle (cell-oracle fixture)) (expected (cell-expected fixture))
+                ,@(when (eq method :buffer) '((output (cell-output fixture))))
+                (query-count (length queries))
+                (cursor 0) (offset 0) (completed 0) (checksum 0) (retries 0)
+                (hits 0) (misses 0) (csn 0) (location 0) (payload-length 0) (end 0))
+           (declare (type arcdocdb.spk01::indice index)
+                    (type simple-vector queries) (type words oracle) (type octets expected)
+                    ,@(when (eq method :buffer) '((type destination output)))
+                    (type fixnum query-count cursor offset completed checksum retries hits misses)
+                    (type u64 csn location payload-length end))
+           (dotimes (step operations)
+             (declare (type fixnum step))
+             (when (zerop (logand step 255))
+               (%guard deadline consed-start consed-limit heap-limit))
+             (let ((key (the octets (aref queries cursor))) (status :miss) (retry 0))
+               (declare (type octets key) (type keyword status) (type fixnum retry))
+               ,lookup
+               (setf checksum
+                     (%verify-and-fold status retry (aref expected cursor) oracle offset
+                                       csn location payload-length end checksum))
+               (incf retries retry)
+               (if (eq status :hit) (incf hits) (incf misses))
+               (incf completed)
+               (incf cursor)
+               (incf offset 4)
+               (when (= cursor query-count) (setf cursor 0 offset 0))))
+           (%guard deadline consed-start consed-limit heap-limit)
+           (unless (= completed operations (+ hits misses))
+             (error 'budget-error :reason :incomplete-operations))
+           (values completed checksum retries hits misses)))))))
+
+(%define-consumer %baseline-loop :baseline)
+(%define-consumer %buffer-loop :buffer))
+
+(declaim (ftype (function (destination) null) %reset-output))
+(defun %reset-output (output)
+  (declare (type destination output))
+  (setf (aref output 0) 0 (aref output 1) 0 (aref output 2) 0 (aref output 3) 0)
+  nil)
+
+(declaim (ftype (function (keyword fixnum fixnum fixnum words) null) %prepare-tuple))
+(defun %prepare-tuple (profile width id documents tuples)
+  (declare (type keyword profile) (type fixnum width id documents) (type words tuples))
+  (let ((offset (* 4 id)))
+    (declare (type fixnum offset))
+    (ecase profile
+      (:fields-fixnum
+       (setf (aref tuples offset) (+ 11 (* 3 id))
+             (aref tuples (+ offset 1)) (+ 101 (* 5 id))
+             (aref tuples (+ offset 2)) (1+ (mod (+ 23 (* 17 id)) 65536))
+             (aref tuples (+ offset 3)) (if (= width 5) (+ 251 (* 7 id)) 0)))
+      (:u64-massimi
+       (setf (aref tuples offset) (- +u64-max+ id)
+             (aref tuples (+ offset 1)) (- +u64-max+ (mod (+ id (1- documents)) documents))
+             (aref tuples (+ offset 2)) (- #xffffff (mod (+ id 3) documents))
+             (aref tuples (+ offset 3))
+             (if (= width 5) (- +u64-max+ (mod (+ id 2) documents)) 0)))))
+  nil)
+
+(declaim (ftype (function (fixnum fixnum fixnum keyword keyword simple-vector
+                          simple-vector fixnum integer integer integer) cell) %prepare-cell))
+(defun %prepare-cell (number documents capacity profile workload keys queries
+                      deadline consed-start consed-limit heap-limit)
+  (declare (type fixnum number documents capacity deadline)
+           (type keyword profile workload) (type simple-vector keys queries)
+           (type integer consed-start consed-limit heap-limit))
+  (let* ((width (if (< number 4) 4 5))
+         (index (arcdocdb.spk01:make-indice :capacity capacity :words width :max-depth 0
+                                         :memory-mib (ceiling heap-limit 1048576)))
+         (tuples (make-array (* 4 documents) :element-type '(unsigned-byte 64)))
+         (oracle (make-array (* 8 documents) :element-type '(unsigned-byte 64)))
+         (expected (make-array (* 2 documents) :element-type '(unsigned-byte 8)))
+         (output (make-array 4 :element-type '(unsigned-byte 64) :initial-element 0)))
+    (declare (type arcdocdb.spk01::indice index) (type words tuples oracle)
+             (type octets expected) (type destination output) (type fixnum width))
+    (dotimes (id documents)
+      (declare (type fixnum id))
+      (when (zerop (logand id 127))
+        (%guard deadline consed-start consed-limit heap-limit))
+      (%prepare-tuple profile width id documents tuples)
+      (let* ((offset (* 4 id)) (location (aref tuples (+ offset 1))))
+        (declare (type fixnum offset) (type u64 location))
+        (unless (arcdocdb.spk01:inserisci
+                 index (the octets (aref keys id)) (aref tuples offset)
+                 (ldb (byte 32 32) location) (ldb (byte 32 0) location)
+                 (aref tuples (+ offset 2)) :end-csn (aref tuples (+ offset 3)))
+          (error 'budget-error :reason :non-new-document))))
+    (dotimes (query (* 2 documents))
+      (declare (type fixnum query))
+      (when (zerop (logand query 255))
+        (%guard deadline consed-start consed-limit heap-limit))
+      (let* ((hit (or (eq workload :hit-only) (evenp query)))
+             (id (mod (* (if (eq workload :hit-only) query (ash query -1)) 104729) documents))
+             (target (* 4 query)) (source (* 4 id)))
+        (declare (type fixnum id target source))
+        (setf (aref expected query) (if hit 1 0))
+        (dotimes (field 4)
+          (setf (aref oracle (+ target field))
+                (if hit (aref tuples (+ source field))
+                    (aref oracle (+ (- target 4) field)))))))
+    ;; Interroghiamo contatori O(1), senza costruire statistiche/hash-table.
+    (unless (and (= documents (arcdocdb.spk01::indice-documenti index))
+                 (= 1 (arcdocdb.spk01::indice-frammenti index))
+                 (zerop (arcdocdb.spk01::indice-split index))
+                 (zerop (arcdocdb.spk01::indice-rebuild index))
+                 (zerop (arcdocdb.spk01::indice-chiavi-byte-copiati index)))
+      (error 'budget-error :reason :unexpected-maintenance))
+    (%cell :number number :width width :profile profile :workload workload :index index
+           :queries queries :oracle oracle :expected expected :output output)))
+
+(declaim (ftype (function (fixnum fixnum integer integer integer)
+                         (values simple-vector simple-vector simple-vector)) %prepare-queries))
+(defun %prepare-queries (documents deadline consed-start consed-limit heap-limit)
+  (declare (type fixnum documents deadline) (type integer consed-start consed-limit heap-limit))
+  (let ((keys (make-array (* 2 documents)))
+        (hit-queries (make-array (* 2 documents)))
+        (mixed-queries (make-array (* 2 documents))))
+    (declare (type simple-vector keys hit-queries mixed-queries))
+    (dotimes (id (* 2 documents))
+      (when (zerop (logand id 127))
+        (%guard deadline consed-start consed-limit heap-limit))
+      (let ((key (make-array 16 :element-type '(unsigned-byte 8))))
+        (arcdocdb.spk01:scrivi-chiave key id)
+        (setf (aref keys id) key)))
+    (dotimes (query (* 2 documents))
+      (when (zerop (logand query 255))
+        (%guard deadline consed-start consed-limit heap-limit))
+      (setf (aref hit-queries query) (aref keys (mod (* query 104729) documents))
+            (aref mixed-queries query)
+            (aref keys (+ (if (oddp query) documents 0)
+                          (mod (* (ash query -1) 104729) documents)))))
+    (values keys hit-queries mixed-queries)))
+
+(declaim (ftype (function (fixnum integer integer integer) list) %positive-control))
+(defun %positive-control (deadline consed-start consed-limit heap-limit)
+  (declare (type fixnum deadline) (type integer consed-start consed-limit heap-limit))
+  (setf *consed-positive-control* nil)
+  (sb-ext:gc :full t)
+  (%guard deadline consed-start consed-limit heap-limit)
+  (let ((before (sb-ext:get-bytes-consed)))
+    (setf *consed-positive-control*
+          (make-array +positive-elements+ :element-type '(unsigned-byte 8) :initial-element 172))
+    (let* ((after (sb-ext:get-bytes-consed)) (delta (- after before))
+           ;; Tutte queste letture seguono AFTER; l'oggetto è pubblicato nel globale.
+           (object (the octets *consed-positive-control*))
+           (value (aref object (1- (length object))))
+           (size (sb-ext:primitive-object-size object)))
+      (unless (and (>= delta +positive-elements+) (= value 172)
+                   (>= size +positive-elements+))
+        (error 'budget-error :reason :consed-positive-control))
+      (%guard deadline consed-start consed-limit heap-limit)
+      (list :status :ok :before before :after after :bytes-consed delta
+            :elements (length object) :payload-bytes +positive-elements+
+            :observed-value value :primitive-object-size size
+            :object-type "(SIMPLE-ARRAY (UNSIGNED-BYTE 8) (*))"
+            :escaped-global "ARCDOCDB.SPK01.BENCH-LETTURA-BUFFER::*CONSED-POSITIVE-CONTROL*"
+            :retention :through-delta-and-size))))
+
+(declaim (ftype (function (cell keyword fixnum fixnum fixnum integer integer integer)
+                         (values fixnum fixnum fixnum fixnum fixnum)) %consume))
+(defun %consume (fixture method operations attempts deadline consed-start consed-limit heap-limit)
+  (declare (type cell fixture) (type keyword method)
+           (type fixnum operations attempts deadline) (type integer consed-start consed-limit heap-limit))
+  (ecase method
+    (:baseline (%baseline-loop fixture operations attempts deadline consed-start consed-limit heap-limit))
+    (:buffer (%buffer-loop fixture operations attempts deadline consed-start consed-limit heap-limit))))
+
+(declaim (ftype (function (cell keyword fixnum fixnum fixnum integer integer integer) list) %warm))
+(defun %warm (fixture method operations attempts deadline consed-start consed-limit heap-limit)
+  (declare (type cell fixture) (type keyword method) (type fixnum operations attempts deadline)
+           (type integer consed-start consed-limit heap-limit))
+  (%reset-output (cell-output fixture))
+  (multiple-value-bind (completed checksum retries hits misses)
+      (%consume fixture method operations attempts deadline consed-start consed-limit heap-limit)
+    (list :method method :operations completed :checksum checksum :retries retries :hits hits :misses misses)))
+
+(declaim (ftype (function (cell keyword fixnum fixnum fixnum fixnum fixnum keyword
+                          integer integer integer) list) %measure))
+(defun %measure (fixture method operations attempts deadline ordinal replica order
+                 consed-start consed-limit heap-limit)
+  (declare (type cell fixture) (type keyword method order)
+           (type fixnum operations attempts deadline ordinal replica)
+           (type integer consed-start consed-limit heap-limit))
+  (%reset-output (cell-output fixture))
+  (%guard deadline consed-start consed-limit heap-limit)
+  (sb-ext:gc :full t)
+  (%guard deadline consed-start consed-limit heap-limit)
+  (let* ((heap-before (sb-kernel:dynamic-usage))
+         (before (sb-ext:get-bytes-consed)) (start (get-internal-real-time)))
+    (multiple-value-bind (completed checksum retries hits misses)
+        (%consume fixture method operations attempts deadline consed-start consed-limit heap-limit)
+      (let* ((stop (get-internal-real-time)) (after (sb-ext:get-bytes-consed))
+             (ticks (- stop start)) (bytes (- after before)))
+        (when (or (<= ticks 0) (minusp bytes))
+          (error 'budget-error :reason :invalid-measurement-counter))
+        (%guard deadline consed-start consed-limit heap-limit)
+        (list :sample ordinal :cell (cell-number fixture) :replica replica :order order :method method
+              :operations completed :ticks ticks :timer-units-per-second internal-time-units-per-second
+              :ns-per-operation (/ (* ticks 1000000000) (* internal-time-units-per-second completed))
+              :bytes-consed-before before :bytes-consed-after after :bytes-consed bytes
+              :bytes-consed-per-operation (/ bytes completed)
+              :heap-before heap-before :heap-after (sb-kernel:dynamic-usage)
+              :checksum checksum :retries retries :hits hits :misses misses)))))
+
+(declaim (ftype (function (list list) list) %pair))
+(defun %pair (baseline buffer)
+  (dolist (key '(:cell :replica :order :operations :checksum :retries :hits :misses))
+    (unless (eql (getf baseline key) (getf buffer key))
+      (error 'budget-error :reason :paired-disagreement)))
+  (list :replica (getf baseline :replica) :order (getf baseline :order)
+        :baseline-sample (getf baseline :sample) :buffer-sample (getf buffer :sample)
+        :buffer-over-baseline-ticks (/ (getf buffer :ticks) (getf baseline :ticks))
+        :buffer-minus-baseline-ticks (- (getf buffer :ticks) (getf baseline :ticks))
+        :buffer-minus-baseline-bytes (- (getf buffer :bytes-consed) (getf baseline :bytes-consed))
+        :checksum (getf baseline :checksum) :retries (getf baseline :retries)))
+
+(declaim (ftype (function (&key (:documents integer) (:capacity integer) (:operations integer)
+                          (:replicas integer) (:warmup integer) (:time-limit-seconds real)
+                          (:memory-mib integer) (:attempts integer) (:max-documents integer)
+                          (:max-operations integer) (:max-warmup integer) (:max-payload-bytes integer)
+                          (:max-copy-bytes integer) (:max-consed-bytes integer)
+                          (:max-time-limit-seconds real)) list) bench))
+(defun bench (&key (documents 4096) (capacity 8192) (operations 128000) (replicas 5)
+                   (warmup 4096) (time-limit-seconds 120) (memory-mib 256) (attempts 8)
+                   (max-documents 16384) (max-operations 1000000) (max-warmup 65536)
+                   (max-payload-bytes 33554432) (max-copy-bytes 16777216)
+                   (max-consed-bytes 1073741824) (max-time-limit-seconds 300))
+  "Matrice paired completa o errore; nessun risultato parziale."
+  (%bounded max-documents 1 28672 :max-documents)
+  (%bounded max-operations 1 10000000 :max-operations)
+  (%bounded max-warmup 1 1000000 :max-warmup)
+  (%bounded max-payload-bytes 1 268435456 :max-payload-bytes)
+  (%bounded max-copy-bytes 1 67108864 :max-copy-bytes)
+  (%bounded max-consed-bytes 1 4294967296 :max-consed-bytes)
+  (%bounded documents 1 max-documents :documents)
+  (%bounded operations 1 max-operations :operations)
+  (%bounded warmup 1 (min operations max-warmup) :warmup)
+  (%bounded capacity 8 32768 :capacity)
+  (%bounded replicas 5 5 :replicas-must-be-five)
+  (%bounded memory-mib 1 1024 :memory-mib)
+  (%bounded attempts 1 8 :attempts)
+  (unless (and (= 1 (logcount capacity)) (<= documents (* 7 (floor capacity 8))))
+    (error 'budget-error :reason :capacity-or-load))
+  (unless (and (typep max-time-limit-seconds '(real (0) 300))
+               (typep time-limit-seconds '(real (0) 300))
+               (<= time-limit-seconds max-time-limit-seconds))
+    (error 'budget-error :reason :time-limit-seconds))
+  ;; Contratto ABI del fixture, anche su piattaforme con fixnum più piccoli.
+  (unless (and (> most-positive-fixnum +checksum-mask+)
+               (<= (* operations attempts) most-positive-fixnum))
+    (error 'budget-error :reason :fixnum-width))
+  (let* ((heap-limit (* memory-mib 1048576))
+         (index-payload (+ (* 4 capacity (+ 49 57)) 64))
+         ;; Chiavi 32d, tre vettori di riferimenti 48d, otto oracle 512d,
+         ;; otto status 16d, tuple temporanee 32d, destinazioni 256, controllo.
+         (planned-payload (+ index-payload (* documents (+ 32 48 512 16 32))
+                             256 +positive-elements+))
+         (planned-copy (* documents (+ (* 8 16) (* 8 2 32))))
+         (start (get-internal-real-time))
+         (deadline (+ start (ceiling (* time-limit-seconds internal-time-units-per-second)))))
+    (declare (type fixnum start deadline))
+    (when (or (> planned-payload max-payload-bytes) (> planned-payload heap-limit))
+      (error 'budget-error :reason :planned-payload))
+    (when (> planned-copy max-copy-bytes)
+      (error 'budget-error :reason :planned-copy))
+    ;; Tutti i budget sono validati prima di controllo positivo, warmup o misura.
+    (sb-ext:gc :full t)
+    (let* ((consed-start (sb-ext:get-bytes-consed))
+           (positive (%positive-control deadline consed-start max-consed-bytes heap-limit))
+           (fixtures (make-array 8)) (reports (make-array 8)) (samples (make-array 80))
+           (ordinal 0) (ab 0) (ba 0))
+      (declare (type simple-vector fixtures reports samples) (type fixnum ordinal ab ba))
+      (multiple-value-bind (keys hit-queries mixed-queries)
+          (%prepare-queries documents deadline consed-start max-consed-bytes heap-limit)
+        (dotimes (number 8)
+          (let ((profile (if (< (mod number 4) 2) :fields-fixnum :u64-massimi))
+                (workload (if (evenp number) :hit-only :mixed-hit-miss)))
+            (setf (aref fixtures number)
+                  (%prepare-cell number documents capacity profile workload keys
+                                 (if (evenp number) hit-queries mixed-queries)
+                                 deadline consed-start max-consed-bytes heap-limit)))))
+      ;; Tutta la matrice è preparata e validata prima del primo campione.
+      (sb-ext:gc :full t)
+      (%guard deadline consed-start max-consed-bytes heap-limit)
+      (dotimes (number 8)
+        (let* ((fixture (the cell (aref fixtures number)))
+               (warm-a (%warm fixture :baseline warmup attempts deadline consed-start max-consed-bytes heap-limit))
+               (warm-b (%warm fixture :buffer warmup attempts deadline consed-start max-consed-bytes heap-limit))
+               (pairs nil))
+          (dolist (key '(:operations :checksum :retries :hits :misses))
+            (unless (eql (getf warm-a key) (getf warm-b key))
+              (error 'budget-error :reason :warmup-disagreement)))
+          (dotimes (replica replicas)
+            (%guard deadline consed-start max-consed-bytes heap-limit)
+            (let* ((order (if (evenp (+ number replica)) :ab :ba))
+                   (first-method (if (eq order :ab) :baseline :buffer))
+                   (second-method (if (eq order :ab) :buffer :baseline))
+                   (first (%measure fixture first-method operations attempts deadline ordinal (1+ replica) order
+                                    consed-start max-consed-bytes heap-limit)))
+              (setf (aref samples ordinal) first)
+              (incf ordinal)
+              (let ((second (%measure fixture second-method operations attempts deadline ordinal (1+ replica) order
+                                      consed-start max-consed-bytes heap-limit)))
+                (setf (aref samples ordinal) second)
+                (incf ordinal)
+                (push (if (eq order :ab) (%pair first second) (%pair second first)) pairs))
+              (if (eq order :ab) (incf ab) (incf ba))))
+          (setf (aref reports number)
+                (list :cell number :layout (if (= (cell-width fixture) 4) :words4 :words5-extra-end)
+                      :words (cell-width fixture) :profile (cell-profile fixture) :workload (cell-workload fixture)
+                      :documents documents :queries (* 2 documents) :warmup (list warm-a warm-b)
+                      :pairs (nreverse pairs)))))
+      (unless (and (= ordinal 80) (= ab 20) (= ba 20))
+        (error 'budget-error :reason :incomplete-matrix))
+      (%guard deadline consed-start max-consed-bytes heap-limit)
+      (let ((result
+              (list :schema 1 :status :ok :spike :spk-01 :kind :paired-lettura-buffer :layout :v1
+                    :environment (list :implementation (lisp-implementation-type)
+                                       :version (lisp-implementation-version) :machine (machine-type)
+                                       :os (software-type) :os-version (software-version)
+                                       :safety 3 :speed 3 :core-speed 2
+                                       :timer-units-per-second internal-time-units-per-second)
+                    :functions (list :baseline "ARCDOCDB.SPK01:LEGGI"
+                                     :buffer "ARCDOCDB.SPK01.LETTURA-BUFFER:LEGGI")
+                    :parameters (list :documents documents :capacity capacity :operations operations
+                                      :replicas replicas :warmup warmup :time-limit-seconds time-limit-seconds
+                                      :memory-mib memory-mib :attempts attempts :max-documents max-documents
+                                      :max-operations max-operations :max-warmup max-warmup
+                                      :max-payload-bytes max-payload-bytes :max-copy-bytes max-copy-bytes
+                                      :max-consed-bytes max-consed-bytes
+                                      :max-time-limit-seconds max-time-limit-seconds)
+                    :budgets (list :planned-payload-bytes planned-payload :planned-copy-bytes planned-copy
+                                   :index-payload-bytes index-payload :heap-limit-bytes heap-limit
+                                   :run-consed-start consed-start :run-consed-stop (sb-ext:get-bytes-consed)
+                                   :elapsed-ticks (- (get-internal-real-time) start)
+                                   :deadline-policy :cooperative-error-on-exhaustion)
+                    :allocation-positive-control positive
+                    :completed-cells 8 :completed-pairs 40 :completed-samples ordinal :ab-pairs ab :ba-pairs ba
+                    :inclusions '(:direct-lookup :query-and-oracle-access :four-u64-verification
+                                  :miss-previous-payload-verification :fixnum-checksum :status-and-retries
+                                  :operation-counts :cooperative-guards :gc-inside-loop)
+                    :exclusions '(:preparation :key-generation :oracle-construction :warmup :full-gc-before-sample
+                                  :buffer-initialization :report :pair-comparison :positive-control)
+                    :allocation-scope :process-counter-between-sample-boundaries
+                    :payload-scope :array-payload-and-references-excluding-headers
+                    :heap-scope :sbcl-dynamic-usage-including-runtime-and-garbage
+                    :constraints '(:serial :no-writer-in-measurement :no-thread-created :no-statistical-claim)
+                    :cells (coerce reports 'list) :samples (coerce samples 'list))))
+        (%guard deadline consed-start max-consed-bytes heap-limit)
+        result))))

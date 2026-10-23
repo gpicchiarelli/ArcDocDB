@@ -1,0 +1,103 @@
+(in-package #:arcdocdb.fulltext.put.tests)
+
+(deftest req-sec-003-put-owned-record-independent-wire
+  (dolist (version '(1 2))
+    (dolist (prepared '(nil t))
+      (with-context (pool queue configs request lease :version version)
+        (let* ((key (key)) (value (dt::wire)) (expected (ft::reference-put key value (if prepared #xffffffffffffffff 0) (if prepared 1 0)))
+               (generation (p:inizia-put-full-text request key value 42 :prepared prepared
+                                                 :txid-high (if prepared #xffffffff 0) :txid-low (if prepared #xffffffff 0)))
+               (batch (batch :version version)))
+          (fill key 0) (fill value 0)
+          (prepare request generation 1) (reserve pool lease request generation 1)
+          (multiple-value-bind (slot token start end) (p:aggiungi-put-full-text pool lease request generation batch)
+            (is (zerop start)) (is (= end (length expected)))
+            (is (equalp expected (subseq (w::lotto-buffer batch) start end)))
+            (dotimes (i 2) (is (dt::matches (f:leggi-run-riserva-full-text pool lease slot token i) 42 1 "ALPHA" :phrase)))
+            (multiple-value-bind (source incarnation number first last row) (p:leggi-legame-put-full-text pool lease slot token)
+              (is (eq source batch)) (is (= incarnation 1)) (is (zerop number)) (is (= first start)) (is (= last end)) (is (= row 42)))
+            (is (equal '(146 0 1) (a::budget pool lease)))
+            (w:sigilla-lotto batch 19 64 64)
+            (is (= (b:leggi-u64 (w::lotto-buffer batch) 16) (if prepared #xffffffffffffffff 19)))
+            (let ((next (p:inizia-put-full-text request (key) (dt::document '("subject" . "omega")) 43)))
+              (prepare request next) (is (dt::matches (f:leggi-run-riserva-full-text pool lease slot token 0) 42 1 "alpha" :all))
+              (p:leggi-legame-put-full-text pool lease slot token)
+              (rejected (lambda () (p:stato-put-full-text request generation)) 'invalid-argument :fulltext-put-token))))))))
+
+(deftest req-sec-003-put-record-number-is-not-hint-row
+  (with-context (pool queue configs request lease)
+    (let* ((batch (batch)) (key (key)) (wire (dt::wire))
+           (expected (ft::reference-put key wire 0 0))
+           (generation (p:inizia-put-full-text request key wire #xffffffff)))
+      (w:aggiungi-record batch r:+tombstone+ (dt::text "old") (ft::bytes))
+      (let ((prefix (w::lotto-used batch)))
+        (prepare request generation) (reserve pool lease request generation)
+        (multiple-value-bind (slot token start end) (p:aggiungi-put-full-text pool lease request generation batch)
+          (is (= prefix start)) (is (equalp expected (subseq (w::lotto-buffer batch) start end)))
+          (multiple-value-bind (source incarnation number first last row) (p:leggi-legame-put-full-text pool lease slot token)
+            (is (eq source batch)) (is (= incarnation 1)) (is (= number 1)) (is (= first prefix))
+            (is (= last end)) (is (= row #xffffffff))))))))
+
+(deftest req-wal-005-frame-append-ranges-and-capacity
+  (dolist (version '(1 2))
+    (let* ((wire (ft::reference-put (key) (dt::wire) 0 0)) (size (length wire))
+           (input (make-array (+ size 21) :element-type '(unsigned-byte 8) :initial-element 99)))
+      (replace input wire :start1 7)
+      (let ((batch (batch :version version :capacity (+ size w::+seal-total+))))
+        (is (= size (w:verifica-append-cornice batch input 7 (+ 7 size))))
+        (is (= size (w:aggiungi-cornice batch input 7 (+ 7 size))))
+        (is (equalp wire (subseq (w::lotto-buffer batch) 0 size)))
+        (is (every #'zerop (subseq (w::lotto-buffer batch) size)))
+        (w:sigilla-lotto batch 11 0 0)
+        (is (= (w:lunghezza-lotto batch) (+ size w::+seal-total+))))
+      (let* ((batch (batch :capacity (1- (+ size w::+seal-total+)))) (before (snapshot batch)))
+        (rejected (lambda () (w:aggiungi-cornice batch wire 0 size)) 'resource-exhausted :lotto-capacity)
+        (is (equalp before (snapshot batch)))))))
+
+(deftest req-sec-010-put-cumulative-work-and-memory
+  (let* ((configs (a::configs)) (request (request configs)) (key (key)) (wire (dt::wire))
+         (generation (p:inizia-put-full-text request key wire 0)))
+    (prepare request generation 1)
+    (let ((work (p::preparazione-put-full-text-work request)))
+      (let* ((exact (request configs)) (token (p:inizia-put-full-text exact key wire 0 :max-work work)))
+        (prepare exact token 1) (is (= work (p::preparazione-put-full-text-work exact))))
+      (let* ((short (request configs)) (token (p:inizia-put-full-text short key wire 0 :max-work (1- work))))
+        (rejected (lambda () (prepare short token 1)) 'resource-exhausted)
+        (is (eq :failed (p:stato-put-full-text short token)))))
+    (rejected (lambda () (request configs :max-memory 1)) 'resource-exhausted :fulltext-put-memory)))
+
+(deftest req-wal-005-put-writer-does-not-scan-body
+  (dolist (padding '(0 32768))
+    (let* ((configs (a::configs)) (queue (ex:crea-coda-writer :capacity 16)) (pool (a::pool queue configs))
+           (request (request configs :document-bytes 65536)) (batch (batch :capacity 131072))
+           (key (key)) (wire (if (zerop padding) (dt::wire)
+                                (dt::document '("subject" . "alpha") '("body" . "beta")
+                                              (cons "unused" (make-string padding :initial-element #\x)))))
+           (expected (ft::reference-put key wire 0 0))
+           (original (symbol-function 'b:crc32c)) (writer nil) (worker-scans 0) (writer-scans 0))
+      (unwind-protect
+           (progn
+             (setf (symbol-function 'b:crc32c)
+                   (lambda (buffer start end &optional (seed 0))
+                     (when (> (- end start) r::+header-crc-bytes+)
+                       (if writer (progn (incf writer-scans) (error "CRC body nel writer")) (incf worker-scans)))
+                     (funcall original buffer start end seed)))
+             (let ((generation (p:inizia-put-full-text request key wire 0)))
+               (prepare request generation 1)
+               (is (>= worker-scans 2)) ; encoder e verifica indipendente della cornice nel worker.
+               (let ((lease (ex:acquisisci-writer queue)))
+                 (setf writer t)
+                 (unwind-protect
+                      (progn
+                        ;; Controllo negativo: il vecchio percorso deve essere intercettato dal probe.
+                        (is (handler-case
+                                (progn (r:verifica-cornice (p::preparazione-put-full-text-frame request) 0
+                                                          (p::preparazione-put-full-text-size request)) nil)
+                              (simple-error () t)))
+                        (is (= writer-scans 1)) (setf writer-scans 0)
+                        (reserve pool lease request generation 1)
+                        (p:aggiungi-put-full-text pool lease request generation batch)
+                        (is (zerop writer-scans))
+                        (is (equalp expected (subseq (w::lotto-buffer batch) 0 (w::lotto-used batch)))))
+                   (setf writer nil) (ex:rilascia-writer queue lease)))))
+        (setf (symbol-function 'b:crc32c) original)))))

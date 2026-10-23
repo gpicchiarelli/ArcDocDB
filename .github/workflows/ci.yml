@@ -1,0 +1,189 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Niente cancellazione dei push main; ogni attempt conserva i propri artefatti.
+# Il catalogo Lisp determina prove e profili, YAML trasporta soltanto i lavori.
+env:
+  ARCDOCDB_CI_TOOLCHAIN_LOCK: .github/ci-toolchain.lock.lisp
+  CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+  CI_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-sbcl
+      - name: Piano e identità dei sorgenti
+        run: sbcl --script tools/ci.lisp plan --out spikes/out/ci/plan
+      - name: Conserva il piano anche al fallimento
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-plan
+          path: spikes/out/ci/plan/packet/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
+
+  verify:
+    needs: plan
+    name: ${{ matrix.job }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: ${{ matrix.minutes }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            job: verify-linux
+            minutes: 30
+          # GitHub standard macos-15 è arm64; Intel usa macos-15-intel.
+          - os: macos-15
+            job: verify-macos
+            minutes: 65
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-sbcl
+        timeout-minutes: 30
+      - name: Verifica del prodotto
+        env:
+          CI_JOB: ${{ matrix.job }}
+        run: sbcl --script tools/ci.lisp run --job "$CI_JOB" --out "spikes/out/ci/$CI_JOB"
+      - name: Conserva la sola uscita della verifica
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.job }}
+          path: spikes/out/ci/${{ matrix.job }}/packet/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
+
+  audit:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-sbcl
+      - name: Audit degli strumenti e della documentazione
+        run: sbcl --script tools/ci.lisp run --job audit --out spikes/out/ci/audit
+      - name: Conserva la sola uscita audit
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-audit
+          path: spikes/out/ci/audit/packet/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
+
+  coverage:
+    needs: [plan, verify]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-sbcl
+      - name: Acquisisci la verifica normale Linux dello stesso attempt
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-verify-linux
+          path: ${{ runner.temp }}/arcdocdb-normal-verify
+      - name: Copertura completa Linux
+        env:
+          CI_NORMAL_TEST_REPORT: ${{ runner.temp }}/arcdocdb-normal-verify/result.lisp
+        run: sbcl --script tools/ci.lisp run --job coverage --out spikes/out/ci/coverage
+      - name: Conserva la sola uscita coverage
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-coverage
+          path: spikes/out/ci/coverage/packet/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
+
+  bench:
+    needs: plan
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-sbcl
+      - name: Profilo quantitativo seriale Linux
+        run: sbcl --script tools/ci.lisp run --job bench --out spikes/out/ci/bench
+      - name: Conserva la sola uscita bench
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-bench
+          path: spikes/out/ci/bench/packet/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
+
+  seal:
+    if: always()
+    needs: [plan, verify, audit, coverage, bench]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        id: checkout
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-sbcl
+        id: setup
+      - name: Prepara la directory di trasporto
+        if: always() && steps.checkout.outcome == 'success'
+        run: mkdir -p "$RUNNER_TEMP/arcdocdb-ci-downloaded"
+      - name: Scarica solo gli artefatti di questo attempt
+        if: always() && steps.checkout.outcome == 'success'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: ci-${{ github.run_id }}-${{ github.run_attempt }}-*
+          path: ${{ runner.temp }}/arcdocdb-ci-downloaded
+          merge-multiple: false
+      - name: Chiudi la raccolta anche quando incompleta
+        if: always() && steps.checkout.outcome == 'success' && steps.setup.outcome == 'success'
+        run: sbcl --script tools/ci.lisp seal --input "$RUNNER_TEMP/arcdocdb-ci-downloaded" --out spikes/out/ci/sealed
+      - name: Conserva la raccolta sigillata
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-seal
+          path: spikes/out/ci/sealed/packet/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0

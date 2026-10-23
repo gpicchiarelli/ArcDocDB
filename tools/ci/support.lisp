@@ -1,0 +1,135 @@
+;;;; Confini C4: percorsi posseduti, inventario limitato e parametri CLI.
+;;; REQ: REQ-VAL-001 REQ-AFF-012
+(in-package #:arcdocdb.ci)
+(declaim (optimize (safety 3) (debug 3)))
+(defconstant +ci-packet-bytes+ (* 2 1024 1024))
+(defconstant +ci-expanded-bytes+ (* 256 1024 1024))
+(defconstant +ci-store-bytes+ (* 256 1024 1024))
+(defparameter *ci-jobs* '("verify-linux" "verify-macos" "audit" "coverage" "bench"))
+
+(defun ci-directory (path)
+  (uiop:ensure-directory-pathname (merge-pathnames path *ci-root*)))
+
+(defun ci-lstat (path)
+  (handler-case (sb-posix:lstat (namestring path))
+    (sb-posix:syscall-error (c)
+      (if (= (sb-posix:syscall-errno c) sb-posix:enoent) nil (error c)))))
+
+(defun ci-safe-ancestors (path)
+  "Rifiuta link negli antenati esistenti, compreso il leaf; namespace posseduto."
+  (loop for p = (pathname path) then (uiop:pathname-parent-directory-pathname p)
+        for parent = (uiop:pathname-parent-directory-pathname p)
+        do (let ((s (ci-lstat p)))
+             (when (and s (sb-posix:s-islnk (sb-posix:stat-mode s)))
+               (error "Antenato simbolico: ~A" p)))
+        until (or (null parent) (equal p parent)))
+  path)
+
+(defun ci-mkdir (path &key existing)
+  "Crea una directory privata; non sostituisce una destinazione esistente."
+  (let ((p (ci-directory path)))
+    (when (some (lambda (part) (member part '(:up :back))) (pathname-directory p))
+      (error "Risalita nel percorso: ~A" p))
+    (ci-safe-ancestors p)
+    (let ((s (ci-lstat p)))
+      (when s
+        (unless (and existing (sb-posix:s-isdir (sb-posix:stat-mode s)))
+          (error "Destinazione esistente: ~A" p))
+        (return-from ci-mkdir p)))
+    (ensure-directories-exist (merge-pathnames ".parent" (uiop:pathname-parent-directory-pathname p)))
+    (ci-safe-ancestors (uiop:pathname-parent-directory-pathname p))
+    (sb-posix:mkdir p #o700)
+    p))
+
+(defun ci-files (directory &key (limit 10000) (max-depth 16))
+  "Inventario chiuso POSIX: include dotfile, rifiuta alias/link/speciali, memoria limitata."
+  (let ((root (ci-directory directory)) (files nil) (count 0))
+    (ci-safe-ancestors root)
+    (labels ((walk (dir depth)
+               (when (> depth max-depth) (error "Directory troppo profonda: ~A" dir))
+               (let ((handle (sb-posix:opendir (namestring dir))))
+                 (unwind-protect
+                      (loop for entry = (sb-posix:readdir handle)
+                            until (sb-alien:null-alien entry)
+                            for name = (sb-posix:dirent-name entry)
+                            unless (member name '("." "..") :test #'string=)
+                              do (when (> (incf count) limit) (error "Inventario oltre ~D." limit))
+                                 (let* ((p (merge-pathnames name dir)) (s (ci-lstat p)))
+                                   (unless s (error "File scomparso: ~A" p))
+                                   (cond ((sb-posix:s-isdir (sb-posix:stat-mode s))
+                                          (walk (uiop:ensure-directory-pathname p) (1+ depth)))
+                                         ((and (sb-posix:s-isreg (sb-posix:stat-mode s))
+                                               (= 1 (sb-posix:stat-nlink s))) (push p files))
+                                         (t (error "File non regolare o con alias: ~A" p)))))
+                   (sb-posix:closedir handle)))))
+      (walk root 0))
+    (sort files #'string< :key #'namestring)))
+
+(defun ci-copy-new (source destination)
+  (unless (ci-regular-file-p source) (error "Origine non regolare: ~A" source))
+  (ci-safe-ancestors destination)
+  (ensure-directories-exist destination)
+  (with-open-file (in source :element-type '(unsigned-byte 8))
+    (with-open-file (out destination :direction :output :if-exists :error
+                                    :element-type '(unsigned-byte 8))
+      (let ((buffer (make-array 65536 :element-type '(unsigned-byte 8))))
+        (loop for n = (read-sequence buffer in) while (plusp n)
+              do (write-sequence buffer out :end n)))))
+  (unless (and (= (ci-bytes source) (ci-bytes destination))
+               (string= (ci-sha256 source) (ci-sha256 destination)))
+    (error "Copia non corrispondente: ~A" destination))
+  destination)
+
+(defun ci-options (args allowed)
+  (let ((options nil))
+    (loop while args for key = (pop args)
+          do (unless (and (member key allowed :test #'string=)
+                          (not (assoc key options :test #'string=)))
+               (error "Opzione inattesa o duplicata: ~A" key))
+             (let ((value (if (string= key "--dry-run") "true" (pop args))))
+               (unless value (error "Valore assente: ~A" key))
+               (push (cons key value) options)))
+    options))
+
+(defun ci-option (options key &optional default)
+  (or (cdr (assoc key options :test #'string=)) default))
+
+(defun ci-required (options key)
+  (or (ci-option options key) (error "Opzione richiesta: ~A" key)))
+
+(defun ci-positive-id (value)
+  (unless (and (stringp value) (<= 1 (length value) 20) (every #'digit-char-p value)
+               (plusp (parse-integer value))) (error "Identificatore non valido: ~S" value))
+  value)
+
+(defun ci-hex-id-p (value &optional (length 64))
+  (and (stringp value) (= (length value) length)
+       (every (lambda (c) (or (char<= #\0 c #\9) (char<= #\a c #\f))) value)))
+
+(defun ci-sbcl-command (&rest arguments)
+  (append (list *ci-sbcl* "--dynamic-space-size" "4096" "--noinform" "--no-userinit"
+                "--no-sysinit" "--script") arguments))
+
+(defun ci-context ()
+  (list :run-id (or (uiop:getenv "GITHUB_RUN_ID") "local")
+        :attempt (or (uiop:getenv "GITHUB_RUN_ATTEMPT") "1")
+        :event (or (uiop:getenv "GITHUB_EVENT_NAME") "local")
+        :ref (or (uiop:getenv "GITHUB_REF") "local")
+        :repository (or (uiop:getenv "GITHUB_REPOSITORY") "gpicchiarelli/ArcDocDB")
+        :head-sha (or (uiop:getenv "CI_HEAD_SHA") "")
+        :base-sha (or (uiop:getenv "CI_BASE_SHA") "")
+        :image (or (uiop:getenv "ImageVersion") (uiop:getenv "ImageOS") "local")
+        :os (software-type) :architecture (machine-type)
+        :lisp-version (lisp-implementation-version)))
+
+(defun ci-identity-summary (identity)
+  (loop for key in '(:tested-sha :source-id :policy-id :source-files :source-bytes
+                    :lisp-files :physical-lines :modules)
+        append (list key (getf identity key))))
+
+(defun ci-installation-record (work)
+  (let ((path (uiop:getenv "ARCDOCDB_CI_TOOLCHAIN_RECORD")))
+    (when path
+      (let ((record (ci-read path)))
+        (ci-workflow-installation-schema record)
+        (ci-copy-new path (merge-pathnames "installation.lisp" work))))))

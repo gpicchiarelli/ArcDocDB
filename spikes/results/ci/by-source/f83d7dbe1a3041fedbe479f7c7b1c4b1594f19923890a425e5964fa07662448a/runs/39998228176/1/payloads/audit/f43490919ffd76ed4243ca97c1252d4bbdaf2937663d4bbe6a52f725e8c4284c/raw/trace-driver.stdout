@@ -1,0 +1,1 @@
+:OK: /home/runner/work/_temp/arcdocdb-sbcl.wdC9oMcs/installed/bin/sbcl --noinform --no-userinit --no-sysinit --script tools/check-trace.lisp --report /home/runner/work/ArcDocDB/ArcDocDB/spikes/out/ci/audit/work/trace.lisp; record: /home/runner/work/ArcDocDB/ArcDocDB/spikes/out/ci/audit/work/commands/trace/report.lisp

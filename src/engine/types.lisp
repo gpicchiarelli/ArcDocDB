@@ -1,0 +1,55 @@
+;;; OWNER: attore I/O seriale; campi configurazione readonly, admission e risorse locali.
+;;; SHARED: solo i registri esistenti del runtime; nessuna richiesta fra Serie.
+(in-package #:arcdocdb.engine)
+(declaim (optimize (safety 3) (speed 2) (debug 2)))
+
+;;; REQ: REQ-AFF-004 REQ-REC-001
+(define-condition errore-cleanup-motore (arcdocdb.conditions:arcdocdb-error)
+  ((primary :initarg :primary :reader causa-cleanup-motore :type (or null condition))
+   (errors :initarg :errors :reader errori-cleanup-motore :type list))
+  (:documentation "Causa primaria intatta e lista completa dei guasti cleanup, aggregati inclusi.")
+  (:report (lambda (condition stream)
+             (format stream "ArcDocDB cleanup: primaria ~A; guasti ~S"
+                     (causa-cleanup-motore condition) (errori-cleanup-motore condition)))))
+
+;;; REQ: REQ-REC-001 REQ-AFF-008 REQ-LIM-003
+(defstruct (motore (:constructor %make-motore) (:copier nil))
+  "Pre: configurazione validata prima dell'I/O; un attore e una Serie per handle.
+Post: admission chiusa fino a READY; risorse possedute fino a close, nessun buffer caller trattenuto.
+Nessun accessore pubblico sui FD o sulle radici; la capacita' non e' trasferibile fra thread."
+  (owner sb-thread:*current-thread* :type sb-thread:thread :read-only t)
+  (state :starting :type (member :starting :recovering :ready :faulted :closed))
+  (busy nil :type boolean)
+  (clock #'identity :type function :read-only t)
+  (observer nil :type (or null function) :read-only t)
+  (record-validator nil :type (or null function) :read-only t)
+  (version 2 :type (member 1 2) :read-only t)
+  (archive-id #() :type octets :read-only t)
+  (series-id #() :type octets :read-only t)
+  (max-file-bytes 16777216 :type index :read-only t)
+  (max-record-bytes 65536 :type index :read-only t)
+  (max-segments 64 :type (integer 2 65536) :read-only t)
+  (max-records 65536 :type u32 :read-only t)
+  (scratch #() :type octets :read-only t)
+  (empty #() :type octets :read-only t)
+  (words (make-array 5 :element-type '(unsigned-byte 64) :initial-element 0)
+         :type (simple-array (unsigned-byte 64) (5)) :read-only t)
+  (index nil :type (or null p:indice-primario))
+  (index-context nil :type (or null p:contesto-indice))
+  (directory nil :type (or null io:file-io))
+  (scope nil :type (or null g:ambito-get))
+  (view nil :type (or null g:vista-get-serie))
+  (registry nil :type (or null arcdocdb.csn:registro-csn))
+  (controller nil :type (or null s:controllore-serie))
+  (lease nil :type (or null index))
+  (active nil :type (or null a:segmento-attivo-preparato))
+  (append nil :type (or null io:file-io))
+  (source nil :type (or null r:sorgente-get-attiva))
+  (sources nil :type (or null gd:fonti-get-serie))
+  (batch nil :type (or null w:lotto))
+  (group nil :type (or null w:gruppo))
+  (get-context nil :type (or null g:contesto-get))
+  (fds nil :type list)
+  (recovery-sets nil :type list)
+  (failure nil :type (or null condition))
+  (cleanup-failures nil :type list))

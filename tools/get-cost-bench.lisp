@@ -1,0 +1,381 @@
+;;;; C4: isolamento byte e lookup con insieme di lavoro crescente; nessuna modifica prodotto.
+;;;; Metodo preregistrato: docs/implementazione/get-costi-metodo.md.
+;;; REQ: REQ-BEN-001 REQ-BEN-002 REQ-IDX-003 REQ-FOR-003 REQ-VAL-001
+;;; OWNER: main possiede fixture, contatori e report; nessun worker o writer concorrente.
+;;; SHARED: sole letture delle tabelle del prodotto; heap globale del processo.
+(require :asdf)
+(setf asdf:*compile-file-failure-behaviour* :error
+      asdf:*compile-file-warnings-behaviour* :error)
+(handler-bind ((warning (lambda (condition)
+                         (unless (typep condition 'sb-kernel:redefinition-warning)
+                           (error "tools/get-cost-bench.lisp COD-01: ~A" condition)))))
+  (asdf:load-asd (merge-pathnames "arcdocdb.asd" (truename "./")))
+  (asdf:load-system "arcdocdb"))
+
+(defpackage #:arcdocdb.get-cost.bench
+  (:use #:cl) (:local-nicknames (#:p #:arcdocdb.index.primary)
+                               (#:b #:arcdocdb.binary) (#:r #:arcdocdb.record)))
+(in-package #:arcdocdb.get-cost.bench)
+(declaim (optimize (safety 3) (speed 2) (debug 2)))
+(deftype octets () '(simple-array (unsigned-byte 8) (*)))
+(deftype digests () '(simple-array (unsigned-byte 32) (*)))
+(deftype words () '(simple-array (unsigned-byte 64) (5)))
+(defconstant +payload-budget+ (* 1024 1024 1024))
+(defconstant +byte-cases+ '(:crc-body :record-verify :two-copies :oracle
+                          :copy-verify-copy :copy-verify-copy-oracle))
+(defconstant +index-cases+ '(:hot-eight :uniform-hit :uniform-miss :hash-uniform-hit))
+;;; OWNER: main esclusivo; checkpoint solo fuori dalle finestre.
+(defvar *report* nil)
+(defvar *directory* nil)
+
+(define-condition bench-failure (error)
+  ((detail :initarg :detail :reader failure-detail))
+  (:report (lambda (condition stream)
+             (format stream "tools/get-cost-bench.lisp COD-61: ~A" (failure-detail condition)))))
+
+(defmacro demand (predicate control &rest arguments)
+  "Asserzione C4: argomenti diagnostici valutati e allocati solo sul fallimento."
+  `(unless ,predicate
+     (error 'bench-failure :detail (format nil ,control ,@arguments))))
+
+(defun bytes (size)
+  (make-array size :element-type '(unsigned-byte 8) :initial-element 0))
+
+(defun save-report ()
+  "Checkpoint privato con rilettura: un fallimento non perde le finestre già prodotte."
+  (let ((path (merge-pathnames "report.lisp" *directory*)))
+    (with-open-file (stream path :direction :output :if-exists :supersede
+                                 :if-does-not-exist :create)
+      (let ((*print-readably* t) (*print-pretty* t))
+        (write *report* :stream stream) (terpri stream)))
+    (with-open-file (stream path)
+      (let ((*read-eval* nil) (eof (gensym)))
+        (demand (equalp *report* (read stream nil eof)) "rilettura differente")
+        (demand (eq eof (read stream nil eof)) "forme ulteriori nel rapporto")))))
+
+(defun check-window (row expected)
+  "Controlla contatori e unità, senza imporre prestazioni o heap zero."
+  (demand (eq :ok (getf row :status)) "finestra fallita: ~S" row)
+  (demand (= expected (getf row :completed) (getf row :iterations)
+             (getf row :sink)) "completamento/sink incoerenti")
+  (demand (and (integerp (getf row :heap-bytes)) (<= 0 (getf row :heap-bytes))
+               (integerp (getf row :ticks)) (<= 0 (getf row :ticks))) "contatori invalidi")
+  (let ((ticks (getf row :ticks)))
+    (demand (if (zerop ticks) (null (getf row :ops-per-second))
+                (= (getf row :ops-per-second)
+                   (/ expected (/ ticks (float internal-time-units-per-second 1d0)))))
+            "rate incoerente")))
+
+(defun measure-window (cycle count warmup coordinates &optional counters)
+  "Contatori privati; errore catturato soltanto al confine della finestra bounded."
+  (declare (type fixnum count warmup) (optimize (speed 3) (safety 3)))
+  (sb-ext:gc :full t)
+  (dotimes (i warmup) (funcall cycle))
+  (when counters (fill counters 0))
+  (let ((completed 0) (sink 0) (failure nil)
+        (ticks (get-internal-real-time)) (heap (sb-ext:get-bytes-consed)))
+    (declare (type fixnum completed sink))
+    (handler-case
+        (sb-ext:with-timeout 60
+          (dotimes (i count)
+            (incf sink (the fixnum (funcall cycle))) (incf completed)))
+      (error (condition) (setf failure (princ-to-string condition))))
+    (setf heap (- (sb-ext:get-bytes-consed) heap)
+          ticks (- (get-internal-real-time) ticks))
+    (let ((row (append coordinates
+                       (list :status (if failure :failed :ok) :iterations count
+                             :completed completed :sink sink :ticks ticks :heap-bytes heap
+                             :ops-per-second (when (plusp ticks)
+                                               (/ completed (/ ticks (float internal-time-units-per-second 1d0))))
+                             :retries (if counters (aref counters 0) 0) :diagnostic failure))))
+      (push row (getf *report* :windows)) (save-report)
+      (check-window row count)
+      row)))
+
+(defun reference-crc (buffer start end)
+  "Oracolo bitwise cold, indipendente dalle tabelle slicing-by-8 del prodotto."
+  (let ((crc #xffffffff))
+    (loop for i from start below end do
+      (setf crc (logxor crc (aref buffer i)))
+      (dotimes (bit 8)
+        (setf crc (logxor (ash crc -1) (if (oddp crc) #x82f63b78 0)))))
+    (logxor crc #xffffffff)))
+
+(defun oracle (output expected)
+  "Controllo e somma di tutti i byte, compresi i buffer piccoli."
+  (declare (type octets output expected))
+  (let ((sum 0))
+    (declare (type fixnum sum))
+    (dotimes (i (length expected) sum)
+      (let ((value (aref output (1+ i))))
+        (demand (= value (aref expected i)) "byte output errato ~D" i)
+        (incf sum value)))))
+
+(defstruct byte-fixture
+  (size 0 :type fixnum) (record (bytes 0) :type octets)
+  (key (bytes 16) :type octets) (value (bytes 0) :type octets)
+  (scratch (bytes 0) :type octets) (output (bytes 0) :type octets)
+  (sentinels (bytes 0) :type octets) (crc 0 :type (unsigned-byte 32))
+  (sum 0 :type fixnum))
+
+(defun make-bytes-fixture (size)
+  (let* ((key (bytes 16)) (value (bytes size)) (record (bytes (+ size 40))))
+    (dotimes (i 16) (setf (aref key i) (+ 31 i)))
+    (dotimes (i size) (setf (aref value i) (mod (+ 11 (* i 29)) 251)))
+    (demand (= (+ size 40) (r:scrivi-record-parole record 0 1 0 7 key value :version 2 :flags 0))
+            "dimensione record inattesa")
+    (make-byte-fixture :size size :key key :value value :record record
+                       :scratch (copy-seq record) :output (bytes (+ size 2))
+                       :sentinels (bytes (+ size 2)) :sum (reduce #'+ value)
+                       :crc (reference-crc record 24 (length record)))))
+
+(defun byte-cycle (fixture scenario &optional negative)
+  (let* ((record (byte-fixture-record fixture)) (key (byte-fixture-key fixture))
+         (value (byte-fixture-value fixture)) (scratch (byte-fixture-scratch fixture))
+         (output (byte-fixture-output fixture)) (sentinels (byte-fixture-sentinels fixture))
+         (size (byte-fixture-size fixture)) (end (length record))
+         (crc (logxor (byte-fixture-crc fixture) (if negative 1 0)))
+         (expected-sum (byte-fixture-sum fixture)))
+    (declare (type octets record key value scratch output sentinels)
+             (type fixnum size end expected-sum) (type (unsigned-byte 32) crc))
+    (fill output 215)
+    (replace output value :start1 1)
+    (lambda ()
+      (ecase scenario
+        (:crc-body (demand (= crc (b:crc32c record 24 end)) "CRC diverso dall'oracolo"))
+        (:record-verify
+         (multiple-value-bind (start finish) (r:verifica-put-parole record 0 end key 0 7 0)
+           (demand (and (= start 40) (= finish end)) "range valore errato")))
+        (:oracle
+         (fill sentinels 215)
+         (demand (= expected-sum (oracle output value)) "somma oracolo errata"))
+        ((:two-copies :copy-verify-copy :copy-verify-copy-oracle)
+         (when (eq scenario :copy-verify-copy-oracle) (fill output 215))
+         (replace scratch record)
+         (unless (eq scenario :two-copies)
+           (multiple-value-bind (start finish) (r:verifica-put-parole scratch 0 end key 0 7 0)
+             (demand (and (= start 40) (= finish end)) "range scratch errato")))
+         (replace output scratch :start1 1 :end1 (1+ size) :start2 40 :end2 end)
+         (when (eq scenario :copy-verify-copy-oracle)
+           (demand (= expected-sum (oracle output value)) "somma pipeline errata"))))
+      1)))
+
+(defun verify-bytes (fixture)
+  (let ((output (byte-fixture-output fixture)))
+    (demand (= (byte-fixture-sum fixture) (oracle output (byte-fixture-value fixture)))
+            "output finale errato")
+    (demand (= 215 (aref output 0) (aref output (1+ (byte-fixture-size fixture))))
+            "guardie output alterate")
+    (demand (equalp (byte-fixture-record fixture) (byte-fixture-scratch fixture))
+            "scratch differente dal record")))
+
+(defstruct index-fixture
+  index context (output (make-array 5 :element-type '(unsigned-byte 64)) :type words)
+  (keys (bytes 0) :type octets) (missing (bytes 0) :type octets)
+  (highs (make-array 0 :element-type '(unsigned-byte 32)) :type digests)
+  (lows (make-array 0 :element-type '(unsigned-byte 32)) :type digests)
+  (missing-highs (make-array 0 :element-type '(unsigned-byte 32)) :type digests)
+  (missing-lows (make-array 0 :element-type '(unsigned-byte 32)) :type digests)
+  (count 0 :type fixnum) (capacity 0 :type fixnum) (fragments 0 :type fixnum))
+
+(defun split-empty-directory (index capacity depth)
+  "Split pubblici di frammenti vuoti, verificati dal piano; setup fuori misura."
+  (dotimes (level depth)
+    (dotimes (prefix (ash 1 level))
+      (let* ((high (ash prefix (- 32 level)))
+             (source (p:frammento-corrente-indice index high))
+             (first (p:crea-frammento-indice index :depth (1+ level) :prefix (* prefix 2)
+                                           :arena-bytes (* capacity 16)))
+             (second (p:crea-frammento-indice index :depth (1+ level) :prefix (1+ (* prefix 2))
+                                            :arena-bytes (* capacity 16)))
+             (plan (p:prepara-directory-indice index source first +payload-budget+ second)))
+        (demand (null (p:pubblica-directory-indice plan)) "pubblicazione split inattesa")))))
+
+(defun seed-index (fixture)
+  "Corpus e digest reali; ogni insert passa dal writer pubblico, senza accessi interni."
+  (let ((keys (index-fixture-keys fixture)) (missing (index-fixture-missing fixture))
+        (index (index-fixture-index fixture)) (context (index-fixture-context fixture))
+        (content (make-array 5 :element-type '(unsigned-byte 64) :initial-element 0)))
+    (setf (aref content 2) (logior (ash 16 32) (ash 1 48)) (aref content 3) 56)
+    (dotimes (j (index-fixture-count fixture))
+      (let ((start (* j 16)))
+        (dotimes (k 8)
+          (setf (aref keys (+ start k)) (ldb (byte 8 (* k 8)) j)
+                (aref missing (+ start k)) (ldb (byte 8 (* k 8)) j)
+                (aref keys (+ start 8 k)) 37 (aref missing (+ start 8 k)) 193))
+        (multiple-value-bind (high low) (p:digest-chiave-indice index keys start (+ start 16))
+          (setf (aref (index-fixture-highs fixture) j) high
+                (aref (index-fixture-lows fixture) j) low
+                (aref content 0) (1+ j) (aref content 1) (+ (ash 17 32) 64 (* j 56)))
+          (demand (null (p:pubblica-chiave-indice index (p:frammento-corrente-indice index high)
+                                               keys start (+ start 16) high low content context))
+                  "insert non completato"))
+        (multiple-value-bind (high low) (p:digest-chiave-indice index missing start (+ start 16))
+          (setf (aref (index-fixture-missing-highs fixture) j) high
+                (aref (index-fixture-missing-lows fixture) j) low)))))
+  fixture)
+
+(defun make-index-input (count)
+  (demand (and (<= 32 count 4194304) (zerop (logand count (1- count)))) "N fuori budget")
+  (let* ((capacity (min 8192 (* 2 count))) (fragments (/ (* 2 count) capacity))
+         (payload (+ (* fragments (+ (* 57 capacity) 8)) (* 48 count))))
+    (demand (<= payload +payload-budget+) "payload oltre 1 GiB")
+    (let* ((depth (1- (integer-length fragments)))
+           (index (p:crea-indice-primario :capacity capacity :max-depth depth
+                                         :directory-budget-bytes (* 8 fragments)
+                                         :fragment-budget-bytes (* 57 capacity)
+                                         :arena-bytes (* 16 capacity)
+                                         :hash-seed-high #x01234567 :hash-seed-low #x89abcdef))
+           (fixture (make-index-fixture
+                     :index index :context (p:crea-contesto-indice) :count count
+                     :capacity capacity :fragments fragments :keys (bytes (* count 16))
+                     :missing (bytes (* count 16))
+                     :highs (make-array count :element-type '(unsigned-byte 32))
+                     :lows (make-array count :element-type '(unsigned-byte 32))
+                     :missing-highs (make-array count :element-type '(unsigned-byte 32))
+                     :missing-lows (make-array count :element-type '(unsigned-byte 32)))))
+      (split-empty-directory index capacity depth)
+      (seed-index fixture))))
+
+(defun check-index-output (output ordinal)
+  (declare (type words output) (type fixnum ordinal))
+  (demand (and (= (aref output 0) (1+ ordinal))
+               (= (aref output 1) (+ (ash 17 32) 64 (* ordinal 56)))) "CSN/location errati"))
+
+(defun verify-index (fixture)
+  (let ((output (index-fixture-output fixture)) (keys (index-fixture-keys fixture)))
+    (dotimes (j (index-fixture-count fixture))
+      (demand (eq :live (p:leggi-indice-primario
+                        (index-fixture-index fixture) keys (* j 16) (+ (* j 16) 16)
+                        (aref (index-fixture-highs fixture) j) (aref (index-fixture-lows fixture) j)
+                        (index-fixture-context fixture) output)) "verifica corpus non live ~D" j)
+      (check-index-output output j)
+      (demand (and (= (ash (aref output 2) -32) (logior 16 (ash 1 16)))
+                   (= (aref output 3) 56) (zerop (aref output 4))) "metadati corpus errati"))))
+
+(defun index-cycle (fixture scenario counters)
+  (let* ((index (index-fixture-index fixture)) (context (index-fixture-context fixture))
+         (output (index-fixture-output fixture)) (miss (eq scenario :uniform-miss))
+         (keys (if miss (index-fixture-missing fixture) (index-fixture-keys fixture)))
+         (highs (if miss (index-fixture-missing-highs fixture) (index-fixture-highs fixture)))
+         (lows (if miss (index-fixture-missing-lows fixture) (index-fixture-lows fixture)))
+         (mask (1- (index-fixture-count fixture))) (cursor 17))
+    (declare (type octets keys) (type digests highs lows) (type fixnum mask cursor))
+    (when miss (fill output #xffffffffffffffff))
+    (lambda ()
+      (setf cursor (logand (+ (* cursor 1664525) 1013904223) mask))
+      (let* ((j (if (eq scenario :hot-eight) (logand cursor 7) cursor)) (start (* j 16)))
+        (multiple-value-bind (high low)
+            (if (eq scenario :hash-uniform-hit) (p:digest-chiave-indice index keys start (+ start 16))
+                (values (aref highs j) (aref lows j)))
+          (let ((status (p:leggi-indice-primario index keys start (+ start 16) high low context output)))
+            (case status
+              (:retry-limit (incf (aref counters 0)))
+              (:live (demand (not miss) "miss restituisce live") (check-index-output output j))
+              (:absent (demand miss "hit restituisce absent"))
+              (otherwise (demand nil "stato inatteso ~S" status))))))
+      1)))
+
+(defun expect-rejection (thunk)
+  (let ((caught nil))
+    (handler-case (funcall thunk)
+      (bench-failure () (setf caught t))
+      (arcdocdb.conditions:corruption-detected () (setf caught t)))
+    (demand caught "controllo negativo non rilevato")))
+
+(defun verify-miss-output (fixture scenario)
+  (when (eq scenario :uniform-miss)
+    (demand (every (lambda (word) (= word #xffffffffffffffff)) (index-fixture-output fixture))
+            "miss modifica il payload destinazione")))
+
+(defun self-test ()
+  (let ((standard (map '(simple-array (unsigned-byte 8) (*)) #'char-code "123456789")))
+    (demand (= #xe3069283 (b:crc32c standard 0 9) (reference-crc standard 0 9)) "vettore CRC errato"))
+  (dolist (size '(16 256 4096))
+    (let ((fixture (make-bytes-fixture size)))
+      (dolist (scenario +byte-cases+)
+        (measure-window (byte-cycle fixture scenario) 16 4
+                        (list :suite :self-test-bytes :size size :scenario scenario :replica 0))
+        (verify-bytes fixture))
+      (incf (aref (byte-fixture-record fixture) 40))
+      (expect-rejection (byte-cycle fixture :record-verify))
+      (decf (aref (byte-fixture-record fixture) 40))
+      (incf (aref (byte-fixture-output fixture) 1))
+      (expect-rejection (lambda () (verify-bytes fixture)))))
+  (let ((fixture (make-index-input 32)) (counters (make-array 1 :element-type 'fixnum :initial-element 0)))
+    (verify-index fixture)
+    (dolist (scenario +index-cases+)
+      (measure-window (index-cycle fixture scenario counters) 128 32
+                      (list :suite :self-test-index :keys 32 :scenario scenario :replica 0) counters)
+      (verify-miss-output fixture scenario))
+    (verify-index fixture)
+    (incf (aref (index-fixture-output fixture) 0))
+    (expect-rejection (lambda () (check-index-output (index-fixture-output fixture) 31))))
+  (let ((before (sb-ext:get-bytes-consed)) (live nil))
+    (setf live (bytes (* 4 1024 1024)))
+    (demand (>= (- (sb-ext:get-bytes-consed) before) (* 4 1024 1024)) "sensore heap insensibile")
+    (demand (zerop (aref live 0)) "array sensore errato"))
+  (let ((row (measure-window (lambda () 1) 65536 16 (list :suite :sensor-empty))))
+    (demand (zerop (getf row :heap-bytes)) "sensore vuoto alloca"))
+  (expect-rejection (lambda () (check-window '(:status :ok :completed 0 :iterations 1 :sink 1) 1)))
+  (setf (getf *report* :self-test) :ok) (save-report))
+
+(defun run-bytes ()
+  (dolist (size '(16 256 4096))
+    (let ((fixture (make-bytes-fixture size)))
+      (dolist (scenario +byte-cases+)
+        (dotimes (replica 5)
+          (measure-window (byte-cycle fixture scenario) 65536 1024
+                          (list :suite :bytes :size size :scenario scenario :replica replica))
+          (verify-bytes fixture))))))
+
+(defun run-index ()
+  (dolist (count '(1024 65536 1048576 4194304))
+    (let* ((fixture (make-index-input count))
+           (counters (make-array 1 :element-type 'fixnum :initial-element 0))
+           (fragments (index-fixture-fragments fixture)) (capacity (index-fixture-capacity fixture)))
+      (verify-index fixture)
+      (push (list :keys count :fragments fragments :capacity capacity :directory-bytes (* 8 fragments)
+                  :index-payload-bytes (+ (* fragments 57 capacity) (* 8 fragments))
+                  :fixture-payload-bytes (* 48 count)) (getf *report* :fixtures))
+      (dolist (scenario +index-cases+)
+        (dotimes (replica 5)
+          (measure-window (index-cycle fixture scenario counters) (max 262144 count) 4096
+                          (list :suite :index :keys count :scenario scenario :replica replica) counters)
+          (verify-miss-output fixture scenario)))
+      (verify-index fixture)
+      (format t "Completata cardinalità ~D.~%" count) (finish-output))))
+
+(defun main ()
+  (let* ((args (uiop:command-line-arguments)) (mode (first args)) (directory (second args)))
+    (unless (and (= (length args) 2) (member mode '("--self-test" "--bytes" "--index" "--negative-fixture")
+                                          :test #'string=))
+      (format *error-output* "tools/get-cost-bench.lisp COD-61: modo e directory nuova richiesti.~%")
+      (uiop:quit 1))
+    (setf *directory* (merge-pathnames (uiop:ensure-directory-pathname directory) (truename "./")))
+    (when (probe-file *directory*)
+      (format *error-output* "tools/get-cost-bench.lisp COD-61: directory già esistente.~%")
+      (uiop:quit 1))
+    (ensure-directories-exist (merge-pathnames "report.lisp" *directory*))
+    (setf *report* (list :schema-version 1 :kind :get-cost-bench :status :running :mode mode
+                        :implementation (lisp-implementation-version) :machine (machine-type)
+                        :os (software-type) :os-version (software-version)
+                        :internal-time-units-per-second internal-time-units-per-second
+                        :self-test nil :fixtures nil :windows nil :diagnostic nil))
+    (handler-case
+        (sb-ext:with-timeout 900
+          (if (string= mode "--negative-fixture")
+              (measure-window (byte-cycle (make-bytes-fixture 16) :crc-body t) 16 0
+                              (list :suite :negative-fixture))
+              (progn (self-test)
+                     (cond ((string= mode "--bytes") (run-bytes))
+                           ((string= mode "--index") (run-index))
+                           (t nil))))
+          (setf (getf *report* :status) :ok) (save-report))
+      (error (condition)
+        (setf (getf *report* :status) :failed (getf *report* :diagnostic) (princ-to-string condition))
+        (save-report) (format *error-output* "tools/get-cost-bench.lisp COD-61: ~A~%" condition)
+        (uiop:quit 1)))
+    (format t "Rapporto: ~A~%" (merge-pathnames "report.lisp" *directory*))))
+
+(main)

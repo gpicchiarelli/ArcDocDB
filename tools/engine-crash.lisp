@@ -1,0 +1,16 @@
+;;;; Driver C4: workload/oracoli nei test, startup/recovery/admission soltanto nel prodotto.
+(require :asdf)
+(require :sb-posix)
+(setf asdf:*compile-file-failure-behaviour* :error asdf:*compile-file-warnings-behaviour* :error)
+(handler-bind ((warning (lambda (condition)
+                         (unless (typep condition 'sb-kernel:redefinition-warning) (error condition)))))
+  (asdf:load-asd (merge-pathnames "../arcdocdb.asd" *load-truename*))
+  (asdf:load-system "arcdocdb/tests"))
+(handler-case
+    (let ((args (uiop:command-line-arguments)))
+      (cond ((equal args '("--self-test")) (uiop:symbol-call :arcdocdb.engine.tests :run))
+            ((= (length args) 4) (uiop:symbol-call :arcdocdb.engine.tests :child-main args))
+            (t (error "Uso: --self-test oppure MODE ROOT VERSION STAGE."))))
+  (error (condition)
+    (format *error-output* "~&ENGINE-FAIL ~A: ~A~%" (type-of condition) condition)
+    (sb-ext:exit :code 1)))

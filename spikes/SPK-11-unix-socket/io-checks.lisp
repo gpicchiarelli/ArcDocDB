@@ -1,0 +1,137 @@
+;;;; C4: backend deterministici, oracoli indipendenti e mutazioni note.
+;;; REQ: REQ-VAL-001 REQ-IPC-002
+(in-package #:arcdocdb.spk11)
+(declaim (optimize (safety 3) (debug 3)))
+
+(defun io-guarded-buffer (size)
+  "Due guardie prima/dopo lo span, escluso qualsiasi offset di base implicito."
+  (make-array (+ size 4) :element-type '(unsigned-byte 8) :initial-element #xa5))
+
+(defun check-io-guards (buffer)
+  "Le quattro sentinelle devono restare identiche anche dopo rifiuti o EOF."
+  (let ((end (length buffer)))
+    (demand (and (= #xa5 (aref buffer 0) (aref buffer 1))
+                 (= #xa5 (aref buffer (- end 2)) (aref buffer (1- end)))) :io-guards)))
+
+(defun check-io-content (buffer expected)
+  "Confronto dei soli byte posseduti e di entrambe le guardie."
+  (check-io-guards buffer)
+  (demand (= (length buffer) (+ (length expected) 4)) :io-content)
+  (dotimes (i (length expected))
+    (demand (= (aref expected i) (aref buffer (+ i 2))) :io-content)))
+
+(defun scripted-io (steps buffer direction)
+  "Callback fidato locale: controlla vettore/FD/range, poi scrive solo byte confermati."
+  (let ((cursor 2) (remaining steps) (calls 0))
+    (values
+     (lambda (fd actual start count)
+       (demand (and (= fd 7) (eq buffer actual) (= cursor start)
+                    (<= 1 count (- (length buffer) 2 start))) :io-callback-range)
+       (demand remaining :io-extra-call)
+       (incf calls)
+       (destructuring-bind (n errno) (pop remaining)
+         (when (and (integerp n) (<= 1 n count) (eql errno 0))
+           (when (eq direction :input)
+             (dotimes (i n) (setf (aref buffer (+ start i)) (+ 10 start i))))
+           (incf cursor n))
+         (values n errno)))
+     (lambda () calls))))
+
+(defun check-io-short-and-retry ()
+  "Tre successi separati da EAGAIN/EINTR: un callback per passo, deadline immutata."
+  (dolist (direction '(:input :output))
+    (let ((buffer (io-guarded-buffer 6)))
+      (multiple-value-bind (backend calls)
+          (scripted-io (list '(2 0) (list -1 sb-posix:eagain)
+                             (list -1 sb-posix:eintr) '(1 0) '(3 0)) buffer direction)
+        (let ((span (make-io-span 7 buffer 2 8 direction 4 100 0 backend)))
+          (loop for expected in '(:progress :would-block :interrupted :progress :done)
+                for cursor in '(4 4 4 5 8) for now from 1 do
+                  (demand (eq expected (io-step span now)) :io-status)
+                  (demand (= cursor (io-span-cursor span)) :io-offset)
+                  (demand (= now (funcall calls) (io-span-calls span)) :io-call-count)
+                  (demand (= 100 (io-span-until span)) :io-deadline))
+          (demand (eq :done (io-step span 99)) :io-terminal)
+          (demand (= 5 (funcall calls)) :io-call-count)
+          (if (eq direction :input)
+              (check-io-content buffer (bytes 12 13 14 15 16 17))
+              (check-io-content buffer (bytes #xa5 #xa5 #xa5 #xa5 #xa5 #xa5)))))))
+  t)
+
+(defun check-io-preflight ()
+  "Rifiuti prima della syscall, deadline esatta e nessun rinnovo dal progresso."
+  (let* ((buffer (io-guarded-buffer 4)) (calls 0)
+         (backend (lambda (fd bytes start count)
+                    (declare (ignore fd bytes start count)) (incf calls) (values 1 0))))
+    (dolist (range '((-1 3) (2 2) (3 2) (2 9)))
+      (expect-rejection :io-span-range
+                        (lambda () (make-io-span 7 buffer (first range) (second range) :input 1 10 0 backend))))
+    (expect-rejection :io-span-range (lambda () (make-io-span -1 buffer 2 6 :input 1 10 0 backend)))
+    (expect-rejection :io-span-range (lambda () (make-io-span 7 #(1 2 3) 0 1 :input 1 10 0 backend)))
+    (expect-rejection :io-direction (lambda () (make-io-span 7 buffer 2 6 :other 1 10 0 backend)))
+    (expect-rejection :io-chunk (lambda () (make-io-span 7 buffer 2 6 :input 0 10 0 backend)))
+    (expect-rejection :io-clock (lambda () (make-io-span 7 buffer 2 6 :input 1 9 10 backend)))
+    (let ((span (make-io-span 7 buffer 2 6 :input 1 10 0 backend)))
+      (demand (eq :expired (io-step span 10)) :io-deadline)
+      (demand (eq :expired (io-step span 11)) :io-terminal)
+      (demand (zerop calls) :io-call-count))
+    (let ((span (make-io-span 7 buffer 2 6 :input 1 10 0 backend)))
+      (demand (eq :progress (io-step span 9)) :io-status)
+      (expect-rejection :io-clock (lambda () (io-step span 8)))
+      (demand (= calls 1) :io-call-count)
+      (demand (eq :expired (io-step span 10)) :io-deadline)
+      (demand (= 3 (io-span-cursor span)) :io-offset)
+      (demand (= calls 1) :io-call-count)))
+  t)
+
+(defun check-io-terminal-errors ()
+  "EOF parziale, zero send e guasto fatale conservano byte confermati e terminalita."
+  (dolist (direction '(:input :output))
+    (dolist (final (list '(0 0) (list -1 sb-posix:econnreset)))
+      (let ((buffer (io-guarded-buffer 6)))
+        (multiple-value-bind (backend calls) (scripted-io (list '(2 0) final) buffer direction)
+          (let* ((span (make-io-span 7 buffer 2 8 direction 4 100 0 backend))
+                 (expected (if (and (eq direction :input) (zerop (first final))) :eof :faulted)))
+            (demand (eq :progress (io-step span 0)) :io-status)
+            (demand (eq expected (io-step span 1)) :io-status)
+            (demand (eq expected (io-step span 2)) :io-terminal)
+            (demand (= 4 (io-span-cursor span)) :io-offset)
+            (demand (= 2 (funcall calls)) :io-call-count)
+            (demand (= (second final) (io-span-errno span)) :io-errno)
+            (check-io-guards buffer))))))
+  t)
+
+(defun check-io-invalid-results ()
+  "Callback incoerenti guastano il contesto, senza avanzare o ritentare."
+  (dolist (result (list '(5 0) '(-2 0) '(-1 0) '(1 7) '(0 -1) '(nil 0) '(1 nil)))
+    (let* ((buffer (io-guarded-buffer 4)) (calls 0)
+           (span (make-io-span 7 buffer 2 6 :input 4 10 0
+                              (lambda (fd bytes start count)
+                                (declare (ignore fd bytes start count))
+                                (incf calls) (values (first result) (second result))))))
+      (expect-rejection :io-result (lambda () (io-step span 0)))
+      (demand (eq :faulted (io-step span 1)) :io-terminal)
+      (demand (= 2 (io-span-cursor span)) :io-offset)
+      (demand (= 1 calls) :io-call-count)
+      (check-io-guards buffer)))
+  t)
+
+(defun check-io-sensitivity ()
+  "Quattro mutazioni rendono falsi oracoli separati di byte, progresso, chiamate e tempo."
+  (let ((buffer (io-guarded-buffer 1)))
+    (setf (aref buffer 0) 0)
+    (expect-rejection :io-guards (lambda () (check-io-guards buffer))))
+  (let ((span (make-io-span 7 (io-guarded-buffer 4) 2 6 :input 4 10 0)))
+    (setf (io-span-cursor span) 6)
+    (expect-rejection :io-offset (lambda () (demand (= 2 (io-span-cursor span)) :io-offset)))
+    (setf (io-span-calls span) 2)
+    (expect-rejection :io-call-count (lambda () (demand (= 1 (io-span-calls span)) :io-call-count)))
+    (expect-rejection :io-deadline (lambda () (demand (= 11 (io-span-until span)) :io-deadline))))
+  t)
+
+(defun check-io-scripts ()
+  "Campagna deterministica senza FD reale; nessun risultato script viene chiamato nativo."
+  (list :status :ok :short-and-retry (check-io-short-and-retry)
+        :preflight-and-deadlines (check-io-preflight)
+        :terminal-errors (check-io-terminal-errors) :invalid-results (check-io-invalid-results)
+        :oracle-negative-controls (progn (check-io-sensitivity) 4)))

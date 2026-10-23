@@ -1,0 +1,82 @@
+;;; REQ: REQ-IDX-009 REQ-LIM-003
+(in-package #:arcdocdb.index.page.tests)
+(declaim (optimize (safety 3) (speed 2) (debug 3)))
+
+(deftest req-idx-009-chiave-massima-frammentata
+  (let ((key (bytes 65535)))
+    (dotimes (i 65535) (setf (aref key i) (mod (+ i (floor i 256)) 256)))
+    (dolist (size '(4096 16384 65536))
+      (let* ((chunk (- size 96)) (parts (ceiling 65535 chunk)) (copy (bytes 65535)))
+        (is (= parts (ecase size (4096 17) (16384 5) (65536 2))))
+        (dotimes (part parts)
+          (let* ((offset (* part chunk)) (limit (min 65535 (+ offset chunk)))
+                 (body (subseq key offset limit)) (page (* size (- 100 part)))
+                 (next (if (= limit 65535) 0 (- page size))) (ng (if (zerop next) 0 7)))
+            (roundtrip size :chiave body 65535 offset :page page :next next :next-generation ng)
+            (multiple-value-bind (buffer start end id)
+                (raw-page size :chiave body 65535 offset :page page :next next :next-generation ng)
+              (multiple-value-bind (kind total position used target generation)
+                  (p:verifica-pagina-indice buffer start end id)
+                (is (eq kind :chiave)) (is (= total 65535)) (is (= position offset))
+                (is (= target next)) (is (= generation ng))
+                (replace copy buffer :start1 position :start2 (+ start 96) :end2 (+ start 96 used))))))
+        (is (equalp key copy))
+        (roundtrip size :bucket (bucket-body size (list key) :external t) 1 (capacity size))))))
+
+(deftest req-idx-009-chiavi-inline-esterne-e-arena-esatta
+  (let* ((full (bucket-body 4096 (list #(3) #(4)) :collision t))
+         (body (subseq full 0 (1- (length full)))) (entry 96))
+    (ref-write body (+ entry 30) 1 2) (ref-write body (+ entry 32) 0 4)
+    (ref-write body (+ entry 40) (* 4096 100) 8) (ref-write body (+ entry 48) 7 8)
+    (roundtrip 4096 :bucket body 2 32))
+  (dolist (size '(4096 16384 65536))
+    (let* ((length (- size 96 (* 65 (capacity size)))) (key (bytes length #xe1)))
+      (roundtrip size :bucket (bucket-body size (list key)) 1 (capacity size))
+      (let ((body (bucket-body size (list (bytes (1+ length))))))
+        (let ((target (bytes size #xac)) (plan (p:crea-descrittore-pagina (identita-fixture size) :bucket 1 (capacity size))))
+          (signals invalid-argument (p:scrivi-pagina-indice target 0 size plan body 0 (length body))
+                   :index-page-body-range)
+          (is (every (lambda (b) (= b #xac)) target)))))))
+
+(deftest req-idx-009-coda-chiave-e-catena-invalide
+  (dolist (item '((0 0 0 :index-page-key-fragment) (1 1 0 :index-page-key-fragment)
+                  (1 2 0 :index-page-key-fragment) (5000 0 0 :index-page-key-fragment)))
+    (destructuring-bind (total offset next reason) item
+      (multiple-value-bind (buffer start end id)
+          (raw-page 4096 :chiave #(1) total offset :next next)
+        (signals corruption-detected (p:verifica-pagina-indice buffer start end id) reason))))
+  (multiple-value-bind (buffer start end id)
+      (raw-page 4096 :chiave #(1) 1 0 :next 4096 :next-generation 7)
+    (signals corruption-detected (p:verifica-pagina-indice buffer start end id) :index-page-key-next))
+  (multiple-value-bind (buffer start end id) (raw-page 4096 :chiave (bytes 4000) 5000 0)
+    (signals corruption-detected (p:verifica-pagina-indice buffer start end id) :index-page-key-next))
+  (multiple-value-bind (buffer start end id)
+      (raw-page 4096 :directory (directory-body 1 4096) 2 (+ 1 (* 63 256)) :next 4096 :next-generation 7)
+    (signals corruption-detected (p:verifica-pagina-indice buffer start end id) :index-page-directory-next)))
+
+(deftest req-idx-009-split-directory-e-bucket-immutabili
+  ;; Due figli gia' costruiti, poi una directory a un bit alto; nessuna root del motore.
+  (dolist (size '(4096 16384 65536))
+    (let ((body (bytes 32)) (left (bucket-body size (list #(1))))
+          (right (bucket-body size (list #(2)))))
+      ;; Primo digest nel prefisso 0, secondo nel prefisso 1; fingerprint e sonda invariati.
+      (ref-write left (+ (capacity size) 4) #x09abcdef 4)
+      (is (zerop (ldb (byte 1 63) (ref-read left (capacity size) 8))))
+      (is (= 1 (ldb (byte 1 63) (ref-read right (capacity size) 8))))
+      (ref-write body 0 (* size 10) 8) (ref-write body 8 7 8)
+      (ref-write body 16 (* size 20) 8) (ref-write body 24 7 8)
+      (roundtrip size :bucket left 1 (capacity size) :page (* size 10))
+      (roundtrip size :bucket right 1 (capacity size) :page (* size 20))
+      (roundtrip size :directory body 2 (+ 1 (* 63 256)) :page (* size 30)))))
+
+(deftest req-idx-009-riferimenti-esterni-e-identita-allineata
+  (let ((body (bucket-body 4096 (list #(1 2)) :external t)))
+    (dolist (edit '((72 0 :index-page-external-key) (72 16777216 :index-page-reference)
+                    (80 8 :index-page-reference)))
+      (destructuring-bind (offset value reason) edit
+        (let ((copy (copy-seq body)))
+          (ref-write copy offset value 8)
+          (multiple-value-bind (buffer start end id) (raw-page 4096 :bucket copy 1 32)
+            (signals corruption-detected (p:verifica-pagina-indice buffer start end id) reason))))))
+  (multiple-value-bind (buffer start end id) (raw-page 4096 :chiave #(1) 1 0 :page 4097)
+    (signals corruption-detected (p:verifica-pagina-indice buffer start end id) :index-page-alignment)))

@@ -1,0 +1,13 @@
+
+; file: /home/runner/work/ArcDocDB/ArcDocDB/tools/ci/measure.lisp
+; in: DEFUN CI-MEASURE-RUN-CHILD
+;     (ARCDOCDB.CI::CI-MEASURE-VALIDATE-REPLICA ARCDOCDB.CI::RECORD
+;      ARCDOCDB.CI::REPLICA)
+; 
+; caught STYLE-WARNING:
+;   undefined function: ARCDOCDB.CI::CI-MEASURE-VALIDATE-REPLICA
+; 
+; compilation unit finished
+;   Undefined function:
+;     CI-MEASURE-VALIDATE-REPLICA
+;   caught 1 STYLE-WARNING condition

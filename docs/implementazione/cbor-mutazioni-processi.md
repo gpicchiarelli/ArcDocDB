@@ -1,0 +1,169 @@
+# Esiti dei processi nelle mutazioni CBOR
+
+I runner delle testate e della struttura CBOR devono distinguere un rifiuto
+del mutante da un errore del processo che esegue i test. La revisione del
+2026-10-09 ha trovato due falsi rilevamenti: un'uscita non nulla dopo la riga
+esatta di completamento del build era contata come mutante rilevato; il
+trasporto del risultato perdeva il segnale del sistema operativo.
+
+Il catalogo resta di 9 mutanti per le testate e 10 per la struttura. La
+correzione riguarda gli strumenti di verifica e non cambia il codec.
+Le campagne precedenti conservano i propri byte e stati originali.
+
+La classificazione segue questo ordine:
+
+1. Un segnale del sistema operativo produce `:worker-error`.
+2. Un'uscita non nulla dopo il completamento esatto produce `:worker-error`.
+3. Un errore di compilazione o un'esecuzione incompleta senza smoke valido
+   resta una verifica non valida.
+4. Un'uscita zero richiede smoke e completamento esatti per attestare
+   la sopravvivenza del mutante.
+5. Un normale errore runtime dopo smoke e prima del completamento attesta
+   il rilevamento del mutante.
+
+La baseline deve terminare senza segnale, con codice zero e con entrambi
+i marker esatti. Baseline e mutanti conservano separatamente codice di
+uscita e segnale. Gli errori di avvio e trasporto sono errori del worker.
+I contatori e l'esito della campagna non trasformano questi errori in
+rilevamenti. Le regole applicabili sono COD-60 e COD-61 dello
+[standard di codifica](../affidabilita/standard-di-codifica.md).
+
+## Metodo registrato prima delle esecuzioni
+
+Per ciascun runner sono previste due fixture reali con lo stesso trasporto
+usato dalla campagna: un figlio scrive smoke, svuota l'output e invia SIGKILL
+al proprio PID; un altro scrive smoke e completamento, poi esce con codice 7.
+Entrambi devono risultare `:worker-error`, senza rilevamento. I self-test
+verificano anche le precedenze, le baseline e i marker LF/CRLF, respingendo
+citazioni e testo aggiunto sulla stessa riga.
+
+Dopo la revisione di entrambi i file, i sorgenti e l'indice Git vengono
+congelati durante ogni esecuzione registrata. Si eseguono i due `--self-test`,
+poi le due campagne complete e `make check-core`. Le campagne possono
+procedere in parallelo in directory e copie indipendenti; ogni catalogo
+viene eseguito serialmente. Si conservano registri del comando, report,
+runner generati e log originali, comprese le fixture ripetute dai `--run`.
+Il catalogo delle prove verifica presenza, dimensioni e integrità dei dati.
+Due invocazioni con `--invalid` verificano inoltre COD-61: ciascun processo
+deve fallire con codice non nullo e diagnostica del file e della regola.
+I registri di questi controlli negativi conservano lo stato `:failed`.
+
+Queste prove verificano l'affidabilità dei runner. Non ripetono benchmark o
+copertura del codec e non approvano nuove condizioni C1, MC/DC o qualifiche
+del motore.
+
+## Risultati osservati
+
+I due self-test e le due campagne complete sono riusciti con hash dei
+sorgenti stabili. Le baseline completano 377 test più smoke senza segnali
+o avvisi; le campagne rilevano tutti i 9 mutanti delle testate e i 10 della
+struttura, con zero errori dei worker. `make check-core` completa inoltre
+lint, tracciabilità, link, verifiche delle evidenze e dieci spike.
+
+Le quattro esecuzioni delle fixture, incluse le ripetizioni nelle campagne,
+conservano SIGKILL come exit 137 / signal 9 e il fallimento dopo completamento
+come exit 7 / signal nil: sempre `:worker-error`, mai `:detected`.
+Le fixture della struttura conservano anche i rifiuti iniettati di copia e
+trasporto della baseline, con codice e segnale non osservati, log e contatore.
+Entrambe le CLI rifiutano `--invalid` con exit 1 e diagnostica del file e
+di COD-61; i due registri restano `:failed` come previsto dal metodo.
+
+Il [catalogo](https://github.com/gpicchiarelli/ArcDocDB/blob/13c2eec90a7a80f97f3bd9ded6b62abd75b7cf78/spikes/results/2026-10-09-cbor-mutation-signals/catalogo.lisp)
+conserva i comandi, le letture C4, i report e i byte originali di log e runner.
+Non è imposto un timeout automatico ai processi delle campagne.
+
+## Metodo della nuova integrazione con CBOR minimo
+
+Il main `e07d772` aggiunge il profilo CBOR minimo e 15 test. Il relativo
+runner di mutazione presenta gli stessi due difetti degli altri strumenti:
+la nuova correzione C4 riguarda soltanto il runner. Il codec, i formati e
+i test di prodotto introdotti dal main restano invariati. I runner di
+testate e struttura conservano i rispettivi hash della precedente revisione.
+
+Il [metodo della nuova integrazione](https://github.com/gpicchiarelli/ArcDocDB/blob/13c2eec90a7a80f97f3bd9ded6b62abd75b7cf78/spikes/results/2026-10-09-cbor-mutation-signals-integration/metodo.lisp)
+è registrato prima delle nuove esecuzioni. Dopo il freeze e la lettura C4
+si prevedono `--self-test` e `--invalid` del runner minimo, tre campagne
+complete in directory nuove e indipendenti, `make check-core` e il controllo
+finale `make evidence trace links` dopo la conservazione delle prove.
+I conteggi attesi sono 8 mutanti del minimo, 9 delle testate, 10 della
+struttura e 392 test più smoke: sono previsioni, non risultati osservati.
+
+Ogni `--run` ripete il self-test con i due processi figli reali. Si
+conservano exit, segnale, contatori, report, log e runner delle fixture e
+delle campagne. Il controllo CLI negativo deve restare `:failed` con
+diagnostica del file e di COD-61. Tutti i comandi vengono registrati con
+argomenti, ambiente, output e hash effettivi; nessuna fonte o indice Git
+può cambiare durante una di queste esecuzioni.
+
+Il nuovo catalogo userà soltanto nomi di artefatti al livello della cartella
+datata, conservando i byte dei registri nativi e i nomi dei payload gzip.
+La precedente fotografia osservata da 377 test resta originale. Non si
+ripetono copertura o benchmark e non si approvano C1, MC/DC, recovery
+completo o qualifiche del motore. I worker restano senza timeout automatico.
+
+## Risultati osservati della nuova integrazione
+
+Il self-test del runner minimo è riuscito; `--invalid` resta un controllo
+negativo riuscito con stato originale `:failed`, exit 1 e diagnostica del
+file e di COD-61. Le tre campagne complete rilevano 9 mutanti delle testate,
+10 della struttura e 8 del minimo, con zero errori dei worker. Le baseline
+completano 392 test più smoke, con exit zero, nessun segnale e completamento
+esatto. I sei comandi conservano hash dei sorgenti stabili.
+
+Il nuovo `make check-core` completa 392 test più smoke e dieci spike. Lo
+stato originale dello SPK-07 resta `:pass`; gli altri nove conservano `:ok`
+e il report globale `:complete`. Le quattro esecuzioni delle fixture,
+compresi i self-test ripetuti dai tre `--run`, conservano otto processi
+figli: SIGKILL con exit 137 / signal 9 oppure exit 7 / signal nil dopo
+completamento, sempre `:worker-error` e mai `:detected`. I rifiuti iniettati
+della baseline conservano report, log e contatori originali.
+
+Il [catalogo integrato](https://github.com/gpicchiarelli/ArcDocDB/blob/13c2eec90a7a80f97f3bd9ded6b62abd75b7cf78/spikes/results/2026-10-09-cbor-mutation-signals-integration/catalogo.lisp)
+conserva registri nativi e payload gzip con byte invariati, report, log,
+runner delle tre campagne e delle quattro fixture, le due letture C4 del
+minimo e gli audit indipendenti dei risultati. Il controllo finale di
+evidenze, tracciabilità e link viene registrato dopo questa pubblicazione.
+La fotografia precedente da 377 test resta nel suo catalogo originale;
+non si aggiungono misure di copertura, benchmark o qualifiche del motore.
+
+## Metodo dell'integrazione con controller Series e WAL
+
+Il main `1cb968d` viene integrato dopo la pubblicazione `bffbdd0`. Il
+[metodo preregistrato](https://github.com/gpicchiarelli/ArcDocDB/blob/13c2eec90a7a80f97f3bd9ded6b62abd75b7cf78/spikes/results/2026-10-09-cbor-mutation-signals-series-integration/metodo.lisp)
+prevede soltanto un nuovo `make check-core`, il controllo finale
+`make evidence trace links` dopo la conservazione delle prove e la CI
+sull'esatto commit pubblicato. Un confronto indipendente deve confermare
+che i tre runner CBOR e i codec bersaglio siano invariati.
+
+I risultati attesi sono exit zero e hash dei sorgenti stabili; il nuovo
+numero di test verrà ricavato dall'output effettivo. Sono attese da
+verificare, non risultati già osservati. Sorgenti, documentazione e indice
+restano congelati durante ciascun comando registrato.
+
+Il nuovo catalogo conserva in una cartella datata soltanto nomi LEAF:
+registri e conservazione del core e del controllo finale, dieci spike,
+report globale con payload originali, metodo, riepilogo, confronto
+d'impatto e audit dei byte nativi. Le fotografie precedenti da 377 e
+392 test, comprese le 27 mutazioni CBOR già osservate sul main `e07d772`,
+restano originali. Questo passaggio non ripete campagne di mutazione,
+fixture, copertura o benchmark e non aggiunge qualifiche del motore.
+
+## Integrazione delle Serie e memoria del checker
+
+La base `1cb968d` aggiunge il controller delle Serie e modifiche al WAL.
+La verifica completa registrata supera 436 test più smoke e dieci spike.
+Le ancore, i test e i tre runner CBOR sono invariati; il copier include
+tutti i nuovi componenti. Le 27 mutazioni restano prove della fotografia
+`e07d772`, conservata nel precedente catalogo.
+
+La CI Linux del commit `bffbdd0` completa anch'essa i 436 test, poi esaurisce
+l'heap leggendo un archivio storico nel checker delle evidenze. Il suo
+registro conserva lo stato `:failed`. Il [metodo aggiuntivo](https://github.com/gpicchiarelli/ArcDocDB/blob/13c2eec90a7a80f97f3bd9ded6b62abd75b7cf78/spikes/results/2026-10-09-cbor-mutation-signals-series-integration/heap-method.lisp)
+registra la correzione prima della verifica: la sola recipe `evidence`
+usa 2048 MiB, configurabili con `EVIDENCE_DYNAMIC_SPACE_SIZE`. Il prodotto,
+il parser e i limiti dei file sono invariati. La verifica registrata e la
+CI sul nuovo commit devono confermare il risultato della configurazione.
+
+Il [catalogo delle prove integrate](https://github.com/gpicchiarelli/ArcDocDB/blob/13c2eec90a7a80f97f3bd9ded6b62abd75b7cf78/spikes/results/2026-10-09-cbor-mutation-signals-series-integration/catalogo.lisp)
+conserva i registri originali, compreso il fallimento Linux, e il confronto
+dei byte. Non vengono ripetuti benchmark, copertura o campagne CBOR.

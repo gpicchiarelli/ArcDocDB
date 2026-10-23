@@ -1,0 +1,1 @@
+(:SCHEMA-VERSION 1 :KIND :CI-CHILD-FAILURE :STATUS :FAILED :JOB "coverage" :REASON "Child coverage interrotto o senza rapporto: :EXITED/1.")

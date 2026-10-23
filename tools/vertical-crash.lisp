@@ -1,0 +1,20 @@
+;;;; Driver C4: nessun argomento viene valutato come codice Lisp.
+(require :asdf)
+(require :sb-posix)
+(setf asdf:*compile-file-failure-behaviour* :error
+      asdf:*compile-file-warnings-behaviour* :error)
+(handler-bind ((warning (lambda (condition)
+                         (unless (typep condition 'sb-kernel:redefinition-warning)
+                           (error "Avviso non ammesso: ~A" condition)))))
+  (asdf:load-asd (merge-pathnames "../arcdocdb.asd" *load-truename*))
+  (asdf:load-system "arcdocdb/tests"))
+(handler-case
+    (let ((arguments (uiop:command-line-arguments)))
+      (cond ((equal arguments '("--self-test"))
+             (uiop:symbol-call :arcdocdb.vertical.tests :run))
+            ((= 4 (length arguments))
+             (uiop:symbol-call :arcdocdb.vertical.tests :child-main arguments))
+            (t (error "Uso: --self-test oppure MODE ROOT VERSION STAGE."))))
+  (error (condition)
+    (format *error-output* "~&VERTICAL-FAIL ~A: ~A~%" (type-of condition) condition)
+    (sb-ext:exit :code 1)))
