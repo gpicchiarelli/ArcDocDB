@@ -1,0 +1,1 @@
+:OK: /home/runner/work/_temp/arcdocdb-sbcl.hsaYI4b9/installed/bin/sbcl --dynamic-space-size 4096 --noinform --no-userinit --no-sysinit --script /home/runner/work/ArcDocDB/ArcDocDB/tools/ci.lisp child --job bench --out /home/runner/work/ArcDocDB/ArcDocDB/spikes/out/ci/bench/work/; record: /home/runner/work/ArcDocDB/ArcDocDB/spikes/out/ci/bench/work/commands/job/report.lisp
