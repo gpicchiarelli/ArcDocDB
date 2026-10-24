@@ -1,8 +1,8 @@
 # Risultati CI archiviati
 
-Ultima raccolta archiviata: [run 38780230735, attempt 1](by-source/8383525c2602268b5b05d8fbdad2e9fabf5cb05a1baa8f872d0ce6f79d87755f/runs/38780230735/1/collections/30cc7f6accc48ab9b1e0b66a44ced9ecaba26fa64ebed617066461d0f4694a35/report.md).
+Ultima raccolta archiviata: [run 38781246234, attempt 1](by-source/2a8449a8c5776cab0d261cf67b298aba73f73491daca734f22d7423e7b912af7/runs/38781246234/1/collections/0a85bced32f995fdd0daf1cd2f1c191dbbb7604a461fdbcb978edc2fe3e41ea1/report.md).
 
-Codice provato: `b9ce1abdc61c592a804373a0b0b126e45415cfc1`. Questo indice descrive l'ultima pubblicazione, e può riferirsi a codice precedente al main attuale.
+Codice provato: `a34cede6fbc9215908d50aa85311d5d703660040`. Questo indice descrive l'ultima pubblicazione, e può riferirsi a codice precedente al main attuale.
 
 Per conoscere lo stato dei sorgenti attuali: `make ci-status`.
 
